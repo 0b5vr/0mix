@@ -1,22 +1,8 @@
-import { BufferRenderTarget } from '../heck/BufferRenderTarget';
+import { BufferTextureRenderTarget } from '../heck/BufferTextureRenderTarget';
 
-export const dummyRenderTarget1 = new BufferRenderTarget( {
-  width: 1,
-  height: 1,
-} );
-
-export const dummyRenderTarget2 = new BufferRenderTarget( {
-  width: 1,
-  height: 1,
-  numBuffers: 2,
-} );
-
-
-export const dummyRenderTarget4 = new BufferRenderTarget( {
-  width: 1,
-  height: 1,
-  numBuffers: 4,
-} );
+export const dummyRenderTarget1 = new BufferTextureRenderTarget( 1, 1 );
+export const dummyRenderTarget2 = new BufferTextureRenderTarget( 1, 1, 2 );
+export const dummyRenderTarget4 = new BufferTextureRenderTarget( 1, 1, 4 );
 
 if ( import.meta.env.DEV ) {
   dummyRenderTarget1.name = 'dummyRenderTarget1';

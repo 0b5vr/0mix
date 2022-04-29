@@ -1,4 +1,3 @@
-import { BufferRenderTarget } from '../../heck/BufferRenderTarget';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
@@ -6,17 +5,16 @@ import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { GL_LINEAR } from '../../gl/constants';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { glTextureFilter } from '../../gl/glTextureFilter';
 
-export class ShaderRenderTarget extends BufferRenderTarget {
+export class ShaderRenderTarget extends BufferTextureRenderTarget {
   public material: Material;
   public quad: Quad;
 
   public constructor( width: number, height: number, frag: string ) {
-    super( {
-      width: width,
-      height: height,
-      filter: GL_LINEAR,
-    } );
+    super( width, height );
+    glTextureFilter( this.texture, GL_LINEAR );
 
     const material = this.material = new Material(
       quadVert,

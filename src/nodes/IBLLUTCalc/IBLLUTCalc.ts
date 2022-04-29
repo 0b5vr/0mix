@@ -1,4 +1,3 @@
-import { BufferRenderTarget } from '../../heck/BufferRenderTarget';
 import { IBLLUT_ITER, IBLLUT_SIZE } from '../../config';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material } from '../../heck/Material';
@@ -11,11 +10,13 @@ import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { vdc } from '../../utils/vdc';
 import { GL_NEAREST, GL_TEXTURE_2D } from '../../gl/constants';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { glTextureFilter } from '../../gl/glTextureFilter';
 
 export const IBLLUTCalcTag = Symbol();
 
 export class IBLLUTCalc extends SceneNode {
-  public swap: Swap<BufferRenderTarget>;
+  public swap: Swap<BufferTextureRenderTarget>;
 
   public get texture(): WebGLTexture {
     return this.swap.o.texture;
@@ -29,17 +30,18 @@ export class IBLLUTCalc extends SceneNode {
 
     // -- swap -------------------------------------------------------------------------------------
     this.swap = new Swap(
-      new BufferRenderTarget( {
-        width: IBLLUT_SIZE,
-        height: IBLLUT_SIZE,
-        filter: GL_NEAREST,
-      } ),
-      new BufferRenderTarget( {
-        width: IBLLUT_SIZE,
-        height: IBLLUT_SIZE,
-        filter: GL_NEAREST,
-      } ),
+      new BufferTextureRenderTarget(
+        IBLLUT_SIZE,
+        IBLLUT_SIZE,
+      ),
+      new BufferTextureRenderTarget(
+        IBLLUT_SIZE,
+        IBLLUT_SIZE,
+      ),
     );
+
+    glTextureFilter( this.swap.i.texture, GL_NEAREST );
+    glTextureFilter( this.swap.o.texture, GL_NEAREST );
 
     if ( import.meta.env.DEV ) {
       this.swap.i.name = 'IBLLUTCalc/swap0';

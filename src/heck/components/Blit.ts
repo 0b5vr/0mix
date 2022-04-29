@@ -1,11 +1,11 @@
-import { BufferRenderTarget } from '../BufferRenderTarget';
+import { RawBufferRenderTarget } from '../RawBufferRenderTarget';
 import { Component, ComponentOptions } from './Component';
 import { RenderTarget } from '../RenderTarget';
 import { gl } from '../../globals/canvas';
 import { GL_COLOR_ATTACHMENT0, GL_COLOR_BUFFER_BIT, GL_DRAW_FRAMEBUFFER, GL_NEAREST, GL_READ_FRAMEBUFFER } from '../../gl/constants';
 
 export interface BlitOptions extends ComponentOptions {
-  src?: BufferRenderTarget;
+  src?: RawBufferRenderTarget;
   dst?: RenderTarget;
   srcRect?: [ number, number, number, number ] | null;
   dstRect?: [ number, number, number, number ] | null;
@@ -18,7 +18,7 @@ export interface BlitOptions extends ComponentOptions {
  * Blit.
  */
 export class Blit extends Component {
-  public src?: BufferRenderTarget;
+  public src?: RawBufferRenderTarget;
   public dst?: RenderTarget;
   public srcRect?: [ number, number, number, number ] | null;
   public dstRect?: [ number, number, number, number ] | null;
@@ -43,7 +43,7 @@ export class Blit extends Component {
   protected __updateImpl(): void {
     if ( this.src && this.dst ) {
       gl.bindFramebuffer( GL_READ_FRAMEBUFFER, this.src.framebuffer );
-      if ( this.dst instanceof BufferRenderTarget ) {
+      if ( this.dst instanceof RawBufferRenderTarget ) {
         gl.bindFramebuffer( GL_DRAW_FRAMEBUFFER, this.dst.framebuffer );
       } else {
         gl.bindFramebuffer( GL_DRAW_FRAMEBUFFER, null );

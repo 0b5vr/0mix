@@ -1,5 +1,4 @@
 import { Blit } from '../../heck/components/Blit';
-import { BufferRenderTarget } from '../../heck/BufferRenderTarget';
 import { Material } from '../../heck/Material';
 import { ONE_SUB_ONE_POINT_FIVE_POW_I } from '../../utils/constants';
 import { Quad } from '../../heck/components/Quad';
@@ -12,9 +11,10 @@ import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { GL_ONE, GL_TEXTURE_2D } from '../../gl/constants';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 
 export interface BloomOptions {
-  input: BufferRenderTarget;
+  input: BufferTextureRenderTarget;
   target: RenderTarget;
 }
 
@@ -25,14 +25,8 @@ export class Bloom extends SceneNode {
     const { width, height } = options.target;
 
     const swap = new Swap(
-      new BufferRenderTarget( {
-        width,
-        height,
-      } ),
-      new BufferRenderTarget( {
-        width,
-        height,
-      } ),
+      new BufferTextureRenderTarget( width, height ),
+      new BufferTextureRenderTarget( width, height ),
     );
 
     if ( import.meta.env.DEV ) {

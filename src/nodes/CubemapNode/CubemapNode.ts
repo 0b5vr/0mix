@@ -1,5 +1,4 @@
 import { Blit } from '../../heck/components/Blit';
-import { BufferRenderTarget } from '../../heck/BufferRenderTarget';
 import { CameraStack } from '../CameraStack/CameraStack';
 import { ComponentOptions } from '../../heck/components/Component';
 import { DustTag } from '../Dust/Dust';
@@ -18,6 +17,7 @@ import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { GL_TEXTURE_2D } from '../../gl/constants';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 
 export const CubemapNodeTag = Symbol();
 
@@ -37,8 +37,8 @@ export interface CubemapNodeOptions extends ComponentOptions {
 }
 
 export class CubemapNode extends SceneNode {
-  public targetDry: BufferRenderTarget;
-  public targetWet: BufferRenderTarget;
+  public targetDry: BufferTextureRenderTarget;
+  public targetWet: BufferTextureRenderTarget;
 
   public constructor( options: CubemapNodeOptions ) {
     super( options );
@@ -51,10 +51,7 @@ export class CubemapNode extends SceneNode {
     const { scene } = options;
 
     // -- cubemap ----------------------------------------------------------------------------------
-    const targets = [ ...Array( 6 ) ].map( () => new BufferRenderTarget( {
-      width: 256,
-      height: 256,
-    } ) );
+    const targets = [ ...Array( 6 ) ].map( () => new BufferTextureRenderTarget( 256, 256 ) );
 
     if ( import.meta.env.DEV ) {
       targets.map( ( target, i ) => target.name = `cubemapTarget${ i }` );
@@ -82,10 +79,7 @@ export class CubemapNode extends SceneNode {
     } );
 
     // -- compiler ---------------------------------------------------------------------------------
-    const targetCompiled = this.targetDry = new BufferRenderTarget( {
-      width: 768,
-      height: 512,
-    } );
+    const targetCompiled = this.targetDry = new BufferTextureRenderTarget( 768, 512 );
 
     if ( import.meta.env.DEV ) {
       targetCompiled.name = 'cubemapCompiled';
@@ -108,14 +102,8 @@ export class CubemapNode extends SceneNode {
 
     // -- sample ggx -------------------------------------------------------------------------------
     const swapTargetSample = new Swap(
-      new BufferRenderTarget( {
-        width: 768,
-        height: 512,
-      } ),
-      new BufferRenderTarget( {
-        width: 768,
-        height: 512,
-      } ),
+      new BufferTextureRenderTarget( 768, 512 ),
+      new BufferTextureRenderTarget( 768, 512 ),
     );
 
     if ( import.meta.env.DEV ) {
@@ -153,10 +141,7 @@ export class CubemapNode extends SceneNode {
     }
 
     // -- merge accumulated ------------------------------------------------------------------------
-    const targetMerge = new BufferRenderTarget( {
-      width: 768,
-      height: 512,
-    } );
+    const targetMerge = new BufferTextureRenderTarget( 768, 512 );
 
     if ( import.meta.env.DEV ) {
       targetMerge.name = 'cubemapMerge';
@@ -203,15 +188,9 @@ export class CubemapNode extends SceneNode {
     } );
 
     // -- blur -------------------------------------------------------------------------------------
-    const targetBlurH = new BufferRenderTarget( {
-      width: 768,
-      height: 512,
-    } );
+    const targetBlurH = new BufferTextureRenderTarget( 768, 512 );
 
-    const targetBlurV = this.targetWet = new BufferRenderTarget( {
-      width: 768,
-      height: 512,
-    } );
+    const targetBlurV = this.targetWet = new BufferTextureRenderTarget( 768, 512 );
 
     if ( import.meta.env.DEV ) {
       targetBlurH.name = 'cubemapBlurH';

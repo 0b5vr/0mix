@@ -5,10 +5,10 @@ import { GLTextureFormatStuffRGBA32F } from './glSetTexture';
 import { glTextureFilter } from './glTextureFilter';
 import { glTextureWrap } from './glTextureWrap';
 
-export function glLazyDrawbuffers(
+export function glLazyMultiTargetFramebuffer(
   width: number,
   height: number,
-  numBuffers: number,
+  numBuffers?: number,
 ): {
   framebuffer: WebGLFramebuffer;
   renderbuffer: WebGLRenderbuffer;
@@ -34,7 +34,7 @@ export function glLazyDrawbuffers(
     gl.bindFramebuffer( GL_FRAMEBUFFER, null );
 
     // == texture ==================================================================================
-    textures = [ ...Array( numBuffers ) ].map( ( _, i ) => {
+    textures = [ ...Array( numBuffers ?? 1 ) ].map( ( _, i ) => {
       const texture = glCreateTexture( width, height, null, GLTextureFormatStuffRGBA32F );
       glTextureFilter( texture, GL_LINEAR );
       glTextureWrap( texture, GL_CLAMP_TO_EDGE );

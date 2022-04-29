@@ -1,4 +1,3 @@
-import { BufferRenderTarget } from '../../heck/BufferRenderTarget';
 import { Geometry } from '../../heck/Geometry';
 import { HALF_SQRT_TWO } from '../../utils/constants';
 import { Lambda } from '../../heck/components/Lambda';
@@ -129,7 +128,7 @@ export class Floor extends SceneNode {
     this.children.push( lambdaResetFloor );
   }
 
-  public setMipmapMirrorTarget( mipmapMirrorTarget: BufferRenderTarget ): void {
-    this.forward.addUniformTextures( 'samplerMirror', GL_TEXTURE_2D, mipmapMirrorTarget.texture );
+  public setMipmapMirrorTexture( texture: WebGLTexture ): void {
+    this.forward.addUniformTextures( 'samplerMirror', GL_TEXTURE_2D, texture );
   }
 }

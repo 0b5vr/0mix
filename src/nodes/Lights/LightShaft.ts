@@ -1,4 +1,3 @@
-import { BufferRenderTarget } from '../../heck/BufferRenderTarget';
 import { Geometry } from '../../heck/Geometry';
 import { Lambda } from '../../heck/components/Lambda';
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/shaders/deferredShadeFrag';
@@ -158,9 +157,10 @@ export class LightShaft extends SceneNode {
 
   /**
    * どうやってフレームバッファのデプスを取るかわかりませんでした 許してほしい
+   *
+   * `deferredCameraTarget.textures[ 1 ]`
    */
-  public setDefferedCameraTarget( deferredCameraTarget: BufferRenderTarget ): void {
-    const texture = deferredCameraTarget.textures[ 1 ];
+  public setDefferedCameraTexture( texture: WebGLTexture ): void {
     this.__forward.addUniformTextures( 'samplerDeferred1', GL_TEXTURE_2D, texture );
   }
 }

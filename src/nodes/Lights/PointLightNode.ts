@@ -1,4 +1,3 @@
-import { BufferRenderTarget } from '../../heck/BufferRenderTarget';
 import { Material } from '../../heck/Material';
 import { PerspectiveCamera } from '../../heck/components/PerspectiveCamera';
 import { Quad } from '../../heck/components/Quad';
@@ -9,6 +8,7 @@ import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { shadowBlurFrag } from './shaders/shadowBlurFrag';
 import { GL_TEXTURE_2D } from '../../gl/constants';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 
 export const PointLightTag = Symbol();
 
@@ -25,7 +25,7 @@ export class PointLightNode extends SceneNode {
   public spotSharpness: number = 0.5;
   public color: [ number, number, number ] = [ 1.0, 1.0, 1.0 ];
   public camera: PerspectiveCamera;
-  public shadowMap: BufferRenderTarget;
+  public shadowMap: BufferTextureRenderTarget;
 
   public get shadowMapFov(): number {
     return this.camera.fov;
@@ -44,14 +44,11 @@ export class PointLightNode extends SceneNode {
 
     this.tags.push( PointLightTag );
 
-    const swapOptions = {
-      width: options.shadowMapSize ?? 256,
-      height: options.shadowMapSize ?? 256,
-    };
+    const shadowMapSize = options.shadowMapSize ?? 256;
 
     const swap = new Swap(
-      new BufferRenderTarget( swapOptions ),
-      new BufferRenderTarget( swapOptions )
+      new BufferTextureRenderTarget( shadowMapSize, shadowMapSize ),
+      new BufferTextureRenderTarget( shadowMapSize, shadowMapSize )
     );
 
     // -- camera -----------------------------------------------------------------------------------

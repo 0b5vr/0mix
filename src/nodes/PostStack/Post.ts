@@ -1,4 +1,3 @@
-import { BufferRenderTarget } from '../../heck/BufferRenderTarget';
 import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
 import { RenderTarget } from '../../heck/RenderTarget';
@@ -9,9 +8,10 @@ import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { randomTexture } from '../../globals/randomTexture';
 import { GL_TEXTURE_2D } from '../../gl/constants';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 
 export interface PostOptions {
-  input: BufferRenderTarget;
+  input: BufferTextureRenderTarget;
   target: RenderTarget;
 }
 

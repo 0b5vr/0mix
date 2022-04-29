@@ -1,5 +1,5 @@
 import { Blit } from '../../heck/components/Blit';
-import { BufferRenderTarget } from '../../heck/BufferRenderTarget';
+import { RawBufferRenderTarget } from '../../heck/RawBufferRenderTarget';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
@@ -14,6 +14,7 @@ import { quadVert } from '../../shaders/common/quadVert';
 import inspectorFrag from './shaders/inspector.frag?raw';
 import { GL_COLOR_ATTACHMENT0, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
 import { CanvasTexture } from '../utils/CanvasTexture';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 
 export interface RTInspectorOptions {
   target: RenderTarget;
@@ -68,7 +69,7 @@ export class RTInspector extends SceneNode {
 
     // count first?
     let count = 0;
-    for ( const src of BufferRenderTarget.nameMap.values() ) {
+    for ( const src of RawBufferRenderTarget.nameMap.values() ) {
       count += src.numBuffers;
     }
 
@@ -79,14 +80,14 @@ export class RTInspector extends SceneNode {
 
     // determine grid positions
     const entries: {
-      src: BufferRenderTarget;
+      src: RawBufferRenderTarget;
       attachment: GLenum;
       dstRect: [ number, number, number, number ];
       name: string;
     }[] = [];
 
     let iBlit = 0;
-    for ( const src of BufferRenderTarget.nameMap.values() ) {
+    for ( const src of RawBufferRenderTarget.nameMap.values() ) {
       for ( let iAttachment = 0; iAttachment < src.numBuffers; iAttachment ++ ) {
         const x = iBlit % grid;
         const y = grid - 1 - Math.floor( iBlit / grid );
@@ -200,8 +201,9 @@ export class RTInspector extends SceneNode {
     } else if ( single !== '' ) {
       this.nodeMultiple.active = false;
 
-      for ( const [ name, target ] of BufferRenderTarget.nameMap ) {
+      for ( const [ name, target ] of RawBufferRenderTarget.nameMap ) {
         if ( !( new RegExp( single ).test( name ) ) ) { continue; }
+        if ( !( target instanceof BufferTextureRenderTarget ) ) { continue; } // TODO
 
         const texture = target?.textures[ singleIndex ];
 

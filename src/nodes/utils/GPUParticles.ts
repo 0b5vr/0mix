@@ -1,4 +1,3 @@
-import { BufferRenderTarget, BufferRenderTargetOptions } from '../../heck/BufferRenderTarget';
 import { Geometry } from '../../heck/Geometry';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material, MaterialMap } from '../../heck/Material';
@@ -7,6 +6,8 @@ import { Quad } from '../../heck/components/Quad';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { Swap } from '@0b5vr/experimental';
 import { GL_NEAREST, GL_TEXTURE_2D } from '../../gl/constants';
+import { glTextureFilter } from '../../gl/glTextureFilter';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 
 export interface GPUParticlesOptions extends SceneNodeOptions {
   materialCompute: Material;
@@ -32,22 +33,13 @@ export class GPUParticles extends SceneNode {
       computeNumBuffers,
     } = options;
 
-    const brtOptions: BufferRenderTargetOptions = {
-      width: computeWidth,
-      height: computeHeight,
-      numBuffers: computeNumBuffers,
-    };
-
     const swapCompute = new Swap(
-      new BufferRenderTarget( {
-        ...brtOptions,
-        filter: GL_NEAREST,
-      } ),
-      new BufferRenderTarget( {
-        ...brtOptions,
-        filter: GL_NEAREST,
-      } ),
+      new BufferTextureRenderTarget( computeWidth, computeHeight, computeNumBuffers ),
+      new BufferTextureRenderTarget( computeWidth, computeHeight, computeNumBuffers ),
     );
+
+    glTextureFilter( swapCompute.i.texture, GL_NEAREST );
+    glTextureFilter( swapCompute.o.texture, GL_NEAREST );
 
     if ( import.meta.env.DEV ) {
       swapCompute.i.name = `${ this.name }/swap0`;

@@ -1,5 +1,4 @@
 import { Blit } from '../../heck/components/Blit';
-import { BufferRenderTarget } from '../../heck/BufferRenderTarget';
 import { CameraStack } from '../CameraStack/CameraStack';
 import { Floor } from './Floor';
 import { Lambda } from '../../heck/components/Lambda';
@@ -13,6 +12,8 @@ import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { GL_TEXTURE_2D } from '../../gl/constants';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { BufferMipmapTextureRenderTarget } from '../../heck/BufferMipmapTextureRenderTarget';
 
 export interface FloorCameraOptions extends SceneNodeOptions {
   width: number;
@@ -23,17 +24,17 @@ export interface FloorCameraOptions extends SceneNodeOptions {
 
 export class FloorCamera extends SceneNode {
   public mirrorCamera: CameraStack;
-  public mirrorTarget: BufferRenderTarget;
-  public mipmapMirrorTarget: BufferRenderTarget;
+  public mirrorTarget: BufferTextureRenderTarget;
+  public mipmapMirrorTarget: BufferMipmapTextureRenderTarget;
 
   public constructor( { width, height, primaryCamera, floor }: FloorCameraOptions ) {
     super();
 
     // -- https://www.nicovideo.jp/watch/sm21005672 ------------------------------------------------
-    this.mirrorTarget = new BufferRenderTarget( {
-      width: 0.5 * primaryCamera.deferredCamera.renderTarget!.width,
-      height: 0.5 * primaryCamera.deferredCamera.renderTarget!.height,
-    } );
+    this.mirrorTarget = new BufferTextureRenderTarget(
+      0.5 * primaryCamera.deferredCamera.renderTarget!.width,
+      0.5 * primaryCamera.deferredCamera.renderTarget!.height,
+    );
 
     if ( import.meta.env.DEV ) {
       this.mirrorTarget.name = `${ this.name }/mirrorTarget`;
@@ -75,21 +76,15 @@ export class FloorCamera extends SceneNode {
 
     // -- create mipmaps ---------------------------------------------------------------------------
     const swapMirrorDownsampleTarget = new Swap(
-      new BufferRenderTarget( {
-        width,
-        height,
-      } ),
-      new BufferRenderTarget( {
-        width,
-        height,
-      } ),
+      new BufferTextureRenderTarget( width, height ),
+      new BufferTextureRenderTarget( width, height ),
     );
 
-    this.mipmapMirrorTarget = new BufferRenderTarget( {
-      width: width / 2,
-      height: height / 2,
-      levels: 6,
-    } );
+    this.mipmapMirrorTarget = new BufferMipmapTextureRenderTarget(
+      width / 2,
+      height / 2,
+      6,
+    );
 
     if ( import.meta.env.DEV ) {
       swapMirrorDownsampleTarget.i.name = `${ this.name }/mirrorDownsampleTarget/swap0`;
@@ -150,7 +145,7 @@ export class FloorCamera extends SceneNode {
     // -- update floor texture ---------------------------------------------------------------------
     this.children.push( new Lambda( {
       onUpdate: () => {
-        floor.setMipmapMirrorTarget( this.mipmapMirrorTarget );
+        floor.setMipmapMirrorTexture( this.mipmapMirrorTarget.texture );
       },
     } ) );
   }

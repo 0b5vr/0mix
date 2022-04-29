@@ -1,5 +1,5 @@
 import { AO_RESOLUTION_RATIO, FAR, NEAR } from '../../config';
-import { BufferRenderTarget } from '../../heck/BufferRenderTarget';
+import { RawBufferRenderTarget } from '../../heck/RawBufferRenderTarget';
 import { Component, ComponentOptions } from '../../heck/components/Component';
 import { Floor } from '../Floor/Floor';
 import { FloorCamera } from '../Floor/FloorCamera';
@@ -21,6 +21,8 @@ import { quadVert } from '../../shaders/common/quadVert';
 import { randomTexture } from '../../globals/randomTexture';
 import { ssaoFrag } from './shaders/ssaoFrag';
 import { GL_NEAREST, GL_TEXTURE_2D } from '../../gl/constants';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { glTextureFilter } from '../../gl/glTextureFilter';
 
 export interface CameraStackOptions extends ComponentOptions {
   width: number;
@@ -61,22 +63,25 @@ export class CameraStack extends SceneNode {
 
     const { width, height, target, scene, exclusionTags, floor, withPost, fov } = options;
 
-    const cameraTarget = withPost ? new BufferRenderTarget( {
-      width: target.width,
-      height: target.height,
-    } ) : target;
+    const cameraTarget = withPost ? new BufferTextureRenderTarget(
+      target.width,
+      target.height,
+    ) : target;
 
-    if ( import.meta.env.DEV && cameraTarget instanceof BufferRenderTarget ) {
+    if ( import.meta.env.DEV && cameraTarget instanceof RawBufferRenderTarget ) {
       cameraTarget.name = `${ this.name }/cameraTarget`;
     }
 
     // -- deferred g rendering ---------------------------------------------------------------------
-    const deferredTarget = new BufferRenderTarget( {
-      width: target.width,
-      height: target.height,
-      numBuffers: 4,
-      filter: GL_NEAREST,
-    } );
+    const deferredTarget = new BufferTextureRenderTarget(
+      target.width,
+      target.height,
+      4,
+    );
+
+    deferredTarget.textures.map( ( texture ) => (
+      glTextureFilter( texture, GL_NEAREST )
+    ) );
 
     if ( import.meta.env.DEV ) {
       deferredTarget.name = `${ this.name }/deferredTarget`;
@@ -98,13 +103,13 @@ export class CameraStack extends SceneNode {
 
     // -- ambient occlusion ------------------------------------------------------------------------
     let aoComponents: Component[] = [];
-    let aoTarget: BufferRenderTarget | undefined;
+    let aoTarget: BufferTextureRenderTarget | undefined;
 
     if ( withAO ) {
-      aoTarget = new BufferRenderTarget( {
-        width: AO_RESOLUTION_RATIO * target.width,
-        height: AO_RESOLUTION_RATIO * target.height,
-      } );
+      aoTarget = new BufferTextureRenderTarget(
+        AO_RESOLUTION_RATIO * target.width,
+        AO_RESOLUTION_RATIO * target.height,
+      );
 
       if ( import.meta.env.DEV ) {
         aoTarget.name = `${ this.name }/aoTarget`;
@@ -248,7 +253,7 @@ export class CameraStack extends SceneNode {
     const lambdaUpdateLightShaftDeferredRenderTarget = new Lambda( {
       onUpdate: ( { componentsByTag } ) => {
         Array.from( componentsByTag.get( LightShaftTag ) ).map( ( lightShaft ) => {
-          ( lightShaft as LightShaft ).setDefferedCameraTarget( deferredTarget );
+          ( lightShaft as LightShaft ).setDefferedCameraTexture( deferredTarget.textures[ 1 ] );
         } );
       },
     } );
@@ -279,7 +284,7 @@ export class CameraStack extends SceneNode {
     // -- post -------------------------------------------------------------------------------------
     if ( withPost ) {
       this.postStack = new PostStack( {
-        input: cameraTarget as BufferRenderTarget,
+        input: cameraTarget as BufferTextureRenderTarget,
         target,
       } );
     }
