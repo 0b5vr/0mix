@@ -14,7 +14,7 @@ import { auto } from '../../globals/automaton';
 import { cubemapBlurFrag } from './shaders/cubemapBlurFrag';
 import { cubemapMergeFrag } from './shaders/cubemapMergeFrag';
 import { cubemapSampleFrag } from './shaders/cubemapSampleFrag';
-import { dummyRenderTarget } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { GL_TEXTURE_2D } from '../../gl/constants';
@@ -126,7 +126,7 @@ export class CubemapNode extends SceneNode {
     const materialSample = new Material(
       quadVert,
       cubemapSampleFrag,
-      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget } },
+      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 } },
     );
     materialSample.addUniformTextures(
       'samplerCubemap',
@@ -165,7 +165,7 @@ export class CubemapNode extends SceneNode {
     const materialMerge = new Material(
       quadVert,
       cubemapMergeFrag,
-      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget } },
+      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 } },
     );
 
     if ( import.meta.env.DEV ) {
@@ -221,7 +221,7 @@ export class CubemapNode extends SceneNode {
     const materialBlurH = new Material(
       quadVert,
       cubemapBlurFrag( 0 ),
-      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget } },
+      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 } },
     );
     materialBlurH.addUniformTextures(
       'samplerCubemap',
@@ -232,7 +232,7 @@ export class CubemapNode extends SceneNode {
     const materialBlurV = new Material(
       quadVert,
       cubemapBlurFrag( 1 ),
-      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget } },
+      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 } },
     );
     materialBlurV.addUniformTextures(
       'samplerCubemap',

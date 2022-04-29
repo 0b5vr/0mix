@@ -4,7 +4,7 @@ import { PerspectiveCamera } from '../../heck/components/PerspectiveCamera';
 import { Quad } from '../../heck/components/Quad';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { Swap } from '@0b5vr/experimental';
-import { dummyRenderTarget } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { shadowBlurFrag } from './shaders/shadowBlurFrag';
@@ -82,7 +82,7 @@ export class PointLightNode extends SceneNode {
       const material = new Material(
         quadVert,
         shadowBlurFrag( i === 1 ),
-        { initOptions: { geometry: quadGeometry, target: dummyRenderTarget } },
+        { initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 } },
       );
       material.addUniformTextures( 'sampler0', GL_TEXTURE_2D, swap.i.texture );
 

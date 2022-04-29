@@ -4,7 +4,7 @@ import { Mesh } from '../../heck/components/Mesh';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { createCubemapUniformsLambda } from '../utils/createCubemapUniformsLambda';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
-import { dummyRenderTarget } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { forwardPBRColorFrag } from '../../shaders/common/forwardPBRColorFrag';
 import { genCube } from '../../geometries/genCube';
 import { objectVert } from '../../shaders/common/objectVert';
@@ -40,7 +40,7 @@ export class TransparentShell extends SceneNode {
       objectVert,
       forwardPBRColorFrag,
       {
-        initOptions: { geometry: geometryShellFront, target: dummyRenderTarget },
+        initOptions: { geometry: geometryShellFront, target: dummyRenderTarget1 },
         blend: [ GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ],
       },
     );

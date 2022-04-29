@@ -4,7 +4,7 @@ import { Material } from '../../heck/Material';
 import { Mesh, MeshCull } from '../../heck/components/Mesh';
 import { RawVector3, TRIANGLE_STRIP_QUAD_3D, TRIANGLE_STRIP_QUAD_NORMAL, TRIANGLE_STRIP_QUAD_UV, quatFromAxisAngle, vecNormalize } from '@0b5vr/experimental';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
-import { dummyRenderTarget } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { objectVert } from '../../shaders/common/objectVert';
 import { uvFrag } from '../../shaders/common/uvFrag';
 import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
@@ -34,7 +34,7 @@ export class Plane extends SceneNode {
       objectVert,
       uvFrag,
       {
-        initOptions: { geometry, target: dummyRenderTarget },
+        initOptions: { geometry, target: dummyRenderTarget1 },
       },
     );
     forward.addUniform( 'color', '4f', 1.0, 1.0, 1.0, 1.0 );

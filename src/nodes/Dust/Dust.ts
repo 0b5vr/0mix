@@ -2,7 +2,7 @@ import { GPUParticles } from '../utils/GPUParticles';
 import { Geometry } from '../../heck/Geometry';
 import { Material } from '../../heck/Material';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
-import { dummyRenderTarget, dummyRenderTargetTwoDrawBuffers } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1, dummyRenderTarget2 } from '../../globals/dummyRenderTarget';
 import { dustComputeFrag } from './shaders/dustComputeFrag';
 import { dustRenderFrag } from './shaders/dustRenderFrag';
 import { dustRenderVert } from './shaders/dustRenderVert';
@@ -28,7 +28,7 @@ export class Dust extends GPUParticles {
     const materialCompute = new Material(
       quadVert,
       dustComputeFrag( materialOptions ),
-      { initOptions: { geometry: quadGeometry, target: dummyRenderTargetTwoDrawBuffers } },
+      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget2 } },
     );
 
     materialCompute.addUniformTextures( 'samplerRandom', GL_TEXTURE_2D, randomTexture.texture );
@@ -69,7 +69,7 @@ export class Dust extends GPUParticles {
       dustRenderVert,
       dustRenderFrag,
       {
-        initOptions: { geometry, target: dummyRenderTarget },
+        initOptions: { geometry, target: dummyRenderTarget1 },
         blend: [ GL_ONE, GL_ONE ],
       },
     );

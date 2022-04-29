@@ -3,7 +3,7 @@ import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
 import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
-import { dummyRenderTarget } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { fxaaFrag } from './shaders/fxaaFrag';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
@@ -24,7 +24,7 @@ export class FXAA extends SceneNode {
     const material = new Material(
       quadVert,
       fxaaFrag,
-      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget } },
+      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 } },
     );
     material.addUniformTextures( 'sampler0', GL_TEXTURE_2D, options.input.texture );
 

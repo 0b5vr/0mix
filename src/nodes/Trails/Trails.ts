@@ -4,7 +4,7 @@ import { MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/shaders/deferredShade
 import { Material } from '../../heck/Material';
 import { TransparentShell } from '../_misc/TransparentShell';
 import { auto } from '../../globals/automaton';
-import { dummyRenderTarget, dummyRenderTargetFourDrawBuffers, dummyRenderTargetTwoDrawBuffers } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1, dummyRenderTarget2, dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { genCylinder } from '../../geometries/genCylinder';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
@@ -29,7 +29,7 @@ export class Trails extends GPUParticles {
     const materialCompute = new Material(
       quadVert,
       trailsComputeFrag( materialOptions ),
-      { initOptions: { geometry: quadGeometry, target: dummyRenderTargetTwoDrawBuffers } },
+      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget2 } },
     );
 
     const shouldUpdate = 1;
@@ -70,7 +70,7 @@ export class Trails extends GPUParticles {
       trailsRenderVert( trailLength ),
       trailsRenderFrag( 'deferred' ),
       {
-        initOptions: { geometry, target: dummyRenderTargetFourDrawBuffers },
+        initOptions: { geometry, target: dummyRenderTarget4 },
       },
     );
     deferred.addUniform( 'color', '4f', 0.6, 0.7, 0.8, 1.0 );
@@ -80,7 +80,7 @@ export class Trails extends GPUParticles {
     const depth = new Material(
       trailsRenderVert( trailLength ),
       trailsRenderFrag( 'depth' ),
-      { initOptions: { geometry, target: dummyRenderTarget } },
+      { initOptions: { geometry, target: dummyRenderTarget1 } },
     );
 
     deferred.addUniformTextures( 'samplerRandomStatic', GL_TEXTURE_2D, randomTextureStatic.texture );

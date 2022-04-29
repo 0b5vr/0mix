@@ -5,7 +5,7 @@ import { Mesh, MeshCull } from '../../heck/components/Mesh';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { TRIANGLE_STRIP_QUAD_3D, TRIANGLE_STRIP_QUAD_NORMAL, TRIANGLE_STRIP_QUAD_UV } from '@0b5vr/experimental';
 import { auto } from '../../globals/automaton';
-import { dummyRenderTarget } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { fuiFrag } from './shaders/fuiFrag';
 import { getYugoppText } from '../../utils/getYugoppText';
 import { objectVert } from '../../shaders/common/objectVert';
@@ -91,7 +91,7 @@ export class FUI extends SceneNode {
       objectVert,
       fuiFrag( 'forward' ),
       {
-        initOptions: { geometry, target: dummyRenderTarget },
+        initOptions: { geometry, target: dummyRenderTarget1 },
         blend: [ GL_ONE, GL_ONE ],
       },
     );
@@ -103,7 +103,7 @@ export class FUI extends SceneNode {
       objectVert,
       fuiFrag( 'depth' ),
       {
-        initOptions: { geometry, target: dummyRenderTarget },
+        initOptions: { geometry, target: dummyRenderTarget1 },
       },
     );
     depth.addUniform( 'color', '4f', 1.0, 1.0, 1.0, 1.0 );

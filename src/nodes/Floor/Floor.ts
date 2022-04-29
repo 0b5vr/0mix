@@ -9,7 +9,7 @@ import { ShaderRenderTarget } from '../utils/ShaderRenderTarget';
 import { TRIANGLE_STRIP_QUAD_3D, TRIANGLE_STRIP_QUAD_NORMAL, TRIANGLE_STRIP_QUAD_UV } from '@0b5vr/experimental';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { depthFrag } from '../../shaders/common/depthFrag';
-import { dummyRenderTarget } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { floorFrag } from './shaders/floorFrag';
 import { floorRoughnessFrag } from './shaders/floorRoughnessFrag';
 import { objectVert } from '../../shaders/common/objectVert';
@@ -79,7 +79,7 @@ export class Floor extends SceneNode {
       objectVert,
       floorFrag,
       {
-        initOptions: { geometry, target: dummyRenderTarget },
+        initOptions: { geometry, target: dummyRenderTarget1 },
       },
     );
     forward.addUniformTextures( 'samplerRoughness', GL_TEXTURE_2D, floorRoughnessTextureTarget.texture );
@@ -88,7 +88,7 @@ export class Floor extends SceneNode {
       objectVert,
       depthFrag,
       {
-        initOptions: { geometry, target: dummyRenderTarget },
+        initOptions: { geometry, target: dummyRenderTarget1 },
       },
     );
 

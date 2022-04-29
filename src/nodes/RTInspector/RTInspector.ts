@@ -7,7 +7,7 @@ import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { canvas } from '../../globals/canvas';
 import { dryFrag } from '../../shaders/common/dryFrag';
-import { dummyRenderTarget } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { gui } from '../../globals/gui';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
@@ -40,7 +40,7 @@ export class RTInspector extends SceneNode {
     this.materialSingle = new Material(
       quadVert,
       inspectorFrag,
-      { initOptions: { target: dummyRenderTarget, geometry: quadGeometry } },
+      { initOptions: { target: dummyRenderTarget1, geometry: quadGeometry } },
     );
 
     this.quadSingle = new Quad( {
@@ -157,7 +157,7 @@ export class RTInspector extends SceneNode {
       quadVert,
       dryFrag,
       {
-        initOptions: { target: dummyRenderTarget, geometry: quadGeometry },
+        initOptions: { target: dummyRenderTarget1, geometry: quadGeometry },
         blend: [ GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ],
       },
     );

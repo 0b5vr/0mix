@@ -7,7 +7,7 @@ import { Mesh, MeshCull } from '../../heck/components/Mesh';
 import { PointLightNode } from './PointLightNode';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { deferredColorFrag } from '../../shaders/common/deferredColorFrag';
-import { dummyRenderTarget, dummyRenderTargetFourDrawBuffers } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1, dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { genCylinder } from '../../geometries/genCylinder';
 import { lightShaftFrag } from './shaders/lightShaftFrag';
 import { lightShaftVert } from './shaders/lightShaftVert';
@@ -54,7 +54,7 @@ export class LightShaft extends SceneNode {
       lightShaftVert,
       lightShaftFrag,
       {
-        initOptions: { geometry: geometry, target: dummyRenderTarget },
+        initOptions: { geometry: geometry, target: dummyRenderTarget1 },
         blend: [ GL_ONE, GL_ONE ],
       },
     );
@@ -134,7 +134,7 @@ export class LightShaft extends SceneNode {
       objectVert,
       deferredColorFrag,
       {
-        initOptions: { geometry: geometry, target: dummyRenderTargetFourDrawBuffers },
+        initOptions: { geometry: geometry, target: dummyRenderTarget4 },
       },
     );
     materialBody.addUniform( 'color', '4f', 0.04, 0.04, 0.04, 1.0 );

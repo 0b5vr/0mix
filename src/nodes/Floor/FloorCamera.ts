@@ -9,7 +9,7 @@ import { Quad } from '../../heck/components/Quad';
 import { RawMatrix4, Swap, mat4Inverse, mat4Multiply } from '@0b5vr/experimental';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { bloomDownFrag } from '../PostStack/shaders/bloomDownFrag';
-import { dummyRenderTarget } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { GL_TEXTURE_2D } from '../../gl/constants';
@@ -103,7 +103,7 @@ export class FloorCamera extends SceneNode {
       const material = new Material(
         quadVert,
         bloomDownFrag( false ),
-        { initOptions: { target: dummyRenderTarget, geometry: quadGeometry } },
+        { initOptions: { target: dummyRenderTarget1, geometry: quadGeometry } },
       );
 
       material.addUniform( 'gain', '1f', 1.0 );

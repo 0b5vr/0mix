@@ -3,7 +3,7 @@ import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { deferredUvFrag } from '../../shaders/common/deferredUvFrag';
-import { dummyRenderTarget } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { genCylinder } from '../../geometries/genCylinder';
 import { objectVert } from '../../shaders/common/objectVert';
 import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
@@ -33,7 +33,7 @@ export class GeometryTestbed extends SceneNode {
       objectVert,
       deferredUvFrag,
       {
-        initOptions: { geometry: geometry, target: dummyRenderTarget },
+        initOptions: { geometry: geometry, target: dummyRenderTarget1 },
         blend: [ GL_ONE, GL_ONE ],
       },
     );
@@ -42,7 +42,7 @@ export class GeometryTestbed extends SceneNode {
       objectVert,
       deferredUvFrag,
       {
-        initOptions: { geometry: geometry, target: dummyRenderTarget },
+        initOptions: { geometry: geometry, target: dummyRenderTarget1 },
         blend: [ GL_ONE, GL_ONE ],
       },
     );

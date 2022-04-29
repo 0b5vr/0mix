@@ -1,25 +1,25 @@
 import { BufferRenderTarget } from '../heck/BufferRenderTarget';
 
-export const dummyRenderTarget = new BufferRenderTarget( {
+export const dummyRenderTarget1 = new BufferRenderTarget( {
   width: 1,
   height: 1,
 } );
 
-export const dummyRenderTargetTwoDrawBuffers = new BufferRenderTarget( {
+export const dummyRenderTarget2 = new BufferRenderTarget( {
   width: 1,
   height: 1,
   numBuffers: 2,
 } );
 
 
-export const dummyRenderTargetFourDrawBuffers = new BufferRenderTarget( {
+export const dummyRenderTarget4 = new BufferRenderTarget( {
   width: 1,
   height: 1,
   numBuffers: 4,
 } );
 
 if ( import.meta.env.DEV ) {
-  dummyRenderTarget.name = 'dummyRenderTarget';
-  dummyRenderTargetTwoDrawBuffers.name = 'dummyRenderTargetTwoDrawBuffers';
-  dummyRenderTargetFourDrawBuffers.name = 'dummyRenderTargetFourDrawBuffers';
+  dummyRenderTarget1.name = 'dummyRenderTarget1';
+  dummyRenderTarget2.name = 'dummyRenderTarget2';
+  dummyRenderTarget4.name = 'dummyRenderTarget4';
 }

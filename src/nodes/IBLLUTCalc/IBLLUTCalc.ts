@@ -5,7 +5,7 @@ import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { Swap } from '@0b5vr/experimental';
-import { dummyRenderTarget } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { iblLutFrag } from './shaders/iblLutFrag';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
@@ -52,7 +52,7 @@ export class IBLLUTCalc extends SceneNode {
     const material = new Material(
       quadVert,
       iblLutFrag,
-      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget } },
+      { initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 } },
     );
     material.addUniform( 'samples', '1f', samples );
     material.addUniform( 'vdc', '1f', vdc( samples, 2.0 ) );

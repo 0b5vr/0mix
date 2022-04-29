@@ -8,7 +8,7 @@ import { SceneNode } from '../../heck/components/SceneNode';
 import { Swap } from '@0b5vr/experimental';
 import { bloomDownFrag } from './shaders/bloomDownFrag';
 import { bloomUpFrag } from './shaders/bloomUpFrag';
-import { dummyRenderTarget } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { GL_ONE, GL_TEXTURE_2D } from '../../gl/constants';
@@ -59,7 +59,7 @@ export class Bloom extends SceneNode {
       const material = new Material(
         quadVert,
         bloomDownFrag( i === 0 ),
-        { initOptions: { target: dummyRenderTarget, geometry: quadGeometry } },
+        { initOptions: { target: dummyRenderTarget1, geometry: quadGeometry } },
       );
 
       material.addUniform( 'bias', '1f', -0.8 );
@@ -96,7 +96,7 @@ export class Bloom extends SceneNode {
         quadVert,
         bloomUpFrag,
         {
-          initOptions: { target: dummyRenderTarget, geometry: quadGeometry },
+          initOptions: { target: dummyRenderTarget1, geometry: quadGeometry },
           blend: [ GL_ONE, GL_ONE ],
         },
       );

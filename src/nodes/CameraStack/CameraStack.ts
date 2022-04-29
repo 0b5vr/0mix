@@ -14,7 +14,7 @@ import { SceneNode } from '../../heck/components/SceneNode';
 import { createCubemapUniformsLambda } from '../utils/createCubemapUniformsLambda';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { deferredShadeFrag } from './shaders/deferredShadeFrag';
-import { dummyRenderTarget } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { mat4Inverse, mat4Multiply } from '@0b5vr/experimental';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
@@ -113,7 +113,7 @@ export class CameraStack extends SceneNode {
       const aoMaterial = new Material(
         quadVert,
         ssaoFrag,
-        { initOptions: { geometry: quadGeometry, target: dummyRenderTarget } },
+        { initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 } },
       );
 
       if ( import.meta.env.DEV ) {
@@ -168,7 +168,7 @@ export class CameraStack extends SceneNode {
       quadVert,
       deferredShadeFrag( { withAO } ),
       {
-        initOptions: { geometry: quadGeometry, target: dummyRenderTarget },
+        initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 },
       },
     );
 

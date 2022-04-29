@@ -4,7 +4,7 @@ import { RawVector3 } from '@0b5vr/experimental';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { createLightUniformsLambda } from './createLightUniformsLambda';
 import { createRaymarchCameraUniformsLambda } from './createRaymarchCameraUniformsLambda';
-import { dummyRenderTarget, dummyRenderTargetFourDrawBuffers } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1, dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { genCube } from '../../geometries/genCube';
 import { objectVert } from '../../shaders/common/objectVert';
 import { randomTexture } from '../../globals/randomTexture';
@@ -33,7 +33,7 @@ export class RaymarcherNode extends SceneNode {
       objectVert,
       builder( 'deferred' ),
       {
-        initOptions: { geometry, target: dummyRenderTargetFourDrawBuffers },
+        initOptions: { geometry, target: dummyRenderTarget4 },
       },
     );
     deferred.addUniformTextures( 'samplerRandom', GL_TEXTURE_2D, randomTexture.texture );
@@ -42,7 +42,7 @@ export class RaymarcherNode extends SceneNode {
       objectVert,
       builder( 'depth' ),
       {
-        initOptions: { geometry, target: dummyRenderTarget },
+        initOptions: { geometry, target: dummyRenderTarget1 },
       },
     );
     depth.addUniformTextures( 'samplerRandom', GL_TEXTURE_2D, randomTexture.texture );
