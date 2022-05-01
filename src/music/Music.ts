@@ -120,6 +120,10 @@ export class Music {
     } );
   }
 
+  public halt(): void {
+    this.__musicDest.disconnect();
+  }
+
   /**
    * Compile given shader code and cue the shader.
    */
@@ -206,9 +210,13 @@ export class Music {
 
     this.__prevAudioTime = now;
 
+    // -- early abort? -----------------------------------------------------------------------------
+    if ( !this.isPlaying ) { return; }
+
     const bufferReaderNode = this.__bufferReaderNode;
     if ( bufferReaderNode == null ) { return; }
 
+    // -- choose a right write block ---------------------------------------------------------------
     const { readBlocks } = bufferReaderNode;
 
     const blockAhead = this.__bufferWriteBlocks - readBlocks;
@@ -227,12 +235,13 @@ export class Music {
 
     const genTime = BLOCK_SIZE * this.__bufferWriteBlocks / sampleRate;
 
-    // should I process the next program?
+    // -- should I process the next program? -------------------------------------------------------
     let beginNext = this.__cueStatus === 'applying'
       ? Math.floor( ( this.__programSwapTime - genTime ) * sampleRate )
       : FRAMES_PER_RENDER;
     beginNext = Math.min( beginNext, FRAMES_PER_RENDER );
 
+    // -- swap the program from first --------------------------------------------------------------
     if ( beginNext < 0 ) {
       this.__setCueStatus( 'none' );
 
@@ -244,11 +253,12 @@ export class Music {
       beginNext = FRAMES_PER_RENDER;
     }
 
+    // -- render -----------------------------------------------------------------------------------
     if ( this.__program ) {
       await this.__prepareBuffer( 0, beginNext );
     }
 
-    // process the next program??
+    // -- render the next program from the mid of the code -----------------------------------------
     if ( beginNext < FRAMES_PER_RENDER && this.__programCue != null ) {
       this.__setCueStatus( 'none' );
 
@@ -260,6 +270,7 @@ export class Music {
       await this.__prepareBuffer( beginNext, FRAMES_PER_RENDER - beginNext );
     }
 
+    // -- update write blocks ----------------------------------------------------------------------
     this.__bufferWriteBlocks += BLOCKS_PER_RENDER;
 
     // emit an event
@@ -274,9 +285,6 @@ export class Music {
     if ( bufferReaderNode == null ) { return; }
 
     const glslTime = BLOCK_SIZE * this.__bufferWriteBlocks / sampleRate - this.timeOffset;
-
-    // const delta = time - this.__lastUpdatedTime;
-    // this.__lastUpdatedTime = time;
 
     // render
     let textureUnit = 0;

@@ -36,7 +36,7 @@ export class Quad extends Component {
   public drawImmediate( event?: Partial<ComponentUpdateEvent> ): void {
     const { target, material } = this;
 
-    if ( target == null || material == null ) {
+    if ( !target || !material ) {
       throw import.meta.env.DEV && new Error( 'Quad: You must assign target and material before draw' );
     }
 

@@ -5,7 +5,7 @@ import { canvas } from './globals/canvas';
 import { dog, initDesktop, initVR } from './scene';
 import { getDivCanvasContainer } from './globals/dom';
 import { gui } from './globals/gui';
-import { music } from './globals/music';
+import { audio, music } from './globals/music';
 
 // == dom ==========================================================================================
 document.body.style.margin = '0';
@@ -50,7 +50,7 @@ if ( import.meta.env.DEV ) {
 
 // == prod kickstarter =============================================================================
 if ( !import.meta.env.DEV ) {
-  document.body.innerHTML = '<select><option>640x360</option><option>1280x720</option><option selected>1920x1080</option><option>2560x1440</option><option>3840x2160</option><option>vr</option></select><button>fullscreen (click this first)</button><button disabled>start</button><a></a><a></a>1920x1080 is intended<br>vr is experimental. expect nothing. Turning asw off is recommended if you are using oculus<style>a,button{display:block}canvas{position:fixed;left:0;top:0;width:100%;height:100%;cursor:none}</style>';
+  document.body.innerHTML = '<select><option>640x360</option><option>1280x720</option><option selected>1920x1080</option><option>2560x1440</option><option>3840x2160</option><option>vr</option></select><button>fullscreen (click this first)</button><button>start</button><a></a>1920x1080 is intended<br>vr is experimental. expect nothing. Turning asw off is recommended if you are using oculus<style>a,button{display:block}canvas{position:fixed;left:0;top:0;width:100%;height:100%;cursor:none}</style>';
 
   const selects = document.querySelectorAll( 'select' );
   const anchors = document.querySelectorAll( 'a' );
@@ -60,42 +60,46 @@ if ( !import.meta.env.DEV ) {
     document.documentElement.requestFullscreen();
   } );
 
-  Promise.all( [
-    Material.d3dSucks(),
-  ].map( ( task, i ) => {
-    const a = anchors[ i ];
-    const taskname = [ 'shaders', 'music' ][ i ];
-    a.textContent = `${ taskname }: 0%`;
-    task.onProgress = ( progress ) => (
-      a.textContent = `${ taskname }: ${ Math.floor( progress * 100.0 ) }%`
-    );
-    return task.promise;
-  } ) ).then( () => {
-    buttons[ 1 ].disabled = false;
-    buttons[ 1 ].addEventListener( 'click', async () => {
-      const resostr = selects[ 0 ].value.split( 'x' );
-      const isVR = resostr[ 0 ] === 'vr';
+  buttons[ 1 ].addEventListener( 'click', async () => {
+    // -- set resolution ---------------------------------------------------------------------------
+    const resostr = selects[ 0 ].value.split( 'x' );
+    const isVR = resostr[ 0 ] === 'vr';
 
-      if ( isVR ) {
-        await initVR();
-      } else {
-        document.body.appendChild( canvas );
-        await initDesktop( parseInt( resostr[ 0 ] ), parseInt( resostr[ 1 ] ) );
-      }
+    if ( isVR ) {
+      await initVR();
+    } else {
+      document.body.appendChild( canvas );
+      await initDesktop( parseInt( resostr[ 0 ] ), parseInt( resostr[ 1 ] ) );
+    }
 
-      dog.active = true;
+    // -- prepare stuff ----------------------------------------------------------------------------
+    await Promise.all( [
+      Material.d3dSucks(),
+    ].map( ( task, i ) => {
+      const a = anchors[ i ];
+      const taskname = [ 'shaders' ][ i ];
+      a.textContent = `${ taskname }: 0%`;
+      task.onProgress = ( progress ) => (
+        a.textContent = `${ taskname }: ${ Math.floor( progress * 100.0 ) }%`
+      );
+      return task.promise;
+    } ) );
 
-      music.time = 0.0;
-      music.isPlaying = true;
-    } );
-
+    // -- esc handler ------------------------------------------------------------------------------
     window.addEventListener( 'keydown', ( event ) => {
       if ( event.code === 'Escape' ) {
         music.isPlaying = false;
         music.update();
+        music.halt();
         dog.active = false;
       }
     } );
 
+    // -- let's go ---------------------------------------------------------------------------------
+    dog.active = true;
+
+    audio.resume();
+    music.time = 0.0;
+    music.isPlaying = true;
   } );
 }
