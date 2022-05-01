@@ -71,12 +71,17 @@ export class Bloom extends SceneNode {
         [ rangeMin, rangeMin, rangeMax, rangeMax ]
       );
 
-      this.children.push( new Quad( {
+      const quadDown = new Quad( {
         target: swap.o,
         material,
         range,
-        name: `quadDown${ i }`,
-      } ) );
+      } );
+
+      if ( import.meta.env.DEV ) {
+        quadDown.name = `quadDown${ i }`;
+      }
+
+      this.children.push( quadDown );
 
       swap.swap();
       srcRange = range;
@@ -108,12 +113,17 @@ export class Bloom extends SceneNode {
         ? [ -1.0, -1.0, 1.0, 1.0 ]
         : [ rangeMin, rangeMin, rangeMax, rangeMax ];
 
-      this.children.push( new Quad( {
+      const quadUp = new Quad( {
         target: isLast ? options.target : swap.o,
         material,
         range,
-        name: `quadUp${ i }`,
-      } ) );
+      } );
+
+      if ( import.meta.env.DEV ) {
+        quadUp.name = `quadUp${ i }`;
+      }
+
+      this.children.push( quadUp );
 
       swap.swap();
       srcRange = range;

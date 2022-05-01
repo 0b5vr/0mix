@@ -117,12 +117,17 @@ export class FloorCamera extends SceneNode {
         2.0 * ONE_SUB_ONE_POINT_FIVE_POW_I[ i + 1 ] - 1.0,
       ];
 
-      this.children.push( new Quad( {
+      const quadDown = new Quad( {
         target: swapMirrorDownsampleTarget.i,
         material,
         range,
-        name: `quadDown${ i }`,
-      } ) );
+      } );
+
+      if ( import.meta.env.DEV ) {
+        quadDown.name = `quadDown${ i }`;
+      }
+
+      this.children.push( quadDown );
 
       swapMirrorDownsampleTarget.swap();
       srcRange = range;
@@ -134,12 +139,17 @@ export class FloorCamera extends SceneNode {
         height * ONE_SUB_ONE_POINT_FIVE_POW_I[ i + 1 ],
       ];
 
-      this.children.push( new Blit( {
+      const blitDown = new Blit( {
         src: swapMirrorDownsampleTarget.o,
         dst: target,
         srcRect,
-        name: `blitDown${ i }`,
-      } ) );
+      } );
+
+      if ( import.meta.env.DEV ) {
+        blitDown.name = `blitDown${ i }`;
+      }
+
+      this.children.push( blitDown );
     } );
 
     // -- update floor texture ---------------------------------------------------------------------
