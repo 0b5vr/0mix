@@ -157,17 +157,17 @@ export class Material {
 
     if ( !program ) { return; }
 
-    Object.entries( this.__uniforms ).forEach( ( [ name, { type, value } ] ) => {
+    Object.entries( this.__uniforms ).map( ( [ name, { type, value } ] ) => {
       const location = gl.getUniformLocation( program, name );
       ( gl as any )[ 'uniform' + type ]( location, ...value );
     } );
 
-    Object.entries( this.__uniformVectors ).forEach( ( [ name, { type, value } ] ) => {
+    Object.entries( this.__uniformVectors ).map( ( [ name, { type, value } ] ) => {
       const location = gl.getUniformLocation( program, name );
       ( gl as any )[ 'uniform' + type ]( location, value );
     } );
 
-    Object.entries( this.__uniformMatrixVectors ).forEach(
+    Object.entries( this.__uniformMatrixVectors ).map(
       ( [ name, { type, value, transpose } ] ) => {
         const location = gl.getUniformLocation( program, name );
         ( gl as any )[ 'uniform' + type ]( location, transpose, value );
@@ -175,7 +175,7 @@ export class Material {
     );
 
     let currentUnit = 0;
-    Object.entries( this.__uniformTextures ).forEach( ( [ name, { target, textures } ] ) => {
+    Object.entries( this.__uniformTextures ).map( ( [ name, { target, textures } ] ) => {
       textures.map( ( texture, i ) => {
         gl.activeTexture( GL_TEXTURE0 + currentUnit + i );
         gl.bindTexture( target, texture );

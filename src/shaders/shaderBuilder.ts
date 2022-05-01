@@ -843,7 +843,7 @@ export function ifChain( ...condProcArgs: [ Ex<'bool'>, () => void ][] ): void {
 }
 
 export function unrollLoop( count: number, func: ( count: number ) => void ): void {
-  [ ...Array( count ) ].forEach( ( _, i ) => {
+  [ ...Array( count ) ].map( ( _, i ) => {
     __stack.unshift( '' );
     func( i );
     const procedure = __stack.shift();

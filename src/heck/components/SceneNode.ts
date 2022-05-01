@@ -30,7 +30,7 @@ export class SceneNode extends Component {
       path = `${ event.path }/${ this.name }`;
     }
 
-    this.children.forEach( ( child ) => {
+    this.children.map( ( child ) => {
       child.update( {
         ...event,
         globalTransform: this.globalTransformCache,
@@ -56,7 +56,7 @@ export class SceneNode extends Component {
       path,
     };
 
-    this.children.forEach( ( child ) => {
+    this.children.map( ( child ) => {
       child.draw( drawEvent );
     } );
   }

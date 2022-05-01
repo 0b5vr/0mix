@@ -22,7 +22,7 @@ class BufferReaderProcessor extends AudioWorkletProcessor {
 
     const head = ( BLOCK_SIZE * this.blocks ) % BUFFER_SIZE_PER_CHANNEL;
 
-    outputs[ 0 ].forEach( ( ch, iCh ) => {
+    outputs[ 0 ].map( ( ch, iCh ) => {
       const chHead = BUFFER_SIZE_PER_CHANNEL * iCh + head;
       ch.set( buffer.subarray( chHead, chHead + BLOCK_SIZE ) );
     } );
