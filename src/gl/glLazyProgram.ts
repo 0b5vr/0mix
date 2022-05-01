@@ -1,5 +1,5 @@
 import { extParallel, gl } from '../globals/canvas';
-import { GL_COMPILE_STATUS, GL_FRAGMENT_SHADER, GL_LINK_STATUS, GL_SEPARATE_ATTRIBS, GL_VERTEX_SHADER } from './constants';
+import { GL_COMPILE_STATUS, GL_COMPLETION_STATUS_KHR, GL_FRAGMENT_SHADER, GL_LINK_STATUS, GL_SEPARATE_ATTRIBS, GL_VERTEX_SHADER } from './constants';
 
 export interface LazyProgramOptions {
   tfVaryings?: string[],
@@ -62,7 +62,7 @@ export function glLazyProgram(
       const update = () => {
         if (
           !extParallel ||
-          gl.getProgramParameter( program!, extParallel.COMPLETION_STATUS_KHR ) === true
+          gl.getProgramParameter( program!, GL_COMPLETION_STATUS_KHR ) === true
         ) {
           if ( !gl.getProgramParameter( program!, GL_LINK_STATUS ) ) {
             gl.deleteProgram( program );

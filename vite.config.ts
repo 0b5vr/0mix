@@ -1,4 +1,5 @@
-import { defineConfig, Terser, UserConfig } from 'vite';
+import { defineConfig, Terser } from 'vite';
+import { domprops } from './domprops';
 import { automatonMinifierPlugin } from './vite-automaton-minifier-plugin';
 
 const terserOptions: Terser.MinifyOptions = {
@@ -14,6 +15,7 @@ const terserOptions: Terser.MinifyOptions = {
   },
   mangle: {
     properties: {
+      builtins: true,
       regex: /.+/,
       keep_quoted: true,
       reserved: [
@@ -21,7 +23,10 @@ const terserOptions: Terser.MinifyOptions = {
         'forward',
         'deferred',
         'depth',
-      ]
+
+        // dom props
+        ...domprops,
+      ],
     },
   },
   format: {
