@@ -43,7 +43,7 @@ export class Music {
   private __programCue?: MusicProgram;
   private __programSwapTime: number;
 
-  private __prevAudioTime: number;
+  private __prevTime: number;
 
   private __bufferReaderNode?: BufferReaderNode;
   private __bufferWriteBlocks: number;
@@ -51,16 +51,17 @@ export class Music {
   private __samples: Map<string, MusicSampleEntry>;
 
   public get time(): number {
-    return audio.currentTime - this.timeOffset;
+    const t = BLOCK_SIZE / sampleRate * this.__bufferReadBlocks;
+    return t - this.timeOffset;
   }
 
   public set time( value: number ) {
-    this.timeOffset = audio.currentTime - value;
+    const t = BLOCK_SIZE / sampleRate * this.__bufferWriteBlocks;
+    this.timeOffset = t - value;
+  }
 
-    const bufferReaderNode = this.__bufferReaderNode;
-    if ( bufferReaderNode ) {
-      this.__bufferWriteBlocks = bufferReaderNode.readBlocks;
-    }
+  private get __bufferReadBlocks(): number {
+    return this.__bufferReaderNode?.readBlocks ?? 0.0;
   }
 
   public constructor() {
@@ -68,7 +69,7 @@ export class Music {
     this.timeOffset = 0.0;
     this.deltaTime = 0.0;
     // this.__lastUpdatedTime = 0.0;
-    this.__prevAudioTime = 0.0;
+    this.__prevTime = 0.0;
 
     // -- audio ------------------------------------------------------------------------------------
     this.__musicDest = audio.createGain();
@@ -118,10 +119,6 @@ export class Music {
       duration: 1.0,
       sampleRate: 48000,
     } );
-  }
-
-  public halt(): void {
-    this.__musicDest.disconnect();
   }
 
   /**
@@ -200,25 +197,23 @@ export class Music {
   }
 
   public async update(): Promise<void> {
-    const now = audio.currentTime;
+    const readBlocks = this.__bufferReadBlocks;
+    const now = readBlocks * BLOCK_SIZE / sampleRate;
+
+    this.__bufferReaderNode?.setActive( this.isPlaying );
 
     if ( this.isPlaying ) {
-      this.deltaTime = now - this.__prevAudioTime;
+      this.deltaTime = now - this.__prevTime;
     } else {
       this.deltaTime = 0.0;
     }
 
-    this.__prevAudioTime = now;
+    this.__prevTime = now;
 
     // -- early abort? -----------------------------------------------------------------------------
     if ( !this.isPlaying ) { return; }
 
-    const bufferReaderNode = this.__bufferReaderNode;
-    if ( bufferReaderNode == null ) { return; }
-
     // -- choose a right write block ---------------------------------------------------------------
-    const { readBlocks } = bufferReaderNode;
-
     const blockAhead = this.__bufferWriteBlocks - readBlocks;
 
     // we don't have to render this time

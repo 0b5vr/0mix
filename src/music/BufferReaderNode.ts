@@ -18,6 +18,13 @@ export class BufferReaderNode extends AudioWorkletNode {
     return audio.audioWorklet.addModule( processorUrl );
   }
 
+  public setActive( value: boolean ) {
+    this.port.postMessage( {
+      type: 'active',
+      value,
+    } );
+  }
+
   public constructor( audio: AudioContext ) {
     super( audio, 'buffer-reader-processor', {
       numberOfInputs: 0,
@@ -38,6 +45,11 @@ export class BufferReaderNode extends AudioWorkletNode {
       + ( BLOCK_SIZE * block ) % BUFFER_SIZE_PER_CHANNEL
       + offset
     );
-    this.port.postMessage( [ buffer, totalOffset ] );
+
+    this.port.postMessage( {
+      type: 'write',
+      buffer,
+      offset: totalOffset,
+    } );
   }
 }

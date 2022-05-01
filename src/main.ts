@@ -90,7 +90,6 @@ if ( !import.meta.env.DEV ) {
       if ( event.code === 'Escape' ) {
         music.isPlaying = false;
         music.update();
-        music.halt();
         dog.active = false;
       }
     } );
