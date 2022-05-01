@@ -1,5 +1,5 @@
 import { GL_QUERY_RESULT, GL_QUERY_RESULT_AVAILABLE, GL_TIME_ELAPSED_EXT } from '../../gl/constants';
-import { extDisjointTimerQuery, gl } from '../canvas';
+import { gl } from '../canvas';
 
 export class GPUTimer {
   private __stackTime: Promise<number>[];
@@ -8,7 +8,7 @@ export class GPUTimer {
   private __loopTasks: Set<() => void>;
 
   public static isSupported(): boolean {
-    return extDisjointTimerQuery != null;
+    return gl.getExtension( 'EXT_disjoint_timer_query_webgl2' ) != null;
   }
 
   public constructor() {
@@ -18,6 +18,8 @@ export class GPUTimer {
     this.__stackTime = [];
 
     this.__loopTasks = new Set();
+
+    gl.getExtension( 'EXT_disjoint_timer_query_webgl2' );
 
     // loop
     const update = (): void => {
