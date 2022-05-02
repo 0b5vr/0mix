@@ -17,9 +17,9 @@ export function glLazyProgram(
 ): Promise<WebGLProgram> {
   const { tfVaryings, tfBufferMode } = options;
 
-  let vertexShader: WebGLShader | null = null;
-  let fragmentShader: WebGLShader | null = null;
-  let program: WebGLProgram | null = null;
+  let vertexShader: WebGLShader | undefined;
+  let fragmentShader: WebGLShader | undefined;
+  let program: WebGLProgram | undefined;
 
   try {
     // == vert =====================================================================================
@@ -65,8 +65,8 @@ export function glLazyProgram(
           gl.getProgramParameter( program!, GL_COMPLETION_STATUS_KHR ) === true
         ) {
           if ( !gl.getProgramParameter( program!, GL_LINK_STATUS ) ) {
-            gl.deleteProgram( program );
-            reject( new Error( gl.getProgramInfoLog( program! ) ?? undefined ) );
+            gl.deleteProgram( program! );
+            reject( new Error( gl.getProgramInfoLog( program! )! ) );
           } else {
             resolve( program! );
           }
@@ -79,11 +79,11 @@ export function glLazyProgram(
       update();
     } );
   } catch ( e ) {
-    gl.deleteProgram( program );
+    gl.deleteProgram( program! );
 
     return Promise.reject( e );
   } finally {
-    gl.deleteShader( fragmentShader );
-    gl.deleteShader( vertexShader );
+    gl.deleteShader( fragmentShader! );
+    gl.deleteShader( vertexShader! );
   }
 }
