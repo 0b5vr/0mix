@@ -5,7 +5,8 @@ import { canvas } from './globals/canvas';
 import { dog, initDesktop, initVR } from './scene';
 import { getDivCanvasContainer } from './globals/dom';
 import { gui } from './globals/gui';
-import { audio, music } from './globals/music';
+import { music } from './globals/music';
+import { audio } from './globals/audio';
 
 // == dom ==========================================================================================
 document.body.style.margin = '0';

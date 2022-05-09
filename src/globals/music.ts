@@ -1,9 +1,6 @@
 import { Music } from '../music/Music';
 import { automatonSetupMusic } from './automaton';
 
-export const audio = new AudioContext();
-export const sampleRate = audio.sampleRate;
-
 const music = new Music();
 music.compile( `
 #define BPM bpm
@@ -22,7 +19,8 @@ music.compile( `
 #define n2f(n) (pow(2.0,((n)+TRANSPOSE)/12.0)*440.0)
 
 uniform sampler2D sample_noise;
-uniform vec4 sample_noise_meta;
+uniform sampler2D sample_clapNoise;
+uniform sampler2D sample_hihat;
 
 float decibellToVoltage( float decibell ) {
   return pow( 10.0, decibell / 20.0 );
@@ -36,32 +34,40 @@ float declickl( float t, float len ) {
   return declick( t ) * declick( len - t );
 }
 
-vec2 noise( float t ) {
-  return sampleSinc( sample_noise, sample_noise_meta, mod( t, sample_noise_meta.w ) );
+float noise( float t ) {
+  return sampleSinc( sample_noise, t );
 }
 
 vec2 kick( float t ) {
   if ( t < 0.0 ) { return vec2( 0.0 ); }
 
-  vec2 tt = t + 0.002 * exp( -4.0 * t ) * noise( 0.004 * t );
-  vec2 a = exp( -4.0 * tt ) * sin( TAU * (
+  float tt = t + 0.002 * exp( -4.0 * t ) * noise( 0.004 * t );
+  float a = exp( -4.0 * tt ) * sin( TAU * (
     50.0 * tt - 2.0 * ( exp( -20.0 * tt ) + exp( -100.0 * t ) )
   ) );
-  return clip( 1.5 * a );
+  return vec2( clip( 1.5 * a ) );
 }
 
 vec2 hihat( float t, float open ) {
   float decay = exp( -open * t );
-  vec2 sig = noise( 0.7 * t ).xy;
-  sig -= noise( 0.7 * t + 0.007 ).xy;
+  vec2 sig = vec2(
+    sampleSinc( sample_hihat, t ),
+    sampleSinc( sample_hihat, t + 0.1 )
+  );
   return sig * decay;
 }
 
-vec2 snare( float t ) {
-  float decay = exp( -t * 20.0 );
-  vec2 snappy = 0.5 + 0.5 * noise( t ).xy;
-  vec2 head = sin( TAU * ( t * 280.0 * vec2( 1.005, 0.995 ) - exp( -t * 100.0 ) ) );
-  return clip( ( 3.0 * snappy * head ) * decay );
+vec2 clap( float t ) {
+  float decay = mix(
+    exp( -200.0 * mod( t, 0.01 ) ),
+    exp( -20.0 * t ),
+    0.2 + 0.8 * smoothstep( 0.0, 0.1, t )
+  );
+  vec2 sig = 4.0 * vec2(
+    sampleSinc( sample_clapNoise, t ),
+    sampleSinc( sample_clapNoise, t + 0.1 )
+  );
+  return sig * decay;
 }
 
 vec2 filterSaw( float freq, float time, float cutoff, float resonance ) {
@@ -97,7 +103,7 @@ vec2 mainAudio( vec4 time ) {
   }
 
   {
-    dest += 0.4 * mix( 0.6, 1.0, sidechain ) * snare( mod( time.y - 1.0 * BEAT, 2.0 * BEAT ) );
+    dest += 0.4 * mix( 0.6, 1.0, sidechain ) * clap( mod( time.y - 1.0 * BEAT, 2.0 * BEAT ) );
   }
 
   {

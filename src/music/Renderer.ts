@@ -1,5 +1,6 @@
 import { glLazyProgram } from '../gl/glLazyProgram';
 import { gl } from '../globals/canvas';
+import { SAMPLE_TEXTURE_SIZE } from './constants';
 import { FRAMES_PER_RENDER } from './Music';
 import { shaderchunkPost, shaderchunkPre } from './shaderchunks';
 
@@ -101,8 +102,6 @@ export class Renderer {
    */
   public uploadTexture(
     textureName: string,
-    width: number,
-    height: number,
     source: Float32Array,
   ): void {
     const texture = gl.createTexture()!;
@@ -112,11 +111,11 @@ export class Renderer {
     gl.texImage2D(
       gl.TEXTURE_2D,
       0,
-      gl.RGBA32F,
-      width,
-      height,
+      gl.R32F,
+      SAMPLE_TEXTURE_SIZE,
+      SAMPLE_TEXTURE_SIZE,
       0,
-      gl.RGBA,
+      gl.RED,
       gl.FLOAT,
       source,
     );

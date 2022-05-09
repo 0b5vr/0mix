@@ -1,3 +1,5 @@
+import { SAMPLE_TEXTURE_SIZE } from './constants';
+
 export const shaderchunkPre = `#version 300 es
 
 precision highp float;
@@ -19,29 +21,19 @@ float paramFetch( vec4 param ) {
   return mix( param.x, param.y, exp( -param.z * off * _deltaSample ) );
 }
 
-vec2 sampleNearest( sampler2D s, vec4 meta, float time ) {
-  if ( meta.w < time ) { return vec2( 0.0 ); }
-  float x = time / meta.x * meta.z;
-  vec2 uv = fract( vec2(
-    x,
-    floor( x ) / meta.y
-  ) ) + 0.5 / meta.xy;
-  return texture( s, uv ).xy;
-}
-
-// I have 0% confidence that the algorithm is perfect
-vec2 sampleSinc( sampler2D s, vec4 meta, float time ) {
-  if ( meta.w < time ) { return vec2( 0.0 ); }
-  vec2 sum = vec2( 0.0 );
-  float def = -fract( time * meta.z );
+float sampleSinc( sampler2D s, float time ) {
+  float sum = 0.0;
+  float def = -fract( time * sampleRate );
   for ( int i = -5; i <= 5; i ++ ) {
-    float x = floor( time * meta.z + float( i ) ) / meta.x;
     float deft = def + float( i );
-    vec2 uv = fract( ( vec2(
-      floor( time * meta.z + float( i ) ),
-      floor( x )
-    ) + 0.5 ) / meta.xy );
-    sum += texture( s, uv ).xy * min( sin( deft * _PI ) / deft / _PI, 1.0 );
+    vec2 uv = (
+      floor(
+        ( time * sampleRate + float( i ) )
+        /
+        vec2( 1.0, ${ SAMPLE_TEXTURE_SIZE }.0 )
+      ) + 0.5
+    ) / ${ SAMPLE_TEXTURE_SIZE }.0;
+    sum += texture( s, uv ).x * min( sin( deft * _PI ) / deft / _PI, 1.0 );
   }
   return sum;
 }

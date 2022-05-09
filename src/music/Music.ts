@@ -1,10 +1,12 @@
-import { audio, sampleRate } from '../globals/music';
 import { promiseGui } from '../globals/gui';
 import { Renderer } from './Renderer';
 import { BufferReaderNode } from './BufferReaderNode';
 import { shaderchunkPreLines } from './shaderchunks';
 import { MUSIC_BPM } from '../config';
-import { Xorshift } from '@0b5vr/experimental';
+import { sample808HiHat } from './samples/sample808HiHat';
+import { sampleWhiteNoise } from './samples/sampleWhiteNoise';
+import { audio, sampleRate } from '../globals/audio';
+import { sampleClapNoise } from './samples/sampleClapNoise';
 
 const BEAT = 60.0 / MUSIC_BPM;
 const BAR = 240.0 / MUSIC_BPM;
@@ -17,14 +19,6 @@ export const LATENCY_BLOCKS = 32;
 
 interface MusicProgram {
   code: string;
-}
-
-interface MusicSampleEntry {
-  name: string;
-  width: number;
-  height: number;
-  sampleRate: number;
-  duration: number;
 }
 
 export class Music {
@@ -48,7 +42,7 @@ export class Music {
   private __bufferReaderNode?: BufferReaderNode;
   private __bufferWriteBlocks: number;
 
-  private __samples: Map<string, MusicSampleEntry>;
+  private __samples: string[];
 
   public get time(): number {
     const t = BLOCK_SIZE / sampleRate * this.__bufferReadBlocks;
@@ -98,27 +92,11 @@ export class Music {
     this.__bufferWriteBlocks = 0;
 
     // -- samples ----------------------------------------------------------------------------------
-    this.__samples = new Map<string, MusicSampleEntry>();
+    this.__samples = [ 'noise', 'clapNoise', 'hihat' ];
 
-    // create noise sample
-    const width = 2048;
-    const height = Math.ceil( sampleRate / width );
-    const buffer = new Float32Array( width * height * 4 );
-    const rng = new Xorshift();
-
-    for ( let i = 0; i < buffer.length; i ++ ) {
-      buffer[ i ] = Math.floor( 1.0 - 2.0 * rng.gen() );
-    }
-
-    this.__renderer.uploadTexture( 'noise', width, height, buffer );
-
-    this.__samples.set( 'noise', {
-      name: 'noise',
-      width: width,
-      height,
-      duration: 1.0,
-      sampleRate: 48000,
-    } );
+    this.__renderer.uploadTexture( 'noise', sampleWhiteNoise );
+    this.__renderer.uploadTexture( 'clapNoise', sampleClapNoise );
+    this.__renderer.uploadTexture( 'hihat', sample808HiHat )
   }
 
   /**
@@ -157,43 +135,6 @@ export class Music {
 
       this.__programSwapTime = Math.floor( this.time / BAR ) * BAR + BAR;
     }
-  }
-
-  /**
-   * Load a sample and store as a uniform texture.
-   */
-  public async loadSample( name: string, inputBuffer: ArrayBuffer ): Promise<void> {
-    const audioBuffer = await audio.decodeAudioData( inputBuffer );
-
-    const { sampleRate, duration } = audioBuffer;
-    const frames = audioBuffer.length;
-    const width = 2048;
-    const lengthCeiled = Math.ceil( frames / 2048.0 );
-    const height = lengthCeiled;
-
-    const buffer = new Float32Array( width * height * 4 );
-    const channels = audioBuffer.numberOfChannels;
-
-    const dataL = audioBuffer.getChannelData( 0 );
-    const dataR = audioBuffer.getChannelData( channels === 1 ? 0 : 1 );
-
-    for ( let i = 0; i < frames; i ++ ) {
-      buffer[ i * 4 + 0 ] = dataL[ i ];
-      buffer[ i * 4 + 1 ] = dataR[ i ];
-    }
-
-    this.__renderer.uploadTexture( name, width, height, buffer );
-
-    this.__samples.set(
-      name,
-      {
-        name,
-        width,
-        height,
-        sampleRate,
-        duration
-      }
-    );
   }
 
   public async update(): Promise<void> {
@@ -283,20 +224,13 @@ export class Music {
 
     // render
     let textureUnit = 0;
-    this.__samples.forEach( ( sample ) => {
-      this.__renderer.uniformTexture( 'sample_' + sample.name, sample.name, textureUnit );
+    this.__samples.map( ( sampleName ) => {
+      this.__renderer.uniformTexture( 'sample_' + sampleName, sampleName, textureUnit );
       textureUnit ++;
-
-      this.__renderer.uniform4f(
-        'sample_' + sample.name + '_meta',
-        sample.width,
-        sample.height,
-        sample.sampleRate,
-        sample.duration
-      );
     } );
 
     this.__renderer.uniform1f( 'bpm', MUSIC_BPM );
+    this.__renderer.uniform1f( 'sampleRate', sampleRate );
     this.__renderer.uniform1f( '_deltaSample', 1.0 / sampleRate );
     this.__renderer.uniform4f(
       'timeLength',
