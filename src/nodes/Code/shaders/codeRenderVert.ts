@@ -7,6 +7,7 @@ export const codeRenderVert = build( () => {
   const vCoord = defOutNamed( 'vec2', 'vCoord' );
   const vMeta = defOutNamed( 'vec4', 'vMeta' );
 
+  const scroll = defUniformNamed( 'float', 'scroll' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
 
   main( () => {
@@ -18,7 +19,7 @@ export const codeRenderVert = build( () => {
         add(
           mul( 7.0, position ),
           mul( vec2( 12.0, -14.0 ), sw( meta, 'xy' ) ),
-          vec2( 128.0, 0.0 )
+          vec2( 128.0, mul( scroll, 14.0 ) ),
         ),
         resolution,
         0.5,

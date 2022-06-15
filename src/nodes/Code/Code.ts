@@ -11,9 +11,9 @@ import { TRIANGLE_STRIP_QUAD } from '@0b5vr/experimental';
 import { Mesh } from '../../heck/components/Mesh';
 import { UITag } from '../common/UITag';
 import { charTexture } from '../common/charTexture';
-import { hahaCode } from '../../globals/music';
-import { Lambda } from '../../heck/components/Lambda';
 import { gl } from '../../globals/canvas';
+import { music } from '../../globals/music';
+import { withinShaderEventRange } from '../../music/withinShaderEventRange';
 
 const chars = 65536;
 
@@ -47,6 +47,7 @@ export class Code extends SceneNode {
       },
     );
 
+    forward.addUniform( 'scroll', '1f', 90.0 );
     forward.addUniformTextures( 'samplerChar', GL_TEXTURE_2D, charTexture );
 
     if ( import.meta.hot ) {
@@ -74,67 +75,38 @@ export class Code extends SceneNode {
       mesh.name = 'mesh';
     }
 
-    // -- lambda set code --------------------------------------------------------------------------
-    const lambdaSetCode = new Lambda( {
-      onUpdate( event ) {
-        if ( event.frameCount % 400 === 200 ) {
-          let head = 0;
-          hahaCode.split( '\n' ).map( ( line, iLine ) => {
-            line.split( '' ).map( ( char, iChar ) => {
-              arrayChars[ head ++ ] = iChar; // x
-              arrayChars[ head ++ ] = iLine; // y
-              arrayChars[ head ++ ] = char.toUpperCase().charCodeAt( 0 ); // char
-              arrayChars[ head ++ ] = event.time; // spawn time
-            } );
-          } );
-          arrayChars.fill( 0, head );
+    // -- set code ---------------------------------------------------------------------------------
+    const { shaderEventManager } = music;
+    shaderEventManager.onAlter = ( change ) => {
+      let head = 0;
 
-          gl.bindBuffer( GL_ARRAY_BUFFER, bufferChars );
-          gl.bufferData( GL_ARRAY_BUFFER, arrayChars, GL_DYNAMIC_DRAW );
-          gl.bindBuffer( GL_ARRAY_BUFFER, null );
-        } else if ( event.frameCount % 400 === 0 ) {
-          let head = 0;
-          const haha = 'ha';
-          haha.split( '\n' ).map( ( line, iLine ) => {
-            line.split( '' ).map( ( char, iChar ) => {
-              arrayChars[ head ++ ] = iChar; // x
-              arrayChars[ head ++ ] = iLine; // y
-              arrayChars[ head ++ ] = char.toUpperCase().charCodeAt( 0 ); // char
-              arrayChars[ head ++ ] = event.time; // spawn time
-            } );
-          } );
-          arrayChars.fill( 0, head );
+      shaderEventManager.lines.map( ( line, iLine ) => {
+        [ ...Array( line.length ) ].map( ( _, iCol ) => {
+          let time = -1E9;
 
-          gl.bindBuffer( GL_ARRAY_BUFFER, bufferChars );
-          gl.bufferData( GL_ARRAY_BUFFER, arrayChars, GL_DYNAMIC_DRAW );
-          gl.bindBuffer( GL_ARRAY_BUFFER, null );
-        } else if ( event.frameCount % 400 < 200 && event.frameCount % 10 === 0 ) {
-          const mm = ( ~~( ( event.frameCount % 400 ) / 10 ) );
-          let head = mm * 8;
-          const haha = 'ha';
-          haha.split( '\n' ).map( ( line, iLine ) => {
-            line.split( '' ).map( ( char, iChar ) => {
-              arrayChars[ head ++ ] = iChar + 2 * mm; // x
-              arrayChars[ head ++ ] = iLine; // y
-              arrayChars[ head ++ ] = char.toUpperCase().charCodeAt( 0 ); // char
-              arrayChars[ head ++ ] = event.time; // spawn time
-            } );
-          } );
+          if ( withinShaderEventRange( change, iLine, iCol ) ) {
+            time = music.time;
+          }
 
-          gl.bindBuffer( GL_ARRAY_BUFFER, bufferChars );
-          gl.bufferData( GL_ARRAY_BUFFER, arrayChars, GL_DYNAMIC_DRAW );
-          gl.bindBuffer( GL_ARRAY_BUFFER, null );
-        }
-      },
-    } );
+          if ( withinShaderEventRange( shaderEventManager.select, iLine, iCol ) ) {
+            time = 1E9;
+          }
 
-    if ( import.meta.env.DEV ) {
-      lambdaSetCode.name = 'lambdaSetCode';
-    }
+          arrayChars[ head ++ ] = iCol; // x
+          arrayChars[ head ++ ] = iLine; // y
+          arrayChars[ head ++ ] = line.toUpperCase().charCodeAt( iCol ); // char
+          arrayChars[ head ++ ] = time; // spawn time
+        } );
+      } );
+      arrayChars.fill( 0, head );
+
+      gl.bindBuffer( GL_ARRAY_BUFFER, bufferChars );
+      gl.bufferData( GL_ARRAY_BUFFER, arrayChars, GL_DYNAMIC_DRAW );
+      gl.bindBuffer( GL_ARRAY_BUFFER, null );
+    };
 
     // -- components -------------------------------------------------------------------------------
     this.children = [
-      lambdaSetCode,
       mesh,
     ];
   }

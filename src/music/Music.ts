@@ -8,6 +8,7 @@ import { sampleWhiteNoise } from './samples/sampleWhiteNoise';
 import { audio, sampleRate } from '../globals/audio';
 import { sampleClapNoise } from './samples/sampleClapNoise';
 import { perlinFBMTextureTarget } from './textures/perlinFBMTextureTarget';
+import { ShaderEventManager } from './ShaderEventManager';
 
 const BEAT = 60.0 / MUSIC_BPM;
 const BAR = 240.0 / MUSIC_BPM;
@@ -27,11 +28,12 @@ export class Music {
   public timeOffset: number;
   public deltaTime: number;
 
+  public shaderEventManager: ShaderEventManager;
+  public cueStatus: 'none' | 'compiling' | 'applying' = 'none';
+
   // private __lastUpdatedTime: number;
 
   private __musicDest: GainNode;
-
-  private __cueStatus: 'none' | 'compiling' | 'ready' | 'applying' = 'none';
 
   private __renderer: Renderer;
   private __program?: MusicProgram;
@@ -65,6 +67,9 @@ export class Music {
     this.deltaTime = 0.0;
     // this.__lastUpdatedTime = 0.0;
     this.__prevTime = 0.0;
+
+    // -- shaderEventManager -----------------------------------------------------------------------
+    this.shaderEventManager = new ShaderEventManager( ( code ) => this.compile( code ) );
 
     // -- audio ------------------------------------------------------------------------------------
     this.__musicDest = audio.createGain();
@@ -105,14 +110,14 @@ export class Music {
    * Compile given shader code and cue the shader.
    */
   public async compile( code: string ): Promise<void> {
-    this.__setCueStatus( 'compiling' );
+    this.cueStatus = 'compiling';
 
     await this.__renderer.compile( code ).catch( ( e ) => {
       const error = this.__processErrorMessage( e );
 
       this.__programCue = undefined;
 
-      this.__setCueStatus( 'none' );
+      this.cueStatus = 'none';
 
       // this.__emit( 'error', { error } );
 
@@ -123,20 +128,11 @@ export class Music {
       code,
     };
 
-    this.__setCueStatus( 'ready' );
+    this.cueStatus = 'applying';
+
+    this.__programSwapTime = Math.floor( this.time / BAR ) * BAR + BAR;
 
     // this.__emit( 'error', { error: null } );
-  }
-
-  /**
-   * Apply the cue shader after the bar ends.
-   */
-  public applyCue(): void {
-    if ( this.__cueStatus === 'ready' ) {
-      this.__setCueStatus( 'applying' );
-
-      this.__programSwapTime = Math.floor( this.time / BAR ) * BAR + BAR;
-    }
   }
 
   public async update(): Promise<void> {
@@ -144,6 +140,8 @@ export class Music {
     const now = readBlocks * BLOCK_SIZE / sampleRate;
 
     this.__bufferReaderNode?.setActive( this.isPlaying );
+
+    this.shaderEventManager.update( now - this.timeOffset );
 
     if ( this.isPlaying ) {
       this.deltaTime = now - this.__prevTime;
@@ -171,17 +169,17 @@ export class Music {
       ) * BLOCKS_PER_RENDER;
     }
 
-    const genTime = BLOCK_SIZE * this.__bufferWriteBlocks / sampleRate;
+    const genTime = BLOCK_SIZE * this.__bufferWriteBlocks / sampleRate - this.timeOffset;
 
     // -- should I process the next program? -------------------------------------------------------
-    let beginNext = this.__cueStatus === 'applying'
+    let beginNext = this.cueStatus === 'applying'
       ? Math.floor( ( this.__programSwapTime - genTime ) * sampleRate )
       : FRAMES_PER_RENDER;
     beginNext = Math.min( beginNext, FRAMES_PER_RENDER );
 
     // -- swap the program from first --------------------------------------------------------------
     if ( beginNext < 0 ) {
-      this.__setCueStatus( 'none' );
+      this.cueStatus = 'none';
 
       this.__renderer.applyCue();
 
@@ -198,7 +196,7 @@ export class Music {
 
     // -- render the next program from the mid of the code -----------------------------------------
     if ( beginNext < FRAMES_PER_RENDER && this.__programCue != null ) {
-      this.__setCueStatus( 'none' );
+      this.cueStatus = 'none';
 
       this.__renderer.applyCue();
 
@@ -268,11 +266,6 @@ export class Music {
       first,
       outR.subarray( first, first + count ),
     );
-  }
-
-  private __setCueStatus( cueStatus: 'none' | 'compiling' | 'ready' | 'applying' ): void {
-    this.__cueStatus = cueStatus;
-    // this.__emit( 'changeCueStatus', { cueStatus } );
   }
 
   private __processErrorMessage( error: any ): string | null {

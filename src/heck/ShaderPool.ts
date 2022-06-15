@@ -1,6 +1,5 @@
 import { Material } from './Material';
 import { glLazyProgram, LazyProgramOptions } from '../gl/glLazyProgram';
-import { gl } from '../globals/canvas';
 
 export class ShaderPool<TUser> {
   private __programMap: Map<string, WebGLProgram> = new Map();
@@ -52,7 +51,7 @@ export class ShaderPool<TUser> {
     this.__deleteUser( user, program );
 
     if ( this.__countUsers( program ) === 0 ) {
-      gl.deleteProgram( program );
+      // gl.deleteProgram( program ); // TODO: what
       this.__programMap.delete( vert + frag );
     }
   }

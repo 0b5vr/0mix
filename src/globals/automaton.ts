@@ -40,6 +40,8 @@ export function automatonSetupMusic( music: Music ): void {
     automatonWithGUI.on( 'pause', () => { music.isPlaying = false; } );
     automatonWithGUI.on( 'seek', ( { time } ) => {
       music.time = Math.max( 0.0, time );
+      music.shaderEventManager.reset();
+
       automatonWithGUI.reset();
     } );
   }
