@@ -1,3 +1,4 @@
+import { GL_ARRAY_BUFFER, GL_DYNAMIC_COPY, GL_FLOAT, GL_NEAREST, GL_POINTS, GL_R32F, GL_RASTERIZER_DISCARD, GL_RED, GL_STATIC_DRAW, GL_TEXTURE0, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TRANSFORM_FEEDBACK, GL_TRANSFORM_FEEDBACK_BUFFER } from '../gl/constants';
 import { glLazyProgram } from '../gl/glLazyProgram';
 import { gl } from '../globals/canvas';
 import { SAMPLE_TEXTURE_SIZE } from './constants';
@@ -106,24 +107,24 @@ export class Renderer {
   ): void {
     const texture = gl.createTexture()!;
 
-    gl.bindTexture( gl.TEXTURE_2D, texture );
+    gl.bindTexture( GL_TEXTURE_2D, texture );
 
     gl.texImage2D(
-      gl.TEXTURE_2D,
+      GL_TEXTURE_2D,
       0,
-      gl.R32F,
+      GL_R32F,
       SAMPLE_TEXTURE_SIZE,
       SAMPLE_TEXTURE_SIZE,
       0,
-      gl.RED,
-      gl.FLOAT,
+      GL_RED,
+      GL_FLOAT,
       source,
     );
 
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
+    gl.texParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    gl.texParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
-    gl.bindTexture( gl.TEXTURE_2D, null );
+    gl.bindTexture( GL_TEXTURE_2D, null );
 
     this.__textures.set( textureName, texture );
   }
@@ -186,8 +187,8 @@ export class Renderer {
 
     const location = gl.getUniformLocation( program, name );
 
-    gl.activeTexture( gl.TEXTURE0 + unit );
-    gl.bindTexture( gl.TEXTURE_2D, texture );
+    gl.activeTexture( GL_TEXTURE0 + unit );
+    gl.bindTexture( GL_TEXTURE_2D, texture );
 
     gl.useProgram( program );
     gl.uniform1i( location, unit );
@@ -206,43 +207,43 @@ export class Renderer {
     // attrib
     const attribLocation = gl.getAttribLocation( program, 'off' );
 
-    gl.bindBuffer( gl.ARRAY_BUFFER, this.__offsetBuffer );
+    gl.bindBuffer( GL_ARRAY_BUFFER, this.__offsetBuffer );
     gl.enableVertexAttribArray( attribLocation );
-    gl.vertexAttribPointer( attribLocation, 1, gl.FLOAT, false, 0, 0 );
+    gl.vertexAttribPointer( attribLocation, 1, GL_FLOAT, false, 0, 0 );
 
     // render
     gl.useProgram( program );
-    gl.bindTransformFeedback( gl.TRANSFORM_FEEDBACK, this.__transformFeedback );
-    gl.enable( gl.RASTERIZER_DISCARD );
+    gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, this.__transformFeedback );
+    gl.enable( GL_RASTERIZER_DISCARD );
 
-    gl.beginTransformFeedback( gl.POINTS );
-    gl.drawArrays( gl.POINTS, first, count );
+    gl.beginTransformFeedback( GL_POINTS );
+    gl.drawArrays( GL_POINTS, first, count );
     gl.endTransformFeedback();
 
-    gl.disable( gl.RASTERIZER_DISCARD );
-    gl.bindTransformFeedback( gl.TRANSFORM_FEEDBACK, null );
+    gl.disable( GL_RASTERIZER_DISCARD );
+    gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, null );
     gl.useProgram( null );
 
     // feedback
-    gl.bindBuffer( gl.ARRAY_BUFFER, this.__tfBuffers[ 0 ] );
+    gl.bindBuffer( GL_ARRAY_BUFFER, this.__tfBuffers[ 0 ] );
     gl.getBufferSubData(
-      gl.ARRAY_BUFFER,
+      GL_ARRAY_BUFFER,
       0,
       this.__dstArrays[ 0 ],
       first,
       count,
     );
-    gl.bindBuffer( gl.ARRAY_BUFFER, null );
+    gl.bindBuffer( GL_ARRAY_BUFFER, null );
 
-    gl.bindBuffer( gl.ARRAY_BUFFER, this.__tfBuffers[ 1 ] );
+    gl.bindBuffer( GL_ARRAY_BUFFER, this.__tfBuffers[ 1 ] );
     gl.getBufferSubData(
-      gl.ARRAY_BUFFER,
+      GL_ARRAY_BUFFER,
       0,
       this.__dstArrays[ 1 ],
       first,
       count,
     );
-    gl.bindBuffer( gl.ARRAY_BUFFER, null );
+    gl.bindBuffer( GL_ARRAY_BUFFER, null );
 
     return this.__dstArrays;
   }
@@ -253,9 +254,9 @@ export class Renderer {
 
     const buffer = gl.createBuffer()!;
 
-    gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
-    gl.bufferData( gl.ARRAY_BUFFER, array, gl.STATIC_DRAW );
-    gl.bindBuffer( gl.ARRAY_BUFFER, null );
+    gl.bindBuffer( GL_ARRAY_BUFFER, buffer );
+    gl.bufferData( GL_ARRAY_BUFFER, array, GL_STATIC_DRAW );
+    gl.bindBuffer( GL_ARRAY_BUFFER, null );
 
     return buffer;
   }
@@ -263,13 +264,13 @@ export class Renderer {
   private __createTFBuffer(): WebGLBuffer {
     const buffer = gl.createBuffer()!;
 
-    gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
+    gl.bindBuffer( GL_ARRAY_BUFFER, buffer );
     gl.bufferData(
-      gl.ARRAY_BUFFER,
+      GL_ARRAY_BUFFER,
       FRAMES_PER_RENDER * 4 /* Float32Array.BYTES_PER_ELEMENT */,
-      gl.DYNAMIC_COPY,
+      GL_DYNAMIC_COPY,
     );
-    gl.bindBuffer( gl.ARRAY_BUFFER, null );
+    gl.bindBuffer( GL_ARRAY_BUFFER, null );
 
     return buffer;
   }
@@ -279,10 +280,10 @@ export class Renderer {
   ): WebGLTransformFeedback {
     const tf = gl.createTransformFeedback()!;
 
-    gl.bindTransformFeedback( gl.TRANSFORM_FEEDBACK, tf );
-    gl.bindBufferBase( gl.TRANSFORM_FEEDBACK_BUFFER, 0, tfBuffers[ 0 ] );
-    gl.bindBufferBase( gl.TRANSFORM_FEEDBACK_BUFFER, 1, tfBuffers[ 1 ] );
-    gl.bindTransformFeedback( gl.TRANSFORM_FEEDBACK, null );
+    gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, tf );
+    gl.bindBufferBase( GL_TRANSFORM_FEEDBACK_BUFFER, 0, tfBuffers[ 0 ] );
+    gl.bindBufferBase( GL_TRANSFORM_FEEDBACK_BUFFER, 1, tfBuffers[ 1 ] );
+    gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, null );
 
     return tf;
   }
