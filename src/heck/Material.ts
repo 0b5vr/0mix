@@ -93,6 +93,11 @@ export class Material {
 
   public blend: [ GLenum, GLenum ];
 
+  /**
+   * A handler which is called when the material is ready.
+   */
+  public onReady?: () => void;
+
   public constructor(
     vert: string,
     frag: string,
@@ -120,6 +125,8 @@ export class Material {
 
         gl.useProgram( this.__program );
         initOptions.geometry.drawElementsOrArrays();
+
+        this.onReady?.();
       } );
     } else {
       if ( import.meta.env.DEV ) {
@@ -217,6 +224,8 @@ export class Material {
       this.__program = program;
 
       SHADERPOOL.discardProgram( this, prevVert, prevFrag );
+
+      this.onReady?.();
     }
   }
 }

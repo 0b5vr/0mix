@@ -4,9 +4,10 @@ import { Quad } from '../../heck/components/Quad';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
-import { GL_LINEAR } from '../../gl/constants';
+import { GL_LINEAR, GL_REPEAT } from '../../gl/constants';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { glTextureFilter } from '../../gl/glTextureFilter';
+import { glTextureWrap } from '../../gl/glTextureWrap';
 
 export class ShaderRenderTarget extends BufferTextureRenderTarget {
   public material: Material;
@@ -14,6 +15,7 @@ export class ShaderRenderTarget extends BufferTextureRenderTarget {
 
   public constructor( width: number, height: number, frag: string ) {
     super( width, height );
+    glTextureWrap( this.texture, GL_REPEAT );
     glTextureFilter( this.texture, GL_LINEAR );
 
     const material = this.material = new Material(
@@ -26,7 +28,8 @@ export class ShaderRenderTarget extends BufferTextureRenderTarget {
       material,
       target: this,
     } );
-    quad.drawImmediate();
+
+    material.onReady = () => quad.drawImmediate();
   }
 
   public createUpdateLambda(): Lambda {
