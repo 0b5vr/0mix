@@ -27,7 +27,7 @@
     "node-zopfli": "^2.1.4",
     "tweakpane": "^3.0.8",
     "typescript": "^4.5.4",
-    "vite": "^2.9.5",
+    "vite": "^2.9.12",
     "webgl-memory": "^1.0.11"
   }
 }
