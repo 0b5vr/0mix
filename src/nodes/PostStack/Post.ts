@@ -30,8 +30,8 @@ export class Post extends SceneNode {
     material.addUniformTextures( 'sampler0', GL_TEXTURE_2D, options.input.texture );
     material.addUniformTextures( 'samplerRandom', GL_TEXTURE_2D, randomTexture.texture );
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept( './shaders/postFrag', ( { postFrag } ) => {
+    if ( import.meta.hot ) {
+      import.meta.hot.accept( './shaders/postFrag', ( { postFrag } ) => {
         material.replaceShader( quadVert, postFrag );
       } );
     }

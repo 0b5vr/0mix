@@ -29,12 +29,10 @@ if ( import.meta.env.DEV ) {
   floorRoughnessTextureTarget.name = 'Floor/roughness';
 }
 
-if ( import.meta.env.DEV ) {
-  import.meta.hot?.accept(
-    [
-      './shaders/floorRoughnessFrag',
-    ],
-    () => {
+if ( import.meta.hot ) {
+  import.meta.hot.accept(
+    './shaders/floorRoughnessFrag',
+    ( { floorRoughnessFrag } ) => {
       floorRoughnessTextureTarget.material.replaceShader(
         quadVert,
         floorRoughnessFrag,
@@ -95,8 +93,8 @@ export class Floor extends SceneNode {
 
     const materials = { forward, depth };
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept(
+    if ( import.meta.hot ) {
+      import.meta.hot.accept(
         [
           '../../shaders/common/objectVert',
           './shaders/floorFrag',

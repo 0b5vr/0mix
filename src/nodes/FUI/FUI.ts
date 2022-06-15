@@ -117,8 +117,8 @@ export class FUI extends SceneNode {
 
     const materials = { forward, cubemap: forward, depth };
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept(
+    if ( import.meta.hot ) {
+      import.meta.hot.accept(
         [
           '../../shaders/common/objectVert',
           './shaders/fuiFrag',

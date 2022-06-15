@@ -126,8 +126,8 @@ export class CubemapNode extends SceneNode {
       materialSample.addUniform( 'accumMix', '1f', value );
     } );
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept( './shaders/cubemapSampleFrag', ( { cubemapSampleFrag } ) => {
+    if ( import.meta.hot ) {
+      import.meta.hot.accept( './shaders/cubemapSampleFrag', ( { cubemapSampleFrag } ) => {
         materialSample.replaceShader( quadVert, cubemapSampleFrag );
       } );
     }
@@ -153,8 +153,8 @@ export class CubemapNode extends SceneNode {
       { initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 } },
     );
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept( './shaders/cubemapMergeFrag', ( { cubemapMergeFrag } ) => {
+    if ( import.meta.hot ) {
+      import.meta.hot.accept( './shaders/cubemapMergeFrag', ( { cubemapMergeFrag } ) => {
         materialMerge.replaceShader( quadVert, cubemapMergeFrag );
       } );
     }
@@ -219,8 +219,8 @@ export class CubemapNode extends SceneNode {
       targetBlurH.texture,
     );
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept( './shaders/cubemapBlurFrag', ( { cubemapBlurFrag } ) => {
+    if ( import.meta.hot ) {
+      import.meta.hot.accept( './shaders/cubemapBlurFrag', ( { cubemapBlurFrag } ) => {
         materialBlurH.replaceShader( quadVert, cubemapBlurFrag( 0 ) );
         materialBlurV.replaceShader( quadVert, cubemapBlurFrag( 1 ) );
       } );

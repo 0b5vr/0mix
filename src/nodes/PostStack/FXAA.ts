@@ -28,8 +28,8 @@ export class FXAA extends SceneNode {
     );
     material.addUniformTextures( 'sampler0', GL_TEXTURE_2D, options.input.texture );
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept( './shaders/fxaaFrag', ( { fxaaFrag } ) => {
+    if ( import.meta.hot ) {
+      import.meta.hot.accept( './shaders/fxaaFrag', ( { fxaaFrag } ) => {
         material.replaceShader( quadVert, fxaaFrag );
       } );
     }

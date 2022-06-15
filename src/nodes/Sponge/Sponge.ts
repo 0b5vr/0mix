@@ -9,8 +9,8 @@ export class Sponge extends RaymarcherNode {
     this.transform.position[ 1 ] = 3.0;
     this.transform.scale = [ 3.0, 3.0, 3.0 ];
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept(
+    if ( import.meta.hot ) {
+      import.meta.hot.accept(
         './shaders/spongeFrag',
         ( { mengerSpongeFrag } ) => {
           const { deferred, depth } = this.materials;

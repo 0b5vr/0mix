@@ -33,8 +33,8 @@ export class Dust extends GPUParticles {
 
     materialCompute.addUniformTextures( 'samplerRandom', GL_TEXTURE_2D, randomTexture.texture );
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept( './shaders/dustComputeFrag', ( { dustComputeFrag } ) => {
+    if ( import.meta.hot ) {
+      import.meta.hot.accept( './shaders/dustComputeFrag', ( { dustComputeFrag } ) => {
         materialCompute.replaceShader(
           quadVert,
           dustComputeFrag( materialOptions ),
@@ -76,8 +76,8 @@ export class Dust extends GPUParticles {
 
     const lambdaLightUniforms = createLightUniformsLambda( [ forward ] );
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept(
+    if ( import.meta.hot ) {
+      import.meta.hot.accept(
         [
           './shaders/dustRenderVert',
           './shaders/dustRenderFrag',

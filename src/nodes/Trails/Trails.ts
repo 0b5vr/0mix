@@ -37,8 +37,8 @@ export class Trails extends GPUParticles {
     materialCompute.addUniform( 'shouldUpdate', '1i', shouldUpdate );
     materialCompute.addUniformTextures( 'samplerRandom', GL_TEXTURE_2D, randomTexture.texture );
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept( '../shaders/trailsComputeFrag', ( { trailsComputeFrag } ) => {
+    if ( import.meta.hot ) {
+      import.meta.hot.accept( '../shaders/trailsComputeFrag', ( { trailsComputeFrag } ) => {
         materialCompute.replaceShader(
           quadVert,
           trailsComputeFrag( materialOptions ),
@@ -86,8 +86,8 @@ export class Trails extends GPUParticles {
     deferred.addUniformTextures( 'samplerRandomStatic', GL_TEXTURE_2D, randomTextureStatic.texture );
     depth.addUniformTextures( 'samplerRandomStatic', GL_TEXTURE_2D, randomTextureStatic.texture );
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept(
+    if ( import.meta.hot ) {
+      import.meta.hot.accept(
         [
           '../shaders/trailsRenderVert',
           '../shaders/trailsRenderFrag',

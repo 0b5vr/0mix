@@ -121,8 +121,8 @@ export class CameraStack extends SceneNode {
         { initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 } },
       );
 
-      if ( import.meta.env.DEV ) {
-        import.meta.hot?.accept( './shaders/ssaoFrag', ( { ssaoFrag } ) => {
+      if ( import.meta.hot ) {
+        import.meta.hot.accept( './shaders/ssaoFrag', ( { ssaoFrag } ) => {
           aoMaterial.replaceShader( quadVert, ssaoFrag );
         } );
       }
@@ -243,8 +243,8 @@ export class CameraStack extends SceneNode {
       shadingQuad.name = 'shadingQuad';
     }
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept( './shaders/deferredShadeFrag', ( { deferredShadeFrag } ) => {
+    if ( import.meta.hot ) {
+      import.meta.hot.accept( './shaders/deferredShadeFrag', ( { deferredShadeFrag } ) => {
         shadingMaterial.replaceShader( quadVert, deferredShadeFrag( { withAO } ) );
       } );
     }

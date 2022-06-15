@@ -63,8 +63,8 @@ export class LightShaft extends SceneNode {
     forward.addUniformTextures( 'samplerRandom', GL_TEXTURE_2D, randomTexture.texture );
     forward.addUniformTextures( 'samplerShadow', GL_TEXTURE_2D, light.shadowMap.texture );
 
-    if ( import.meta.env.DEV ) {
-      import.meta.hot?.accept(
+    if ( import.meta.hot ) {
+      import.meta.hot.accept(
         [
           './shaders/lightShaftVert',
           './shaders/lightShaftFrag',
