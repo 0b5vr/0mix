@@ -1,9 +1,7 @@
 import { Music } from '../music/Music';
 import { automatonSetupMusic } from './automaton';
 
-const music = new Music();
-music.compile( `
-#define PI 3.141592654
+export const hahaCode = `#define PI 3.141592654
 #define TAU 6.283185307
 #define BPM bpm
 #define P4 1.33483985417
@@ -188,9 +186,10 @@ vec2 mainAudio( vec4 time ) {
   }
 
   return clip( 1.2 * dest );
-}
-` )
-  .then( () => music.applyCue() );
+}`;
+
+const music = new Music();
+music.compile( hahaCode ).then( () => music.applyCue() );
 
 automatonSetupMusic( music );
 

@@ -1,7 +1,6 @@
 import { Bloom } from './Bloom';
 import { RawBufferRenderTarget } from '../../heck/RawBufferRenderTarget';
 import { ComponentOptions } from '../../heck/components/Component';
-import { FXAA } from './FXAA';
 import { Post } from './Post';
 import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
@@ -42,20 +41,21 @@ export class PostStack extends SceneNode {
     postSwap.swap();
     const post = new Post( {
       input: postSwap.o,
-      target: postSwap.i,
-    } );
-
-    postSwap.swap();
-    const fxaa = new FXAA( {
-      input: postSwap.o,
+      // target: postSwap.i,
       target,
     } );
+
+    // postSwap.swap();
+    // const fxaa = new FXAA( {
+    //   input: postSwap.o,
+    //   target,
+    // } );
 
     // -- components -------------------------------------------------------------------------------
     this.children = [
       bloom,
       post,
-      fxaa,
+      // fxaa,
     ];
   }
 }

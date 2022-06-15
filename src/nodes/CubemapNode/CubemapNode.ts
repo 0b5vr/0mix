@@ -18,6 +18,7 @@ import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { UITag } from '../common/UITag';
 
 export const CubemapNodeTag = Symbol();
 
@@ -63,7 +64,7 @@ export class CubemapNode extends SceneNode {
         width: 256,
         height: 256,
         scene,
-        exclusionTags: [ /* StuffTag, */ PointLightTag, DustTag ],
+        exclusionTags: [ /* StuffTag, */ PointLightTag, DustTag, UITag ],
         target,
         near: 2.9,
         fov: 90.0,

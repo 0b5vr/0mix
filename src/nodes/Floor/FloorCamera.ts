@@ -14,6 +14,7 @@ import { quadVert } from '../../shaders/common/quadVert';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { BufferMipmapTextureRenderTarget } from '../../heck/BufferMipmapTextureRenderTarget';
+import { UITag } from '../common/UITag';
 
 export interface FloorCameraOptions extends SceneNodeOptions {
   width: number;
@@ -45,6 +46,7 @@ export class FloorCamera extends SceneNode {
       height,
       scene: primaryCamera.deferredCamera.scene!,
       target: this.mirrorTarget,
+      exclusionTags: [ UITag ],
     } );
 
     if ( import.meta.env.DEV ) {

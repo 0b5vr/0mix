@@ -199,8 +199,8 @@ export class Material {
   }
 
   public async replaceShader(
-    vert: string,
-    frag: string,
+    vert?: string,
+    frag?: string,
     options?: {
       defines?: string[],
       linkOptions?: LazyProgramOptions,
@@ -208,8 +208,8 @@ export class Material {
   ): Promise<void> {
     const program = await SHADERPOOL.getProgramAsync(
       this,
-      vert,
-      frag,
+      vert ?? this.__vert,
+      frag ?? this.__frag,
       options?.linkOptions,
     ).catch( ( e ) => {
       console.error( e );
@@ -219,8 +219,8 @@ export class Material {
       const prevVert = this.vert;
       const prevFrag = this.frag;
 
-      this.__vert = vert;
-      this.__frag = frag;
+      vert && ( this.__vert = vert );
+      frag && ( this.__frag = frag );
       this.__program = program;
 
       SHADERPOOL.discardProgram( this, prevVert, prevFrag );
