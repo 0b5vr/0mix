@@ -129,6 +129,13 @@ export class Renderer {
   }
 
   /**
+   * @todo this API should be improved
+   */
+  public addTextureDirect( textureName: string, texture: WebGLTexture ) {
+    this.__textures.set( textureName, texture );
+  }
+
+  /**
    * Delete a texture entry.
    */
   public deleteTexture( textureName: string ): void {

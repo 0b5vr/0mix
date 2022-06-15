@@ -7,6 +7,7 @@ import { sample808HiHat } from './samples/sample808HiHat';
 import { sampleWhiteNoise } from './samples/sampleWhiteNoise';
 import { audio, sampleRate } from '../globals/audio';
 import { sampleClapNoise } from './samples/sampleClapNoise';
+import { perlinFBMTextureTarget } from './textures/perlinFBMTextureTarget';
 
 const BEAT = 60.0 / MUSIC_BPM;
 const BAR = 240.0 / MUSIC_BPM;
@@ -96,7 +97,8 @@ export class Music {
 
     this.__renderer.uploadTexture( 'noise', sampleWhiteNoise );
     this.__renderer.uploadTexture( 'clapNoise', sampleClapNoise );
-    this.__renderer.uploadTexture( 'hihat', sample808HiHat )
+    this.__renderer.uploadTexture( 'hihat', sample808HiHat );
+    this.__renderer.addTextureDirect( 'fbm', perlinFBMTextureTarget.texture );
   }
 
   /**
@@ -228,6 +230,10 @@ export class Music {
       this.__renderer.uniformTexture( 'sample_' + sampleName, sampleName, textureUnit );
       textureUnit ++;
     } );
+
+    // TODO: this is terrible
+    this.__renderer.uniformTexture( 'fbm', 'fbm', textureUnit );
+    textureUnit ++;
 
     this.__renderer.uniform1f( 'bpm', MUSIC_BPM );
     this.__renderer.uniform1f( 'sampleRate', sampleRate );

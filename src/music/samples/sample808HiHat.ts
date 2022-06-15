@@ -22,5 +22,5 @@ for ( let i = 0; i < SAMPLE_TEXTURE_SIZE_SQ; i ++ ) {
   sample808HiHat[ i ] = Math.sign( sample808HiHat[ i ] ) * Math.pow( Math.abs( sample808HiHat[ i ] ), 0.1 );
 
   // hpf 2
-  sample808HiHat[ i ] = hpf2.process( sample808HiHat[ i ] );
+  sample808HiHat[ i ] = 0.5 * hpf2.process( sample808HiHat[ i ] );
 }

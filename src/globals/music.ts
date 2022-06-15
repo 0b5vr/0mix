@@ -3,85 +3,81 @@ import { automatonSetupMusic } from './automaton';
 
 const music = new Music();
 music.compile( `
+#define PI 3.141592654
+#define TAU 6.283185307
 #define BPM bpm
-#define BEAT (60.0/BPM)
-#define TRANSPOSE -3.0
+#define P4 1.33483985417
+#define P5 1.49830707688
+#define beat *60.0/BPM
 
-#define PI 3.14159265359
-#define TAU 6.28318530718
-#define LN2 0.69314718056
-#define LN10 2.30258509299
-
-#define saturate(i) clamp(i,0.,1.)
-#define clip(i) clamp(i,-1.,1.)
+#define saturate(i) clamp(i, 0.,1.)
+#define clip(i) clamp(i, -1.,1.)
+#define linearstep(a,b,x) saturate(((x)-(a))/((b)-(a)))
+#define lofi(i,m) (floor((i)/(m))*(m))
+#define lofir(i,m) (floor((i)/(m)+0.5)*(m))
+#define saw(p) (2.*fract(p)-1.)
+#define pwm(x,d) (step(fract(x),(d))*2.0-1.0)
+#define tri(p) (1.-4.*abs(fract(p)-0.5))
+#define p2f(i) (pow(2.,((i)-69.)/12.)*440.)
 #define fs(i) (fract(sin((i)*114.514)*1919.810))
-#define lofi(i,j) (floor((i)/(j))*(j))
-#define n2f(n) (pow(2.0,((n)+TRANSPOSE)/12.0)*440.0)
+#define inRange(a,b,x) ((a)<=(x)&&(x)<(b))
 
-uniform sampler2D sample_noise;
-uniform sampler2D sample_clapNoise;
 uniform sampler2D sample_hihat;
+uniform vec4 sample_hihat_meta;
+uniform sampler2D sample_noise;
+uniform vec4 sample_noise_meta;
+uniform sampler2D fbm;
 
-float decibellToVoltage( float decibell ) {
-  return pow( 10.0, decibell / 20.0 );
+float envA( float t, float a ) {
+  return linearstep( 0.0, a, t );
 }
 
-float declick( float t ) {
-  return 1.0 - exp( -max( 0.0, t ) * 1E3 );
+float envAR( float t, float l, float a, float r ) {
+  return envA( t, a ) * linearstep( l, l - r, t );
 }
 
-float declickl( float t, float len ) {
-  return declick( t ) * declick( len - t );
+vec2 orbit( float t ) {
+  return vec2( cos( TAU * t ), sin( TAU * t ) );
 }
+
+float chords[8] = float[](
+  0.0, 0.0, 3.0, 3.0, 7.0, 7.0, 10.0, 14.0
+);
 
 float noise( float t ) {
   return sampleSinc( sample_noise, t );
 }
 
-vec2 kick( float t ) {
+float random2( float t ) {
+  return fract( sampleSinc( sample_noise, t ) );
+}
+
+vec2 kick( float t, float freq ) {
+  float phase = freq * t - 11.0 * ( exp( -25.0 * t ) + exp( -100.0 * t ) + exp( -700.0 * t ) );
+  float fmA = sin( TAU * 1.0 * phase + 1.4 );
+  vec2 fmB = 0.5 * exp( -20.0 * t ) * tri( 0.5 * phase + fmA + vec2( 0.2, 0.24 ) );
+  return clip( 1.0 * vec2( exp( -4.0 * t ) * sin( TAU * phase + fmB ) ) );
+}
+
+vec2 rimshot( float t ) {
   if ( t < 0.0 ) { return vec2( 0.0 ); }
-
-  float tt = t + 0.002 * exp( -4.0 * t ) * noise( 0.004 * t );
-  float a = exp( -4.0 * tt ) * sin( TAU * (
-    50.0 * tt - 2.0 * ( exp( -20.0 * tt ) + exp( -100.0 * t ) )
-  ) );
-  return vec2( clip( 1.5 * a ) );
-}
-
-vec2 hihat( float t, float open ) {
-  float decay = exp( -open * t );
-  vec2 sig = vec2(
-    sampleSinc( sample_hihat, t ),
-    sampleSinc( sample_hihat, t + 0.1 )
+  float attack = exp( -t * 400.0 ) * 0.6;
+  vec2 wave = (
+    tri( t * 450.0 * vec2( 1.005, 0.995 ) - attack ) +
+    tri( t * 1800.0 * vec2( 0.995, 1.005 ) - attack )
   );
-  return sig * decay;
-}
-
-vec2 clap( float t ) {
-  float decay = mix(
-    exp( -200.0 * mod( t, 0.01 ) ),
-    exp( -20.0 * t ),
-    0.2 + 0.8 * smoothstep( 0.0, 0.1, t )
-  );
-  vec2 sig = 4.0 * vec2(
-    sampleSinc( sample_clapNoise, t ),
-    sampleSinc( sample_clapNoise, t + 0.1 )
-  );
-  return sig * decay;
+  return clip( 4.0 * wave * exp( -t * 400.0 ) );
 }
 
 vec2 filterSaw( float freq, float time, float cutoff, float resonance ) {
   if ( time < 0.0 ) { return vec2( 0.0 ); }
   vec2 sum = vec2( 0.0 );
-  for ( int i = 1; i <= 64; i ++ ) {
+  for ( int i = 1; i <= 32; i ++ ) {
     float fi = float( i );
-    float octCut = log( cutoff ) / LN2;
-    float octFreq = log( fi * freq ) / LN2;
-    float octDiff = octFreq - octCut;
-    float cutDB = min( 0.0, -24.0 * octDiff );
-    cutDB += smoothstep( 0.5, 0.0, abs( octDiff ) ) * resonance;
+    float cut = smoothstep( cutoff * 1.2, cutoff * 0.8, fi * freq );
+    cut += smoothstep( cutoff * 0.3, 0.0, abs( cutoff - fi * freq ) ) * resonance;
     vec2 offset = vec2( -1.0, 1.0 ) * ( 0.1 * ( fi - 1.0 ) );
-    sum += sin( fi * freq * time * TAU + offset ) / fi * decibellToVoltage( cutDB );
+    sum += sin( fi * freq * time * TAU + offset ) / fi * cut;
   }
   return sum;
 }
@@ -89,43 +85,109 @@ vec2 filterSaw( float freq, float time, float cutoff, float resonance ) {
 vec2 mainAudio( vec4 time ) {
   vec2 dest = vec2( 0.0 );
 
-  float sidechain = smoothstep( 0.0, 0.6 * BEAT, time.x );
-  {
-    float t = time.x;
-    dest += 0.5 * kick( t ) * declickl( t + 0.1, BEAT + 0.1 );
+  // -- kick ---------------------------------------------------------------------------------------
+  float kickTime = mod( time.x, 1.0 beat );
+  float sidechain = linearstep( 0.0, 0.6 beat, kickTime );
+
+  if ( inRange( 0.0 beat, 61.0 beat, time.z ) ) {
+    dest += 0.5 * kick( kickTime, 50.0 );
   }
 
+  // -- hihat --------------------------------------------------------------------------------------
   {
-    float t = mod( time.z, 0.25 * BEAT );
-    vec4 dice = fs( lofi( time.y, 0.25 * BEAT ) + 19.28 * vec4( 0, 1, 2, 3 ) );
-    float open = mix( 30.0, 70.0, dice.y );
-    dest += 0.3 * mix( 0.2, 1.0, sidechain ) * hihat( t, open );
+    float t = mod( time.x, 0.25 beat );
+
+    float vel = fract( floor( time.y / ( 0.25 beat ) ) * 0.62 + 0.67 );
+    float amp = mix( 0.2, 0.3, vel );
+    float decay = mix( 140.0, 10.0, vel );
+    dest += amp * sampleSinc( sample_hihat, t ) * exp( -t * decay );
   }
 
+  // -- rim ----------------------------------------------------------------------------------------
   {
-    dest += 0.4 * mix( 0.6, 1.0, sidechain ) * clap( mod( time.y - 1.0 * BEAT, 2.0 * BEAT ) );
+    float t = mod( time.x, 0.25 beat );
+    float st = mod( floor( ( time.z ) / ( 0.25 beat ) ), 256.0 );
+
+    if ( fract( st * 0.71 + 0.5 ) > 0.5 ) {
+      dest += 0.3 * rimshot( t );
+    }
   }
 
+  // -- bass ---------------------------------------------------------------------------------------
   {
-    float t = mod( time.y, 0.25 * BEAT );
-    vec4 dice = fs( lofi( time.y, 0.25 * BEAT ) + 3.88 * vec4( 0, 1, 2, 3 ) );
-
-    float pattern[6] = float[](
-      0.0, 12.0, 17.0, 0.0, 13.0, 12.0
-    );
-    float freq = n2f( -24.0 + pattern[ int( time.z / ( 0.25 * BEAT ) ) % 6 ] );
-
-    float filt = (
-      400.0 +
-      mix( 1000.0, 4000.0, dice.x ) * exp( -mix( 10.0, 40.0, dice.y ) * t )
-    );
-
-    float amp = 0.3;
-    vec2 a = filterSaw( freq, t, filt, 12.0 );
-    dest += 0.3 * mix( 0.6, 1.0, sidechain ) * declickl( t, mix( 0.15, 0.25, dice.z ) * BEAT ) * declickl( t, 0.25 * BEAT ) * clip( a );
+    // float t = mod( aTime - 0.5 beat, 1.0 beat );
+    float t = mod( time.x, 0.25 beat );
+    float decay = exp( -20.0 * t );
+    float cutoff = mix( 100.0, 500.0, decay );
+    float noteI = 0.0;
+    float trans = mod( time.z, 16.0 beat ) < ( 12.0 beat ) ? 0.0 : -2.0;
+    float freq = p2f( 30.0 + trans );
+    vec2 wave = filterSaw( freq, t + 0.004 * sin( TAU * 2.0 * freq * t ), cutoff, 1.0 );
+    dest += 0.4 * sidechain * decay * wave;
   }
 
-  return dest;
+  // -- arp ----------------------------------------------------------------------------------------
+  {
+    vec2 wave = vec2( 0.0 );
+
+    for ( int i = 0; i < 4; i ++ ) {
+      float fi = float( i );
+      float t = mod( time.x, 0.25 beat );
+      float st = mod( floor( ( time.z - fi * 0.75 beat ) / ( 0.25 beat ) ), 256.0 );
+
+      float dice = random2( 0.81 * fi );
+
+      float arpseed = fract( 0.615 * st );
+      float trans = mod( st, 64.0 ) < 48.0 ? 0.0 : -2.0;
+      float note = chords[ int( arpseed * 24.0 ) % 8 ] + 12.0 * floor( arpseed * 3.0 ) + trans;
+      float freq = p2f( 42.0 + note );
+
+      float env = exp( -t * 10.0 );
+      vec2 amp = saturate( 0.5 + vec2( 0.5, -0.5 ) * sin( 2.0 * fi + time.w ) * fi ) * exp( -fi ) * env;
+
+      vec2 phase = t * freq + mix( vec2( 1.0, 0.0 ), vec2( 0.0, 1.0 ), dice );
+      wave += amp * (
+        + saw( phase )
+        + saw( P5 * phase )
+        + pwm( 0.2 + 0.5 * phase, vec2( 0.5 ) )
+        + pwm( 1.5 * phase, vec2( 0.5 ) )
+      );
+    }
+
+    dest += 0.24 * sidechain * wave;
+  }
+
+  // -- pad ----------------------------------------------------------------------------------------
+  {
+    vec2 sum = vec2( 0.0 );
+
+    int pitchTable[8] = int[]( 0, 3, 7, 10, 12, 14, 19, 26 );
+
+    for ( int i = 0; i < 48; i ++ ) {
+      float fi = float( i );
+
+      float t = time.z;
+
+      float trans = mod( time.z, 16.0 beat ) < ( 12.0 beat ) ? 0.0 : -2.0;
+      float freq = p2f( float( 42 + pitchTable[ i % 8 ] ) + trans )
+        * mix( 0.99, 1.01, fs( fi ) );
+      float offu = fs( fi + 4.0 );
+      vec2 pan = mix( vec2( 0.0, 1.0 ), vec2( 1.0, 0.0 ), fi / 47.0 );
+
+      vec2 uv = vec2( 0.5 );
+      uv += 0.5 * time.z;
+      vec2 uv1 = uv + 0.05 * orbit( freq * t + offu );
+      vec2 uv2 = uv + 0.05 * orbit( freq * t + offu + 0.13 );
+      float diff = texture( fbm, uv1 ).x - texture( fbm, uv2 ).x;
+
+      float amp = 0.2 * mix( 0.3, 1.0, sidechain );
+      sum += amp * pan * diff; // fbm osc
+    }
+
+    dest += clip( sum );
+  }
+
+  return clip( 1.2 * dest );
 }
 ` )
   .then( () => music.applyCue() );
