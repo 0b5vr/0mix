@@ -17,7 +17,6 @@ import { createVRSesh } from './globals/createVRSesh';
 import { music } from './globals/music';
 import { promiseGui } from './globals/gui';
 import { randomTexture } from './globals/randomTexture';
-import { Code } from './nodes/Code/Code';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
@@ -139,8 +138,6 @@ const cubemapNode = new CubemapNode( {
   scene: dog.root,
 } );
 
-const code = new Code();
-
 if ( import.meta.env.DEV ) {
   cubemapNode.name = 'cubemapNode';
 }
@@ -170,7 +167,6 @@ dog.root.children.push(
   dust,
   cubemapNode,
   // plane,
-  code,
 );
 
 // -- desktop --------------------------------------------------------------------------------------

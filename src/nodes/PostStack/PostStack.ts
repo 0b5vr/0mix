@@ -6,6 +6,7 @@ import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { Swap } from '@0b5vr/experimental';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { Code } from './Code/Code';
 
 export interface PostStackOptions extends ComponentOptions {
   input: BufferTextureRenderTarget;
@@ -32,6 +33,8 @@ export class PostStack extends SceneNode {
     }
 
     // -- post -------------------------------------------------------------------------------------
+    const code = new Code( { target: input } );
+
     postSwap.swap();
     const bloom = new Bloom( {
       input,
@@ -53,6 +56,7 @@ export class PostStack extends SceneNode {
 
     // -- components -------------------------------------------------------------------------------
     this.children = [
+      code,
       bloom,
       post,
       // fxaa,

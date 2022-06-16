@@ -1,25 +1,29 @@
-import { Geometry } from '../../heck/Geometry';
-import { Material } from '../../heck/Material';
-import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
+import { Geometry } from '../../../heck/Geometry';
+import { Material } from '../../../heck/Material';
+import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
 import { codeRenderFrag } from './shaders/codeRenderFrag';
 import { codeRenderVert } from './shaders/codeRenderVert';
-import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
-import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
-import { GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../gl/constants';
-import { SceneNode } from '../../heck/components/SceneNode';
-import { Mesh } from '../../heck/components/Mesh';
-import { UITag } from '../common/UITag';
-import { charTexture } from '../common/charTexture';
-import { gl } from '../../globals/canvas';
-import { music } from '../../globals/music';
-import { withinShaderEventRange } from '../../music/withinShaderEventRange';
-import { Lambda } from '../../heck/components/Lambda';
-import { quadBuffer } from '../../globals/quadGeometry';
+import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
+import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
+import { GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../../gl/constants';
+import { SceneNode } from '../../../heck/components/SceneNode';
+import { charTexture } from '../../common/charTexture';
+import { gl } from '../../../globals/canvas';
+import { music } from '../../../globals/music';
+import { withinShaderEventRange } from '../../../music/withinShaderEventRange';
+import { Lambda } from '../../../heck/components/Lambda';
+import { quadBuffer } from '../../../globals/quadGeometry';
+import { Quad } from '../../../heck/components/Quad';
+import { RenderTarget } from '../../../heck/RenderTarget';
 
 const chars = 65536;
 
+interface CodeOptions {
+  target: RenderTarget;
+}
+
 export class Code extends SceneNode {
-  public constructor() {
+  public constructor( { target }: CodeOptions ) {
     super();
 
     // -- geometry render --------------------------------------------------------------------------
@@ -64,16 +68,20 @@ export class Code extends SceneNode {
     }
 
     // -- mesh -------------------------------------------------------------------------------------
-    const mesh = new Mesh( { geometry, materials: { forward } } );
+    const mesh = new Quad( {
+      geometry,
+      material: forward,
+      target,
+    } ); // TODO: Quad???
+
     mesh.depthTest = false;
     mesh.depthWrite = false;
-    mesh.tags = [ UITag ];
 
     if ( import.meta.env.DEV ) {
       mesh.name = 'mesh';
     }
 
-    // -- scroll lambda ----------------------------------------------------------------------------
+    // -- lambda -----------------------------------------------------------------------------------
     let scrollCurrent = 0.0;
     let scrollTarget = 0.0;
 

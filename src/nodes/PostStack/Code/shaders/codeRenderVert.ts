@@ -1,4 +1,4 @@
-import { add, assign, build, defIn, defOutNamed, defUniformNamed, div, glPosition, main, mul, step, sub, sw, vec2, vec4 } from '../../../shaders/shaderBuilder';
+import { add, assign, build, defIn, defOutNamed, defUniformNamed, div, glPosition, main, mul, step, sub, sw, vec2, vec4 } from '../../../../shaders/shaderBuilder';
 
 export const codeRenderVert = build( () => {
   const position = defIn( 'vec2', 0 );

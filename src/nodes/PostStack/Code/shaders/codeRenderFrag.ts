@@ -1,6 +1,6 @@
-import { glslLinearstep } from '../../../shaders/modules/glslLinearstep';
-import { isValidUv } from '../../../shaders/modules/isValidUv';
-import { add, assign, build, def, defInNamed, defOutNamed, defUniformNamed, div, exp, floor, insert, main, mix, mul, mulAssign, sub, sw, tern, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { glslLinearstep } from '../../../../shaders/modules/glslLinearstep';
+import { isValidUv } from '../../../../shaders/modules/isValidUv';
+import { add, assign, build, def, defInNamed, defOutNamed, defUniformNamed, div, exp, floor, insert, main, mix, mul, mulAssign, sub, sw, tern, texture, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 
 export const codeRenderFrag = build( () => {
   insert( 'precision highp float;' );
