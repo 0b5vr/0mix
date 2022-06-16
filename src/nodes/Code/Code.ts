@@ -14,6 +14,7 @@ import { charTexture } from '../common/charTexture';
 import { gl } from '../../globals/canvas';
 import { music } from '../../globals/music';
 import { withinShaderEventRange } from '../../music/withinShaderEventRange';
+import { Lambda } from '../../heck/components/Lambda';
 
 const chars = 65536;
 
@@ -47,7 +48,6 @@ export class Code extends SceneNode {
       },
     );
 
-    forward.addUniform( 'scroll', '1f', 90.0 );
     forward.addUniformTextures( 'samplerChar', GL_TEXTURE_2D, charTexture );
 
     if ( import.meta.hot ) {
@@ -74,6 +74,17 @@ export class Code extends SceneNode {
     if ( import.meta.env.DEV ) {
       mesh.name = 'mesh';
     }
+
+    // -- scroll lambda ----------------------------------------------------------------------------
+    let scrollCurrent = 0.0;
+    let scrollTarget = 0.0;
+
+    const lambdaScroll = new Lambda( {
+      onUpdate( { deltaTime } ) {
+        scrollCurrent += ( 1.0 - Math.exp( -10.0 * deltaTime ) ) * ( scrollTarget - scrollCurrent );
+        forward.addUniform( 'scroll', '1f', scrollCurrent );
+      }
+    } );
 
     // -- set code ---------------------------------------------------------------------------------
     const { shaderEventManager } = music;
@@ -103,10 +114,13 @@ export class Code extends SceneNode {
       gl.bindBuffer( GL_ARRAY_BUFFER, bufferChars );
       gl.bufferData( GL_ARRAY_BUFFER, arrayChars, GL_DYNAMIC_DRAW );
       gl.bindBuffer( GL_ARRAY_BUFFER, null );
+
+      scrollTarget = shaderEventManager.select[ 2 ];
     };
 
     // -- components -------------------------------------------------------------------------------
     this.children = [
+      lambdaScroll,
       mesh,
     ];
   }

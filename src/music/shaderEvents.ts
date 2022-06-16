@@ -212,7 +212,8 @@ vec2 mainAudio( vec4 time ) {
   return clip( dest );
 }` ],
   [ 0.0, ShaderEventType.Apply ],
-  [ 20.0, ShaderEventType.Select, [ 91, 0, 98, 3 ] ],
+  [ 20.0, ShaderEventType.Select, [ 98, 0, 98, 0 ] ],
+  [ 2.0, ShaderEventType.Select, [ 91, 0, 98, 3 ] ],
   [ 2.0, ShaderEventType.Comment, 2 ],
   [ 3.0, ShaderEventType.Apply ],
 ];
