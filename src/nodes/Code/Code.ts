@@ -7,7 +7,6 @@ import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexb
 import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
 import { GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../gl/constants';
 import { SceneNode } from '../../heck/components/SceneNode';
-import { TRIANGLE_STRIP_QUAD } from '@0b5vr/experimental';
 import { Mesh } from '../../heck/components/Mesh';
 import { UITag } from '../common/UITag';
 import { charTexture } from '../common/charTexture';
@@ -15,6 +14,7 @@ import { gl } from '../../globals/canvas';
 import { music } from '../../globals/music';
 import { withinShaderEventRange } from '../../music/withinShaderEventRange';
 import { Lambda } from '../../heck/components/Lambda';
+import { quadBuffer } from '../../globals/quadGeometry';
 
 const chars = 65536;
 
@@ -25,9 +25,7 @@ export class Code extends SceneNode {
     // -- geometry render --------------------------------------------------------------------------
     const geometry = new Geometry();
 
-    const bufferPos = glCreateVertexbuffer( new Float32Array( TRIANGLE_STRIP_QUAD ) );
-
-    glVertexArrayBindVertexbuffer( geometry.vao, bufferPos, 0, 2 );
+    glVertexArrayBindVertexbuffer( geometry.vao, quadBuffer, 0, 2 );
 
     const arrayChars = new Float32Array( 4 * chars );
     const bufferChars = glCreateVertexbuffer( arrayChars, GL_DYNAMIC_DRAW );
