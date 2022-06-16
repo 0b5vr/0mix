@@ -141,6 +141,7 @@ export class RTInspector extends SceneNode {
 
         context.font = '500 10px Wt-Position';
         context.fillStyle = '#fff';
+        context.lineWidth = 2;
         context.strokeStyle = '#000';
 
         for ( const { dstRect, name } of entries ) {
