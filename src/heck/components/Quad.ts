@@ -28,12 +28,12 @@ const meshCullMap = {
 export class Quad extends Component {
   public material?: Material;
   public target?: RenderTarget;
-  public range: [ number, number, number, number ] = [ -1.0, -1.0, 1.0, 1.0 ];
+  public range: [ number, number, number, number ];
   public clear: Array<number | undefined> | false;
   public geometry: Geometry;
-  public cull: MeshCull = MeshCull.Back;
-  public depthWrite = true;
-  public depthTest = true;
+  public cull: MeshCull;
+  public depthWrite: boolean;
+  public depthTest: boolean;
 
   public constructor( options?: QuadOptions ) {
     super( options );
@@ -45,9 +45,9 @@ export class Quad extends Component {
     this.target = options?.target;
     this.range = options?.range ?? [ -1.0, -1.0, 1.0, 1.0 ];
     this.clear = options?.clear ?? false;
-    this.cull = MeshCull.Back;
+    this.cull = MeshCull.None;
     this.depthWrite = true;
-    this.depthTest = true;
+    this.depthTest = false;
   }
 
   public drawImmediate( event?: Partial<ComponentUpdateEvent> ): void {
