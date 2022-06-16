@@ -1,6 +1,6 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/shaders/deferredShadeFrag';
 import { abs, add, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, discard, div, glFragCoord, glFragDepth, gt, ifThen, insert, length, main, max, mod, mul, neg, normalize, retFn, sub, sw, unrollLoop, vec3, vec4 } from '../../../shaders/shaderBuilder';
-import { calcDepth } from '../../../shaders/modules/calcDepth';
+import { calcShadowDepth } from '../../../shaders/modules/calcDepth';
 import { calcNormal } from '../../../shaders/modules/calcNormal';
 import { raymarch } from '../../../shaders/modules/raymarch';
 import { sdbox } from '../../../shaders/modules/sdbox';
@@ -72,7 +72,7 @@ export const mengerSpongeFrag = ( tag: 'deferred' | 'depth' ): string => build( 
 
     if ( tag === 'depth' ) {
       const len = length( sub( cameraPos, sw( modelPos, 'xyz' ) ) );
-      assign( fragColor, calcDepth( cameraNearFar, len ) );
+      assign( fragColor, calcShadowDepth( cameraNearFar, len ) );
       retFn();
 
     }

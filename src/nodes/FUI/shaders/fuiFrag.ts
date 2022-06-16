@@ -1,5 +1,5 @@
 import { add, assign, build, def, defInNamed, defOutNamed, defUniformNamed, discard, ifThen, insert, length, lt, main, max, mul, mulAssign, sin, sub, sw, texture, vec2, vec4 } from '../../../shaders/shaderBuilder';
-import { calcDepth } from '../../../shaders/modules/calcDepth';
+import { calcShadowDepth } from '../../../shaders/modules/calcDepth';
 import { glslLinearstep } from '../../../shaders/modules/glslLinearstep';
 import { sdcapsule } from '../../../shaders/modules/sdcapsule';
 
@@ -45,7 +45,7 @@ export const fuiFrag = ( tag: 'forward' | 'depth' ): string => build( () => {
       const posXYZ = sw( vPosition, 'xyz' );
 
       const len = length( sub( cameraPos, posXYZ ) );
-      assign( fragColor, calcDepth( cameraNearFar, len ) );
+      assign( fragColor, calcShadowDepth( cameraNearFar, len ) );
       return;
 
     }
