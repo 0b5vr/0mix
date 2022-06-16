@@ -5,10 +5,15 @@ import { fxDefinitions } from './automaton-fxs/fxDefinitions';
 import { getDivAutomaton } from './dom';
 import automatonData from '../automaton.json';
 
+// it's pointless to live reload automatonData
+if ( import.meta.hot ) {
+  import.meta.hot.accept( '../automaton', () => {
+    // do nothing
+  } );
+}
+
 export const automaton = ( () => {
   if ( import.meta.env.DEV ) {
-    // this cast smells so bad
-    // https://github.com/0b5vr/automaton/issues/121
     const automatonWithGUI = new AutomatonWithGUI(
       automatonData,
       {
