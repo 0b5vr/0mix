@@ -1,6 +1,5 @@
 import { invCalcDepth } from '../../../../shaders/modules/invCalcDepth';
 import { assign, build, def, defInNamed, defOut, defUniformNamed, div, insert, main, min, mul, neg, smoothstep, sq, sub, sw, texture, vec4 } from '../../../../shaders/shaderBuilder';
-import { INV_PI } from '../../../../utils/constants';
 import { dofCalcCoC } from './dofCalcCoC';
 
 export const dofPresortFrag = build( () => {
@@ -20,7 +19,7 @@ export const dofPresortFrag = build( () => {
 
     const coc = def( 'float', dofCalcCoC( depth ) );
 
-    const alpha = min( div( INV_PI, sq( coc ) ), INV_PI );
+    const alpha = min( div( 1.0, sq( coc ) ), 1.0 );
 
     const bg = def( 'float', smoothstep( 0.0, 5.0, sub( depth, sw( texTile, 'x' ) ) ) );
 

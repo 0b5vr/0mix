@@ -34,13 +34,12 @@ export const dofBlurFrag = build( () => {
       const texPresort = def( 'vec4', texture( samplerPresort, uv ) );
       const coc = sw( texPresort, 'x' );
 
-      const spread = glslSaturate( sub( coc, r, -1.0 ) );
-      // const spread = glslSaturate( sub( coc, r, -0.5 ) );
+      const weight = glslSaturate( sub( coc, r, -1.0 ) );
 
       const tex0 = def( 'vec4', vec4( sw( texture( sampler0, uv ), 'xyz' ), 1.0 ) );
 
-      addAssign( bg, mul( sw( texPresort, 'y' ), spread, tex0 ) );
-      addAssign( fg, mul( sw( texPresort, 'z' ), spread, tex0 ) );
+      addAssign( bg, mul( sw( texPresort, 'y' ), weight, tex0 ) );
+      addAssign( fg, mul( sw( texPresort, 'z' ), weight, tex0 ) );
     } );
 
     divAssign( sw( bg, 'xyz' ), mix( 1.0, sw( bg, 'w' ), step( 1E-6, sw( bg, 'w' ) ) ) ); // just `bg /= bg.w` but with zerodiv guard
