@@ -354,6 +354,7 @@ export const lshift: {
 ) as any;
 
 export const rshift: {
+  ( x: Ex<'int'>, y: Ex<'int'> ): Ex<'int'>;
   ( x: Ex<'uint'>, y: Ex<'uint'> ): Ex<'uint'>;
   ( x: Ex<'uint'> | Ex<'uvec2'>, y: Ex<'uint'> | Ex<'uvec2'> ): Ex<'uvec2'>;
   ( x: Ex<'uint'> | Ex<'uvec3'>, y: Ex<'uint'> | Ex<'uvec3'> ): Ex<'uvec3'>;

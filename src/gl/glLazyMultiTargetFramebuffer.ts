@@ -1,7 +1,7 @@
 import { gl } from '../globals/canvas';
 import { GL_CLAMP_TO_EDGE, GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, GL_FRAMEBUFFER, GL_LINEAR, GL_RENDERBUFFER, GL_TEXTURE_2D } from './constants';
 import { glCreateTexture } from './glCreateTexture';
-import { GLTextureFormatStuffRGBA32F } from './glSetTexture';
+import { GLTextureFormatStuff, GLTextureFormatStuffRGBA32F } from './glSetTexture';
 import { glTextureFilter } from './glTextureFilter';
 import { glTextureWrap } from './glTextureWrap';
 
@@ -9,6 +9,7 @@ export function glLazyMultiTargetFramebuffer(
   width: number,
   height: number,
   numBuffers?: number,
+  format?: GLTextureFormatStuff,
 ): {
   framebuffer: WebGLFramebuffer;
   renderbuffer: WebGLRenderbuffer;
@@ -35,7 +36,12 @@ export function glLazyMultiTargetFramebuffer(
 
     // == texture ==================================================================================
     textures = [ ...Array( numBuffers ?? 1 ) ].map( ( _, i ) => {
-      const texture = glCreateTexture( width, height, null, GLTextureFormatStuffRGBA32F );
+      const texture = glCreateTexture(
+        width,
+        height,
+        null,
+        format ?? GLTextureFormatStuffRGBA32F,
+      );
       glTextureFilter( texture, GL_LINEAR );
       glTextureWrap( texture, GL_CLAMP_TO_EDGE );
 

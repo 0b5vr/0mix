@@ -30,7 +30,7 @@ export const mengerSpongeFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     const d = def( 'float', sdbox( p, vec3( 0.5 ) ) );
 
     let scale = 1.0;
-    unrollLoop( tag === 'depth' ? 3 : 4, () => {
+    unrollLoop( tag === 'depth' ? 4 : 5, () => {
       const pt = def( 'vec3', abs( sub( mod( add( p, scale / 2.0 ), scale ), scale / 2.0 ) ) );
       assign( pt, sortVec3Components( pt ) );
       assign( d, max( d, neg( sdbox( pt, vec3( scale / 6.0, scale / 6.0, 9 ) ) ) ) );
@@ -65,7 +65,7 @@ export const mengerSpongeFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     const depth = div( sw( projPos, 'z' ), sw( projPos, 'w' ) );
     assign( glFragDepth, add( 0.5, mul( 0.5, depth ) ) );
 
-    const N = def( 'vec3', calcNormal( { rp, map } ) );
+    const N = def( 'vec3', calcNormal( { rp, map, delta: 1E-6 } ) );
     const roughness = 0.5;
     const metallic = 0.0;
     const baseColor = vec3( 0.7 );

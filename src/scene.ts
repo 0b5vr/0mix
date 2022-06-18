@@ -2,7 +2,6 @@ import { CameraStack } from './nodes/CameraStack/CameraStack';
 import { CanvasRenderTarget } from './heck/CanvasRenderTarget';
 import { CubemapNode } from './nodes/CubemapNode/CubemapNode';
 import { Dog } from './heck/Dog';
-import { FUI } from './nodes/FUI/FUI';
 import { Floor } from './nodes/Floor/Floor';
 import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
 import { Lambda } from './heck/components/Lambda';
@@ -154,13 +153,10 @@ const cameraStackOptions = {
 // plane.transform.position = [ 0.0, 3.0, 5.0 ];
 // plane.transform.scale = [ 1.0, 1.0, 1.0 ];
 
-const fui = new FUI();
-
 const sponge = new Sponge();
 
 dog.root.children.push(
   iblLutCalc,
-  fui,
   floor,
   sponge,
   lights,

@@ -285,6 +285,8 @@ export class CameraStack extends SceneNode {
     if ( withPost ) {
       this.postStack = new PostStack( {
         input: cameraTarget as BufferTextureRenderTarget,
+        deferredCamera,
+        deferredTarget,
         target,
       } );
     }

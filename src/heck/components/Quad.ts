@@ -47,7 +47,7 @@ export class Quad extends Component {
     this.clear = options?.clear ?? false;
     this.cull = MeshCull.None;
     this.depthWrite = true;
-    this.depthTest = false;
+    this.depthTest = true;
   }
 
   public drawImmediate( event?: Partial<ComponentUpdateEvent> ): void {

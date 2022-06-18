@@ -1,4 +1,5 @@
 import { glLazyMultiTargetFramebuffer } from '../gl/glLazyMultiTargetFramebuffer';
+import { GLTextureFormatStuff } from '../gl/glSetTexture';
 import { RawBufferRenderTarget } from './RawBufferRenderTarget';
 
 export class BufferTextureRenderTarget extends RawBufferRenderTarget {
@@ -8,8 +9,18 @@ export class BufferTextureRenderTarget extends RawBufferRenderTarget {
     return this.textures[ 0 ];
   }
 
-  public constructor( width: number, height: number, numBuffers?: number ) {
-    const { framebuffer, textures } = glLazyMultiTargetFramebuffer( width, height, numBuffers );
+  public constructor(
+    width: number,
+    height: number,
+    numBuffers?: number,
+    format?: GLTextureFormatStuff,
+  ) {
+    const { framebuffer, textures } = glLazyMultiTargetFramebuffer(
+      width,
+      height,
+      numBuffers,
+      format,
+    );
 
     super( {
       viewport: [ 0, 0, width, height ],

@@ -6,10 +6,14 @@ import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { Swap } from '@0b5vr/experimental';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { DoF } from './DoF/DoF';
 import { Code } from './Code/Code';
+import { PerspectiveCamera } from '../../heck/components/PerspectiveCamera';
 
 export interface PostStackOptions extends ComponentOptions {
   input: BufferTextureRenderTarget;
+  deferredCamera: PerspectiveCamera;
+  deferredTarget: BufferTextureRenderTarget;
   target: RenderTarget;
 }
 
@@ -33,11 +37,19 @@ export class PostStack extends SceneNode {
     }
 
     // -- post -------------------------------------------------------------------------------------
-    const code = new Code( { target: input } );
+    postSwap.swap();
+    const dof = new DoF( {
+      input,
+      deferredCamera: options.deferredCamera,
+      deferredTarget: options.deferredTarget,
+      target: postSwap.i,
+    } );
+
+    const code = new Code( { target: postSwap.i } );
 
     postSwap.swap();
     const bloom = new Bloom( {
-      input,
+      input: postSwap.o,
       target: postSwap.i,
     } );
 
@@ -56,6 +68,7 @@ export class PostStack extends SceneNode {
 
     // -- components -------------------------------------------------------------------------------
     this.children = [
+      dof,
       code,
       bloom,
       post,

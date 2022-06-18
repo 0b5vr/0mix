@@ -14,7 +14,7 @@ export const codeRenderFrag = build( () => {
   const samplerChar = defUniformNamed( 'sampler2D', 'samplerChar' );
 
   main( () => {
-    const uvm = add( 0.5, mul( vec2( 3.5 / 5.0, -3.5 / 5.0 ), vCoord ) );
+    const uvm = add( 0.5, mul( vec2( 3.0 / 5.0, -3.5 / 5.0 ), vCoord ) );
     const uv = mul(
       add(
         uvm,
