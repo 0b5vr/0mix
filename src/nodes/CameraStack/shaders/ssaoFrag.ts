@@ -1,4 +1,4 @@
-import { GLSLExpression, add, addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, div, divAssign, dot, forLoop, ifThen, insert, length, lt, main, mul, normalize, sq, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, add, addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, div, divAssign, dot, forLoop, ifThen, insert, length, lt, main, mul, normalize, sq, sub, sw, texture, vec4 } from '../../../shaders/shaderBuilder';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslSaturate } from '../../../shaders/modules/glslSaturate';
 import { uniformHemisphere } from '../../../shaders/modules/uniformHemisphere';
@@ -12,7 +12,7 @@ export const ssaoFrag = build( () => {
 
   const vUv = defInNamed( 'vec2', 'vUv' );
 
-  const fragColor = defOut( 'vec4' );
+  const fragColor = defOut( 'float' );
 
   const resolution = defUniformNamed( 'vec2', 'resolution' );
   const cameraPV = defUniformNamed( 'mat4', 'cameraPV' );
@@ -66,6 +66,6 @@ export const ssaoFrag = build( () => {
     const normal = def( 'vec3', sw( tex2, 'xyz' ) );
 
     const ao = ssao( position, normal );
-    assign( fragColor, vec4( vec3( ao ), 1.0 ) );
+    assign( fragColor, ao );
   } );
 } );

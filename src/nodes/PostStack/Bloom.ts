@@ -12,6 +12,7 @@ import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { GL_ONE, GL_TEXTURE_2D } from '../../gl/constants';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { GLTextureFormatStuffRGBA16F } from '../../gl/glSetTexture';
 
 export interface BloomOptions {
   input: BufferTextureRenderTarget;
@@ -25,8 +26,8 @@ export class Bloom extends SceneNode {
     const { width, height } = options.target;
 
     const swap = new Swap(
-      new BufferTextureRenderTarget( width, height ),
-      new BufferTextureRenderTarget( width, height ),
+      new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffRGBA16F ),
+      new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffRGBA16F ),
     );
 
     if ( import.meta.env.DEV ) {

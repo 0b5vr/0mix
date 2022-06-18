@@ -15,6 +15,7 @@ import { GL_TEXTURE_2D } from '../../gl/constants';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { BufferMipmapTextureRenderTarget } from '../../heck/BufferMipmapTextureRenderTarget';
 import { UITag } from '../common/UITag';
+import { GLTextureFormatStuffR11G11B10F } from '../../gl/glSetTexture';
 
 export interface FloorCameraOptions extends SceneNodeOptions {
   width: number;
@@ -35,6 +36,8 @@ export class FloorCamera extends SceneNode {
     this.mirrorTarget = new BufferTextureRenderTarget(
       0.5 * primaryCamera.deferredCamera.renderTarget!.width,
       0.5 * primaryCamera.deferredCamera.renderTarget!.height,
+      1,
+      GLTextureFormatStuffR11G11B10F,
     );
 
     if ( import.meta.env.DEV ) {
@@ -78,14 +81,15 @@ export class FloorCamera extends SceneNode {
 
     // -- create mipmaps ---------------------------------------------------------------------------
     const swapMirrorDownsampleTarget = new Swap(
-      new BufferTextureRenderTarget( width, height ),
-      new BufferTextureRenderTarget( width, height ),
+      new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffR11G11B10F ),
+      new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffR11G11B10F ),
     );
 
     this.mipmapMirrorTarget = new BufferMipmapTextureRenderTarget(
       width / 2,
       height / 2,
       6,
+      GLTextureFormatStuffR11G11B10F,
     );
 
     if ( import.meta.env.DEV ) {

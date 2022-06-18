@@ -1,4 +1,4 @@
-import { GLSLExpression, assign, build, def, defInNamed, defOut, defUniformNamed, div, dot, gt, ifThen, insert, main, max, mix, mul, normalize, pow, sqrt, sub, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, assign, build, def, defInNamed, defOut, defUniformNamed, div, dot, gt, ifThen, insert, main, max, mix, mul, normalize, pow, sqrt, sub, sw, texture, vec2, vec3 } from '../../../shaders/shaderBuilder';
 import { IBLLUT_ITER } from '../../../config';
 import { glslSaturate } from '../../../shaders/modules/glslSaturate';
 import { sampleGGX } from '../../../shaders/modules/sampleGGX';
@@ -9,7 +9,7 @@ export const iblLutFrag = build( () => {
 
   const vUv = defInNamed( 'vec2', 'vUv' );
 
-  const fragColor = defOut( 'vec4' );
+  const fragColor = defOut( 'vec2' );
 
   const vdc = defUniformNamed( 'float', 'vdc' ); // normal.xyz
   const samples = defUniformNamed( 'float', 'samples' ); // normal.xyz
@@ -80,6 +80,6 @@ export const iblLutFrag = build( () => {
       div( 1.0, samples ),
     );
 
-    assign( fragColor, vec4( result, 0.0, 1.0 ) );
+    assign( fragColor, result );
   } );
 } );

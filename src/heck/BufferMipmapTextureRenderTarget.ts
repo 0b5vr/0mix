@@ -1,12 +1,18 @@
 import { glLazyMipmapFramebuffers } from '../gl/glLazyMipmapFramebuffers';
+import { GLTextureFormatStuff } from '../gl/glSetTexture';
 import { RawBufferRenderTarget } from './RawBufferRenderTarget';
 
 export class BufferMipmapTextureRenderTarget extends RawBufferRenderTarget {
   public readonly texture: WebGLTexture;
   public readonly mipmapTargets: RawBufferRenderTarget[] | null;
 
-  public constructor( width: number, height: number, levels: number ) {
-    const { framebuffers, texture } = glLazyMipmapFramebuffers( width, height, levels );
+  public constructor(
+    width: number,
+    height: number,
+    levels: number,
+    format?: GLTextureFormatStuff,
+  ) {
+    const { framebuffers, texture } = glLazyMipmapFramebuffers( width, height, levels, format );
 
     super( {
       viewport: [ 0, 0, width, height ],

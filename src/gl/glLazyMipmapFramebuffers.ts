@@ -1,5 +1,6 @@
 import { gl } from '../globals/canvas';
 import { GL_CLAMP_TO_EDGE, GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, GL_FRAMEBUFFER, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR, GL_RENDERBUFFER, GL_RGBA32F, GL_TEXTURE_2D } from './constants';
+import { GLTextureFormatStuff } from './glSetTexture';
 import { glTextureFilter } from './glTextureFilter';
 import { glTextureWrap } from './glTextureWrap';
 
@@ -7,6 +8,7 @@ export function glLazyMipmapFramebuffers(
   width: number,
   height: number,
   levels: number,
+  format?: GLTextureFormatStuff,
 ): {
   framebuffers: WebGLFramebuffer[];
   renderbuffer: WebGLRenderbuffer;
@@ -22,7 +24,7 @@ export function glLazyMipmapFramebuffers(
     glTextureWrap( texture, GL_CLAMP_TO_EDGE );
 
     gl.bindTexture( GL_TEXTURE_2D, texture );
-    gl.texStorage2D( GL_TEXTURE_2D, levels, GL_RGBA32F, width, height );
+    gl.texStorage2D( GL_TEXTURE_2D, levels, format?.[ 0 ] ?? GL_RGBA32F, width, height );
     gl.bindTexture( GL_TEXTURE_2D, null );
 
     // == framebuffers =============================================================================

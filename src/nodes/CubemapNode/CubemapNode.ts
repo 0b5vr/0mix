@@ -19,6 +19,7 @@ import { quadVert } from '../../shaders/common/quadVert';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { UITag } from '../common/UITag';
+import { GLTextureFormatStuffR11G11B10F } from '../../gl/glSetTexture';
 
 export const CubemapNodeTag = Symbol();
 
@@ -52,7 +53,9 @@ export class CubemapNode extends SceneNode {
     const { scene } = options;
 
     // -- cubemap ----------------------------------------------------------------------------------
-    const targets = [ ...Array( 6 ) ].map( () => new BufferTextureRenderTarget( 256, 256 ) );
+    const targets = [ ...Array( 6 ) ].map( () => (
+      new BufferTextureRenderTarget( 256, 256, 1, GLTextureFormatStuffR11G11B10F )
+    ) );
 
     if ( import.meta.env.DEV ) {
       targets.map( ( target, i ) => target.name = `cubemapTarget${ i }` );
