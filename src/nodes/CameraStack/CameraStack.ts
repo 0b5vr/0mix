@@ -23,6 +23,7 @@ import { ssaoFrag } from './shaders/ssaoFrag';
 import { GL_NEAREST, GL_TEXTURE_2D } from '../../gl/constants';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { glTextureFilter } from '../../gl/glTextureFilter';
+import { GLTextureFormatStuffRGBA16F } from '../../gl/glSetTexture';
 
 export interface CameraStackOptions extends ComponentOptions {
   width: number;
@@ -66,6 +67,8 @@ export class CameraStack extends SceneNode {
     const cameraTarget = withPost ? new BufferTextureRenderTarget(
       target.width,
       target.height,
+      1,
+      GLTextureFormatStuffRGBA16F,
     ) : target;
 
     if ( import.meta.env.DEV && cameraTarget instanceof RawBufferRenderTarget ) {

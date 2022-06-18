@@ -5,7 +5,6 @@ export const dustRenderVert = build( () => {
   const computeUV = defIn( 'vec2' );
 
   const vPosition = defOutNamed( 'vec4', 'vPosition' );
-  const vOpacity = defOutNamed( 'float', 'vOpacity' );
 
   const resolution = defUniformNamed( 'vec2', 'resolution' );
   const projectionMatrix = defUniformNamed( 'mat4', 'projectionMatrix' );
@@ -18,9 +17,6 @@ export const dustRenderVert = build( () => {
     // -- fetch texture ----------------------------------------------------------------------------
     const tex0 = texture( samplerCompute0, computeUV );
     // const tex1 = texture( samplerCompute1, computeUV );
-
-    // -- life -------------------------------------------------------------------------------------
-    assign( vOpacity, sin( mul( PI, sw( tex0, 'w' ) ) ) );
 
     // -- send the vertex position -----------------------------------------------------------------
     assign( vPosition, mul( modelMatrix, vec4( sw( tex0, 'xyz' ), 1.0 ) ) );
@@ -37,8 +33,9 @@ export const dustRenderVert = build( () => {
 
     assign( glPointSize, mul(
       sw( resolution, 'y' ),
+      sin( mul( PI, sw( tex0, 'w' ) ) ), // life
       ( ( projectionMatrix ) + '[0][0]' ) as GLSLExpression<'float'>,
-      div( 0.004, sw( glPosition, 'w' ) ),
+      div( 0.001, sw( glPosition, 'w' ) ),
     ) );
   } );
 } );

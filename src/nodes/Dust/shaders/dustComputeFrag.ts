@@ -58,8 +58,8 @@ export const dustComputeFrag = (
       assign( dt, sub( time, spawnTime ) );
 
       assign( pos, mix(
-        vec3( -10.0, 0.0, -10.0 ),
-        vec3( 10.0, 10.0, 10.0 ),
+        vec3( -1.0 ),
+        vec3( 1.0 ),
         vec3( random(), random(), random() ),
       ) );
       assign( vel, vec3( 0.0 ) );
@@ -72,7 +72,7 @@ export const dustComputeFrag = (
       mul( 0.5, pos ),
       sin( mul( 0.1, time ) ),
     );
-    addAssign( vel, mul( 2.0, dt, cyclicNoise( cyclicV ) ) );
+    addAssign( vel, mul( 0.1, dt, cyclicNoise( cyclicV ) ) );
 
     // resistance
     mulAssign( vel, exp( mul( -10.0, dt ) ) );

@@ -1,4 +1,4 @@
-import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformArrayNamed, div, glPointCoord, insert, length, main, max, mul, mulAssign, num, retFn, smoothstep, sq, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformArrayNamed, discard, div, glPointCoord, ifThen, insert, length, lt, main, max, mul, mulAssign, num, retFn, sq, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { calcL } from '../../../shaders/modules/calcL';
 import { defDoSomethingUsingSamplerArray } from '../../../shaders/modules/defDoSomethingUsingSamplerArray';
 import { doShadowMapping } from '../../../shaders/modules/doShadowMapping';
@@ -8,7 +8,6 @@ export const dustRenderFrag = build( () => {
   insert( 'precision highp float;' );
 
   const vPosition = defInNamed( 'vec4', 'vPosition' );
-  const vOpacity = defInNamed( 'float', 'vOpacity' );
 
   const fragColor = defOut( 'vec4' );
 
@@ -23,8 +22,9 @@ export const dustRenderFrag = build( () => {
   } );
 
   main( () => {
+    ifThen( lt( 0.5, length( sub( glPointCoord, 0.5 ) ) ), () => discard() );
+
     const position = sw( vPosition, 'xyz' );
-    const shape = smoothstep( 0.5, 0.0, length( sub( glPointCoord, 0.5 ) ) );
 
     const accum = def( 'vec3', vec3( 0.0 ) );
 
@@ -58,9 +58,7 @@ export const dustRenderFrag = build( () => {
     } );
 
     assign( fragColor, vec4( vec3( mul(
-      0.03,
-      vOpacity,
-      shape,
+      0.1,
       accum,
     ) ), 1.0 ) );
 

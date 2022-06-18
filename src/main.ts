@@ -7,6 +7,7 @@ import { getDivCanvasContainer } from './globals/dom';
 import { gui } from './globals/gui';
 import { music } from './globals/music';
 import { audio } from './globals/audio';
+import { DEV_CANVAS_RESOLUTION } from './config';
 
 // == dom ==========================================================================================
 document.body.style.margin = '0';
@@ -41,7 +42,7 @@ if ( import.meta.env.DEV ) {
       return task.promise;
     } );
 
-    initDesktop( 1280, 720 );
+    initDesktop( DEV_CANVAS_RESOLUTION[ 0 ], DEV_CANVAS_RESOLUTION[ 1 ] );
     dog.active = true;
     ( automaton as AutomatonWithGUI ).play();
   };

@@ -11,7 +11,7 @@ import { quadVert } from '../../shaders/common/quadVert';
 import { randomTexture } from '../../globals/randomTexture';
 import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
-import { GL_ONE, GL_POINTS, GL_TEXTURE_2D } from '../../gl/constants';
+import { GL_POINTS, GL_TEXTURE_2D } from '../../gl/constants';
 
 const particlesSqrt = 256;
 const particles = particlesSqrt * particlesSqrt;
@@ -70,7 +70,6 @@ export class Dust extends GPUParticles {
       dustRenderFrag,
       {
         initOptions: { geometry, target: dummyRenderTarget1 },
-        blend: [ GL_ONE, GL_ONE ],
       },
     );
 
@@ -82,8 +81,8 @@ export class Dust extends GPUParticles {
           './shaders/dustRenderVert',
           './shaders/dustRenderFrag',
         ],
-        ( [ { dustRenderVert }, { dustRenderFrag } ] ) => {
-          forward.replaceShader( dustRenderVert, dustRenderFrag );
+        ( [ v, f ] ) => {
+          forward.replaceShader( v?.dustRenderVert, f?.dustRenderFrag );
         },
       );
     }
@@ -99,7 +98,9 @@ export class Dust extends GPUParticles {
       tags: [ DustTag ],
     } );
 
+    this.transform.position = [ 0.0, 3.0, 0.0 ];
+    this.transform.scale = [ 5.0, 5.0, 5.0 ];
+
     this.children.unshift( lambdaLightUniforms );
-    this.meshRender.depthWrite = false;
   }
 }
