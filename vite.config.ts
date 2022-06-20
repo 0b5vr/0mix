@@ -1,6 +1,7 @@
 import { defineConfig, Terser } from 'vite';
 import { domprops } from './domprops';
 import { automatonMinifierPlugin } from './vite-automaton-minifier-plugin';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 const terserOptions: Terser.MinifyOptions = {
   compress: {
@@ -43,6 +44,15 @@ export default defineConfig( ( { mode } ) => {
       target: 'esnext',
       minify: mode === 'prod' ? 'terser' : false,
       terserOptions: mode === 'prod' ? terserOptions : undefined,
+      rollupOptions: {
+        plugins: [
+          visualizer( {
+            json: true,
+            gzipSize: true,
+            brotliSize: true,
+          } ),
+        ],
+      }
     },
     plugins: [
       automatonMinifierPlugin( {
