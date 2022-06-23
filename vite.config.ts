@@ -44,6 +44,7 @@ export default defineConfig( ( { mode } ) => {
       target: 'esnext',
       minify: mode === 'prod' ? 'terser' : false,
       terserOptions: mode === 'prod' ? terserOptions : undefined,
+      sourcemap: true,
       rollupOptions: {
         plugins: [
           visualizer( {
