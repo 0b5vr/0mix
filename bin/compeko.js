@@ -46,6 +46,13 @@ console.info( 'Compressing the file...' );
     blocksplitting: true,
   } );
 
+  // extra: output deflate
+  {
+    const outputPathBase = outputPath.match( /(.*)\..+$/ )[ 1 ];
+    const deflatePath = `${ outputPathBase }.deflate.bin`;
+    await fs.promises.writeFile( deflatePath, compressed );
+  }
+
   const header = '<script>fetch("#").then(t=>t.blob()).then(t=>new Response(t.slice(156).stream().pipeThrough(new DecompressionStream("deflate"))).text()).then(eval)</script>';
   const headerBuffer = Buffer.alloc( header.length );
   headerBuffer.write( header );
