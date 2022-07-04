@@ -217,6 +217,10 @@ export const addAssign: {
   ( dst: Tok<'vec2'>, src: Exf | Ex<'vec2'> ): void;
   ( dst: Tok<'vec3'>, src: Exf | Ex<'vec3'> ): void;
   ( dst: Tok<'vec4'>, src: Exf | Ex<'vec4'> ): void;
+  ( dst: Tok<'int'>, src: Ex<'int'> ): void;
+  ( dst: Tok<'ivec2'>, src: Exf | Ex<'ivec2'> ): void;
+  ( dst: Tok<'ivec3'>, src: Exf | Ex<'ivec3'> ): void;
+  ( dst: Tok<'ivec4'>, src: Exf | Ex<'ivec4'> ): void;
   ( dst: Tok<'uint'>, src: Ex<'uint'> ): void;
   ( dst: Tok<'uvec2'>, src: Ex<'uint'> | Ex<'uvec2'> ): void;
   ( dst: Tok<'uvec3'>, src: Ex<'uint'> | Ex<'uvec3'> ): void;
@@ -230,6 +234,10 @@ export const subAssign: {
   ( dst: Tok<'vec2'>, src: Exf | Ex<'vec2'> ): void;
   ( dst: Tok<'vec3'>, src: Exf | Ex<'vec3'> ): void;
   ( dst: Tok<'vec4'>, src: Exf | Ex<'vec4'> ): void;
+  ( dst: Tok<'int'>, src: Ex<'int'> ): void;
+  ( dst: Tok<'ivec2'>, src: Exf | Ex<'ivec2'> ): void;
+  ( dst: Tok<'ivec3'>, src: Exf | Ex<'ivec3'> ): void;
+  ( dst: Tok<'ivec4'>, src: Exf | Ex<'ivec4'> ): void;
   ( dst: Tok<'uint'>, src: Ex<'uint'> ): void;
   ( dst: Tok<'uvec2'>, src: Ex<'uint'> | Ex<'uvec2'> ): void;
   ( dst: Tok<'uvec3'>, src: Ex<'uint'> | Ex<'uvec3'> ): void;
@@ -730,7 +738,7 @@ export const textureLod: {
 } = __callFn( 'textureLod' ) as any;
 
 export const texelFetch: {
-  ( sampler: Ex<'sampler2D'>, x: Ex<'ivec2'>, lod?: Ex<'int'> ): Ex<'vec4'>;
+  ( sampler: Ex<'sampler2D'>, x: Ex<'ivec2'>, lod: Ex<'int'> ): Ex<'vec4'>;
 } = __callFn( 'texelFetch' ) as any;
 
 type FloatArg =
