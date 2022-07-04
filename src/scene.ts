@@ -3,11 +3,8 @@ import { CanvasRenderTarget } from './heck/CanvasRenderTarget';
 import { Dog } from './heck/Dog';
 import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
 import { Lambda } from './heck/components/Lambda';
-import { RawVector3, vecAdd } from '@0b5vr/experimental';
-import { VRCameraStack } from './nodes/CameraStack/VRCameraStack';
-import { auto, automaton } from './globals/automaton';
+import { automaton } from './globals/automaton';
 import { canvas, gl } from './globals/canvas';
-import { createVRSesh } from './globals/createVRSesh';
 import { music } from './globals/music';
 import { promiseGui } from './globals/gui';
 import { randomTexture } from './globals/randomTexture';
@@ -157,54 +154,7 @@ export async function initDesktop( width: number, height: number ): Promise<void
     cameraStack.name = 'cameraStack';
   }
 
-  dog.root.children.push(
-    new Lambda( {
-      name: import.meta.env.DEV ? 'cameraLambda' : undefined,
-      onUpdate: ( { time } ) => {
-        const shake = auto( 'camera/shake' );
-
-        const posR = auto( 'camera/pos/r' );
-        const posP = auto( 'camera/pos/p' );
-        const posT = auto( 'camera/pos/t' );
-        const pos = vecAdd(
-          [
-            auto( 'camera/pos/x' ),
-            auto( 'camera/pos/y' ),
-            auto( 'camera/pos/z' ),
-          ],
-          [
-            posR * Math.cos( posT ) * Math.sin( posP ),
-            posR * Math.sin( posT ),
-            posR * Math.cos( posT ) * Math.cos( posP ),
-          ],
-          [
-            0.04 * shake * Math.sin( time * 2.4 ),
-            0.04 * shake * Math.sin( time * 3.4 ),
-            0.04 * shake * Math.sin( time * 2.7 ),
-          ],
-        ) as RawVector3;
-
-        const tar = vecAdd(
-          [
-            auto( 'camera/tar/x' ),
-            auto( 'camera/tar/y' ),
-            auto( 'camera/tar/z' ),
-          ],
-          [
-            0.04 * shake * Math.sin( time * 2.8 ),
-            0.04 * shake * Math.sin( time * 2.5 ),
-            0.04 * shake * Math.sin( time * 3.1 ),
-          ],
-        ) as RawVector3;
-
-        const roll = auto( 'camera/roll' ) + 0.01 * shake * Math.sin( time * 1.1 );
-
-        cameraStack.fov = auto( 'camera/fov' );
-        cameraStack.transform.lookAt( pos, tar, [ 0.0, 1.0, 0.0 ], roll );
-      },
-    } ),
-    cameraStack,
-  );
+  spongeScene.cameraProxy.children = [ cameraStack ];
 
   if ( import.meta.env.DEV ) {
     import( './nodes/RTInspector/RTInspector' ).then( ( { RTInspector } ) => {
@@ -216,48 +166,10 @@ export async function initDesktop( width: number, height: number ): Promise<void
   }
 
   const update = function(): void {
-    if ( import.meta.env.DEV ) {
-      // vr
-      if ( !cameraStack.active ) {
-        return;
-      }
-    }
-
     dog.update();
 
     requestAnimationFrame( update );
   };
 
   update();
-}
-
-// -- vr -------------------------------------------------------------------------------------------
-export async function initVR(): Promise<void> {
-  const vrSesh = await createVRSesh();
-
-  const vrCameraStack = new VRCameraStack( {
-    ...cameraStackOptions,
-    vrSesh,
-    dog,
-  } );
-  vrCameraStack.transform.position = [ 0.0, 0.0, 5.0 ];
-
-  if ( import.meta.env.DEV ) {
-    vrCameraStack.name = 'vrCameraStack';
-
-    const existingCameraStack = dog.root.children.find( ( compo ) => compo.name === 'cameraStack' );
-    if ( existingCameraStack ) {
-      existingCameraStack.active = false;
-    }
-  }
-
-  dog.root.children.push(
-    vrCameraStack,
-  );
-}
-
-if ( import.meta.env.DEV ) {
-  promiseGui.then( ( gui ) => {
-    gui.button( 'vr (what)' ).on( 'click', initVR );
-  } );
 }

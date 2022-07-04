@@ -8,6 +8,8 @@ import { PointLightNode } from '../Lights/PointLightNode';
 import { Sponge } from './Sponge/Sponge';
 
 export class SpongeScene extends SceneNode {
+  public cameraProxy: SceneNode;
+
   public constructor() {
     super();
 
@@ -63,6 +65,14 @@ export class SpongeScene extends SceneNode {
       scene,
     } );
 
+    this.cameraProxy = new SceneNode();
+    this.cameraProxy.transform.lookAt(
+      [ 0.0, 0.0, 3.0 ],
+      [ 0.0, 0.0, 0.0 ],
+      [ 0.0, 1.0, 0.0 ],
+      0.4,
+    );
+
     this.children = [
       lambdaSpeen,
       lightL,
@@ -71,6 +81,7 @@ export class SpongeScene extends SceneNode {
       sponge,
       dust,
       cubemapNode,
+      this.cameraProxy,
     ];
   }
 }

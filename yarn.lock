@@ -14,10 +14,10 @@
   resolved "https://registry.yarnpkg.com/@0b5vr/automaton/-/automaton-4.2.1.tgz#9ba2fe920421102940254918ceaa7d5aade747e4"
   integrity sha512-+co+9owRVycY3EqQhlCQ5iIhnt4Rh4zQOfdbEXN+WRFPfjXhlnwW6ZXA7WRXz9qFQqimuFKZfZLZxy30B/ZnOg==
 
-"@0b5vr/experimental@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@0b5vr/experimental/-/experimental-0.8.0.tgz#3abfdde3714313ea67d19bd2123ab19135361fad"
-  integrity sha512-h1KHFiYYWvB4lvsabK80Slypc6q+ap+cho0nhkDVxoSIk6zOm4YPCRHTDU1LI/gPh1wR60ZzJQasr+pYbLWa5g==
+"@0b5vr/experimental@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@0b5vr/experimental/-/experimental-0.9.0.tgz#2bc608f67fd8162ba1f6f25a7f68382da4ca297f"
+  integrity sha512-8lxOBUILVYJv8CYJj+cL6q55gEYDHMY6XYHMZ960bxYQRK1EVJsg1S6nVN/ZjtjszT9ots876TNxingPDoD5cw==
 
 "@0b5vr/imtweakpane@^0.1.3":
   version "0.1.3"

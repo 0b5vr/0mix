@@ -21,7 +21,7 @@ export class SceneNode extends Component {
     this.children = options?.children ?? [];
   }
 
-  public __updateImpl( event: ComponentUpdateEvent ): void {
+  protected __updateImpl( event: ComponentUpdateEvent ): void {
     this.globalTransformCache = event.globalTransform.multiply( this.transform );
     const ancestors = [ this, ...event.ancestors ];
 
@@ -40,7 +40,7 @@ export class SceneNode extends Component {
     } );
   }
 
-  public __drawImpl( event: ComponentDrawEvent ): void {
+  protected __drawImpl( event: ComponentDrawEvent ): void {
     this.globalTransformCache = event.globalTransform.multiply( this.transform );
     const ancestors = [ this, ...event.ancestors ];
 
