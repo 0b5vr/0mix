@@ -1,7 +1,11 @@
-import { abs, div, GLSLExpression, min, mul, sub } from '../../../../shaders/shaderBuilder';
+import { abs, defUniformNamed, div, GLSLExpression, min, mul, sub, sw } from '../../../../shaders/shaderBuilder';
 
 export function dofCalcCoC(
   depth: GLSLExpression<'float'>,
 ): GLSLExpression<'float'> {
-  return mul( 8.0, min( 1.0, abs( div( sub( depth, 2.0 ), depth ) ) ) );
+  const dofDepthSize = defUniformNamed( 'vec2', 'dofDepthSize' );
+  return mul(
+    sw( dofDepthSize, 'y' ),
+    min( 1.0, abs( div( sub( depth, sw( dofDepthSize, 'x' ) ), depth ) ) ),
+  );
 }

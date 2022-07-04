@@ -1,5 +1,6 @@
 import { quatFromAxisAngle } from '@0b5vr/experimental';
 import { FAR, NEAR } from '../../config';
+import { emit, EventType } from '../../globals/globalEvent';
 import { Lambda } from '../../heck/components/Lambda';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { CubemapNode } from '../CubemapNode/CubemapNode';
@@ -67,11 +68,18 @@ export class SpongeScene extends SceneNode {
 
     this.cameraProxy = new SceneNode();
     this.cameraProxy.transform.lookAt(
-      [ 0.0, 0.0, 3.0 ],
+      [ 0.0, 0.2, 3.0 ],
       [ 0.0, 0.0, 0.0 ],
       [ 0.0, 1.0, 0.0 ],
       0.4,
     );
+
+    const lambdaUpdateCameraParams = new Lambda( {
+      onUpdate: () => {
+        emit( EventType.CameraFov, 40.0 );
+        emit( EventType.CameraDoF, [ 1.5, 8.0 ] );
+      },
+    } );
 
     this.children = [
       lambdaSpeen,
@@ -81,6 +89,7 @@ export class SpongeScene extends SceneNode {
       sponge,
       dust,
       cubemapNode,
+      lambdaUpdateCameraParams,
       this.cameraProxy,
     ];
   }

@@ -24,6 +24,7 @@ import { GL_NEAREST, GL_TEXTURE_2D } from '../../gl/constants';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { glTextureFilter } from '../../gl/glTextureFilter';
 import { GLTextureFormatStuffR16F, GLTextureFormatStuffRGBA16F } from '../../gl/glSetTexture';
+import { EventType, on } from '../../globals/globalEvent';
 
 export interface CameraStackOptions extends ComponentOptions {
   width: number;
@@ -43,15 +44,6 @@ export class CameraStack extends SceneNode {
   public deferredCamera: PerspectiveCamera;
   public forwardCamera: PerspectiveCamera;
   public postStack?: PostStack;
-
-  public get fov(): number {
-    return this.deferredCamera.fov;
-  }
-
-  public set fov( value: number ) {
-    this.deferredCamera.fov = value;
-    this.forwardCamera.fov = value;
-  }
 
   public constructor( options: CameraStackOptions ) {
     super( options );
@@ -295,6 +287,12 @@ export class CameraStack extends SceneNode {
         target,
       } );
     }
+
+    // -- event listener ---------------------------------------------------------------------------
+    on( EventType.CameraFov, ( fov ) => {
+      this.deferredCamera.fov = fov;
+      this.forwardCamera.fov = fov;
+    } );
 
     // -- components -------------------------------------------------------------------------------
     this.children = [

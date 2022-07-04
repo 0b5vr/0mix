@@ -2,6 +2,7 @@ import { GL_NEAREST, GL_TEXTURE_2D } from '../../../gl/constants';
 import { GLTextureFormatStuffR11G11B10F, GLTextureFormatStuffRG16F, GLTextureFormatStuffRGBA16F } from '../../../gl/glSetTexture';
 import { glTextureFilter } from '../../../gl/glTextureFilter';
 import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
+import { EventType, on } from '../../../globals/globalEvent';
 import { quadGeometry } from '../../../globals/quadGeometry';
 import { BufferTextureRenderTarget } from '../../../heck/BufferTextureRenderTarget';
 import { PerspectiveCamera } from '../../../heck/components/PerspectiveCamera';
@@ -200,6 +201,12 @@ export class DoF extends SceneNode {
       quadBlur.name = 'quadBlur';
       quadPost.name = 'quadPost';
     }
+
+    // -- event listener ---------------------------------------------------------------------------
+    on( EventType.CameraDoF, ( [ depth, size ] ) => {
+      materialTileMaxH.addUniform( 'dofDepthSize', '2f', depth, size );
+      materialPresort.addUniform( 'dofDepthSize', '2f', depth, size );
+    } );
 
     // -- children ---------------------------------------------------------------------------------
     this.children = [
