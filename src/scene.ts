@@ -1,14 +1,9 @@
 import { CameraStack } from './nodes/CameraStack/CameraStack';
 import { CanvasRenderTarget } from './heck/CanvasRenderTarget';
-import { CubemapNode } from './nodes/CubemapNode/CubemapNode';
 import { Dog } from './heck/Dog';
-import { Floor } from './nodes/Floor/Floor';
 import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
 import { Lambda } from './heck/components/Lambda';
-import { Lights } from './nodes/Lights/Lights';
-import { Dust } from './nodes/Dust/Dust';
 import { RawVector3, vecAdd } from '@0b5vr/experimental';
-import { Sponge } from './nodes/Sponge/Sponge';
 import { VRCameraStack } from './nodes/CameraStack/VRCameraStack';
 import { auto, automaton } from './globals/automaton';
 import { canvas, gl } from './globals/canvas';
@@ -16,6 +11,7 @@ import { createVRSesh } from './globals/createVRSesh';
 import { music } from './globals/music';
 import { promiseGui } from './globals/gui';
 import { randomTexture } from './globals/randomTexture';
+import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
@@ -123,45 +119,23 @@ if ( import.meta.env.DEV ) {
 // const plane = new Plane();
 // dog.root.children.push( plane );
 
-export const tagMainCamera = Symbol();
-
 const iblLutCalc = new IBLLUTCalc();
 
-const lights = new Lights( dog.root );
-
-const floor = new Floor();
-
-const dust = new Dust();
-
-const cubemapNode = new CubemapNode( {
-  scene: dog.root,
-} );
-
-if ( import.meta.env.DEV ) {
-  cubemapNode.name = 'cubemapNode';
-}
+const spongeScene = new SpongeScene();
 
 const cameraStackOptions = {
   scene: dog.root,
-  floor,
   withAO: true,
   withPost: true,
-  tags: [ tagMainCamera ],
 };
 
 // const plane = new Plane();
 // plane.transform.position = [ 0.0, 3.0, 5.0 ];
 // plane.transform.scale = [ 1.0, 1.0, 1.0 ];
 
-const sponge = new Sponge();
-
 dog.root.children.push(
   iblLutCalc,
-  floor,
-  sponge,
-  lights,
-  dust,
-  cubemapNode,
+  spongeScene,
   // plane,
 );
 

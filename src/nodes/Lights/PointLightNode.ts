@@ -9,6 +9,7 @@ import { quadVert } from '../../shaders/common/quadVert';
 import { shadowBlurFrag } from './shaders/shadowBlurFrag';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { GLTextureFormatStuffRG16F } from '../../gl/glSetTexture';
 
 export const PointLightTag = Symbol();
 
@@ -44,12 +45,18 @@ export class PointLightNode extends SceneNode {
 
     this.tags.push( PointLightTag );
 
-    const shadowMapSize = options.shadowMapSize ?? 256;
+    const shadowMapSize = options.shadowMapSize ?? 1024;
 
     const swap = new Swap(
-      new BufferTextureRenderTarget( shadowMapSize, shadowMapSize ),
-      new BufferTextureRenderTarget( shadowMapSize, shadowMapSize )
+      new BufferTextureRenderTarget( shadowMapSize, shadowMapSize, 1, GLTextureFormatStuffRG16F ),
+      new BufferTextureRenderTarget( shadowMapSize, shadowMapSize, 1, GLTextureFormatStuffRG16F )
     );
+
+    if ( import.meta.env.DEV ) {
+      const id = Math.floor( 1E9 * Math.random() );
+      swap.i.name = `PointLightNode${ id }/shadow/0`;
+      swap.o.name = `PointLightNode${ id }/shadow/1`;
+    }
 
     // -- camera -----------------------------------------------------------------------------------
     const fov = options.shadowMapFov ?? 45.0;

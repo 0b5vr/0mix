@@ -1,13 +1,10 @@
-import { RaymarcherNode } from '../utils/RaymarcherNode';
+import { RaymarcherNode } from '../../utils/RaymarcherNode';
 import { mengerSpongeFrag } from './shaders/spongeFrag';
-import { objectVert } from '../../shaders/common/objectVert';
+import { objectVert } from '../../../shaders/common/objectVert';
 
 export class Sponge extends RaymarcherNode {
   public constructor() {
     super( mengerSpongeFrag );
-
-    this.transform.position[ 1 ] = 3.0;
-    this.transform.scale = [ 3.0, 3.0, 3.0 ];
 
     if ( import.meta.hot ) {
       import.meta.hot.accept(

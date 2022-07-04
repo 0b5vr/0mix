@@ -1,11 +1,11 @@
-import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/shaders/deferredShadeFrag';
-import { abs, add, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, discard, div, glFragCoord, glFragDepth, gt, ifThen, insert, length, main, max, mod, mul, neg, normalize, retFn, sub, sw, unrollLoop, vec3, vec4 } from '../../../shaders/shaderBuilder';
-import { calcShadowDepth } from '../../../shaders/modules/calcDepth';
-import { calcNormal } from '../../../shaders/modules/calcNormal';
-import { raymarch } from '../../../shaders/modules/raymarch';
-import { sdbox } from '../../../shaders/modules/sdbox';
-import { setupRoRd } from '../../../shaders/modules/setupRoRd';
-import { sortVec3Components } from '../../../shaders/modules/sortVec3Components';
+import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/shaders/deferredShadeFrag';
+import { abs, add, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, discard, div, glFragCoord, glFragDepth, gt, ifThen, insert, length, main, max, mod, mul, neg, normalize, retFn, sub, sw, unrollLoop, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { calcShadowDepth } from '../../../../shaders/modules/calcDepth';
+import { calcNormal } from '../../../../shaders/modules/calcNormal';
+import { raymarch } from '../../../../shaders/modules/raymarch';
+import { sdbox } from '../../../../shaders/modules/sdbox';
+import { setupRoRd } from '../../../../shaders/modules/setupRoRd';
+import { sortVec3Components } from '../../../../shaders/modules/sortVec3Components';
 
 export const mengerSpongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
@@ -30,7 +30,7 @@ export const mengerSpongeFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     const d = def( 'float', sdbox( p, vec3( 0.5 ) ) );
 
     let scale = 1.0;
-    unrollLoop( tag === 'depth' ? 4 : 5, () => {
+    unrollLoop( tag === 'depth' ? 3 : 5, () => {
       const pt = def( 'vec3', abs( sub( mod( add( p, scale / 2.0 ), scale ), scale / 2.0 ) ) );
       assign( pt, sortVec3Components( pt ) );
       assign( d, max( d, neg( sdbox( pt, vec3( scale / 6.0, scale / 6.0, 9 ) ) ) ) );
@@ -54,7 +54,6 @@ export const mengerSpongeFrag = ( tag: 'deferred' | 'depth' ): string => build( 
       rd,
       map,
       initRl: length( sub( sw( vPositionWithoutModel, 'xyz' ), ro ) ),
-      marchMultiplier: 0.6,
     } );
 
     ifThen( gt( sw( isect, 'x' ), 1E-2 ), () => discard() );

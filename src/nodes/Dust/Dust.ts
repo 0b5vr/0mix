@@ -98,9 +98,6 @@ export class Dust extends GPUParticles {
       tags: [ DustTag ],
     } );
 
-    this.transform.position = [ 0.0, 3.0, 0.0 ];
-    this.transform.scale = [ 5.0, 5.0, 5.0 ];
-
     this.children.unshift( lambdaLightUniforms );
   }
 }

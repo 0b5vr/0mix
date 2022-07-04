@@ -9,7 +9,7 @@ import { dog } from '../../scene';
 
 export interface VRCameraStackOptions extends ComponentOptions {
   scene: SceneNode;
-  floor: Floor;
+  floor?: Floor;
   vrSesh: VRSesh;
   dog: Dog;
 }
