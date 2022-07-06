@@ -89,8 +89,8 @@ export class Trails extends GPUParticles {
     if ( import.meta.hot ) {
       import.meta.hot.accept(
         [
-          '../shaders/trailsRenderVert',
-          '../shaders/trailsRenderFrag',
+          './shaders/trailsRenderVert',
+          './shaders/trailsRenderFrag',
         ],
         ( [ { trailsRenderVert }, { trailsRenderFrag } ] ) => {
           deferred.replaceShader(
