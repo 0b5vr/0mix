@@ -38,27 +38,32 @@ if ( import.meta.env.DEV ) {
   } ) );
 
   promiseGui.then( ( gui ) => {
+    gui.input( 'webgl-memory/active', false );
+
     const webglMemory = gl.getExtension( 'GMAN_webgl_memory' );
 
-    if ( webglMemory ) {
-      gui.input( 'webgl-memory/enabled', false );
-
-      dog.root.children.push( new Lambda( {
-        onUpdate: () => {
-          if ( gui.value( 'webgl-memory/enabled' ) ) {
+    dog.root.children.push( new Lambda( {
+      onUpdate: () => {
+        if ( gui.value( 'webgl-memory/active' ) ) {
+          if ( webglMemory == null ) {
+            gui.monitor(
+              'webgl-memory/unavailable',
+              'make sure you import webgl-memory',
+            );
+          } else {
             const info = webglMemory.getMemoryInfo();
 
             gui.monitor(
               'webgl-memory/buffer',
-              `${ info.resources.buffer } / ${ ( info.memory.buffer * 1E-6 ).toFixed( 3 ) } MB`,
+              `${ info.resources.buffer } - ${ ( info.memory.buffer * 1E-6 ).toFixed( 1 ) } MB`,
             );
             gui.monitor(
               'webgl-memory/texture',
-              `${ info.resources.texture } / ${ ( info.memory.texture * 1E-6 ).toFixed( 3 ) } MB`,
+              `${ info.resources.texture } - ${ ( info.memory.texture * 1E-6 ).toFixed( 1 ) } MB`,
             );
             gui.monitor(
               'webgl-memory/renderbuffer',
-              `${ info.resources.renderbuffer } / ${ ( info.memory.renderbuffer * 1E-6 ).toFixed( 3 ) } MB`,
+              `${ info.resources.renderbuffer } - ${ ( info.memory.renderbuffer * 1E-6 ).toFixed( 1 ) } MB`,
             );
             gui.monitor(
               'webgl-memory/program',
@@ -70,16 +75,16 @@ if ( import.meta.env.DEV ) {
             );
             gui.monitor(
               'webgl-memory/drawingbuffer',
-              `${ ( info.memory.drawingbuffer * 1E-6 ).toFixed( 3 ) } MB`,
+              `${ ( info.memory.drawingbuffer * 1E-6 ).toFixed( 1 ) } MB`,
             );
             gui.monitor(
               'webgl-memory/total',
-              `${ ( info.memory.total * 1E-6 ).toFixed( 3 ) } MB`,
+              `${ ( info.memory.total * 1E-6 ).toFixed( 1 ) } MB`,
             );
           }
-        },
-      } ) );
-    }
+        }
+      },
+    } ) );
   } );
 } else {
   dog.root.children.push( new Lambda( {

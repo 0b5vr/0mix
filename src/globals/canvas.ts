@@ -1,4 +1,4 @@
-// import 'webgl-memory';
+import 'webgl-memory';
 
 import { GL_BLEND, GL_LEQUAL } from '../gl/constants';
 
