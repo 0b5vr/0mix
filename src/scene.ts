@@ -144,8 +144,6 @@ export async function initDesktop( width: number, height: number ): Promise<void
   const canvasRenderTarget = new CanvasRenderTarget();
 
   const cameraStack = new CameraStack( {
-    width,
-    height,
     ...cameraStackOptions,
     target: canvasRenderTarget,
   } );

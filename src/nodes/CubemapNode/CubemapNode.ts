@@ -64,8 +64,6 @@ export class CubemapNode extends SceneNode {
     // -- cameras ----------------------------------------------------------------------------------
     const cameras = targets.map( ( target, i ) => {
       const cameraStack = new CameraStack( {
-        width: 256,
-        height: 256,
         scene,
         exclusionTags: [ /* StuffTag, */ PointLightTag, DustTag, UITag ],
         target,
