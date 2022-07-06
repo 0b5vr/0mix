@@ -9,6 +9,7 @@ import { music } from './globals/music';
 import { promiseGui } from './globals/gui';
 import { randomTexture } from './globals/randomTexture';
 import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
+import { LineWave } from './nodes/LineWave/LineWave';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
@@ -124,6 +125,7 @@ if ( import.meta.env.DEV ) {
 const iblLutCalc = new IBLLUTCalc();
 
 const spongeScene = new SpongeScene();
+const lineWave = new LineWave();
 
 const cameraStackOptions = {
   scene: dog.root,
@@ -137,7 +139,8 @@ const cameraStackOptions = {
 
 dog.root.children.push(
   iblLutCalc,
-  spongeScene,
+  // spongeScene,
+  lineWave,
   // plane,
 );
 
@@ -158,6 +161,7 @@ export async function initDesktop( width: number, height: number ): Promise<void
   }
 
   spongeScene.cameraProxy.children = [ cameraStack ];
+  lineWave.cameraProxy.children = [ cameraStack ];
 
   if ( import.meta.env.DEV ) {
     import( './nodes/RTInspector/RTInspector' ).then( ( { RTInspector } ) => {

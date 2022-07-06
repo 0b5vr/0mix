@@ -1,0 +1,56 @@
+import { orthBas } from '../../../shaders/modules/orthBas';
+import { perlin3d } from '../../../shaders/modules/perlin3d';
+import { add, addAssign, assign, build, def, defIn, defUniformNamed, div, divAssign, glPosition, main, mul, mulAssign, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
+
+export const lineWaveVert = build( () => {
+  const x = defIn( 'float', 0 );
+  const y = defIn( 'float', 1 );
+
+  const time = defUniformNamed( 'float', 'time' );
+  const resolution = defUniformNamed( 'vec2', 'resolution' );
+  const projectionMatrix = defUniformNamed( 'mat4', 'projectionMatrix' );
+  const viewMatrix = defUniformNamed( 'mat4', 'viewMatrix' );
+  const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
+
+  main( () => {
+    // -- create local position --------------------------------------------------------------------
+    const position = def( 'vec4', vec4( x, y, 0.0, 1.0 ) );
+
+    // -- apply noise ------------------------------------------------------------------------------
+    const t = def( 'float', mul( 0.4, time ) );
+    const noisePxy = def( 'vec3', mul(
+      5.0,
+      sw( position, 'xyz' ),
+      orthBas( vec3( -1.0, -2.0, 3.0 ) ),
+    ) );
+    const noise = def( 'vec3', add(
+      mul( 0.1, vec3(
+        perlin3d( add( noisePxy, 0.0, t ) ),
+        perlin3d( add( noisePxy, 1.0, t ) ),
+        perlin3d( add( noisePxy, 2.0, t ) ),
+      ) ),
+    ) );
+
+    mulAssign( t, 2.0 );
+    mulAssign( noisePxy, mul(
+      4.0,
+      orthBas( vec3( -3.0, -5.0, -1.0 ) ),
+    ) );
+    addAssign( noise, add(
+      mul( 0.01, vec3(
+        perlin3d( add( noisePxy, 0.0, t ) ),
+        perlin3d( add( noisePxy, 1.0, t ) ),
+        perlin3d( add( noisePxy, 2.0, t ) ),
+      ) ),
+    ) );
+
+    addAssign( sw( position, 'xyz' ), noise );
+
+    // -- send the vertex position -----------------------------------------------------------------
+    const outPos = def( 'vec4', mul( projectionMatrix, viewMatrix, modelMatrix, position ) );
+
+    const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
+    divAssign( sw( outPos, 'x' ), aspect );
+    assign( glPosition, outPos );
+  } );
+} );
