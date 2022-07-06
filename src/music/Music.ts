@@ -78,6 +78,10 @@ export class Music {
     if ( import.meta.env.DEV ) {
       this.__musicDest.gain.value = 0.0;
       promiseGui.then( ( gui ) => {
+        gui.button( 'audio/resume', { title: 'audio.resume();' } ).on( 'click', () => {
+          audio.resume();
+        } );
+
         gui.input( 'audio/volume', 0.0, { min: 0.0, max: 1.0 } )?.on( 'change', ( { value } ) => {
           this.__musicDest.gain.value = value;
         } );
