@@ -1,8 +1,6 @@
 import { AO_RESOLUTION_RATIO, FAR, NEAR } from '../../config';
 import { RawBufferRenderTarget } from '../../heck/RawBufferRenderTarget';
 import { Component, ComponentOptions } from '../../heck/components/Component';
-import { Floor } from '../Floor/Floor';
-import { FloorCamera } from '../Floor/FloorCamera';
 import { Lambda } from '../../heck/components/Lambda';
 import { LightShaft, LightShaftTag } from '../Lights/LightShaft';
 import { Material } from '../../heck/Material';
@@ -27,12 +25,9 @@ import { GLTextureFormatStuffR16F, GLTextureFormatStuffRGBA16F } from '../../gl/
 import { EventType, on } from '../../globals/globalEvent';
 
 export interface CameraStackOptions extends ComponentOptions {
-  width: number;
-  height: number;
   scene: SceneNode;
   target: RenderTarget;
   exclusionTags?: symbol[];
-  floor?: Floor;
   near?: number;
   far?: number;
   fov?: number;
@@ -54,7 +49,7 @@ export class CameraStack extends SceneNode {
     const far = options.far ?? FAR;
     const withAO = options.withAO ?? false;
 
-    const { width, height, target, scene, exclusionTags, floor, withPost, fov } = options;
+    const { target, scene, exclusionTags, withPost, fov } = options;
 
     const cameraTarget = withPost ? new BufferTextureRenderTarget(
       target.width,
@@ -270,14 +265,6 @@ export class CameraStack extends SceneNode {
       forwardCamera.name = 'forwardCamera';
     }
 
-    // -- floor camera -----------------------------------------------------------------------------
-    const floorComponents = floor ? [ new FloorCamera( {
-      width,
-      height,
-      primaryCamera: this,
-      floor,
-    } ) ] : [];
-
     // -- post -------------------------------------------------------------------------------------
     if ( withPost ) {
       this.postStack = new PostStack( {
@@ -296,7 +283,6 @@ export class CameraStack extends SceneNode {
 
     // -- components -------------------------------------------------------------------------------
     this.children = [
-      ...floorComponents,
       deferredCamera,
       ...aoComponents,
       lambdaDeferredCameraUniforms,
