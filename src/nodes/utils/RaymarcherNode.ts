@@ -62,7 +62,6 @@ export class RaymarcherNode extends SceneNode {
       geometry,
       materials,
     } );
-    this.transform.scale = [ 1.0, 1.0, 1.0 ];
 
     if ( import.meta.env.DEV ) {
       mesh.name = 'mesh';
@@ -74,9 +73,6 @@ export class RaymarcherNode extends SceneNode {
       lambdaRaymarchCameraUniforms,
       mesh,
     ];
-
-    // -- done ---------------------------------------------------------------------------------------
-    return this;
   }
 
   public forEachMaterials( fn: ( material: Material ) => void ): void {
