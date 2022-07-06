@@ -19,7 +19,7 @@ export const codeRenderVert = build( () => {
         add(
           mul( vec2( 6.0, 7.0 ), position ),
           mul( vec2( 12.0, -14.0 ), sw( meta, 'xy' ) ),
-          vec2( 128.0, mul( scroll, 14.0 ) ),
+          vec2( 60.0, mul( scroll, 14.0 ) ),
         ),
         resolution,
         0.5,

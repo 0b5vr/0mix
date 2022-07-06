@@ -7,7 +7,6 @@ import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVert
 import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
 import { GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../../gl/constants';
 import { SceneNode } from '../../../heck/components/SceneNode';
-import { charTexture } from '../../common/charTexture';
 import { gl } from '../../../globals/canvas';
 import { music } from '../../../globals/music';
 import { withinShaderEventRange } from '../../../music/withinShaderEventRange';
@@ -15,6 +14,7 @@ import { Lambda } from '../../../heck/components/Lambda';
 import { quadBuffer } from '../../../globals/quadGeometry';
 import { Quad } from '../../../heck/components/Quad';
 import { RenderTarget } from '../../../heck/RenderTarget';
+import { codeCharTexture } from './codeCharTexture';
 
 const chars = 65536;
 
@@ -50,7 +50,7 @@ export class Code extends SceneNode {
       },
     );
 
-    forward.addUniformTextures( 'samplerChar', GL_TEXTURE_2D, charTexture );
+    forward.addUniformTextures( 'samplerChar', GL_TEXTURE_2D, codeCharTexture );
 
     if ( import.meta.hot ) {
       import.meta.hot.accept(
@@ -111,7 +111,7 @@ export class Code extends SceneNode {
 
           arrayChars[ head ++ ] = iCol; // x
           arrayChars[ head ++ ] = iLine; // y
-          arrayChars[ head ++ ] = line.toUpperCase().charCodeAt( iCol ); // char
+          arrayChars[ head ++ ] = line.charCodeAt( iCol ); // char
           arrayChars[ head ++ ] = time; // spawn time
         } );
       } );
