@@ -153,6 +153,12 @@ export class CameraStack extends SceneNode {
       },
     );
 
+    if ( import.meta.hot ) {
+      import.meta.hot.accept( './shaders/deferredShadeFrag', ( { deferredShadeFrag } ) => {
+        shadingMaterial.replaceShader( quadVert, deferredShadeFrag( { withAO } ) );
+      } );
+    }
+
     const lambdaDeferredCameraUniforms = new Lambda( {
       onUpdate: ( { globalTransform } ) => {
         const cameraView = mat4Inverse( this.transform.matrix );
@@ -217,12 +223,6 @@ export class CameraStack extends SceneNode {
 
     if ( import.meta.env.DEV ) {
       shadingQuad.name = 'shadingQuad';
-    }
-
-    if ( import.meta.hot ) {
-      import.meta.hot.accept( './shaders/deferredShadeFrag', ( { deferredShadeFrag } ) => {
-        shadingMaterial.replaceShader( quadVert, deferredShadeFrag( { withAO } ) );
-      } );
     }
 
     // -- forward ----------------------------------------------------------------------------------

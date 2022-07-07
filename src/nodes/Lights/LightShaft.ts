@@ -1,6 +1,6 @@
 import { Geometry } from '../../heck/Geometry';
 import { Lambda } from '../../heck/components/Lambda';
-import { MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/shaders/deferredShadeFrag';
+import { MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/deferredConstants';
 import { Material } from '../../heck/Material';
 import { Mesh, MeshCull } from '../../heck/components/Mesh';
 import { PointLightNode } from './PointLightNode';

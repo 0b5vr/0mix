@@ -1,6 +1,6 @@
 import { GPUParticles } from '../utils/GPUParticles';
 import { Lambda } from '../../heck/components/Lambda';
-import { MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/shaders/deferredShadeFrag';
+import { MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/deferredConstants';
 import { Material } from '../../heck/Material';
 import { TransparentShell } from '../_misc/TransparentShell';
 import { auto } from '../../globals/automaton';

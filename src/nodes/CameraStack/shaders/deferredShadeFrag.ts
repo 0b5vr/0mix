@@ -9,34 +9,7 @@ import { doAnalyticLighting } from '../../../shaders/modules/doAnalyticLighting'
 import { doShadowMapping } from '../../../shaders/modules/doShadowMapping';
 import { forEachLights } from '../../../shaders/modules/forEachLights';
 import { glslSaturate } from '../../../shaders/modules/glslSaturate';
-
-export const MTL_NONE = 0;
-
-/**
- * no need to set params
- */
-export const MTL_UNLIT = 1;
-
-/**
- * vec4( roughness, metallic, emissive, reserved )
- */
-export const MTL_PBR_ROUGHNESS_METALLIC = 2;
-
-/**
- * vec4( emissiveRGB, roughness )
- * if roughness is negative, use full metallic
- */
-export const MTL_PBR_EMISSIVE3_ROUGHNESS = 3;
-
-/**
- * vec4( sheenTint, sheenRoughness )
- */
-export const MTL_PBR_SHEEN = 4;
-
-/**
- * vec4( roughness, metallic, mix, reserved )
- */
-export const MTL_IRIDESCENT = 5;
+import { MTL_IRIDESCENT, MTL_NONE, MTL_PBR_EMISSIVE3_ROUGHNESS, MTL_PBR_ROUGHNESS_METALLIC, MTL_PBR_SHEEN, MTL_UNLIT } from '../deferredConstants';
 
 const EPSILON = 1E-3;
 
