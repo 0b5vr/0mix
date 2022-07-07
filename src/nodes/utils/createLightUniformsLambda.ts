@@ -7,7 +7,7 @@ import { mat4Inverse, mat4Multiply } from '@0b5vr/experimental';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 
 export function createLightUniformsLambda( materials: Material[] ): Lambda {
-  const lambda = ( { frameCount, componentsByTag }: {
+  const setLightUniforms = ( { frameCount, componentsByTag }: {
     frameCount: number,
     componentsByTag: MapOfSet<symbol, Component>,
   } ): void => {
@@ -58,8 +58,14 @@ export function createLightUniformsLambda( materials: Material[] ): Lambda {
     } );
   };
 
-  return new Lambda( {
-    onDraw: lambda,
-    onUpdate: lambda,
+  const lambda = new Lambda( {
+    onDraw: setLightUniforms,
+    onUpdate: setLightUniforms,
   } );
+
+  if ( import.meta.env.DEV ) {
+    lambda.name = 'lambdaLightUniforms';
+  }
+
+  return lambda;
 }

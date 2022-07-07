@@ -43,7 +43,7 @@ if ( import.meta.env.DEV ) {
 
     const webglMemory = gl.getExtension( 'GMAN_webgl_memory' );
 
-    dog.root.children.push( new Lambda( {
+    const lambdaUpdateWebGLMemory = new Lambda( {
       onUpdate: () => {
         if ( gui.value( 'webgl-memory/active' ) ) {
           if ( webglMemory == null ) {
@@ -85,7 +85,11 @@ if ( import.meta.env.DEV ) {
           }
         }
       },
-    } ) );
+    } );
+
+    lambdaUpdateWebGLMemory.name = 'lambdaUpdateWebGLMemory';
+
+    dog.root.children.push( lambdaUpdateWebGLMemory );
   } );
 } else {
   dog.root.children.push( new Lambda( {

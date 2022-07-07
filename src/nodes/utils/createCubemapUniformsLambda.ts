@@ -7,7 +7,7 @@ import { Material } from '../../heck/Material';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 
 export function createCubemapUniformsLambda( materials: Material[] ): Lambda {
-  const lambda = ( { componentsByTag }: {
+  const setCubemapUniforms = ( { componentsByTag }: {
     componentsByTag: MapOfSet<symbol, Component>,
   } ): void => {
     const cubemapNode = Array.from(
@@ -37,8 +37,14 @@ export function createCubemapUniformsLambda( materials: Material[] ): Lambda {
     } );
   };
 
-  return new Lambda( {
-    onUpdate: lambda,
-    onDraw: lambda,
+  const lambda = new Lambda( {
+    onUpdate: setCubemapUniforms,
+    onDraw: setCubemapUniforms,
   } );
+
+  if ( import.meta.env.DEV ) {
+    lambda.name = 'lambdaCubemapUniforms';
+  }
+
+  return lambda;
 }

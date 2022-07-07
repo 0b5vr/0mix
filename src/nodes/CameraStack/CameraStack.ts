@@ -58,10 +58,6 @@ export class CameraStack extends SceneNode {
       GLTextureFormatStuffRGBA16F,
     ) : target;
 
-    if ( import.meta.env.DEV && cameraTarget instanceof RawBufferRenderTarget ) {
-      cameraTarget.name = `${ this.name }/cameraTarget`;
-    }
-
     // -- deferred g rendering ---------------------------------------------------------------------
     const deferredTarget = new BufferTextureRenderTarget(
       target.width,
@@ -73,10 +69,6 @@ export class CameraStack extends SceneNode {
       glTextureFilter( texture, GL_NEAREST )
     ) );
 
-    if ( import.meta.env.DEV ) {
-      deferredTarget.name = `${ this.name }/deferredTarget`;
-    }
-
     const deferredCamera = this.deferredCamera = new PerspectiveCamera( {
       scene,
       exclusionTags,
@@ -86,10 +78,6 @@ export class CameraStack extends SceneNode {
       fov,
       materialTag: 'deferred',
     } );
-
-    if ( import.meta.env.DEV ) {
-      deferredCamera.name = 'deferredCamera';
-    }
 
     // -- ambient occlusion ------------------------------------------------------------------------
     let aoComponents: Component[] = [];
@@ -102,10 +90,6 @@ export class CameraStack extends SceneNode {
         1,
         GLTextureFormatStuffR16F,
       );
-
-      if ( import.meta.env.DEV ) {
-        aoTarget.name = `${ this.name }/aoTarget`;
-      }
 
       const aoMaterial = new Material(
         quadVert,
@@ -250,6 +234,10 @@ export class CameraStack extends SceneNode {
       },
     } );
 
+    if ( import.meta.env.DEV ) {
+      lambdaUpdateLightShaftDeferredRenderTarget.name = 'lambdaUpdateLightShaftDeferredRenderTarget';
+    }
+
     const forwardCamera = this.forwardCamera = new PerspectiveCamera( {
       scene,
       exclusionTags,
@@ -280,6 +268,21 @@ export class CameraStack extends SceneNode {
       this.deferredCamera.fov = fov;
       this.forwardCamera.fov = fov;
     } );
+
+    // -- buffer names -----------------------------------------------------------------------------
+    if ( import.meta.env.DEV ) {
+      const id = Math.floor( 1E9 * Math.random() );
+
+      if ( cameraTarget instanceof RawBufferRenderTarget ) {
+        cameraTarget.name = `CameraStack${ id }/cameraTarget`;
+      }
+
+      deferredTarget.name = `CameraStack${ id }/deferredTarget`;
+
+      if ( aoTarget != null ) {
+        aoTarget.name = `CameraStack${ id }/aoTarget`;
+      }
+    }
 
     // -- components -------------------------------------------------------------------------------
     this.children = [
