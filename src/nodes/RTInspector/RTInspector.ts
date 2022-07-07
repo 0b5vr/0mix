@@ -15,6 +15,8 @@ import inspectorFrag from './shaders/inspector.frag?raw';
 import { GL_COLOR_ATTACHMENT0, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
 import { CanvasTexture } from '../utils/CanvasTexture';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { traverse } from '@0b5vr/experimental';
+import { Component } from '../../heck/components/Component';
 
 export interface RTInspectorOptions {
   target: RenderTarget;
@@ -48,7 +50,6 @@ export class RTInspector extends SceneNode {
       target: target,
       material: this.materialSingle,
       name: 'quadSingle',
-      ignoreBreakpoints: true,
     } );
     this.nodeSingle.children.push( this.quadSingle );
 
@@ -123,7 +124,6 @@ export class RTInspector extends SceneNode {
         attachment,
         dstRect,
         name,
-        ignoreBreakpoints: true,
       } );
 
       this.blitsMultiple.push( blit );
@@ -152,7 +152,6 @@ export class RTInspector extends SceneNode {
         textureText.updateTexture();
       },
       name: 'lambdaUpdateTextCanvas',
-      ignoreBreakpoints: true,
     } ) );
 
     const materialMultipleText = new Material(
@@ -169,7 +168,6 @@ export class RTInspector extends SceneNode {
       target: target,
       material: materialMultipleText,
       name: 'quadMultipleText',
-      ignoreBreakpoints: true,
       range: [ -1.0, 1.0, 1.0, -1.0 ],
     } );
     this.nodeMultiple.children.push( quadMultipleText );
@@ -180,8 +178,18 @@ export class RTInspector extends SceneNode {
         this.__updateTarget();
       },
       name: 'lambdaUpdateTarget',
-      ignoreBreakpoints: true,
     } ) );
+
+    // -- set ignoreBreakpoiints -------------------------------------------------------------------
+    traverse<Component>( this, ( node ) => {
+      node.ignoreBreakpoints = true;
+
+      if ( node instanceof SceneNode ) {
+        return node.children;
+      } else {
+        return [];
+      }
+    } );
   }
 
   private __updateTarget(): void {
