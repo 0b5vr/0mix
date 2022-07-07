@@ -164,12 +164,16 @@ export async function initDesktop( width: number, height: number ): Promise<void
   lineWave.cameraProxy.children = [ cameraStack ];
 
   if ( import.meta.env.DEV ) {
-    import( './nodes/RTInspector/RTInspector' ).then( ( { RTInspector } ) => {
-      const rtInspector = new RTInspector( {
-        target: canvasRenderTarget,
-      } );
-      dog.root.children.push( rtInspector );
+    const { RTInspector } = await import( './nodes/RTInspector/RTInspector' );
+    const { ComponentLogger } = await import( './nodes/ComponentLogger/ComponentLogger' );
+
+    const rtInspector = new RTInspector( {
+      target: canvasRenderTarget,
     } );
+    dog.root.children.push( rtInspector );
+
+    const componentLogger = new ComponentLogger();
+    dog.root.children.push( componentLogger );
   }
 
   const update = function(): void {

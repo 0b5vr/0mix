@@ -7,6 +7,7 @@ import { SceneNode } from './SceneNode';
 import { Transform } from '../Transform';
 import { arraySetIntersects } from '../../utils/arraySetIntersects';
 import { gui, guiMeasureDraw, guiMeasureUpdate } from '../../globals/gui';
+import { emit, EventType } from '../../globals/globalEvent';
 
 export interface ComponentUpdateEvent {
   frameCount: number;
@@ -82,6 +83,9 @@ export class Component {
     if ( import.meta.env.DEV ) {
       if ( Component.updateHaveReachedBreakpoint && !this.ignoreBreakpoints ) { return; }
 
+      const path = `${ event.path }/${ this.name ?? '(no name)' }`;
+      emit( EventType.ComponentUpdate, path );
+
       if ( this.name != null ) {
         guiMeasureUpdate( this.name!, () => {
           this.__updateImpl( event );
@@ -90,14 +94,10 @@ export class Component {
         this.__updateImpl( event );
       }
 
-      if ( this.name != null ) {
-        const path = `${ event.path }/${ this.name }`;
-
-        const ha = gui;
-        const breakpoint = ha?.value( 'breakpoint/update', '' ) ?? '';
-        if ( breakpoint !== '' && new RegExp( breakpoint ).test( path ) ) {
-          Component.updateHaveReachedBreakpoint = true;
-        }
+      const ha = gui;
+      const breakpoint = ha?.value( 'breakpoint/update', '' ) ?? '';
+      if ( breakpoint !== '' && new RegExp( breakpoint ).test( path ) ) {
+        Component.updateHaveReachedBreakpoint = true;
       }
     } else {
       this.__updateImpl( event );

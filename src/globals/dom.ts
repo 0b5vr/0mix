@@ -65,3 +65,19 @@ export function getDivAutomaton(): HTMLDivElement {
     },
   );
 }
+
+export function getDivComponentLogger(): HTMLDivElement {
+  return getElement<HTMLDivElement>(
+    'divComponentLogger',
+    'div',
+    {
+      position: 'absolute',
+      left: '0',
+      top: '0',
+      color: '#fff',
+      whiteSpace: 'pre',
+      font: '500 10px Wt-Position',
+      textShadow: '-1px -1px #000, -1px 1px #000, 1px -1px #000, 1px 1px #000',
+    },
+  );
+}

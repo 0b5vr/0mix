@@ -1,9 +1,11 @@
 export enum EventType {
+  ComponentUpdate,
   CameraFov,
   CameraDoF,
 }
 
 export type Event = {
+  [ EventType.ComponentUpdate ]: string;
   [ EventType.CameraFov ]: number;
   [ EventType.CameraDoF ]: [ depth: number, size: number ];
 };
