@@ -5,7 +5,6 @@ import { GL_BLEND, GL_LEQUAL } from '../gl/constants';
 export const canvas = document.createElement( 'canvas' );
 
 export const gl = canvas.getContext( 'webgl2', { antialias: false } )!;
-gl.lineWidth( 1 );
 gl.depthFunc( GL_LEQUAL );
 gl.enable( GL_BLEND );
 
