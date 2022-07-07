@@ -81,6 +81,10 @@ export class SpongeScene extends SceneNode {
       },
     } );
 
+    if ( import.meta.env.DEV ) {
+      lambdaUpdateCameraParams.name = 'lambdaUpdateCameraParams';
+    }
+
     this.children = [
       lambdaSpeen,
       lightL,

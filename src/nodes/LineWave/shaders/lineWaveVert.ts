@@ -1,10 +1,14 @@
 import { orthBas } from '../../../shaders/modules/orthBas';
 import { perlin3d } from '../../../shaders/modules/perlin3d';
-import { add, addAssign, assign, build, def, defIn, defUniformNamed, div, divAssign, glPosition, main, mul, mulAssign, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mul, mulAssign, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
 
 export const lineWaveVert = build( () => {
   const x = defIn( 'float', 0 );
   const y = defIn( 'float', 1 );
+
+  const vPosition = defOutNamed( 'vec4', 'vPosition' );
+  const vProjPosition = defOutNamed( 'vec4', 'vProjPosition' );
+  const vNormal = defOutNamed( 'vec3', 'vNormal' );
 
   const time = defUniformNamed( 'float', 'time' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
@@ -47,10 +51,15 @@ export const lineWaveVert = build( () => {
     addAssign( sw( position, 'xyz' ), noise );
 
     // -- send the vertex position -----------------------------------------------------------------
-    const outPos = def( 'vec4', mul( projectionMatrix, viewMatrix, modelMatrix, position ) );
+    assign( vPosition, mul( modelMatrix, position ) );
+    assign( vProjPosition, mul( projectionMatrix, viewMatrix, vPosition ) );
+    const outPos = def( 'vec4', vProjPosition );
 
     const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( outPos, 'x' ), aspect );
     assign( glPosition, outPos );
+
+    // -- haha -------------------------------------------------------------------------------------
+    assign( vNormal, vec3( 0.0, 0.0, 1.0 ) );
   } );
 } );

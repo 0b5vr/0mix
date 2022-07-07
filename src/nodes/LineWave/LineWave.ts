@@ -1,12 +1,15 @@
 import { GL_LINE_STRIP } from '../../gl/constants';
 import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
-import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
+import { emit, EventType } from '../../globals/globalEvent';
+import { Lambda } from '../../heck/components/Lambda';
 import { Mesh } from '../../heck/components/Mesh';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { Geometry } from '../../heck/Geometry';
 import { Material } from '../../heck/Material';
-import { colorFrag } from '../../shaders/common/colorFrag';
+import { deferredColorFrag } from '../../shaders/common/deferredColorFrag';
+import { MTL_UNLIT } from '../CameraStack/deferredConstants';
 import { lineWaveVert } from './shaders/lineWaveVert';
 
 export class LineWave extends SceneNode {
@@ -29,20 +32,21 @@ export class LineWave extends SceneNode {
     glVertexArrayBindVertexbuffer( geometry.vao, bufferInstance, 1, 1, 1 );
 
     // -- material ---------------------------------------------------------------------------------
-    const forward = new Material(
+    const deferred = new Material(
       lineWaveVert,
-      colorFrag,
+      deferredColorFrag,
       {
-        initOptions: { geometry, target: dummyRenderTarget1 },
+        initOptions: { geometry, target: dummyRenderTarget4 },
       },
     );
-    forward.addUniform( 'color', '4f', 0.3, 0.3, 0.3, 1.0 );
+    deferred.addUniform( 'color', '4f', 0.4, 0.4, 0.4, 1.0 );
+    deferred.addUniform( 'mtlKind', '1f', MTL_UNLIT );
 
     if ( import.meta.hot ) {
       import.meta.hot.accept(
         './shaders/lineWaveVert',
         ( { lineWaveVert } ) => {
-          forward.replaceShader( lineWaveVert, colorFrag );
+          deferred.replaceShader( lineWaveVert, deferredColorFrag );
         }
       )
     }
@@ -50,7 +54,9 @@ export class LineWave extends SceneNode {
     // -- mesh -------------------------------------------------------------------------------------
     const mesh = new Mesh( {
       geometry,
-      materials: { forward },
+      materials: { deferred },
+      depthTest: false, // I'm not sure why this is required
+      depthWrite: false, // I'm not sure why this is required
     } );
 
     if ( import.meta.env.DEV ) {
@@ -66,9 +72,21 @@ export class LineWave extends SceneNode {
       0.0,
     );
 
+    const lambdaUpdateCameraParams = new Lambda( {
+      onUpdate: () => {
+        emit( EventType.CameraFov, 40.0 );
+        emit( EventType.CameraDoF, [ 0.0, 0.0 ] );
+      },
+    } );
+
+    if ( import.meta.env.DEV ) {
+      lambdaUpdateCameraParams.name = 'lambdaUpdateCameraParams';
+    }
+
     // -- children ---------------------------------------------------------------------------------
     this.children = [
       mesh,
+      lambdaUpdateCameraParams,
       this.cameraProxy,
     ];
   }

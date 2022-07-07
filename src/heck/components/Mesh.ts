@@ -21,15 +21,18 @@ const meshCullMap = {
 export interface MeshOptions extends ComponentOptions {
   geometry: Geometry;
   materials: MaterialMap;
+  cull?: MeshCull;
+  depthWrite?: boolean;
+  depthTest?: boolean;
 }
 
 export class Mesh extends Component {
   public geometry: Geometry;
   public materials: MaterialMap;
 
-  public cull: MeshCull = MeshCull.Back;
-  public depthWrite = true;
-  public depthTest = true;
+  public cull: MeshCull;
+  public depthWrite: boolean;
+  public depthTest: boolean;
 
   public constructor( options: MeshOptions ) {
     super( options );
@@ -38,6 +41,9 @@ export class Mesh extends Component {
 
     this.geometry = options.geometry;
     this.materials = options.materials;
+    this.cull = options.cull ?? MeshCull.Back;
+    this.depthWrite = options.depthWrite ?? true;
+    this.depthTest = options.depthTest ?? true;
   }
 
   protected __drawImpl( event: ComponentDrawEvent ): void {
