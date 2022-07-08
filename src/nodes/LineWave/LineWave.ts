@@ -9,6 +9,7 @@ import { SceneNode } from '../../heck/components/SceneNode';
 import { Geometry } from '../../heck/Geometry';
 import { Material } from '../../heck/Material';
 import { deferredColorFrag } from '../../shaders/common/deferredColorFrag';
+import { CameraStack } from '../CameraStack/CameraStack';
 import { MTL_UNLIT } from '../CameraStack/deferredConstants';
 import { lineWaveVert } from './shaders/lineWaveVert';
 
@@ -76,6 +77,7 @@ export class LineWave extends SceneNode {
       onUpdate: () => {
         emit( EventType.CameraFov, 40.0 );
         emit( EventType.CameraDoF, [ 0.0, 0.0 ] );
+        ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
       },
     } );
 

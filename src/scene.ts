@@ -10,6 +10,9 @@ import { promiseGui } from './globals/gui';
 import { randomTexture } from './globals/randomTexture';
 import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
 import { LineWave } from './nodes/LineWave/LineWave';
+import { PostStack } from './nodes/PostStack/PostStack';
+import { BufferTextureRenderTarget } from './heck/BufferTextureRenderTarget';
+import { Mixer } from './nodes/Mixer/Mixer';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
@@ -134,7 +137,7 @@ const lineWave = new LineWave();
 const cameraStackOptions = {
   scene: dog.root,
   withAO: true,
-  withPost: true,
+  withDoF: true,
 };
 
 // const plane = new Plane();
@@ -143,8 +146,13 @@ const cameraStackOptions = {
 
 dog.root.children.push(
   iblLutCalc,
-  // spongeScene,
+
+  // A
+  spongeScene,
+
+  // B
   lineWave,
+
   // plane,
 );
 
@@ -153,19 +161,43 @@ export async function initDesktop( width: number, height: number ): Promise<void
   canvas.width = width;
   canvas.height = height;
 
+  const cameraStackTargetA = new BufferTextureRenderTarget( width, height );
+  const cameraStackTargetB = new BufferTextureRenderTarget( width, height );
+  const mixerTarget = new BufferTextureRenderTarget( width, height );
+
   const canvasRenderTarget = new CanvasRenderTarget();
 
-  const cameraStack = new CameraStack( {
+  const cameraStackA = new CameraStack( {
     ...cameraStackOptions,
-    target: canvasRenderTarget,
+    target: cameraStackTargetA,
+  } );
+
+  const cameraStackB = new CameraStack( {
+    ...cameraStackOptions,
+    target: cameraStackTargetB,
   } );
 
   if ( import.meta.env.DEV ) {
-    cameraStack.name = 'cameraStack';
+    cameraStackA.name = 'cameraStackA';
+    cameraStackB.name = 'cameraStackB';
   }
 
-  spongeScene.cameraProxy.children = [ cameraStack ];
-  lineWave.cameraProxy.children = [ cameraStack ];
+  spongeScene.cameraProxy.children = [ cameraStackA ];
+
+  lineWave.cameraProxy.children = [ cameraStackB ];
+
+  const mixer = new Mixer( {
+    inputA: cameraStackTargetA,
+    inputB: cameraStackTargetB,
+    target: mixerTarget,
+  } );
+
+  const postStack = new PostStack( {
+    input: mixerTarget,
+    target: canvasRenderTarget,
+  } );
+
+  dog.root.children.push( mixer, postStack );
 
   if ( import.meta.env.DEV ) {
     const { RTInspector } = await import( './nodes/RTInspector/RTInspector' );

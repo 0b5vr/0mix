@@ -3,6 +3,7 @@ import { FAR, NEAR } from '../../config';
 import { emit, EventType } from '../../globals/globalEvent';
 import { Lambda } from '../../heck/components/Lambda';
 import { SceneNode } from '../../heck/components/SceneNode';
+import { CameraStack } from '../CameraStack/CameraStack';
 import { CubemapNode } from '../CubemapNode/CubemapNode';
 import { Dust } from '../Dust/Dust';
 import { PointLightNode } from '../Lights/PointLightNode';
@@ -78,6 +79,7 @@ export class SpongeScene extends SceneNode {
       onUpdate: () => {
         emit( EventType.CameraFov, 40.0 );
         emit( EventType.CameraDoF, [ 1.5, 8.0 ] );
+        ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
       },
     } );
 

@@ -1,11 +1,9 @@
 import { AO_RESOLUTION_RATIO, FAR, NEAR } from '../../config';
-import { RawBufferRenderTarget } from '../../heck/RawBufferRenderTarget';
 import { Component, ComponentOptions } from '../../heck/components/Component';
 import { Lambda } from '../../heck/components/Lambda';
 import { LightShaft, LightShaftTag } from '../Lights/LightShaft';
 import { Material } from '../../heck/Material';
 import { PerspectiveCamera } from '../../heck/components/PerspectiveCamera';
-import { PostStack } from '../PostStack/PostStack';
 import { Quad } from '../../heck/components/Quad';
 import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
@@ -23,6 +21,7 @@ import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget'
 import { glTextureFilter } from '../../gl/glTextureFilter';
 import { GLTextureFormatStuffR16F, GLTextureFormatStuffRGBA16F } from '../../gl/glSetTexture';
 import { EventType, on } from '../../globals/globalEvent';
+import { DoF } from './DoF/DoF';
 
 export interface CameraStackOptions extends ComponentOptions {
   scene: SceneNode;
@@ -31,14 +30,13 @@ export interface CameraStackOptions extends ComponentOptions {
   near?: number;
   far?: number;
   fov?: number;
-  withPost?: boolean;
   withAO?: boolean;
+  withDoF?: boolean;
 }
 
 export class CameraStack extends SceneNode {
   public deferredCamera: PerspectiveCamera;
   public forwardCamera: PerspectiveCamera;
-  public postStack?: PostStack;
 
   public constructor( options: CameraStackOptions ) {
     super( options );
@@ -47,11 +45,11 @@ export class CameraStack extends SceneNode {
 
     const near = options.near ?? NEAR;
     const far = options.far ?? FAR;
+    const withDoF = options.withDoF ?? false;
     const withAO = options.withAO ?? false;
 
-    const { target, scene, exclusionTags, withPost, fov } = options;
-
-    const cameraTarget = withPost ? new BufferTextureRenderTarget(
+    const { target, scene, exclusionTags, fov } = options;
+    const cameraTarget = withDoF ? new BufferTextureRenderTarget(
       target.width,
       target.height,
       1,
@@ -253,9 +251,11 @@ export class CameraStack extends SceneNode {
       forwardCamera.name = 'forwardCamera';
     }
 
-    // -- post -------------------------------------------------------------------------------------
-    if ( withPost ) {
-      this.postStack = new PostStack( {
+    // -- dof --------------------------------------------------------------------------------------
+    let dof: DoF | undefined;
+
+    if ( withDoF ) {
+      dof = new DoF( {
         input: cameraTarget as BufferTextureRenderTarget,
         deferredCamera,
         deferredTarget,
@@ -272,10 +272,6 @@ export class CameraStack extends SceneNode {
     // -- buffer names -----------------------------------------------------------------------------
     if ( import.meta.env.DEV ) {
       const id = Math.floor( 1E9 * Math.random() );
-
-      if ( cameraTarget instanceof RawBufferRenderTarget ) {
-        cameraTarget.name = `CameraStack${ id }/cameraTarget`;
-      }
 
       deferredTarget.name = `CameraStack${ id }/deferredTarget`;
 
@@ -294,7 +290,12 @@ export class CameraStack extends SceneNode {
       shadingQuad,
       lambdaUpdateLightShaftDeferredRenderTarget,
       forwardCamera,
-      ...( this.postStack ? [ this.postStack ] : [] ),
+      ...( dof ? [ dof ] : [] ),
     ];
+  }
+
+  public setScene( scene: SceneNode ): void {
+    this.deferredCamera.scene = scene;
+    this.forwardCamera.scene = scene;
   }
 }
