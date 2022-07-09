@@ -32,6 +32,7 @@ export class Mixer extends SceneNode {
     material.addUniformTextures( 'sampler1', GL_TEXTURE_2D, inputB.texture );
 
     auto( 'Mixer/blendAdd', ( { value } ) => material.addUniform( 'blendAdd', '1f', value ) );
+    auto( 'Mixer/blendMix', ( { value } ) => material.addUniform( 'blendMix', '1f', value ) );
 
     const quadMixer = new Quad( {
       target,

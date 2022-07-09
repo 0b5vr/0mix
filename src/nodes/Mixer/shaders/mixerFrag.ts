@@ -1,4 +1,4 @@
-import { build, insert, defInNamed, defOut, defUniformNamed, main, assign, texture, mix, def, add, mul } from '../../../shaders/shaderBuilder';
+import { build, insert, defInNamed, defOut, defUniformNamed, main, assign, texture, mix, def, mul, addAssign } from '../../../shaders/shaderBuilder';
 
 export const mixerFrag = build( () => {
   insert( 'precision highp float;' );
@@ -9,11 +9,13 @@ export const mixerFrag = build( () => {
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
   const sampler1 = defUniformNamed( 'sampler2D', 'sampler1' );
   const blendAdd = defUniformNamed( 'float', 'blendAdd' );
+  const blendMix = defUniformNamed( 'float', 'blendMix' );
 
   main( () => {
     const a = def( 'vec4', texture( sampler0, vUv ) );
     const b = def( 'vec4', texture( sampler1, vUv ) );
 
-    assign( fragColor, add( a, mul( b, blendAdd ) ) );
+    assign( fragColor, mix( a, b, blendMix ) );
+    addAssign( fragColor, mul( b, blendAdd ) );
   } );
 } );
