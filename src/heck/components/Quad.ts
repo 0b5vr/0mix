@@ -14,6 +14,9 @@ export interface QuadOptions extends ComponentOptions {
   target?: RenderTarget;
   range?: [ number, number, number, number ];
   clear?: Array<number | undefined> | false;
+  cull?: MeshCull;
+  depthWrite?: boolean;
+  depthTest?: boolean;
 }
 
 const meshCullMap = {
@@ -45,9 +48,9 @@ export class Quad extends Component {
     this.target = options?.target;
     this.range = options?.range ?? [ -1.0, -1.0, 1.0, 1.0 ];
     this.clear = options?.clear ?? false;
-    this.cull = MeshCull.None;
-    this.depthWrite = true;
-    this.depthTest = true;
+    this.cull = options?.cull ?? MeshCull.None;
+    this.depthWrite = options?.depthWrite ?? true;
+    this.depthTest = options?.depthTest ?? true;
   }
 
   public drawImmediate( event?: Partial<ComponentUpdateEvent> ): void {
