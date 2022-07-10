@@ -149,7 +149,7 @@ export class HistogramScatter extends SceneNode {
       target: targetPlot,
       depthTest: false,
       depthWrite: false,
-      clear: [ 0.0, 0.0, 0.0, 0.0 ],
+      clear: [],
     } );
 
     if ( import.meta.env.DEV ) {
