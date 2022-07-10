@@ -13,6 +13,8 @@ import { LineWave } from './nodes/LineWave/LineWave';
 import { PostStack } from './nodes/PostStack/PostStack';
 import { BufferTextureRenderTarget } from './heck/BufferTextureRenderTarget';
 import { Mixer } from './nodes/Mixer/Mixer';
+import { GLTextureFormatStuffRGBA8 } from './gl/glSetTexture';
+import { Blit } from './heck/components/Blit';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
@@ -192,16 +194,40 @@ export async function initDesktop( width: number, height: number ): Promise<void
     target: mixerTarget,
   } );
 
+  const postTarget = import.meta.env.DEV
+    ? new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffRGBA8 )
+    : canvasRenderTarget;
+
   const postStack = new PostStack( {
     input: mixerTarget,
-    target: canvasRenderTarget,
+    target: postTarget,
   } );
 
   dog.root.children.push( mixer, postStack );
 
   if ( import.meta.env.DEV ) {
+    const { HistogramScatter } = await import( './nodes/HistogramScatter/HistogramScatter' );
     const { RTInspector } = await import( './nodes/RTInspector/RTInspector' );
     const { ComponentLogger } = await import( './nodes/ComponentLogger/ComponentLogger' );
+
+    const blit = new Blit( {
+      src: postTarget as BufferTextureRenderTarget,
+      dst: canvasRenderTarget,
+    } );
+    dog.root.children.push( blit );
+
+    const histogramScatter = new HistogramScatter( {
+      input: postTarget as BufferTextureRenderTarget,
+      target: canvasRenderTarget,
+      active: false,
+    } );
+    dog.root.children.push( histogramScatter );
+
+    promiseGui.then( ( gui ) => (
+      gui.input( 'HistogramScatter/active', false )?.on( 'change', ( { value } ) => {
+        histogramScatter.active = value;
+      } )
+    ) );
 
     const rtInspector = new RTInspector( {
       target: canvasRenderTarget,
