@@ -15,6 +15,7 @@ import { quadBuffer } from '../../../globals/quadGeometry';
 import { Quad } from '../../../heck/components/Quad';
 import { RenderTarget } from '../../../heck/RenderTarget';
 import { codeCharTexture } from './codeCharTexture';
+import { promiseGui } from '../../../globals/gui';
 
 const chars = 65536;
 
@@ -67,18 +68,24 @@ export class Code extends SceneNode {
       );
     }
 
-    // -- mesh -------------------------------------------------------------------------------------
-    const mesh = new Quad( {
+    // -- quad -------------------------------------------------------------------------------------
+    const quad = new Quad( {
       geometry,
       material: forward,
       target,
     } ); // TODO: Quad???
 
-    mesh.depthTest = false;
-    mesh.depthWrite = false;
+    quad.depthTest = false;
+    quad.depthWrite = false;
 
     if ( import.meta.env.DEV ) {
-      mesh.name = 'mesh';
+      quad.name = 'quad';
+
+      promiseGui.then( ( gui ) => {
+        gui.input( 'Code/active', true )?.on( 'change', ( { value } ) => {
+          quad.active = value;
+        } );
+      } );
     }
 
     // -- lambda -----------------------------------------------------------------------------------
@@ -127,7 +134,7 @@ export class Code extends SceneNode {
     // -- components -------------------------------------------------------------------------------
     this.children = [
       lambdaScroll,
-      mesh,
+      quad,
     ];
   }
 }
