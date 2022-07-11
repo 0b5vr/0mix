@@ -4,7 +4,7 @@ import { Dog } from './heck/Dog';
 import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
 import { Lambda } from './heck/components/Lambda';
 import { automaton } from './globals/automaton';
-import { canvas, gl } from './globals/canvas';
+import { canvas } from './globals/canvas';
 import { music } from './globals/music';
 import { promiseGui } from './globals/gui';
 import { randomTexture } from './globals/randomTexture';
@@ -17,6 +17,7 @@ import { GLTextureFormatStuffRGBA8 } from './gl/glSetTexture';
 import { Blit } from './heck/components/Blit';
 import { glTextureFilter } from './gl/glTextureFilter';
 import { GL_NEAREST } from './gl/constants';
+import { WebGLMemory } from './nodes/WebGLMemory/WebGLMemory';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
@@ -45,59 +46,7 @@ if ( import.meta.env.DEV ) {
     name: 'automaton',
   } ) );
 
-  promiseGui.then( ( gui ) => {
-    gui.input( 'webgl-memory/active', false );
-
-    const webglMemory = gl.getExtension( 'GMAN_webgl_memory' );
-
-    const lambdaUpdateWebGLMemory = new Lambda( {
-      onUpdate: () => {
-        if ( gui.value( 'webgl-memory/active' ) ) {
-          if ( webglMemory == null ) {
-            gui.monitor(
-              'webgl-memory/unavailable',
-              'make sure you import webgl-memory',
-            );
-          } else {
-            const info = webglMemory.getMemoryInfo();
-
-            gui.monitor(
-              'webgl-memory/buffer',
-              `${ info.resources.buffer } - ${ ( info.memory.buffer * 1E-6 ).toFixed( 1 ) } MB`,
-            );
-            gui.monitor(
-              'webgl-memory/texture',
-              `${ info.resources.texture } - ${ ( info.memory.texture * 1E-6 ).toFixed( 1 ) } MB`,
-            );
-            gui.monitor(
-              'webgl-memory/renderbuffer',
-              `${ info.resources.renderbuffer } - ${ ( info.memory.renderbuffer * 1E-6 ).toFixed( 1 ) } MB`,
-            );
-            gui.monitor(
-              'webgl-memory/program',
-              info.resources.program,
-            );
-            gui.monitor(
-              'webgl-memory/shader',
-              info.resources.shader,
-            );
-            gui.monitor(
-              'webgl-memory/drawingbuffer',
-              `${ ( info.memory.drawingbuffer * 1E-6 ).toFixed( 1 ) } MB`,
-            );
-            gui.monitor(
-              'webgl-memory/total',
-              `${ ( info.memory.total * 1E-6 ).toFixed( 1 ) } MB`,
-            );
-          }
-        }
-      },
-    } );
-
-    lambdaUpdateWebGLMemory.name = 'lambdaUpdateWebGLMemory';
-
-    dog.root.children.push( lambdaUpdateWebGLMemory );
-  } );
+  dog.root.children.push( new WebGLMemory() );
 } else {
   dog.root.children.push( new Lambda( {
     onUpdate: () => {
