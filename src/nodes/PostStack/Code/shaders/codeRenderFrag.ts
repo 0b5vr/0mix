@@ -33,6 +33,6 @@ export const codeRenderFrag = build( () => {
       glslLinearstep( sub( ani, 0.125 ), ani, mul( 0.5, add( 1.0, sw( vCoord, 'y' ) ) ) ),
     ) );
 
-    assign( fragColor, vec4( vec3( tex ), mix( 0.9, 1.0, tex ) ) );
+    assign( fragColor, vec4( vec3( tex ), mix( 0.8, 1.0, tex ) ) );
   } );
 } );
