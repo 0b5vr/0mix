@@ -15,6 +15,8 @@ import { BufferTextureRenderTarget } from './heck/BufferTextureRenderTarget';
 import { Mixer } from './nodes/Mixer/Mixer';
 import { GLTextureFormatStuffRGBA8 } from './gl/glSetTexture';
 import { Blit } from './heck/components/Blit';
+import { glTextureFilter } from './gl/glTextureFilter';
+import { GL_NEAREST } from './gl/constants';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
@@ -197,6 +199,10 @@ export async function initDesktop( width: number, height: number ): Promise<void
   const postTarget = import.meta.env.DEV
     ? new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffRGBA8 )
     : canvasRenderTarget;
+
+  if ( import.meta.env.DEV ) {
+    glTextureFilter( ( postTarget as BufferTextureRenderTarget ).texture, GL_NEAREST );
+  }
 
   const postStack = new PostStack( {
     input: mixerTarget,
