@@ -48,8 +48,6 @@ export class CubemapNode extends SceneNode {
     this.visible = false;
     this.tags.push( CubemapNodeTag );
 
-    this.transform.position = [ 0.0, 3.0, 0.0 ];
-
     const { scene } = options;
 
     // -- cubemap ----------------------------------------------------------------------------------
