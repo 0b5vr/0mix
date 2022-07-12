@@ -8,7 +8,7 @@
  * Ref: https://www.shadertoy.com/view/ldl3W8
  */
 
-import { GLSLExpression, add, and, assign, cache, def, defConst, defFn, dot, eq, forLoop, ifThen, int, lt, mul, normalize, not, retFn, sub, sw, vec2, vec3 } from '../shaderBuilder';
+import { GLSLExpression, add, and, assign, cache, def, defConst, defFn, dot, eq, forLoop, ifThen, int, lt, mul, normalize, not, retFn, sub, sw, vec2, vec3, mod } from '../shaderBuilder';
 import { pcg2df } from './pcg2df';
 
 const symbol = Symbol();
@@ -16,19 +16,21 @@ const symbol = Symbol();
 /**
  * @param v vector
  * @param result voronoi result retrieved by voronoi2d
+ * @param rep repeat
  * @returns vec3( cellOrigin, len )
  */
 export function voronoi2dBorder(
-  v: GLSLExpression<'vec2'>,
   result: GLSLExpression<'vec3'>,
+  v: GLSLExpression<'vec2'>,
+  rep?: GLSLExpression<'vec2'>,
 ): GLSLExpression<'vec3'> {
   const f = cache(
     symbol,
-    () => defFn( 'vec3', [ 'vec2', 'vec3' ], ( v, result ) => {
+    () => defFn( 'vec3', [ 'vec3', 'vec2', 'vec2' ], ( result, v, rep ) => {
       const nearestCell = sw( result, 'xy' );
       const nearestCellOrigin = def( 'vec2', add(
         nearestCell,
-        pcg2df( nearestCell ),
+        pcg2df( mod( nearestCell, rep ) ),
       ) );
 
       const nearestCell2 = def( 'vec2' );
@@ -41,7 +43,7 @@ export function voronoi2dBorder(
             const currentCell = add( nearestCell, -2.0, vec2( ix, iy ) );
             const cellOrigin = add(
               currentCell,
-              pcg2df( currentCell ),
+              pcg2df( mod( currentCell, rep ) ),
             );
             const diff = def( 'vec2', sub( cellOrigin, nearestCellOrigin ) );
 
@@ -62,5 +64,5 @@ export function voronoi2dBorder(
     } )
   );
 
-  return f( v, result );
+  return f( result, v, rep ?? vec2( 65536.0 ) );
 }

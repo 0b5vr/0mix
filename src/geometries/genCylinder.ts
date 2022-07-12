@@ -18,9 +18,13 @@ interface ResultGenCylinder {
 }
 
 export function genCylinder( options?: {
+  radius?: number,
+  height?: number,
   radialSegs?: number,
   heightSegs?: number,
 } ): ResultGenCylinder {
+  const radius = options?.radius ?? 1.0;
+  const height = ( options?.height ?? 2.0 ) * 0.5;
   const radialSegs = options?.radialSegs ?? 16;
   const heightSegs = options?.heightSegs ?? 1;
 
@@ -31,7 +35,7 @@ export function genCylinder( options?: {
 
   for ( let ih = 0; ih < heightSegs + 1; ih ++ ) {
     const v = ih / heightSegs;
-    const z = v * 2.0 - 1.0;
+    const z = 1.0 - v * 2.0;
     for ( let ir = 0; ir < radialSegs; ir ++ ) {
       const i = ih * radialSegs + ir;
       const i1 = i + 1;
@@ -40,7 +44,7 @@ export function genCylinder( options?: {
       const x = Math.cos( t );
       const y = Math.sin( t );
 
-      arrayPosition.push( x, y, z );
+      arrayPosition.push( radius * x, radius * y, height * z );
       arrayNormal.push( x, y, 0.0 );
       arrayUv.push( ir / radialSegs, v );
 
@@ -52,7 +56,7 @@ export function genCylinder( options?: {
       }
     }
 
-    arrayPosition.push( 1, 0.0, z );
+    arrayPosition.push( radius, 0.0, height * z );
     arrayNormal.push( 1.0, 0.0, 0.0 );
     arrayUv.push( 1.0, v );
   }

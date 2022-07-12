@@ -1,5 +1,5 @@
-import { ShaderRenderTarget } from '../../nodes/utils/ShaderRenderTarget';
-import { quadVert } from '../../shaders/common/quadVert';
+import { ShaderRenderTarget } from '../nodes/utils/ShaderRenderTarget';
+import { quadVert } from '../shaders/common/quadVert';
 import { perlinFBMFrag } from './shaders/perlinFBMFrag';
 
 /**
@@ -12,7 +12,7 @@ export const perlinFBMTextureTarget = new ShaderRenderTarget(
 );
 
 if ( import.meta.env.DEV ) {
-  perlinFBMTextureTarget.name = 'TextureBakery/perlinFBM';
+  perlinFBMTextureTarget.name = 'perlinFBM';
 }
 
 if ( import.meta.hot ) {

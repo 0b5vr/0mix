@@ -1,19 +1,19 @@
 import { RaymarcherNode } from '../../utils/RaymarcherNode';
-import { mengerSpongeFrag } from './shaders/spongeFrag';
+import { spongeFrag } from './shaders/spongeFrag';
 import { objectVert } from '../../../shaders/common/objectVert';
 
 export class Sponge extends RaymarcherNode {
   public constructor() {
-    super( mengerSpongeFrag );
+    super( spongeFrag );
 
     if ( import.meta.hot ) {
       import.meta.hot.accept(
         './shaders/spongeFrag',
-        ( { mengerSpongeFrag } ) => {
+        ( { spongeFrag } ) => {
           const { deferred, depth } = this.materials;
 
-          deferred.replaceShader( objectVert, mengerSpongeFrag( 'deferred' ) );
-          depth.replaceShader( objectVert, mengerSpongeFrag( 'depth' ) );
+          deferred.replaceShader( objectVert, spongeFrag( 'deferred' ) );
+          depth.replaceShader( objectVert, spongeFrag( 'depth' ) );
         },
       );
     }

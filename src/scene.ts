@@ -18,6 +18,7 @@ import { Blit } from './heck/components/Blit';
 import { glTextureFilter } from './gl/glTextureFilter';
 import { GL_NEAREST } from './gl/constants';
 import { WebGLMemory } from './nodes/WebGLMemory/WebGLMemory';
+import { WormTunnelScene } from './nodes/WormTunnelScene/WormTunnelScene';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
@@ -85,6 +86,7 @@ if ( import.meta.env.DEV ) {
 const iblLutCalc = new IBLLUTCalc();
 
 const spongeScene = new SpongeScene();
+const wormTunnelScene = new WormTunnelScene();
 const lineWave = new LineWave();
 
 const cameraStackOptions = {
@@ -101,7 +103,8 @@ dog.root.children.push(
   iblLutCalc,
 
   // A
-  spongeScene,
+  // spongeScene,
+  wormTunnelScene,
 
   // B
   lineWave,
@@ -135,7 +138,9 @@ export async function initDesktop( width: number, height: number ): Promise<void
     cameraStackB.name = 'cameraStackB';
   }
 
-  spongeScene.cameraProxy.children = [ cameraStackA ];
+  spongeScene.cameraProxy.children
+    = wormTunnelScene.cameraProxy.children
+    = [ cameraStackA ];
 
   lineWave.cameraProxy.children = [ cameraStackB ];
 

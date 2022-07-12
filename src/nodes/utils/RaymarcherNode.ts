@@ -2,15 +2,16 @@ import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
 import { RawVector3 } from '@0b5vr/experimental';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
-import { createLightUniformsLambda } from './createLightUniformsLambda';
 import { createRaymarchCameraUniformsLambda } from './createRaymarchCameraUniformsLambda';
 import { dummyRenderTarget1, dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { genCube } from '../../geometries/genCube';
 import { objectVert } from '../../shaders/common/objectVert';
 import { randomTexture } from '../../globals/randomTexture';
 import { GL_TEXTURE_2D } from '../../gl/constants';
+import { Geometry } from '../../heck/Geometry';
 
 export interface RaymarcherNodeOptions extends SceneNodeOptions {
+  geometry?: Geometry;
   dimension?: RawVector3;
 }
 
@@ -27,7 +28,10 @@ export class RaymarcherNode extends SceneNode {
     super( options );
 
     // -- render -----------------------------------------------------------------------------------
-    const { geometry } = genCube( { dimension: options?.dimension ?? [ 0.55, 0.55, 0.55 ] } );
+    const geometry = (
+      options?.geometry
+      ?? genCube( { dimension: options?.dimension ?? [ 0.55, 0.55, 0.55 ] } ).geometry
+    );
 
     const deferred = new Material(
       objectVert,
@@ -47,10 +51,6 @@ export class RaymarcherNode extends SceneNode {
     );
     depth.addUniformTextures( 'samplerRandom', GL_TEXTURE_2D, randomTexture.texture );
 
-    const lambdaLightUniforms = createLightUniformsLambda( [
-      deferred,
-    ] );
-
     const lambdaRaymarchCameraUniforms = createRaymarchCameraUniformsLambda( [
       deferred,
       depth,
@@ -69,7 +69,6 @@ export class RaymarcherNode extends SceneNode {
 
     // -- components -------------------------------------------------------------------------------
     this.children = [
-      lambdaLightUniforms,
       lambdaRaymarchCameraUniforms,
       mesh,
     ];

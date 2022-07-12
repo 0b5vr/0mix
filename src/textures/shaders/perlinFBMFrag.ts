@@ -1,5 +1,5 @@
-import { addAssign, assign, build, def, defInNamed, defOut, insert, main, mul, unrollLoop, vec2, vec4 } from '../../../shaders/shaderBuilder';
-import { perlin2d } from '../../../shaders/modules/perlin2d';
+import { addAssign, assign, build, def, defInNamed, defOut, insert, main, mul, unrollLoop, vec2, vec4 } from '../../shaders/shaderBuilder';
+import { perlin2d } from '../../shaders/modules/perlin2d';
 
 export const perlinFBMFrag = build( () => {
   insert( 'precision highp float;' );

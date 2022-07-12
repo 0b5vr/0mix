@@ -1,4 +1,4 @@
-import { GLSLExpression, GLSLFloatExpression, add, assign, cache, def, defFn, floor, forLoop, ifThen, lt, num, retFn, sub, vec2, vec3 } from '../shaderBuilder';
+import { GLSLExpression, GLSLFloatExpression, add, assign, cache, def, defFn, floor, forLoop, ifThen, lt, num, retFn, sub, vec2, vec3, mod } from '../shaderBuilder';
 import { minkowski2d } from './minkowski2d';
 import { pcg2df } from './pcg2df';
 
@@ -7,13 +7,15 @@ const symbol = Symbol();
 /**
  * @param v vector
  * @param p minzowsky p
+ * @param rep repeat
  * @returns vec3( cellOrigin, len )
  */
 export function voronoi2d(
   v: GLSLExpression<'vec2'>,
+  rep?: GLSLExpression<'vec2'>,
   p: GLSLFloatExpression = 2.0,
-): GLSLExpression<'vec3'> {
-  const f = cache( symbol, () => defFn( 'vec3', [ 'vec2', 'float' ], ( v, p ) => {
+  ): GLSLExpression<'vec3'> {
+  const f = cache( symbol, () => defFn( 'vec3', [ 'vec2', 'vec2', 'float' ], ( v, rep, p ) => {
     const cell = def( 'vec2', floor( v ) );
 
     const nearestCell = def( 'vec2' );
@@ -24,7 +26,7 @@ export function voronoi2d(
         const currentCell = add( cell, -1.0, vec2( ix, iy ) );
         const cellOrigin = add(
           currentCell,
-          pcg2df( currentCell ),
+          pcg2df( mod( currentCell, rep ) ),
         );
 
         const len = def( 'float', minkowski2d( sub( cellOrigin, v ), p ) );
@@ -39,5 +41,5 @@ export function voronoi2d(
     retFn( vec3( nearestCell, nearestLen ) );
   } ) );
 
-  return f( v, num( p ) );
+  return f( v, rep ?? vec2( 65536.0 ), num( p ) );
 }

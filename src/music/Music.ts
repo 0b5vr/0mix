@@ -7,7 +7,7 @@ import { sample808HiHat } from './samples/sample808HiHat';
 import { sampleWhiteNoise } from './samples/sampleWhiteNoise';
 import { audio, sampleRate } from '../globals/audio';
 import { sampleClapNoise } from './samples/sampleClapNoise';
-import { perlinFBMTextureTarget } from './textures/perlinFBMTextureTarget';
+import { perlinFBMTextureTarget } from '../textures/perlinFBMTextureTarget';
 import { ShaderEventManager } from './ShaderEventManager';
 
 const BEAT = 60.0 / MUSIC_BPM;
