@@ -166,31 +166,40 @@ export class Material {
 
     Object.entries( this.__uniforms ).map( ( [ name, { type, value } ] ) => {
       const location = gl.getUniformLocation( program, name );
-      ( gl as any )[ 'uniform' + type ]( location, ...value );
+      if ( location != null ) {
+        ( gl as any )[ 'uniform' + type ]( location, ...value );
+      }
     } );
 
     Object.entries( this.__uniformVectors ).map( ( [ name, { type, value } ] ) => {
       const location = gl.getUniformLocation( program, name );
-      ( gl as any )[ 'uniform' + type ]( location, value );
+      if ( location != null ) {
+        ( gl as any )[ 'uniform' + type ]( location, value );
+      }
     } );
 
     Object.entries( this.__uniformMatrixVectors ).map(
       ( [ name, { type, value, transpose } ] ) => {
         const location = gl.getUniformLocation( program, name );
-        ( gl as any )[ 'uniform' + type ]( location, transpose, value );
+        if ( location != null ) {
+          ( gl as any )[ 'uniform' + type ]( location, transpose, value );
+        }
       }
     );
 
     let currentUnit = 0;
     Object.entries( this.__uniformTextures ).map( ( [ name, { target, textures } ] ) => {
-      textures.map( ( texture, i ) => {
-        gl.activeTexture( GL_TEXTURE0 + currentUnit + i );
-        gl.bindTexture( target, texture );
-      } );
-
       const location = gl.getUniformLocation( program, name );
-      gl.uniform1iv( location, textures.map( ( _, i ) => currentUnit + i ) );
-      currentUnit += textures.length;
+      if ( location != null ) {
+          textures.map( ( texture, i ) => {
+            gl.activeTexture( GL_TEXTURE0 + currentUnit + i );
+            gl.bindTexture( target, texture );
+          } );
+
+        gl.uniform1iv( location, textures.map( ( _, i ) => currentUnit + i ) );
+
+        currentUnit += textures.length;
+      }
     } );
   }
 
