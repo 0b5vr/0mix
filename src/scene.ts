@@ -19,6 +19,7 @@ import { glTextureFilter } from './gl/glTextureFilter';
 import { GL_NEAREST } from './gl/constants';
 import { WebGLMemory } from './nodes/WebGLMemory/WebGLMemory';
 import { WormTunnelScene } from './nodes/WormTunnelScene/WormTunnelScene';
+import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
@@ -87,6 +88,7 @@ const iblLutCalc = new IBLLUTCalc();
 
 const spongeScene = new SpongeScene();
 const wormTunnelScene = new WormTunnelScene();
+const pillarGridScene = new PillarGridScene();
 const lineWaveScene = new LineWaveScene();
 
 const cameraStackOptions = {
@@ -104,7 +106,8 @@ dog.root.children.push(
 
   // A
   // spongeScene,
-  wormTunnelScene,
+  // wormTunnelScene,
+  pillarGridScene,
 
   // B
   lineWaveScene,
@@ -140,6 +143,7 @@ export async function initDesktop( width: number, height: number ): Promise<void
 
   spongeScene.cameraProxy.children
     = wormTunnelScene.cameraProxy.children
+    = pillarGridScene.cameraProxy.children
     = [ cameraStackA ];
 
   lineWaveScene.cameraProxy.children = [ cameraStackB ];

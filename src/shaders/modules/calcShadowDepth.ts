@@ -10,5 +10,5 @@ export function calcShadowDepth(
     sw( cameraNearFar, 'y' ),
     distance,
   ) as GLSLExpression<'float'> );
-  return vec4( depth, mul( depth, depth ), depth, 1.0 );
+  return vec4( depth, mul( depth, depth ), 0.0, 0.0 );
 }

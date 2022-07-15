@@ -355,6 +355,18 @@ export const div: {
   `(${args.map( ( arg ) => num( arg ) ).join( '/' )})`
 ) as any;
 
+/**
+ * `a + b * c`
+ */
+export const mad: {
+  ( a: Exf, b: Exf, c: Exf ): Ex<'float'>;
+  ( a: Exf | Ex<'vec2'>, b: Exf | Ex<'vec2'>, c: Exf | Ex<'vec2'> ): Ex<'vec2'>;
+  ( a: Exf | Ex<'vec3'>, b: Exf | Ex<'vec3'>, c: Exf | Ex<'vec3'> ): Ex<'vec3'>;
+  ( a: Exf | Ex<'vec4'>, b: Exf | Ex<'vec4'>, c: Exf | Ex<'vec4'> ): Ex<'vec4'>;
+} = ( a: string | number, b: string | number, c: string | number ) => (
+  `(${ num( a ) }+${ num( b ) }*${ num( c ) })`
+) as any;
+
 export const lshift: {
   ( x: Ex<'uint'>, y: Ex<'uint'> ): Ex<'uint'>;
 } = ( x: string, y: string ) => (
