@@ -46,9 +46,10 @@ export class WormTunnelScene extends SceneNode {
 
     const lambdaUpdateCameraParams = new Lambda( {
       onUpdate: () => {
-        emit( EventType.CameraFov, 40.0 );
-        emit( EventType.CameraDoF, [ 4.0, 5.0 ] );
-        emit( EventType.CameraFog, [ 20.0, 5.0, 20.0 ] );
+        emit( EventType.Camera, {
+          dof: [ 4.0, 5.0 ],
+          fog: [ 20.0, 5.0, 20.0 ],
+        } );
 
         ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
       },

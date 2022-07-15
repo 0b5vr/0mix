@@ -203,7 +203,11 @@ export class DoF extends SceneNode {
     }
 
     // -- event listener ---------------------------------------------------------------------------
-    on( EventType.CameraDoF, ( [ depth, size ] ) => {
+    on( EventType.Camera, ( o ) => {
+      const [ depth, size ] = o?.dof ?? [ 0.0, 0.0 ];
+
+      // TODO: blitDry
+
       materialTileMaxH.addUniform( 'dofDepthSize', '2f', depth, size );
       materialPresort.addUniform( 'dofDepthSize', '2f', depth, size );
     } );

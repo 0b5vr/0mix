@@ -136,11 +136,6 @@ export class DCT extends SceneNode {
       }
 
       // -- event listener ---------------------------------------------------------------------------
-      // on( EventType.CameraDoF, ( [ depth, size ] ) => {
-      //   materialEncodeH.addUniform( 'dofDepthSize', '2f', depth, size );
-      //   materialPresort.addUniform( 'dofDepthSize', '2f', depth, size );
-      // } );
-
       auto( 'DCT/amp', ( { value } ) => {
         const enable = value > 0.0;
 

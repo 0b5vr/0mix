@@ -75,9 +75,7 @@ export class LineWave extends SceneNode {
 
     const lambdaUpdateCameraParams = new Lambda( {
       onUpdate: () => {
-        emit( EventType.CameraFov, 40.0 );
-        emit( EventType.CameraDoF, [ 0.0, 0.0 ] );
-        emit( EventType.CameraFog, [ 0.0, 100.0, 100.0 ] );
+        emit( EventType.Camera );
 
         ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
       },
