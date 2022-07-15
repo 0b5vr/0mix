@@ -1,6 +1,6 @@
 import { MTL_PBR_EMISSIVE3_ROUGHNESS } from '../../CameraStack/deferredConstants';
 import { assign, build, defInNamed, defOut, defUniformNamed, discard, div, fract, gt, ifThen, insert, length, main, mix, mul, normalize, retFn, step, sub, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
-import { calcShadowDepth } from '../../../shaders/modules/calcDepth';
+import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 
 export const trailsRenderFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );

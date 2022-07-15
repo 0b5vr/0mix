@@ -1,5 +1,5 @@
 import { assign, build, defInNamed, defOut, defUniformNamed, insert, length, main, sub, sw } from '../shaderBuilder';
-import { calcShadowDepth } from '../modules/calcDepth';
+import { calcShadowDepth } from '../modules/calcShadowDepth';
 
 export const depthFrag = build( () => {
   insert( 'precision highp float;' );

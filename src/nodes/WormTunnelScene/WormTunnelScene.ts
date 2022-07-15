@@ -29,7 +29,7 @@ export class WormTunnelScene extends SceneNode {
       shadowMapNear: NEAR,
       shadowMapFar: FAR,
     } );
-    lightFront.transform.lookAt( [ 0.0, 0.0, 5.0 ] );
+    lightFront.transform.lookAt( [ 0.0, 0.0, 10.0 ] );
     lightFront.color = [ 20.0, 20.0, 20.0 ];
 
     if ( import.meta.env.DEV ) {
@@ -48,6 +48,8 @@ export class WormTunnelScene extends SceneNode {
       onUpdate: () => {
         emit( EventType.CameraFov, 40.0 );
         emit( EventType.CameraDoF, [ 4.0, 5.0 ] );
+        emit( EventType.CameraFog, [ 20.0, 5.0, 20.0 ] );
+
         ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
       },
     } );

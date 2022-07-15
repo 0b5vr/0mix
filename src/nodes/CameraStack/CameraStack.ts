@@ -269,6 +269,10 @@ export class CameraStack extends SceneNode {
       this.forwardCamera.fov = fov;
     } );
 
+    on( EventType.CameraFog, ( fogParams ) => {
+      shadingMaterial.addUniform( 'fog', '3f', ...fogParams );
+    } );
+
     // -- buffer names -----------------------------------------------------------------------------
     if ( import.meta.env.DEV ) {
       const id = Math.floor( 1E9 * Math.random() );

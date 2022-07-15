@@ -2,12 +2,14 @@ export enum EventType {
   ComponentUpdate,
   CameraFov,
   CameraDoF,
+  CameraFog,
 }
 
 export type Event = {
   [ EventType.ComponentUpdate ]: string;
   [ EventType.CameraFov ]: number;
   [ EventType.CameraDoF ]: [ depth: number, size: number ];
+  [ EventType.CameraFog ]: [ brightness: number, near: number, far: number ];
 };
 
 export type EventListener<T extends EventType> = ( event: Event[T] ) => void;

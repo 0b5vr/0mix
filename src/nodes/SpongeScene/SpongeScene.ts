@@ -79,6 +79,8 @@ export class SpongeScene extends SceneNode {
       onUpdate: () => {
         emit( EventType.CameraFov, 40.0 );
         emit( EventType.CameraDoF, [ 1.5, 8.0 ] );
+        emit( EventType.CameraFog, [ 0.0, 100.0, 100.0 ] );
+
         ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
       },
     } );

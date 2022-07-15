@@ -1,6 +1,6 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
 import { abs, add, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, discard, div, glFragCoord, glFragDepth, gt, ifThen, insert, length, main, max, mod, mul, neg, normalize, retFn, sub, sw, unrollLoop, vec3, vec4 } from '../../../../shaders/shaderBuilder';
-import { calcShadowDepth } from '../../../../shaders/modules/calcDepth';
+import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
 import { raymarch } from '../../../../shaders/modules/raymarch';
 import { sdbox } from '../../../../shaders/modules/sdbox';

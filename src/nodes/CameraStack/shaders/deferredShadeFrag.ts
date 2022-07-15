@@ -1,5 +1,5 @@
 import { DIELECTRIC_SPECULAR, ONE_SUB_DIELECTRIC_SPECULAR, TAU } from '../../../utils/constants';
-import { GLSLExpression, GLSLFloatExpression, abs, add, addAssign, assign, build, clamp, cos, def, defFn, defInNamed, defOut, defUniformArrayNamed, defUniformNamed, div, dot, eq, glFragDepth, gt, ifChain, ifThen, insert, length, main, max, mix, mul, mulAssign, normalize, num, pow, retFn, smoothstep, sq, step, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, GLSLFloatExpression, abs, add, addAssign, assign, build, clamp, cos, def, defFn, defInNamed, defOut, defUniformArrayNamed, defUniformNamed, div, dot, eq, glFragDepth, gt, ifChain, ifThen, insert, length, main, max, mix, mul, mulAssign, normalize, num, pow, retFn, smoothstep, sq, step, sub, sw, texture, vec3, vec4, neg } from '../../../shaders/shaderBuilder';
 import { brdfSheen } from '../../../shaders/modules/brdfSheen';
 import { calcAlbedoF0 } from '../../../shaders/modules/calcAlbedoF0';
 import { calcL } from '../../../shaders/modules/calcL';
@@ -10,6 +10,7 @@ import { doShadowMapping } from '../../../shaders/modules/doShadowMapping';
 import { forEachLights } from '../../../shaders/modules/forEachLights';
 import { glslSaturate } from '../../../shaders/modules/glslSaturate';
 import { MTL_IRIDESCENT, MTL_NONE, MTL_PBR_EMISSIVE3_ROUGHNESS, MTL_PBR_ROUGHNESS_METALLIC, MTL_PBR_SHEEN, MTL_UNLIT } from '../deferredConstants';
+import { invCalcDepth } from '../../../shaders/modules/invCalcDepth';
 
 const EPSILON = 1E-3;
 
@@ -23,6 +24,8 @@ export const deferredShadeFrag = ( { withAO }: {
   const fragColor = defOut( 'vec4' );
 
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
+  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
+  const fog = defUniformNamed( 'vec3', 'fog' );
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' ); // color.rgba
   const sampler1 = defUniformNamed( 'sampler2D', 'sampler1' ); // position.xyz, depth
   const sampler2 = defUniformNamed( 'sampler2D', 'sampler2' ); // normal.xyz
@@ -178,6 +181,14 @@ export const deferredShadeFrag = ( { withAO }: {
     );
 
     assign( fragColor, vec4( clamp( outColor, 0.0, 1E3 ), 1.0 ) );
+
+    const linearDepth = neg( invCalcDepth( depth, cameraNearFar ) );
+
+    assign( fragColor, mix(
+      fragColor,
+      vec4( sw( fog, 'x' ) ),
+      smoothstep( sw( fog, 'y' ), sw( fog, 'z' ), linearDepth ),
+    ) );
 
     assign( glFragDepth, add( 0.5, mul( 0.5, depth ) ) );
   } );

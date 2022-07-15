@@ -3,6 +3,7 @@ import { PI } from '../../../utils/constants';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslLofi } from '../../../shaders/modules/glslLofi';
 import { glslSaturate } from '../../../shaders/modules/glslSaturate';
+import { sRGBOETF } from '../../../shaders/modules/sRGBOETF';
 
 const BARREL_ITER = 10;
 const BARREL_OFFSET = 0.03;
@@ -80,15 +81,6 @@ export const postFrag = build( () => {
       mul( x, add( mul( 0.45, x ), 0.02 ) ),
       add( mul( x, add( mul( 0.45, x ), 0.07 ) ), 0.2 )
     ) ) as GLSLExpression<'vec3'>;
-  }
-
-  function sRGBOETF( x: GLSLExpression<'vec3'> ): GLSLExpression<'vec3'> {
-    const x_ = def( 'vec3', glslSaturate( x ) as GLSLExpression<'vec3'> );
-    return mix(
-      mul( x_, 12.92 ),
-      sub( mul( pow( x_, vec3( 0.4167 ) ), 1.055 ), 0.055 ),
-      step( 0.0031308, x_ )
-    );
   }
 
   main( () => {
