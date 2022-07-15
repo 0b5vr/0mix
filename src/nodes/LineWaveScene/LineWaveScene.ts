@@ -13,7 +13,7 @@ import { CameraStack } from '../CameraStack/CameraStack';
 import { MTL_UNLIT } from '../CameraStack/deferredConstants';
 import { lineWaveVert } from './shaders/lineWaveVert';
 
-export class LineWave extends SceneNode {
+export class LineWaveScene extends SceneNode {
   public cameraProxy: SceneNode;
 
   public constructor() {

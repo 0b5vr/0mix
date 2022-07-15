@@ -9,7 +9,7 @@ import { music } from './globals/music';
 import { promiseGui } from './globals/gui';
 import { randomTexture } from './globals/randomTexture';
 import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
-import { LineWave } from './nodes/LineWave/LineWave';
+import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
 import { PostStack } from './nodes/PostStack/PostStack';
 import { BufferTextureRenderTarget } from './heck/BufferTextureRenderTarget';
 import { Mixer } from './nodes/Mixer/Mixer';
@@ -87,7 +87,7 @@ const iblLutCalc = new IBLLUTCalc();
 
 const spongeScene = new SpongeScene();
 const wormTunnelScene = new WormTunnelScene();
-const lineWave = new LineWave();
+const lineWaveScene = new LineWaveScene();
 
 const cameraStackOptions = {
   scene: dog.root,
@@ -107,7 +107,7 @@ dog.root.children.push(
   wormTunnelScene,
 
   // B
-  lineWave,
+  lineWaveScene,
 
   // plane,
 );
@@ -142,7 +142,7 @@ export async function initDesktop( width: number, height: number ): Promise<void
     = wormTunnelScene.cameraProxy.children
     = [ cameraStackA ];
 
-  lineWave.cameraProxy.children = [ cameraStackB ];
+  lineWaveScene.cameraProxy.children = [ cameraStackB ];
 
   const mixer = new Mixer( {
     inputA: cameraStackTargetA,
