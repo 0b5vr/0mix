@@ -138,7 +138,7 @@ export const deferredShadeFrag = ( { withAO }: {
       const iblAmp = def( 'float', smoothstep(
         3.0,
         2.0,
-        length( sub( position, vec3( 0.0, 3.0, 0.0 ) ) ),
+        length( position ),
       ) );
       ifThen( gt( iblAmp, 0.0 ), () => {
         // diffuse ibl

@@ -21,8 +21,6 @@ import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget'
 import { UITag } from '../common/UITag';
 import { GLTextureFormatStuffR11G11B10F } from '../../gl/glSetTexture';
 
-export const CubemapNodeTag = Symbol();
-
 const INV_SQRT2 = 1.0 / Math.sqrt( 2.0 );
 
 const CUBEMAP_ROTATIONS: RawQuaternion[] = [ // 🔥
@@ -46,7 +44,6 @@ export class CubemapNode extends SceneNode {
     super( options );
 
     this.visible = false;
-    this.tags.push( CubemapNodeTag );
 
     const { scene } = options;
 

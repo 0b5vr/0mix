@@ -12,24 +12,16 @@ import { vdc } from '../../utils/vdc';
 import { GL_NEAREST, GL_TEXTURE_2D } from '../../gl/constants';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { glTextureFilter } from '../../gl/glTextureFilter';
-
-export const IBLLUTCalcTag = Symbol();
+import { emit, EventType } from '../../globals/globalEvent';
 
 export class IBLLUTCalc extends SceneNode {
-  public swap: Swap<BufferTextureRenderTarget>;
-
-  public get texture(): WebGLTexture {
-    return this.swap.o.texture;
-  }
-
   public constructor() {
     super();
 
     this.visible = false;
-    this.tags.push( IBLLUTCalcTag );
 
     // -- swap -------------------------------------------------------------------------------------
-    this.swap = new Swap(
+    const swap = new Swap(
       new BufferTextureRenderTarget(
         IBLLUT_SIZE,
         IBLLUT_SIZE,
@@ -40,12 +32,12 @@ export class IBLLUTCalc extends SceneNode {
       ),
     );
 
-    glTextureFilter( this.swap.i.texture, GL_NEAREST );
-    glTextureFilter( this.swap.o.texture, GL_NEAREST );
+    glTextureFilter( swap.i.texture, GL_NEAREST );
+    glTextureFilter( swap.o.texture, GL_NEAREST );
 
     if ( import.meta.env.DEV ) {
-      this.swap.i.name = 'IBLLUTCalc/swap0';
-      this.swap.o.name = 'IBLLUTCalc/swap1';
+      swap.i.name = 'IBLLUTCalc/swap0';
+      swap.o.name = 'IBLLUTCalc/swap1';
     }
 
     // -- post -------------------------------------------------------------------------------------
@@ -58,10 +50,10 @@ export class IBLLUTCalc extends SceneNode {
     );
     material.addUniform( 'samples', '1f', samples );
     material.addUniform( 'vdc', '1f', vdc( samples, 2.0 ) );
-    material.addUniformTextures( 'sampler0', GL_TEXTURE_2D, this.swap.i.texture );
+    material.addUniformTextures( 'sampler0', GL_TEXTURE_2D, swap.i.texture );
 
     const quad = new Quad( {
-      target: this.swap.o,
+      target: swap.o,
       material,
     } );
 
@@ -73,16 +65,16 @@ export class IBLLUTCalc extends SceneNode {
     const swapper = new Lambda( {
       onUpdate: () => {
         samples ++;
-        this.swap.swap();
+        swap.swap();
 
         if ( samples > IBLLUT_ITER ) {
           this.active = false; // THE LAMBDA ITSELF WILL ALSO BE DEACTIVATED
         } else {
           material.addUniform( 'samples', '1f', samples );
           material.addUniform( 'vdc', '1f', vdc( samples, 2.0 ) );
-          material.addUniformTextures( 'sampler0', GL_TEXTURE_2D, this.swap.i.texture );
+          material.addUniformTextures( 'sampler0', GL_TEXTURE_2D, swap.i.texture );
 
-          quad.target = this.swap.o;
+          quad.target = swap.o;
         }
       },
     } );
@@ -91,6 +83,22 @@ export class IBLLUTCalc extends SceneNode {
       swapper.name = 'swapper';
     }
 
-    this.children.push( swapper, quad );
+    // -- updater ----------------------------------------------------------------------------------
+    const lambdaUpdater = new Lambda( {
+      onUpdate: () => {
+        emit( EventType.IBLLUT, swap.o.texture );
+      },
+    } );
+
+    if ( import.meta.env.DEV ) {
+      lambdaUpdater.name = 'lambdaUpdater';
+    }
+
+    // -- children ---------------------------------------------------------------------------------
+    this.children = [
+      swapper,
+      quad,
+      lambdaUpdater,
+    ];
   }
 }

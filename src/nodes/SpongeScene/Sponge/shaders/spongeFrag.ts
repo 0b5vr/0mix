@@ -65,9 +65,6 @@ export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
     assign( glFragDepth, add( 0.5, mul( 0.5, depth ) ) );
 
     const N = def( 'vec3', calcNormal( { rp, map, delta: 1E-6 } ) );
-    const roughness = 0.5;
-    const metallic = 0.0;
-    const baseColor = vec3( 0.7 );
 
     if ( tag === 'depth' ) {
       const len = length( sub( cameraPos, sw( modelPos, 'xyz' ) ) );
@@ -76,10 +73,10 @@ export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
 
     }
 
-    assign( fragColor, vec4( baseColor, 1.0 ) );
+    assign( fragColor, vec4( vec3( 0.7 ), 1.0 ) );
     assign( fragPosition, vec4( sw( modelPos, 'xyz' ), depth ) );
     assign( fragNormal, vec4( normalize( mul( normalMatrix, N ) ), MTL_PBR_ROUGHNESS_METALLIC ) );
-    assign( fragMisc, vec4( roughness, metallic, 0.0, 0.0 ) );
+    assign( fragMisc, vec4( 0.5, 0.0, 0.0, 0.0 ) );
 
   } );
 } );

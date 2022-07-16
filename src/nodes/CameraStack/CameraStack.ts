@@ -7,7 +7,6 @@ import { PerspectiveCamera } from '../../heck/components/PerspectiveCamera';
 import { Quad } from '../../heck/components/Quad';
 import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
-import { createCubemapUniformsLambda } from '../utils/createCubemapUniformsLambda';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { deferredShadeFrag } from './shaders/deferredShadeFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
@@ -22,6 +21,7 @@ import { glTextureFilter } from '../../gl/glTextureFilter';
 import { GLTextureFormatStuffR16F, GLTextureFormatStuffRGBA16F } from '../../gl/glSetTexture';
 import { EventType, on } from '../../globals/globalEvent';
 import { DoF } from './DoF/DoF';
+import { zeroTexture } from '../../globals/zeroTexture';
 
 export interface CameraStackOptions extends ComponentOptions {
   scene: SceneNode;
@@ -208,8 +208,6 @@ export class CameraStack extends SceneNode {
       aoTarget.texture,
     );
 
-    const lambdaCubemap = createCubemapUniformsLambda( [ shadingMaterial ] );
-
     // shadingMaterial.addUniformTextures( 'samplerEnv', textureEnv );
     shadingMaterial.addUniformTextures( 'samplerRandom', GL_TEXTURE_2D, randomTexture.texture );
 
@@ -263,7 +261,7 @@ export class CameraStack extends SceneNode {
       } );
     }
 
-    // -- event listener ---------------------------------------------------------------------------
+    // -- event listeners --------------------------------------------------------------------------
     on( EventType.Camera, ( o ) => {
       const fov = o?.fov ?? 40.0;
       this.deferredCamera.fov = fov;
@@ -271,6 +269,27 @@ export class CameraStack extends SceneNode {
 
       const fog = o?.fog ?? [ 0.0, 100.0, 100.0 ];
       shadingMaterial.addUniform( 'fog', '3f', ...fog );
+    } );
+
+    on( EventType.IBLLUT, ( ibllutTexture ) => {
+      shadingMaterial.addUniformTextures(
+        'samplerIBLLUT',
+        GL_TEXTURE_2D,
+        ibllutTexture,
+      );
+    } );
+
+    on( EventType.CubeMap, ( cubemapNode ) => {
+      shadingMaterial.addUniformTextures(
+        'samplerEnvDry',
+        GL_TEXTURE_2D,
+        cubemapNode?.targetDry?.texture ?? zeroTexture,
+      );
+      shadingMaterial.addUniformTextures(
+        'samplerEnvWet',
+        GL_TEXTURE_2D,
+        cubemapNode?.targetWet?.texture ?? zeroTexture,
+      );
     } );
 
     // -- buffer names -----------------------------------------------------------------------------
@@ -290,7 +309,6 @@ export class CameraStack extends SceneNode {
       ...aoComponents,
       lambdaDeferredCameraUniforms,
       lambdaLightUniforms,
-      lambdaCubemap,
       shadingQuad,
       lambdaUpdateLightShaftDeferredRenderTarget,
       forwardCamera,

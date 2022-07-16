@@ -1,6 +1,10 @@
+import type { CubemapNode } from '../nodes/CubemapNode/CubemapNode';
+
 export enum EventType {
   ComponentUpdate,
   Camera,
+  IBLLUT,
+  CubeMap,
 }
 
 export type Event = {
@@ -10,6 +14,8 @@ export type Event = {
     dof?: [ depth: number, size: number ];
     fog?: [ brightness: number, near: number, far: number ];
   } | void;
+  [ EventType.IBLLUT ]: WebGLTexture;
+  [ EventType.CubeMap ]: CubemapNode | void;
 };
 
 export type EventListener<T extends EventType>

@@ -80,6 +80,7 @@ export class SpongeScene extends SceneNode {
         emit( EventType.Camera, {
           dof: [ 1.5, 8.0 ],
         } );
+        emit( EventType.CubeMap, cubemapNode );
 
         ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
       },

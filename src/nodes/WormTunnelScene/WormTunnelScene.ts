@@ -50,6 +50,7 @@ export class WormTunnelScene extends SceneNode {
           dof: [ 4.0, 5.0 ],
           fog: [ 20.0, 5.0, 20.0 ],
         } );
+        emit( EventType.CubeMap );
 
         ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
       },

@@ -64,6 +64,7 @@ export class PillarGridScene extends SceneNode {
           dof: [ 3.0, 8.0 ],
           fog: [ 0.0, 3.0, 5.0 ],
         } );
+        emit( EventType.CubeMap );
 
         ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
       },

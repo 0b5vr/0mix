@@ -2,13 +2,14 @@ import { Component } from '../../heck/components/Component';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
-import { createCubemapUniformsLambda } from '../utils/createCubemapUniformsLambda';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { forwardPBRColorFrag } from '../../shaders/common/forwardPBRColorFrag';
 import { genCube } from '../../geometries/genCube';
 import { objectVert } from '../../shaders/common/objectVert';
-import { GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA } from '../../gl/constants';
+import { GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
+import { EventType, on } from '../../globals/globalEvent';
+import { zeroTexture } from '../../globals/zeroTexture';
 
 export interface TransparentShellOptions extends SceneNodeOptions {
   baseColor?: [ number, number, number ];
@@ -64,12 +65,32 @@ export class TransparentShell extends SceneNode {
 
     // -- receive stuff ----------------------------------------------------------------------------
     const lightUniformsLambda = createLightUniformsLambda( [ forwardShell ] );
-    const lambdaCubemap = createCubemapUniformsLambda( [ forwardShell ] );
+
+    // -- event listeners --------------------------------------------------------------------------
+    on( EventType.IBLLUT, ( ibllutTexture ) => {
+      forwardShell.addUniformTextures(
+        'samplerIBLLUT',
+        GL_TEXTURE_2D,
+        ibllutTexture,
+      );
+    } );
+
+    on( EventType.CubeMap, ( cubemapNode ) => {
+      forwardShell.addUniformTextures(
+        'samplerEnvDry',
+        GL_TEXTURE_2D,
+        cubemapNode?.targetDry?.texture ?? zeroTexture,
+      );
+      forwardShell.addUniformTextures(
+        'samplerEnvWet',
+        GL_TEXTURE_2D,
+        cubemapNode?.targetWet?.texture ?? zeroTexture,
+      );
+    } );
 
     // -- components -------------------------------------------------------------------------------
     this.children = [
       lightUniformsLambda,
-      lambdaCubemap,
       meshShellBack,
       ...( insideChildren ?? [] ),
       meshShellFront,
@@ -77,7 +98,6 @@ export class TransparentShell extends SceneNode {
 
     if ( import.meta.env.DEV ) {
       lightUniformsLambda.name = 'lightUniformsLambda';
-      lambdaCubemap.name = 'lambdaCubemap';
       meshShellBack.name = 'meshShellBack';
       meshShellFront.name = 'meshShellFront';
     }
