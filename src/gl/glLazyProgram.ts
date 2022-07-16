@@ -1,4 +1,4 @@
-import { extParallel, gl } from '../globals/canvas';
+import { gl } from '../globals/canvas';
 import { GL_COMPILE_STATUS, GL_COMPLETION_STATUS_KHR, GL_FRAGMENT_SHADER, GL_LINK_STATUS, GL_SEPARATE_ATTRIBS, GL_VERTEX_SHADER } from './constants';
 
 export interface LazyProgramOptions {
@@ -28,8 +28,10 @@ export function glLazyProgram(
     gl.shaderSource( vertexShader, vert );
     gl.compileShader( vertexShader );
 
-    if ( !gl.getShaderParameter( vertexShader, GL_COMPILE_STATUS ) ) {
-      throw new Error( gl.getShaderInfoLog( vertexShader ) ?? undefined );
+    if ( import.meta.env.DEV ) {
+      if ( !gl.getShaderParameter( vertexShader, GL_COMPILE_STATUS ) ) {
+        throw new Error( gl.getShaderInfoLog( vertexShader ) ?? undefined );
+      }
     }
 
     // == frag =====================================================================================
@@ -38,8 +40,10 @@ export function glLazyProgram(
     gl.shaderSource( fragmentShader, frag );
     gl.compileShader( fragmentShader );
 
-    if ( !gl.getShaderParameter( fragmentShader, GL_COMPILE_STATUS ) ) {
-      throw new Error( gl.getShaderInfoLog( fragmentShader ) ?? undefined );
+    if ( import.meta.env.DEV ) {
+      if ( !gl.getShaderParameter( fragmentShader, GL_COMPILE_STATUS ) ) {
+        throw new Error( gl.getShaderInfoLog( fragmentShader ) ?? undefined );
+      }
     }
 
     // == program ==================================================================================
@@ -60,17 +64,17 @@ export function glLazyProgram(
 
     return new Promise( ( resolve, reject ) => {
       const update = () => {
-        if (
-          !extParallel ||
-          gl.getProgramParameter( program!, GL_COMPLETION_STATUS_KHR ) === true
-        ) {
-          if ( !gl.getProgramParameter( program!, GL_LINK_STATUS ) ) {
-            gl.deleteProgram( program! );
-            reject( new Error( gl.getProgramInfoLog( program! )! ) );
-          } else {
-            resolve( program! );
+        if ( gl.getProgramParameter( program!, GL_COMPLETION_STATUS_KHR ) ) {
+          if ( import.meta.env.DEV ) {
+            if ( !gl.getProgramParameter( program!, GL_LINK_STATUS ) ) {
+              const error = gl.getProgramInfoLog( program! )!;
+              gl.deleteProgram( program! );
+              reject( error );
+              return;
+            }
           }
 
+          resolve( program! );
           return;
         }
 

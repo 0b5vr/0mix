@@ -11,4 +11,4 @@ gl.enable( GL_BLEND );
 gl.getExtension( 'EXT_color_buffer_float' );
 gl.getExtension( 'EXT_float_blend' );
 gl.getExtension( 'OES_texture_float_linear' );
-export const extParallel = gl.getExtension( 'KHR_parallel_shader_compile' );
+export const extParallel = gl.getExtension( 'KHR_parallel_shader_compile' )!;
