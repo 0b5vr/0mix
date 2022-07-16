@@ -4,7 +4,6 @@ import { emit, EventType } from '../../globals/globalEvent';
 import { Lambda } from '../../heck/components/Lambda';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { CameraStack } from '../CameraStack/CameraStack';
-import { CubemapNode } from '../CubemapNode/CubemapNode';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { PillarGrid } from './PillarGrid/PillarGrid';
 
@@ -23,7 +22,7 @@ export class PillarGridScene extends SceneNode {
       shadowMapFar: FAR,
     } );
     lightT.transform.lookAt( [ 1.0, 3.0, 4.0 ], [ 0.0, 0.0, 1.0 ] );
-    lightT.color = [ 50.0, 50.0, 50.0 ];
+    lightT.color = [ 100.0, 100.0, 100.0 ];
 
     const lightB = new PointLightNode( {
       scene,
@@ -51,14 +50,10 @@ export class PillarGridScene extends SceneNode {
       lambdaSpeen.name = 'lambdaSpeen';
     }
 
-    const cubemapNode = new CubemapNode( {
-      scene,
-    } );
-
     this.cameraProxy = new SceneNode();
     this.cameraProxy.transform.lookAt(
-      [ 0.0, -3.0, 3.0 ],
-      [ 0.0, 0.0, 0.0 ],
+      [ 0.0, -2.0, 3.0 ],
+      [ 0.0, 1.0, 0.0 ],
       [ 0.0, 1.0, 0.0 ],
       -0.2,
     );
@@ -67,6 +62,7 @@ export class PillarGridScene extends SceneNode {
       onUpdate: () => {
         emit( EventType.Camera, {
           dof: [ 3.0, 8.0 ],
+          fog: [ 0.0, 3.0, 5.0 ],
         } );
 
         ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
@@ -82,7 +78,6 @@ export class PillarGridScene extends SceneNode {
       lightB,
       lambdaSpeen,
       pillarGrid,
-      cubemapNode,
       lambdaUpdateCameraParams,
       this.cameraProxy,
     ];
