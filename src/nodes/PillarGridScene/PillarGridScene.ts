@@ -21,8 +21,8 @@ export class PillarGridScene extends SceneNode {
       shadowMapNear: NEAR,
       shadowMapFar: FAR,
     } );
-    lightT.transform.lookAt( [ 1.0, 3.0, 4.0 ], [ 0.0, 0.0, 1.0 ] );
-    lightT.color = [ 100.0, 100.0, 100.0 ];
+    lightT.transform.lookAt( [ 5.0, -3.0, 2.0 ], [ 0.0, 0.0, 1.0 ] );
+    lightT.color = [ 500.0, 500.0, 500.0 ];
 
     const lightB = new PointLightNode( {
       scene,
@@ -30,8 +30,8 @@ export class PillarGridScene extends SceneNode {
       shadowMapNear: NEAR,
       shadowMapFar: FAR,
     } );
-    lightB.transform.lookAt( [ -1.0, 3.0, 6.0 ], [ 0.0, 0.0, 1.0 ] );
-    lightB.color = [ 50.0, 50.0, 50.0 ];
+    lightB.transform.lookAt( [ -0.3, 3.0, 4.0 ], [ 0.0, 0.0, 1.0 ] );
+    lightB.color = [ 100.0, 100.0, 100.0 ];
 
     if ( import.meta.env.DEV ) {
       lightT.name = 'lightT';
@@ -61,7 +61,7 @@ export class PillarGridScene extends SceneNode {
     const lambdaUpdateCameraParams = new Lambda( {
       onUpdate: () => {
         emit( EventType.Camera, {
-          dof: [ 3.0, 8.0 ],
+          dof: [ 2.8, 8.0 ],
           fog: [ 0.0, 3.0, 5.0 ],
         } );
         emit( EventType.CubeMap );

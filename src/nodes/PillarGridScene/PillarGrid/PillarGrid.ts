@@ -14,7 +14,7 @@ import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
 import { pillarGridBodyFrag } from './shaders/pillarGridBodyFrag';
 import { pillarGridFrameFrag } from './shaders/pillarGridFrameFrag';
 import { pillarGridFrameVert } from './shaders/pillarGridFrameVert';
-import { pillarGridVert } from './shaders/pillarGridVert';
+import { pillarGridBodyVert } from './shaders/pillarGridBodyVert';
 
 export class PillarGrid extends SceneNode {
   public cameraProxy: SceneNode;
@@ -24,14 +24,14 @@ export class PillarGrid extends SceneNode {
 
     // -- geometry body ----------------------------------------------------------------------------
     const { geometry } = genCube( {
-      dimension: [ 0.09, 0.09, 0.99 ],
+      dimension: [ 0.1, 0.1, 1.0 ],
     } );
     geometry.primcount = 1024;
 
     const arrayInstance = new Float32Array( 2048 );
     for ( let i = 0; i < 1024; i ++ ) {
-      arrayInstance[ i * 2     ] = ( ( i % 32 ) - 15.5 ) * 0.201;
-      arrayInstance[ i * 2 + 1 ] = ( ( ~~( i / 32 ) ) - 15.5 ) * 0.201;
+      arrayInstance[ i * 2     ] = ( ( i % 32 ) - 15.5 ) * 0.2;
+      arrayInstance[ i * 2 + 1 ] = ( ( ~~( i / 32 ) ) - 15.5 ) * 0.2;
     }
 
     const bufferInstance = glCreateVertexbuffer( arrayInstance );
@@ -70,7 +70,7 @@ export class PillarGrid extends SceneNode {
 
     // -- material body ----------------------------------------------------------------------------
     const deferred = new Material(
-      pillarGridVert,
+      pillarGridBodyVert,
       pillarGridBodyFrag( 'deferred' ),
       {
         initOptions: { geometry, target: dummyRenderTarget4 },
@@ -78,7 +78,7 @@ export class PillarGrid extends SceneNode {
     );
 
     const depth = new Material(
-      pillarGridVert,
+      pillarGridBodyVert,
       pillarGridBodyFrag( 'depth' ),
       {
         initOptions: { geometry, target: dummyRenderTarget1 },
@@ -88,12 +88,12 @@ export class PillarGrid extends SceneNode {
     if ( import.meta.hot ) {
       import.meta.hot.accept(
         [
-          './shaders/pillarGridVert',
+          './shaders/pillarGridBodyVert',
           './shaders/pillarGridBodyFrag',
         ],
         ( [ v, f ] ) => {
-          deferred.replaceShader( v?.pillarGridVert, f?.pillarGridBodyFrag( 'deferred' ) );
-          depth.replaceShader( v?.pillarGridVert, f?.pillarGridBodyFrag( 'depth' ) );
+          deferred.replaceShader( v?.pillarGridBodyVert, f?.pillarGridBodyFrag( 'deferred' ) );
+          depth.replaceShader( v?.pillarGridBodyVert, f?.pillarGridBodyFrag( 'depth' ) );
         },
       )
     }

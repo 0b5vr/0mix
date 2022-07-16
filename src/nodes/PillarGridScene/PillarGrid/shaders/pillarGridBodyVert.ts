@@ -1,8 +1,8 @@
 import { pcg3df } from '../../../../shaders/modules/pcg3df';
-import { add, addAssign, mad, sin, vec3 } from '../../../../shaders/shaderBuilder';
+import { add, addAssign, mad, sign, sin, subAssign, vec3 } from '../../../../shaders/shaderBuilder';
 import { assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mul, normalize, sw, vec4 } from '../../../../shaders/shaderBuilder';
 
-export const pillarGridVert = build( () => {
+export const pillarGridBodyVert = build( () => {
   const position = defIn( 'vec3', 0 );
   const normal = defIn( 'vec3', 1 );
   const instance = defIn( 'vec2', 3 );
@@ -21,11 +21,20 @@ export const pillarGridVert = build( () => {
 
   main( () => {
     assign( vPosition, vec4( position, 1.0 ) );
+
+    const dice = def( 'vec3', pcg3df( mad( 128.0, vec3( instance, 0.0 ), 16.0 ) ) );
+
+    // change size per instance
+    subAssign(
+      sw( vPosition, 'xyz' ),
+      mul( sign( position ), mad( 0.01, 0.05, sw( dice, 'y' ) ) ),
+    );
+
     const z = mul( 0.2, sin( add(
-      mul( 3.0, sw( pcg3df(
-        mad( 64.0, vec3( instance, 0.0 ), 16.0 ),
-      ), 'x' ) ),
+      mul( 3.0, sw( dice, 'x' ) ),
       sw( instance, 'x' ),
+      sw( instance, 'y' ),
+      0.1,
       time,
     ) ) );
     addAssign( vPosition, vec4(

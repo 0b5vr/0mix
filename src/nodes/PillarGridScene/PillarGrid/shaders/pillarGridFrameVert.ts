@@ -9,7 +9,6 @@ export const pillarGridFrameVert = build( () => {
   const vProjPosition = defOutNamed( 'vec4', 'vProjPosition' );
   const vPosition = defOutNamed( 'vec4', 'vPosition' );
   const vNormal = defOutNamed( 'vec3', 'vNormal' );
-  const vH = defOutNamed( 'float', 'vH' );
 
   const time = defUniformNamed( 'float', 'time' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
@@ -21,9 +20,10 @@ export const pillarGridFrameVert = build( () => {
     assign( vPosition, vec4( position, 1.0 ) );
     const z = mul( 0.2, sin( add(
       mul( 3.0, sw( pcg3df(
-        mad( 64.0, vec3( instance, 0.0 ), 16.0 ),
+        mad( 128.0, vec3( instance, 0.0 ), 16.0 ),
       ), 'x' ) ),
       sw( instance, 'x' ),
+      sw( instance, 'y' ),
       time,
     ) ) );
     addAssign( vPosition, vec4(
@@ -40,7 +40,5 @@ export const pillarGridFrameVert = build( () => {
     const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( outPos, 'x' ), aspect );
     assign( glPosition, outPos );
-
-    assign( vH, sw( position, 'z' ) );
   } );
 } );
