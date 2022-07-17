@@ -40,6 +40,13 @@ const terserOptions: Terser.MinifyOptions = {
 
 export default defineConfig( ( { mode } ) => {
   return {
+    resolve: {
+      alias: {
+        ...( mode === 'prod' ? {
+          'webgl-memory': `${ __dirname }/src/dummy.ts`, // don't want to import webgl-memory when it's prod build
+        } : {} ),
+      },
+    },
     build: {
       target: 'esnext',
       minify: mode === 'prod' ? 'terser' : false,
