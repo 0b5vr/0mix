@@ -2,7 +2,7 @@ import { Geometry } from '../../heck/Geometry';
 import { Lambda } from '../../heck/components/Lambda';
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/deferredConstants';
 import { Material } from '../../heck/Material';
-import { Mesh, MeshCull } from '../../heck/components/Mesh';
+import { Mesh } from '../../heck/components/Mesh';
 import { PointLightNode } from './PointLightNode';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { deferredColorFrag } from '../../shaders/common/deferredColorFrag';
@@ -15,7 +15,7 @@ import { objectVert } from '../../shaders/common/objectVert';
 import { randomTexture } from '../../globals/randomTexture';
 import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 import { glVertexArrayBindIndexbuffer } from '../../gl/glVertexArrayBindIndexbuffer';
-import { GL_ONE, GL_TEXTURE_2D } from '../../gl/constants';
+import { GL_NONE, GL_ONE, GL_TEXTURE_2D } from '../../gl/constants';
 
 export const LightShaftTag = Symbol();
 
@@ -113,7 +113,7 @@ export class LightShaft extends SceneNode {
       geometry,
       materials,
     } );
-    mesh.cull = MeshCull.None;
+    mesh.cull = GL_NONE;
     mesh.depthTest = false;
     mesh.depthWrite = false;
 
@@ -144,7 +144,7 @@ export class LightShaft extends SceneNode {
       geometry,
       materials: { deferred: materialBody },
     } );
-    meshBody.cull = MeshCull.None;
+    meshBody.cull = GL_NONE;
     nodeBody.children = [ meshBody ];
 
     // -- components -------------------------------------------------------------------------------

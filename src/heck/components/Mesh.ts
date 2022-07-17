@@ -3,24 +3,21 @@ import { Geometry } from '../Geometry';
 import { MaterialMap } from '../Material';
 import { gl } from '../../globals/canvas';
 import { mat3FromMat4Transpose, mat3Inverse } from '@0b5vr/experimental';
-import { GL_CULL_FACE, GL_DEPTH_TEST } from '../../gl/constants';
+import { GL_BACK, GL_CULL_FACE, GL_DEPTH_TEST, GL_FRONT, GL_FRONT_AND_BACK, GL_NONE } from '../../gl/constants';
 
-export enum MeshCull {
-  None,
-  Front,
-  Back,
-  Both
-}
-
-const meshCullMap = {
-  [ MeshCull.Front ]: /* GL_FRONT */ 1028,
-  [ MeshCull.Back ]: /* GL_BACK */ 1029,
-  [ MeshCull.Both ]: /* GL_FRONT_AND_BACK */ 1032
-};
+export type MeshCull =
+  | typeof GL_NONE
+  | typeof GL_BACK
+  | typeof GL_FRONT
+  | typeof GL_FRONT_AND_BACK;
 
 export interface MeshOptions extends ComponentOptions {
   geometry: Geometry;
   materials: MaterialMap;
+
+  /**
+   * `GL_NONE` is accepted to disable culling
+   */
   cull?: MeshCull;
   depthWrite?: boolean;
   depthTest?: boolean;
@@ -41,7 +38,7 @@ export class Mesh extends Component {
 
     this.geometry = options.geometry;
     this.materials = options.materials;
-    this.cull = options.cull ?? MeshCull.Back;
+    this.cull = options.cull ?? GL_BACK;
     this.depthWrite = options.depthWrite ?? true;
     this.depthTest = options.depthTest ?? true;
   }
@@ -59,11 +56,11 @@ export class Mesh extends Component {
     gl.useProgram( program );
     material.setBlendMode();
 
-    if ( this.cull === MeshCull.None ) {
+    if ( this.cull === GL_NONE ) {
       gl.disable( GL_CULL_FACE );
     } else {
       gl.enable( GL_CULL_FACE );
-      gl.cullFace( meshCullMap[ this.cull ] );
+      gl.cullFace( this.cull );
     }
 
     if ( this.depthTest ) {

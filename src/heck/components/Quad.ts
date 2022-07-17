@@ -4,7 +4,7 @@ import { RenderTarget } from '../RenderTarget';
 import { gl } from '../../globals/canvas';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { glClear } from '../../gl/glClear';
-import { GL_CULL_FACE, GL_DEPTH_TEST } from '../../gl/constants';
+import { GL_CULL_FACE, GL_DEPTH_TEST, GL_NONE } from '../../gl/constants';
 import { Geometry } from '../Geometry';
 import { MeshCull } from './Mesh';
 
@@ -18,12 +18,6 @@ export interface QuadOptions extends ComponentOptions {
   depthWrite?: boolean;
   depthTest?: boolean;
 }
-
-const meshCullMap = {
-  [ MeshCull.Front ]: /* GL_FRONT */ 1028,
-  [ MeshCull.Back ]: /* GL_BACK */ 1029,
-  [ MeshCull.Both ]: /* GL_FRONT_AND_BACK */ 1032
-};
 
 /**
  * Renders a fullscreen quad.
@@ -48,7 +42,7 @@ export class Quad extends Component {
     this.target = options?.target;
     this.range = options?.range ?? [ -1.0, -1.0, 1.0, 1.0 ];
     this.clear = options?.clear ?? false;
-    this.cull = options?.cull ?? MeshCull.None;
+    this.cull = options?.cull ?? GL_NONE;
     this.depthWrite = options?.depthWrite ?? true;
     this.depthTest = options?.depthTest ?? true;
   }
@@ -69,11 +63,11 @@ export class Quad extends Component {
     gl.useProgram( program );
     material.setBlendMode();
 
-    if ( this.cull === MeshCull.None ) {
+    if ( this.cull === GL_NONE ) {
       gl.disable( GL_CULL_FACE );
     } else {
       gl.enable( GL_CULL_FACE );
-      gl.cullFace( meshCullMap[ this.cull ] );
+      gl.cullFace( this.cull );
     }
 
     if ( this.depthTest ) {

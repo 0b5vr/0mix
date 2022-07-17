@@ -1,7 +1,7 @@
 import { Geometry } from '../../heck/Geometry';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material } from '../../heck/Material';
-import { Mesh, MeshCull } from '../../heck/components/Mesh';
+import { Mesh } from '../../heck/components/Mesh';
 import { RawVector3, TRIANGLE_STRIP_QUAD_3D, TRIANGLE_STRIP_QUAD_NORMAL, TRIANGLE_STRIP_QUAD_UV, quatFromAxisAngle, vecNormalize } from '@0b5vr/experimental';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
@@ -9,7 +9,7 @@ import { objectVert } from '../../shaders/common/objectVert';
 import { uvFrag } from '../../shaders/common/uvFrag';
 import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
-import { GL_TRIANGLE_STRIP } from '../../gl/constants';
+import { GL_NONE, GL_TRIANGLE_STRIP } from '../../gl/constants';
 
 export class Plane extends SceneNode {
   public constructor( options?: SceneNodeOptions ) {
@@ -43,7 +43,7 @@ export class Plane extends SceneNode {
 
     // -- mesh -------------------------------------------------------------------------------------
     const mesh = new Mesh( { geometry, materials } );
-    mesh.cull = MeshCull.None;
+    mesh.cull = GL_NONE;
 
     // -- speen ------------------------------------------------------------------------------------
     const speenAxis = vecNormalize( [ 0.0, 1.0, 0.0 ] ) as RawVector3;
