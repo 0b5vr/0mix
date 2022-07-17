@@ -1,6 +1,6 @@
-import { glLazyMultiTargetFramebuffer } from '../gl/glLazyMultiTargetFramebuffer';
 import { GLTextureFormatStuff } from '../gl/glSetTexture';
 import { RawBufferRenderTarget } from './RawBufferRenderTarget';
+import { glLazyMultiTargetFramebuffer } from '../gl/glLazyMultiTargetFramebuffer';
 
 export class BufferTextureRenderTarget extends RawBufferRenderTarget {
   public readonly textures: WebGLTexture[];

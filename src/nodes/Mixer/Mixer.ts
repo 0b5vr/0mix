@@ -1,14 +1,14 @@
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { GL_TEXTURE_2D } from '../../gl/constants';
+import { Material } from '../../heck/Material';
+import { Quad } from '../../heck/components/Quad';
+import { RenderTarget } from '../../heck/RenderTarget';
+import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { auto } from '../../globals/automaton';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
-import { quadGeometry } from '../../globals/quadGeometry';
-import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
-import { Quad } from '../../heck/components/Quad';
-import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
-import { Material } from '../../heck/Material';
-import { RenderTarget } from '../../heck/RenderTarget';
-import { quadVert } from '../../shaders/common/quadVert';
 import { mixerFrag } from './shaders/mixerFrag';
+import { quadGeometry } from '../../globals/quadGeometry';
+import { quadVert } from '../../shaders/common/quadVert';
 
 export interface MixerOptions extends SceneNodeOptions {
   inputA: BufferTextureRenderTarget;

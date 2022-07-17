@@ -1,6 +1,6 @@
+import { add, addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mul, mulAssign, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { orthBas } from '../../../shaders/modules/orthBas';
 import { perlin3d } from '../../../shaders/modules/perlin3d';
-import { add, addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mul, mulAssign, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
 
 export const lineWaveVert = build( () => {
   const x = defIn( 'float', 0 );

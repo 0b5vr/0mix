@@ -1,20 +1,20 @@
-import { genCube } from '../../../geometries/genCube';
+import { CameraStack } from '../../CameraStack/CameraStack';
+import { EventType, emit } from '../../../globals/globalEvent';
 import { GL_LINES } from '../../../gl/constants';
-import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
-import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
-import { dummyRenderTarget1, dummyRenderTarget4 } from '../../../globals/dummyRenderTarget';
-import { emit, EventType } from '../../../globals/globalEvent';
+import { Geometry } from '../../../heck/Geometry';
 import { Lambda } from '../../../heck/components/Lambda';
+import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
+import { Material } from '../../../heck/Material';
 import { Mesh } from '../../../heck/components/Mesh';
 import { SceneNode } from '../../../heck/components/SceneNode';
-import { Geometry } from '../../../heck/Geometry';
-import { Material } from '../../../heck/Material';
-import { CameraStack } from '../../CameraStack/CameraStack';
-import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
+import { dummyRenderTarget1, dummyRenderTarget4 } from '../../../globals/dummyRenderTarget';
+import { genCube } from '../../../geometries/genCube';
+import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
+import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
 import { pillarGridBodyFrag } from './shaders/pillarGridBodyFrag';
+import { pillarGridBodyVert } from './shaders/pillarGridBodyVert';
 import { pillarGridFrameFrag } from './shaders/pillarGridFrameFrag';
 import { pillarGridFrameVert } from './shaders/pillarGridFrameVert';
-import { pillarGridBodyVert } from './shaders/pillarGridBodyVert';
 
 export class PillarGrid extends SceneNode {
   public cameraProxy: SceneNode;
@@ -95,7 +95,7 @@ export class PillarGrid extends SceneNode {
           deferred.replaceShader( v?.pillarGridBodyVert, f?.pillarGridBodyFrag( 'deferred' ) );
           depth.replaceShader( v?.pillarGridBodyVert, f?.pillarGridBodyFrag( 'depth' ) );
         },
-      )
+      );
     }
 
     // -- material frame ---------------------------------------------------------------------------
@@ -119,7 +119,7 @@ export class PillarGrid extends SceneNode {
         ( [ v, f ] ) => {
           deferredFrame.replaceShader( v?.pillarGridFrameVert, f?.pillarGridFrameFrag );
         },
-      )
+      );
     }
 
     // -- mesh body --------------------------------------------------------------------------------

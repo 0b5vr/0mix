@@ -1,21 +1,21 @@
-import { GL_NEAREST, GL_TEXTURE_2D } from '../../../gl/constants';
-import { GLTextureFormatStuffR11G11B10F, GLTextureFormatStuffRG16F, GLTextureFormatStuffRGBA16F } from '../../../gl/glSetTexture';
-import { glTextureFilter } from '../../../gl/glTextureFilter';
-import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
-import { EventType, on } from '../../../globals/globalEvent';
-import { quadGeometry } from '../../../globals/quadGeometry';
 import { BufferTextureRenderTarget } from '../../../heck/BufferTextureRenderTarget';
+import { EventType, on } from '../../../globals/globalEvent';
+import { GLTextureFormatStuffR11G11B10F, GLTextureFormatStuffRG16F, GLTextureFormatStuffRGBA16F } from '../../../gl/glSetTexture';
+import { GL_NEAREST, GL_TEXTURE_2D } from '../../../gl/constants';
+import { Material } from '../../../heck/Material';
 import { PerspectiveCamera } from '../../../heck/components/PerspectiveCamera';
 import { Quad } from '../../../heck/components/Quad';
-import { SceneNode } from '../../../heck/components/SceneNode';
-import { Material } from '../../../heck/Material';
 import { RenderTarget } from '../../../heck/RenderTarget';
-import { quadVert } from '../../../shaders/common/quadVert';
+import { SceneNode } from '../../../heck/components/SceneNode';
 import { dofBlurFrag } from './shaders/dofBlurFrag';
 import { dofPostFrag } from './shaders/dofPostFrag';
 import { dofPresortFrag } from './shaders/dofPresortFrag';
 import { dofTileGatherFrag } from './shaders/dofTileGatherFrag';
 import { dofTileMaxFrag } from './shaders/dofTileMaxFrag';
+import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
+import { glTextureFilter } from '../../../gl/glTextureFilter';
+import { quadGeometry } from '../../../globals/quadGeometry';
+import { quadVert } from '../../../shaders/common/quadVert';
 
 export interface DoFOptions {
   input: BufferTextureRenderTarget;
@@ -32,11 +32,36 @@ export class DoF extends SceneNode {
     const { width, height } = target;
 
     // -- buffers ----------------------------------------------------------------------------------
-    const targetTileMaxH = new BufferTextureRenderTarget( width / 16, height, 1, GLTextureFormatStuffRG16F );
-    const targetTileMaxV = new BufferTextureRenderTarget( width / 16, height / 16, 1, GLTextureFormatStuffRG16F );
-    const targetTileGather = new BufferTextureRenderTarget( width / 16, height / 16, 1, GLTextureFormatStuffRG16F );
-    const targetPresort = new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffR11G11B10F );
-    const targetBlur = new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffRGBA16F );
+    const targetTileMaxH = new BufferTextureRenderTarget(
+      width / 16,
+      height,
+      1,
+      GLTextureFormatStuffRG16F,
+    );
+    const targetTileMaxV = new BufferTextureRenderTarget(
+      width / 16,
+      height / 16,
+      1,
+      GLTextureFormatStuffRG16F,
+    );
+    const targetTileGather = new BufferTextureRenderTarget(
+      width / 16,
+      height / 16,
+      1,
+      GLTextureFormatStuffRG16F,
+    );
+    const targetPresort = new BufferTextureRenderTarget(
+      width,
+      height,
+      1,
+      GLTextureFormatStuffR11G11B10F,
+    );
+    const targetBlur = new BufferTextureRenderTarget(
+      width,
+      height,
+      1,
+      GLTextureFormatStuffRGBA16F,
+    );
 
     glTextureFilter( targetTileMaxH.texture, GL_NEAREST );
     glTextureFilter( targetTileMaxV.texture, GL_NEAREST );

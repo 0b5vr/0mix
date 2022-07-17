@@ -1,5 +1,5 @@
+import { LazyProgramOptions, glLazyProgram } from '../gl/glLazyProgram';
 import { Material } from './Material';
-import { glLazyProgram, LazyProgramOptions } from '../gl/glLazyProgram';
 
 export class ShaderPool<TUser> {
   private __programMap: Map<string, WebGLProgram> = new Map();

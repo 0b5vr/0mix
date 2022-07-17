@@ -1,6 +1,6 @@
-import { glLazyMipmapFramebuffers } from '../gl/glLazyMipmapFramebuffers';
 import { GLTextureFormatStuff } from '../gl/glSetTexture';
 import { RawBufferRenderTarget } from './RawBufferRenderTarget';
+import { glLazyMipmapFramebuffers } from '../gl/glLazyMipmapFramebuffers';
 
 export class BufferMipmapTextureRenderTarget extends RawBufferRenderTarget {
   public readonly texture: WebGLTexture;

@@ -1,4 +1,4 @@
-/*!
+/* !
  * Original implementation by Ashima Arts (MIT License)
  * https://github.com/hughsk/glsl-noise
  */

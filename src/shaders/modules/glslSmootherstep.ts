@@ -1,4 +1,4 @@
-import { GLSLExpression, GLSLFloatExpression, sub, mul, add } from '../shaderBuilder';
+import { GLSLExpression, GLSLFloatExpression, add, mul, sub } from '../shaderBuilder';
 import { glslLinearstep } from './glslLinearstep';
 
 export const glslSmootherstep: {

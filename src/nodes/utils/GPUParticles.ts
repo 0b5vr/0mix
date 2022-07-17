@@ -1,3 +1,5 @@
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { GL_NEAREST, GL_TEXTURE_2D } from '../../gl/constants';
 import { Geometry } from '../../heck/Geometry';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material, MaterialMap } from '../../heck/Material';
@@ -5,9 +7,7 @@ import { Mesh } from '../../heck/components/Mesh';
 import { Quad } from '../../heck/components/Quad';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { Swap } from '@0b5vr/experimental';
-import { GL_NEAREST, GL_TEXTURE_2D } from '../../gl/constants';
 import { glTextureFilter } from '../../gl/glTextureFilter';
-import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 
 export interface GPUParticlesOptions extends SceneNodeOptions {
   materialCompute: Material;

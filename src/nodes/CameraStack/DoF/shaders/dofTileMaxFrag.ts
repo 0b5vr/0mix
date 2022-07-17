@@ -1,8 +1,8 @@
-import { invCalcDepth } from '../../../../shaders/modules/invCalcDepth';
 import { add, assign, build, def, defInNamed, defOut, defUniformNamed, div, float, forLoop, insert, main, max, min, mul, neg, sub, sw, texture, vec2, vec4 } from '../../../../shaders/shaderBuilder';
 import { dofCalcCoC } from './dofCalcCoC';
+import { invCalcDepth } from '../../../../shaders/modules/invCalcDepth';
 
-export const dofTileMaxFrag = ( isVert: boolean ) => build( () => {
+export const dofTileMaxFrag = ( isVert: boolean ): string => build( () => {
   insert( 'precision highp float;' );
 
   const vUv = defInNamed( 'vec2', 'vUv' );

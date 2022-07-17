@@ -1,10 +1,10 @@
 import { Component } from '../../heck/components/Component';
+import { GL_TEXTURE_2D } from '../../gl/constants';
 import { Lambda } from '../../heck/components/Lambda';
 import { MapOfSet } from '../../utils/MapOfSet';
 import { Material } from '../../heck/Material';
 import { PointLightNode, PointLightTag } from '../Lights/PointLightNode';
 import { mat4Inverse, mat4Multiply } from '@0b5vr/experimental';
-import { GL_TEXTURE_2D } from '../../gl/constants';
 
 export function createLightUniformsLambda( materials: Material[] ): Lambda {
   const setLightUniforms = ( { frameCount, componentsByTag }: {

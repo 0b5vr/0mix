@@ -1,16 +1,16 @@
-import { GL_NEAREST, GL_TEXTURE_2D } from '../../../gl/constants';
-import { glTextureFilter } from '../../../gl/glTextureFilter';
-import { auto } from '../../../globals/automaton';
-import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
-import { quadGeometry } from '../../../globals/quadGeometry';
-import { BufferTextureRenderTarget } from '../../../heck/BufferTextureRenderTarget';
 import { Blit } from '../../../heck/components/Blit';
-import { Quad } from '../../../heck/components/Quad';
-import { SceneNode } from '../../../heck/components/SceneNode';
+import { BufferTextureRenderTarget } from '../../../heck/BufferTextureRenderTarget';
+import { GL_NEAREST, GL_TEXTURE_2D } from '../../../gl/constants';
 import { Material } from '../../../heck/Material';
+import { Quad } from '../../../heck/components/Quad';
 import { RenderTarget } from '../../../heck/RenderTarget';
-import { quadVert } from '../../../shaders/common/quadVert';
+import { SceneNode } from '../../../heck/components/SceneNode';
+import { auto } from '../../../globals/automaton';
 import { dctEncodeFrag } from './shaders/dctEncodeFrag';
+import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
+import { glTextureFilter } from '../../../gl/glTextureFilter';
+import { quadGeometry } from '../../../globals/quadGeometry';
+import { quadVert } from '../../../shaders/common/quadVert';
 
 export interface DCTOptions {
   input: BufferTextureRenderTarget;

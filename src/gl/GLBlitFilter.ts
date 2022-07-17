@@ -1,4 +1,4 @@
-import { GL_NEAREST, GL_LINEAR } from './constants';
+import { GL_LINEAR, GL_NEAREST } from './constants';
 
 export type GLBlitFilter =
   | typeof GL_NEAREST

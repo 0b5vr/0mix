@@ -1,7 +1,7 @@
-import { gl } from '../globals/canvas';
-import { GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER } from './constants';
 import { GLTextureMagFilterType } from './GLTextureMagFilterType';
 import { GLTextureMinFilterType } from './GLTextureMinFilterType';
+import { GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER } from './constants';
+import { gl } from '../globals/canvas';
 
 export function glTextureFilter(
   texture: WebGLTexture,

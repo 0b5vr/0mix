@@ -1,4 +1,4 @@
-import { GLSLExpression, mul, sw, div, sub } from '../shaderBuilder';
+import { GLSLExpression, div, mul, sub, sw } from '../shaderBuilder';
 
 /**
  * It probably returns a negative value.

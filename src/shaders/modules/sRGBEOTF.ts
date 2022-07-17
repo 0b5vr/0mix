@@ -1,4 +1,4 @@
-import { GLSLExpression, def, mix, pow, step, div, add, vec3 } from '../shaderBuilder';
+import { GLSLExpression, add, def, div, mix, pow, step, vec3 } from '../shaderBuilder';
 import { glslSaturate } from './glslSaturate';
 
 export function sRGBEOTF( x: GLSLExpression<'vec3'> ): GLSLExpression<'vec3'> {

@@ -1,8 +1,8 @@
-import { getDivComponentLogger } from '../../globals/dom';
 import { EventType, on } from '../../globals/globalEvent';
-import { gui } from '../../globals/gui';
 import { Lambda } from '../../heck/components/Lambda';
 import { SceneNode } from '../../heck/components/SceneNode';
+import { getDivComponentLogger } from '../../globals/dom';
+import { gui } from '../../globals/gui';
 
 export class ComponentLogger extends SceneNode {
   private __isActive: boolean;

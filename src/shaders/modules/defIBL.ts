@@ -25,7 +25,7 @@ export function defIBL(): {
     V: GLSLExpression<'vec3'>,
     roughness: GLSLExpression<'float'>,
   ) => GLSLExpression<'vec3'>,
-} {
+  } {
   const [
     samplerEnvDry,
     samplerEnvWet,

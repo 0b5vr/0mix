@@ -1,3 +1,6 @@
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { GLTextureFormatStuffRG16F } from '../../gl/glSetTexture';
+import { GL_TEXTURE_2D } from '../../gl/constants';
 import { Material } from '../../heck/Material';
 import { PerspectiveCamera } from '../../heck/components/PerspectiveCamera';
 import { Quad } from '../../heck/components/Quad';
@@ -7,9 +10,6 @@ import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { shadowBlurFrag } from './shaders/shadowBlurFrag';
-import { GL_TEXTURE_2D } from '../../gl/constants';
-import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
-import { GLTextureFormatStuffRG16F } from '../../gl/glSetTexture';
 
 export const PointLightTag = Symbol();
 
@@ -22,8 +22,8 @@ export interface PointLightNodeOptions extends SceneNodeOptions {
 }
 
 export class PointLightNode extends SceneNode {
-  public spotness: number = 0.0;
-  public spotSharpness: number = 0.5;
+  public spotness = 0.0;
+  public spotSharpness = 0.5;
   public color: [ number, number, number ] = [ 1.0, 1.0, 1.0 ];
   public camera: PerspectiveCamera;
   public shadowMap: BufferTextureRenderTarget;

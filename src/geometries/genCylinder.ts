@@ -1,12 +1,12 @@
-import { Geometry } from '../heck/Geometry';
-import { TAU } from '../utils/constants';
-import { glCreateVertexbuffer } from '../gl/glCreateVertexbuffer';
-import { glCreateIndexbuffer } from '../gl/glCreateIndexbuffer';
-import { glVertexArrayBindVertexbuffer } from '../gl/glVertexArrayBindVertexbuffer';
-import { glVertexArrayBindIndexbuffer } from '../gl/glVertexArrayBindIndexbuffer';
-import { GL_TRIANGLES, GL_UNSIGNED_SHORT } from '../gl/constants';
 import { GLDrawMode } from '../gl/glDrawMode';
 import { GLIndexType } from '../gl/GLIndexType';
+import { GL_TRIANGLES, GL_UNSIGNED_SHORT } from '../gl/constants';
+import { Geometry } from '../heck/Geometry';
+import { TAU } from '../utils/constants';
+import { glCreateIndexbuffer } from '../gl/glCreateIndexbuffer';
+import { glCreateVertexbuffer } from '../gl/glCreateVertexbuffer';
+import { glVertexArrayBindIndexbuffer } from '../gl/glVertexArrayBindIndexbuffer';
+import { glVertexArrayBindVertexbuffer } from '../gl/glVertexArrayBindVertexbuffer';
 
 interface ResultGenCylinder {
   position: WebGLBuffer;

@@ -1,3 +1,4 @@
+import { GL_TEXTURE_2D } from '../../gl/constants';
 import { GPUParticles } from '../utils/GPUParticles';
 import { Lambda } from '../../heck/components/Lambda';
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/deferredConstants';
@@ -6,15 +7,14 @@ import { TransparentShell } from '../_misc/TransparentShell';
 import { auto } from '../../globals/automaton';
 import { dummyRenderTarget1, dummyRenderTarget2, dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { genCylinder } from '../../geometries/genCylinder';
+import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
+import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { randomTexture, randomTextureStatic } from '../../globals/randomTexture';
 import { trailsComputeFrag } from './shaders/trailsComputeFrag';
 import { trailsRenderFrag } from './shaders/trailsRenderFrag';
 import { trailsRenderVert } from './shaders/trailsRenderVert';
-import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
-import { GL_TEXTURE_2D } from '../../gl/constants';
-import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
 
 const trails = 512;
 const trailLength = 512;

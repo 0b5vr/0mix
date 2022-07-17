@@ -18,7 +18,7 @@ export class BufferReaderNode extends AudioWorkletNode {
     return audio.audioWorklet.addModule( processorUrl );
   }
 
-  public setActive( value: boolean ) {
+  public setActive( value: boolean ): void {
     this.port.postMessage( {
       type: 'active',
       value,

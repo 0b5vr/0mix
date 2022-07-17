@@ -1,13 +1,13 @@
-import { quatFromAxisAngle } from '@0b5vr/experimental';
-import { FAR, NEAR } from '../../config';
-import { emit, EventType } from '../../globals/globalEvent';
-import { Lambda } from '../../heck/components/Lambda';
-import { SceneNode } from '../../heck/components/SceneNode';
 import { CameraStack } from '../CameraStack/CameraStack';
 import { CubemapNode } from '../CubemapNode/CubemapNode';
 import { Dust } from '../Dust/Dust';
+import { EventType, emit } from '../../globals/globalEvent';
+import { FAR, NEAR } from '../../config';
+import { Lambda } from '../../heck/components/Lambda';
 import { PointLightNode } from '../Lights/PointLightNode';
+import { SceneNode } from '../../heck/components/SceneNode';
 import { Sponge } from './Sponge/Sponge';
+import { quatFromAxisAngle } from '@0b5vr/experimental';
 
 export class SpongeScene extends SceneNode {
   public cameraProxy: SceneNode;

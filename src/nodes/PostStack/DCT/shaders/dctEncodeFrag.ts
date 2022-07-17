@@ -1,8 +1,8 @@
-import { glslLofir } from '../../../../shaders/modules/glslLofir';
-import { add, addAssign, assign, build, cos, def, defConst, defOut, defUniformNamed, div, divAssign, exp, float, glFragCoord, insert, int, ivec2, length, main, mat3, mul, mulAssign, step, subAssign, sw, texelFetch, unrollLoop, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { PI } from '../../../../utils/constants';
+import { add, addAssign, assign, build, cos, def, defConst, defOut, defUniformNamed, div, divAssign, exp, float, glFragCoord, insert, int, ivec2, length, main, mat3, mul, mulAssign, step, subAssign, sw, texelFetch, unrollLoop, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { glslLofir } from '../../../../shaders/modules/glslLofir';
 
-export const dctEncodeFrag = ( isVert: boolean, isDecode: boolean ) => build( () => {
+export const dctEncodeFrag = ( isVert: boolean, isDecode: boolean ): string => build( () => {
   insert( 'precision highp float;' );
 
   const fragColor = defOut( 'vec4' );

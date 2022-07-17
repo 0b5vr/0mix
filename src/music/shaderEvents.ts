@@ -5,7 +5,7 @@ export enum ShaderEventType {
   Select,
   Comment,
   Apply,
-};
+}
 
 export type ShaderEvent = [
   beatOffset: number,

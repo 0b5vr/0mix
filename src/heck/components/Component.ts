@@ -1,4 +1,5 @@
 import { Camera } from './Camera';
+import { EventType, emit } from '../../globals/globalEvent';
 import { MapOfSet } from '../../utils/MapOfSet';
 import { MaterialTag } from '../Material';
 import { RawMatrix4 } from '@0b5vr/experimental';
@@ -7,7 +8,6 @@ import { SceneNode } from './SceneNode';
 import { Transform } from '../Transform';
 import { arraySetIntersects } from '../../utils/arraySetIntersects';
 import { gui, guiMeasureDraw, guiMeasureUpdate } from '../../globals/gui';
-import { emit, EventType } from '../../globals/globalEvent';
 
 export interface ComponentUpdateEvent {
   frameCount: number;

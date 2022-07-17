@@ -1,5 +1,5 @@
-import { glslSaturate } from '../../../../shaders/modules/glslSaturate';
 import { abs, add, addAssign, assign, band, build, def, defInNamed, defOut, defUniformNamed, div, float, forLoop, insert, int, main, mix, rshift, sub, sw, texture, vec2, vec4 } from '../../../../shaders/shaderBuilder';
+import { glslSaturate } from '../../../../shaders/modules/glslSaturate';
 
 export const dofPostFrag = build( () => {
   insert( 'precision highp float;' );

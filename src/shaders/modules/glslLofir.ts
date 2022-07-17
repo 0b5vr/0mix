@@ -1,4 +1,4 @@
-import { GLSLExpression, GLSLFloatExpression, div, floor, mul, add } from '../shaderBuilder';
+import { GLSLExpression, GLSLFloatExpression, add, div, floor, mul } from '../shaderBuilder';
 
 export function glslLofir( x: GLSLFloatExpression, y: GLSLFloatExpression ): GLSLExpression<'float'>;
 export function glslLofir( x: GLSLExpression<'vec2'>, y: GLSLExpression<'vec2'> | GLSLFloatExpression ): GLSLExpression<'vec2'>;

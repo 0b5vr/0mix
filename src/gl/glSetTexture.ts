@@ -1,5 +1,5 @@
-import { gl } from '../globals/canvas';
 import { GL_FLOAT, GL_HALF_FLOAT, GL_R11F_G11F_B10F, GL_R16F, GL_R8, GL_RED, GL_RG, GL_RG16F, GL_RGB, GL_RGBA, GL_RGBA16F, GL_RGBA32F, GL_RGBA8, GL_TEXTURE_2D, GL_UNSIGNED_BYTE, GL_UNSIGNED_INT_10F_11F_11F_REV } from './constants';
+import { gl } from '../globals/canvas';
 
 export type GLTextureFormatStuff = [
   internalformat: number,

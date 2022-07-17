@@ -1,7 +1,7 @@
-import { gl } from '../../globals/canvas';
-import { promiseGui } from '../../globals/gui';
 import { Lambda } from '../../heck/components/Lambda';
 import { SceneNode } from '../../heck/components/SceneNode';
+import { gl } from '../../globals/canvas';
+import { promiseGui } from '../../globals/gui';
 
 export class WebGLMemory extends SceneNode {
   public constructor() {

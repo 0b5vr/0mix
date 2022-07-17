@@ -1,6 +1,6 @@
 import { MUSIC_BPM } from '../config';
 import { ShaderEventRange } from './ShaderEventRange';
-import { shaderEvents, ShaderEventType } from './shaderEvents';
+import { ShaderEventType, shaderEvents } from './shaderEvents';
 
 export class ShaderEventManager {
   public lines: string[];
@@ -13,7 +13,7 @@ export class ShaderEventManager {
   public onApply: ( code: string ) => void;
   public onAlter?: ( change: ShaderEventRange ) => void;
 
-  public get code() {
+  public get code(): string {
     return this.lines.join( '\n' );
   }
 

@@ -1,4 +1,4 @@
-import { GL_NEAREST, GL_LINEAR } from './constants';
+import { GL_LINEAR, GL_NEAREST } from './constants';
 
 export type GLTextureMagFilterType =
   | typeof GL_NEAREST

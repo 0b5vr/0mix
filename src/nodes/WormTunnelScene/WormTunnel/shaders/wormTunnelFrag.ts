@@ -1,10 +1,10 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
 import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, forLoop, glFragCoord, glFragDepth, glslFalse, glslTrue, ifThen, insert, length, main, mul, mulAssign, normalize, retFn, sub, sw, texture, vec3, vec4 } from '../../../../shaders/shaderBuilder';
-import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
+import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
+import { perlin3d } from '../../../../shaders/modules/perlin3d';
 import { raymarch } from '../../../../shaders/modules/raymarch';
 import { setupRoRd } from '../../../../shaders/modules/setupRoRd';
-import { perlin3d } from '../../../../shaders/modules/perlin3d';
 import { triplanarMapping } from '../../../../shaders/modules/triplanarMapping';
 
 export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {

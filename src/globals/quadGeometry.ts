@@ -1,8 +1,8 @@
+import { GL_TRIANGLE_STRIP } from '../gl/constants';
 import { Geometry } from '../heck/Geometry';
 import { TRIANGLE_STRIP_QUAD } from '@0b5vr/experimental';
 import { glCreateVertexbuffer } from '../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../gl/glVertexArrayBindVertexbuffer';
-import { GL_TRIANGLE_STRIP } from '../gl/constants';
 
 export const quadBuffer = glCreateVertexbuffer( new Float32Array( TRIANGLE_STRIP_QUAD ) );
 

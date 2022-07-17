@@ -1,5 +1,10 @@
 import { AO_RESOLUTION_RATIO, FAR, NEAR } from '../../config';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { Component, ComponentOptions } from '../../heck/components/Component';
+import { DoF } from './DoF/DoF';
+import { EventType, on } from '../../globals/globalEvent';
+import { GLTextureFormatStuffR16F, GLTextureFormatStuffRGBA16F } from '../../gl/glSetTexture';
+import { GL_NEAREST, GL_TEXTURE_2D } from '../../gl/constants';
 import { Lambda } from '../../heck/components/Lambda';
 import { LightShaft, LightShaftTag } from '../Lights/LightShaft';
 import { Material } from '../../heck/Material';
@@ -10,17 +15,12 @@ import { SceneNode } from '../../heck/components/SceneNode';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { deferredShadeFrag } from './shaders/deferredShadeFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
+import { glTextureFilter } from '../../gl/glTextureFilter';
 import { mat4Inverse, mat4Multiply } from '@0b5vr/experimental';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { randomTexture } from '../../globals/randomTexture';
 import { ssaoFrag } from './shaders/ssaoFrag';
-import { GL_NEAREST, GL_TEXTURE_2D } from '../../gl/constants';
-import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
-import { glTextureFilter } from '../../gl/glTextureFilter';
-import { GLTextureFormatStuffR16F, GLTextureFormatStuffRGBA16F } from '../../gl/glSetTexture';
-import { EventType, on } from '../../globals/globalEvent';
-import { DoF } from './DoF/DoF';
 import { zeroTexture } from '../../globals/zeroTexture';
 
 export interface CameraStackOptions extends ComponentOptions {

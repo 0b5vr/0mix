@@ -1,11 +1,11 @@
-import { quatRotationZ } from '@0b5vr/experimental';
-import { FAR, NEAR } from '../../config';
-import { emit, EventType } from '../../globals/globalEvent';
-import { Lambda } from '../../heck/components/Lambda';
-import { SceneNode } from '../../heck/components/SceneNode';
 import { CameraStack } from '../CameraStack/CameraStack';
-import { PointLightNode } from '../Lights/PointLightNode';
+import { EventType, emit } from '../../globals/globalEvent';
+import { FAR, NEAR } from '../../config';
+import { Lambda } from '../../heck/components/Lambda';
 import { PillarGrid } from './PillarGrid/PillarGrid';
+import { PointLightNode } from '../Lights/PointLightNode';
+import { SceneNode } from '../../heck/components/SceneNode';
+import { quatRotationZ } from '@0b5vr/experimental';
 
 export class PillarGridScene extends SceneNode {
   public cameraProxy: SceneNode;

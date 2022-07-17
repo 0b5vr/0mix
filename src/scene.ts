@@ -1,25 +1,25 @@
+import { Blit } from './heck/components/Blit';
+import { BufferTextureRenderTarget } from './heck/BufferTextureRenderTarget';
 import { CameraStack } from './nodes/CameraStack/CameraStack';
 import { CanvasRenderTarget } from './heck/CanvasRenderTarget';
 import { Dog } from './heck/Dog';
+import { GLTextureFormatStuffRGBA8 } from './gl/glSetTexture';
+import { GL_NEAREST } from './gl/constants';
 import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
 import { Lambda } from './heck/components/Lambda';
+import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
+import { Mixer } from './nodes/Mixer/Mixer';
+import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
+import { PostStack } from './nodes/PostStack/PostStack';
+import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
+import { WebGLMemory } from './nodes/WebGLMemory/WebGLMemory';
+import { WormTunnelScene } from './nodes/WormTunnelScene/WormTunnelScene';
 import { automaton } from './globals/automaton';
 import { canvas } from './globals/canvas';
+import { glTextureFilter } from './gl/glTextureFilter';
 import { music } from './globals/music';
 import { promiseGui } from './globals/gui';
 import { randomTexture } from './globals/randomTexture';
-import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
-import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
-import { PostStack } from './nodes/PostStack/PostStack';
-import { BufferTextureRenderTarget } from './heck/BufferTextureRenderTarget';
-import { Mixer } from './nodes/Mixer/Mixer';
-import { GLTextureFormatStuffRGBA8 } from './gl/glSetTexture';
-import { Blit } from './heck/components/Blit';
-import { glTextureFilter } from './gl/glTextureFilter';
-import { GL_NEAREST } from './gl/constants';
-import { WebGLMemory } from './nodes/WebGLMemory/WebGLMemory';
-import { WormTunnelScene } from './nodes/WormTunnelScene/WormTunnelScene';
-import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
 
 // == dog ==========================================================================================
 export const dog = new Dog();

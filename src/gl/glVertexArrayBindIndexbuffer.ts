@@ -1,5 +1,5 @@
-import { gl } from '../globals/canvas';
 import { GL_ELEMENT_ARRAY_BUFFER } from './constants';
+import { gl } from '../globals/canvas';
 
 export function glVertexArrayBindIndexbuffer(
   vertexArray: WebGLVertexArrayObject,

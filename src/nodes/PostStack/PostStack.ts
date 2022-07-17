@@ -1,14 +1,14 @@
 import { Bloom } from './Bloom';
-import { RawBufferRenderTarget } from '../../heck/RawBufferRenderTarget';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { Code } from './Code/Code';
 import { ComponentOptions } from '../../heck/components/Component';
+import { DCT } from './DCT/DCT';
+import { FXAA } from './FXAA';
 import { Post } from './Post';
+import { RawBufferRenderTarget } from '../../heck/RawBufferRenderTarget';
 import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { Swap } from '@0b5vr/experimental';
-import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
-import { Code } from './Code/Code';
-import { DCT } from './DCT/DCT';
-import { FXAA } from './FXAA';
 
 export interface PostStackOptions extends ComponentOptions {
   input: BufferTextureRenderTarget;

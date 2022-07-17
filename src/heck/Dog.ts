@@ -11,7 +11,7 @@ export class Dog {
   public root: SceneNode;
   public active: boolean;
 
-  private __frameCount: number = 0;
+  private __frameCount = 0;
 
   public constructor() {
     this.root = new SceneNode();

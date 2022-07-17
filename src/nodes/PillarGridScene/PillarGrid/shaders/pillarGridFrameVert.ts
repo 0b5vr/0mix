@@ -1,6 +1,6 @@
-import { pcg3df } from '../../../../shaders/modules/pcg3df';
 import { add, addAssign, mad, sin, vec3 } from '../../../../shaders/shaderBuilder';
 import { assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mul, sw, vec4 } from '../../../../shaders/shaderBuilder';
+import { pcg3df } from '../../../../shaders/modules/pcg3df';
 
 export const pillarGridFrameVert = build( () => {
   const position = defIn( 'vec3', 0 );

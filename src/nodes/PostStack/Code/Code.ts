@@ -1,21 +1,21 @@
-import { Geometry } from '../../../heck/Geometry';
-import { Material } from '../../../heck/Material';
-import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
-import { codeRenderFrag } from './shaders/codeRenderFrag';
-import { codeRenderVert } from './shaders/codeRenderVert';
-import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
-import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
 import { GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../../gl/constants';
-import { SceneNode } from '../../../heck/components/SceneNode';
-import { gl } from '../../../globals/canvas';
-import { music } from '../../../globals/music';
-import { withinShaderEventRange } from '../../../music/withinShaderEventRange';
+import { Geometry } from '../../../heck/Geometry';
 import { Lambda } from '../../../heck/components/Lambda';
-import { quadBuffer } from '../../../globals/quadGeometry';
+import { Material } from '../../../heck/Material';
 import { Quad } from '../../../heck/components/Quad';
 import { RenderTarget } from '../../../heck/RenderTarget';
+import { SceneNode } from '../../../heck/components/SceneNode';
 import { codeCharTexture } from './codeCharTexture';
+import { codeRenderFrag } from './shaders/codeRenderFrag';
+import { codeRenderVert } from './shaders/codeRenderVert';
+import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
+import { gl } from '../../../globals/canvas';
+import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
+import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
+import { music } from '../../../globals/music';
 import { promiseGui } from '../../../globals/gui';
+import { quadBuffer } from '../../../globals/quadGeometry';
+import { withinShaderEventRange } from '../../../music/withinShaderEventRange';
 
 const chars = 65536;
 

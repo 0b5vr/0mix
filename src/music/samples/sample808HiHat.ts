@@ -1,6 +1,6 @@
-import { sampleRate } from '../../globals/audio';
-import { SAMPLE_TEXTURE_SIZE_SQ } from '../constants';
 import { HPF } from './HPF';
+import { SAMPLE_TEXTURE_SIZE_SQ } from '../constants';
+import { sampleRate } from '../../globals/audio';
 
 export const sample808HiHat = new Float32Array( SAMPLE_TEXTURE_SIZE_SQ );
 
@@ -19,7 +19,7 @@ for ( let i = 0; i < SAMPLE_TEXTURE_SIZE_SQ; i ++ ) {
   sample808HiHat[ i ] = hpf1.process( sample808HiHat[ i ] );
 
   // wave shaper
-  sample808HiHat[ i ] = Math.sign( sample808HiHat[ i ] ) * Math.pow( Math.abs( sample808HiHat[ i ] ), 0.1 );
+  sample808HiHat[ i ] = Math.tanh( 10.0 * sample808HiHat[ i ] );
 
   // hpf 2
   sample808HiHat[ i ] = 0.5 * hpf2.process( sample808HiHat[ i ] );

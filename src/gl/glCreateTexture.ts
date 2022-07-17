@@ -1,5 +1,5 @@
+import { GLTextureFormatStuff, glSetTexture } from './glSetTexture';
 import { gl } from '../globals/canvas';
-import { glSetTexture, GLTextureFormatStuff } from './glSetTexture';
 
 export function glCreateTexture(
   width: number,

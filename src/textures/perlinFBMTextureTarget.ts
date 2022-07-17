@@ -1,6 +1,6 @@
 import { ShaderRenderTarget } from '../nodes/utils/ShaderRenderTarget';
-import { quadVert } from '../shaders/common/quadVert';
 import { perlinFBMFrag } from './shaders/perlinFBMFrag';
+import { quadVert } from '../shaders/common/quadVert';
 
 /**
  * Intended to be used in music

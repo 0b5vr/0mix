@@ -1,8 +1,12 @@
 import { Blit } from '../../heck/components/Blit';
-import { RawBufferRenderTarget } from '../../heck/RawBufferRenderTarget';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { CanvasTexture } from '../utils/CanvasTexture';
+import { Component } from '../../heck/components/Component';
+import { GL_COLOR_ATTACHMENT0, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
+import { RawBufferRenderTarget } from '../../heck/RawBufferRenderTarget';
 import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { canvas } from '../../globals/canvas';
@@ -11,12 +15,8 @@ import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { gui } from '../../globals/gui';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
-import inspectorFrag from './shaders/inspector.frag?raw';
-import { GL_COLOR_ATTACHMENT0, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
-import { CanvasTexture } from '../utils/CanvasTexture';
-import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { traverse } from '@0b5vr/experimental';
-import { Component } from '../../heck/components/Component';
+import inspectorFrag from './shaders/inspector.frag?raw';
 
 export interface RTInspectorOptions {
   target: RenderTarget;

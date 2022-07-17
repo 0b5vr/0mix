@@ -1,6 +1,6 @@
+import { GL_BACK, GL_FRAMEBUFFER } from '../gl/constants';
 import { RenderTarget } from './RenderTarget';
 import { canvas, gl } from '../globals/canvas';
-import { GL_BACK, GL_FRAMEBUFFER } from '../gl/constants';
 
 export interface CanvasRenderTargetOptions {
   viewport?: [ number, number, number, number ];

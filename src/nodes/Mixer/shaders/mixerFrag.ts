@@ -1,4 +1,4 @@
-import { build, insert, defInNamed, defOut, defUniformNamed, main, assign, texture, mix, def, mul, addAssign } from '../../../shaders/shaderBuilder';
+import { addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, insert, main, mix, mul, texture } from '../../../shaders/shaderBuilder';
 
 export const mixerFrag = build( () => {
   insert( 'precision highp float;' );

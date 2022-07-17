@@ -1,6 +1,6 @@
-import { invCalcDepth } from '../../../../shaders/modules/invCalcDepth';
 import { assign, build, def, defInNamed, defOut, defUniformNamed, div, insert, main, min, mul, neg, smoothstep, sq, sub, sw, texture, vec4 } from '../../../../shaders/shaderBuilder';
 import { dofCalcCoC } from './dofCalcCoC';
+import { invCalcDepth } from '../../../../shaders/modules/invCalcDepth';
 
 export const dofPresortFrag = build( () => {
   insert( 'precision highp float;' );

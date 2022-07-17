@@ -1,10 +1,10 @@
-import { RawBufferRenderTarget } from '../RawBufferRenderTarget';
 import { Component, ComponentOptions } from './Component';
+import { GLBlitFilter } from '../../gl/GLBlitFilter';
+import { GLBlitMask } from '../../gl/GLBlitMask';
+import { GL_COLOR_ATTACHMENT0, GL_COLOR_BUFFER_BIT, GL_DRAW_FRAMEBUFFER, GL_NEAREST, GL_READ_FRAMEBUFFER } from '../../gl/constants';
+import { RawBufferRenderTarget } from '../RawBufferRenderTarget';
 import { RenderTarget } from '../RenderTarget';
 import { gl } from '../../globals/canvas';
-import { GL_COLOR_ATTACHMENT0, GL_COLOR_BUFFER_BIT, GL_DRAW_FRAMEBUFFER, GL_NEAREST, GL_READ_FRAMEBUFFER } from '../../gl/constants';
-import { GLBlitMask } from '../../gl/GLBlitMask';
-import { GLBlitFilter } from '../../gl/GLBlitFilter';
 
 export interface BlitOptions extends ComponentOptions {
   src?: RawBufferRenderTarget;

@@ -1,12 +1,12 @@
 import { Component, ComponentOptions, ComponentUpdateEvent } from './Component';
-import { Material } from '../Material';
-import { RenderTarget } from '../RenderTarget';
-import { gl } from '../../globals/canvas';
-import { quadGeometry } from '../../globals/quadGeometry';
-import { glClear } from '../../gl/glClear';
 import { GL_CULL_FACE, GL_DEPTH_TEST, GL_NONE } from '../../gl/constants';
 import { Geometry } from '../Geometry';
+import { Material } from '../Material';
 import { MeshCull } from './Mesh';
+import { RenderTarget } from '../RenderTarget';
+import { gl } from '../../globals/canvas';
+import { glClear } from '../../gl/glClear';
+import { quadGeometry } from '../../globals/quadGeometry';
 
 export interface QuadOptions extends ComponentOptions {
   geometry?: Geometry;

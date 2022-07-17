@@ -1,4 +1,4 @@
-/*!
+/* !
  * voronoi2dBorder
  *
  * The idea is stolen from iq

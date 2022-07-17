@@ -1,6 +1,6 @@
-import { gl } from '../globals/canvas';
-import { GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T } from './constants';
 import { GLTextureWrapType } from './GLTextureWrapType';
+import { GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T } from './constants';
+import { gl } from '../globals/canvas';
 
 export function glTextureWrap(
   texture: WebGLTexture,

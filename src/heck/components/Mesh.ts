@@ -1,10 +1,10 @@
 import { Component, ComponentDrawEvent, ComponentOptions } from './Component';
+import { GLCullFaceType } from '../../gl/GLCullFaceType';
+import { GL_BACK, GL_CULL_FACE, GL_DEPTH_TEST, GL_NONE } from '../../gl/constants';
 import { Geometry } from '../Geometry';
 import { MaterialMap } from '../Material';
 import { gl } from '../../globals/canvas';
 import { mat3FromMat4Transpose, mat3Inverse } from '@0b5vr/experimental';
-import { GL_BACK, GL_CULL_FACE, GL_DEPTH_TEST, GL_NONE } from '../../gl/constants';
-import { GLCullFaceType } from '../../gl/GLCullFaceType';
 
 export interface MeshOptions extends ComponentOptions {
   geometry: Geometry;

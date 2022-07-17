@@ -1,6 +1,6 @@
-import { GL_BYTE, GL_FLOAT, GL_HALF_FLOAT, GL_INT, GL_SHORT, GL_TRANSFORM_FEEDBACK, GL_TRIANGLES, GL_UNSIGNED_BYTE, GL_UNSIGNED_INT, GL_UNSIGNED_SHORT } from '../gl/constants';
 import { GLDrawMode } from '../gl/glDrawMode';
 import { GLIndexType } from '../gl/GLIndexType';
+import { GL_BYTE, GL_FLOAT, GL_HALF_FLOAT, GL_INT, GL_SHORT, GL_TRANSFORM_FEEDBACK, GL_TRIANGLES, GL_UNSIGNED_BYTE, GL_UNSIGNED_INT, GL_UNSIGNED_SHORT } from '../gl/constants';
 import { gl } from '../globals/canvas';
 
 export class Geometry {

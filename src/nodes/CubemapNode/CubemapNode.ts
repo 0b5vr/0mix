@@ -9,6 +9,10 @@ import { Quad } from '../../heck/components/Quad';
 import { RawQuaternion, Swap } from '@0b5vr/experimental';
 import { SceneNode } from '../../heck/components/SceneNode';
 // import { StuffTag } from './Stuff';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { GLTextureFormatStuffR11G11B10F } from '../../gl/glSetTexture';
+import { GL_TEXTURE_2D } from '../../gl/constants';
+import { UITag } from '../common/UITag';
 import { auto } from '../../globals/automaton';
 import { cubemapBlurFrag } from './shaders/cubemapBlurFrag';
 import { cubemapMergeFrag } from './shaders/cubemapMergeFrag';
@@ -16,10 +20,6 @@ import { cubemapSampleFrag } from './shaders/cubemapSampleFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
-import { GL_TEXTURE_2D } from '../../gl/constants';
-import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
-import { UITag } from '../common/UITag';
-import { GLTextureFormatStuffR11G11B10F } from '../../gl/glSetTexture';
 
 const INV_SQRT2 = 1.0 / Math.sqrt( 2.0 );
 

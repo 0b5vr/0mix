@@ -1,4 +1,6 @@
 import { Component } from '../../heck/components/Component';
+import { EventType, on } from '../../globals/globalEvent';
+import { GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
@@ -7,8 +9,6 @@ import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { forwardPBRColorFrag } from '../../shaders/common/forwardPBRColorFrag';
 import { genCube } from '../../geometries/genCube';
 import { objectVert } from '../../shaders/common/objectVert';
-import { GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
-import { EventType, on } from '../../globals/globalEvent';
 import { zeroTexture } from '../../globals/zeroTexture';
 
 export interface TransparentShellOptions extends SceneNodeOptions {

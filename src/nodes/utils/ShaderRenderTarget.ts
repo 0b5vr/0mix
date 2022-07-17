@@ -1,13 +1,13 @@
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { GL_LINEAR, GL_REPEAT } from '../../gl/constants';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
-import { quadGeometry } from '../../globals/quadGeometry';
-import { quadVert } from '../../shaders/common/quadVert';
-import { GL_LINEAR, GL_REPEAT } from '../../gl/constants';
-import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { glTextureFilter } from '../../gl/glTextureFilter';
 import { glTextureWrap } from '../../gl/glTextureWrap';
+import { quadGeometry } from '../../globals/quadGeometry';
+import { quadVert } from '../../shaders/common/quadVert';
 
 export class ShaderRenderTarget extends BufferTextureRenderTarget {
   public material: Material;

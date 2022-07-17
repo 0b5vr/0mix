@@ -25,4 +25,4 @@ export function isectBox(
   } ) );
 
   return f( ro, rd, s );
-};
+}

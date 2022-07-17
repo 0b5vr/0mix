@@ -1,6 +1,6 @@
 import { RaymarcherNode } from '../../utils/RaymarcherNode';
-import { spongeFrag } from './shaders/spongeFrag';
 import { objectVert } from '../../../shaders/common/objectVert';
+import { spongeFrag } from './shaders/spongeFrag';
 
 export class Sponge extends RaymarcherNode {
   public constructor() {

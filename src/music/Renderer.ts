@@ -1,8 +1,8 @@
-import { GL_ARRAY_BUFFER, GL_DYNAMIC_COPY, GL_FLOAT, GL_NEAREST, GL_POINTS, GL_R32F, GL_RASTERIZER_DISCARD, GL_RED, GL_STATIC_DRAW, GL_TEXTURE0, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TRANSFORM_FEEDBACK, GL_TRANSFORM_FEEDBACK_BUFFER } from '../gl/constants';
-import { glLazyProgram } from '../gl/glLazyProgram';
-import { gl } from '../globals/canvas';
-import { SAMPLE_TEXTURE_SIZE } from './constants';
 import { FRAMES_PER_RENDER } from './Music';
+import { GL_ARRAY_BUFFER, GL_DYNAMIC_COPY, GL_FLOAT, GL_NEAREST, GL_POINTS, GL_R32F, GL_RASTERIZER_DISCARD, GL_RED, GL_STATIC_DRAW, GL_TEXTURE0, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TRANSFORM_FEEDBACK, GL_TRANSFORM_FEEDBACK_BUFFER } from '../gl/constants';
+import { SAMPLE_TEXTURE_SIZE } from './constants';
+import { gl } from '../globals/canvas';
+import { glLazyProgram } from '../gl/glLazyProgram';
 import { shaderchunkPost, shaderchunkPre } from './shaderchunks';
 
 export class Renderer {
@@ -132,7 +132,7 @@ export class Renderer {
   /**
    * @todo this API should be improved
    */
-  public addTextureDirect( textureName: string, texture: WebGLTexture ) {
+  public addTextureDirect( textureName: string, texture: WebGLTexture ): void {
     this.__textures.set( textureName, texture );
   }
 

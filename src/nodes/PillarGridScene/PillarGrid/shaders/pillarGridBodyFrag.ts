@@ -1,11 +1,11 @@
+import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
+import { addAssign, def, length, mad, mul, mulAssign, retFn, sub, unrollLoop, vec3 } from '../../../../shaders/shaderBuilder';
+import { assign, build, defInNamed, defOut, defUniformNamed, div, insert, main, normalize, sw, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
 import { glslLofir } from '../../../../shaders/modules/glslLofir';
 import { pcg3df } from '../../../../shaders/modules/pcg3df';
-import { addAssign, def, length, mad, mul, mulAssign, retFn, sub, unrollLoop, vec3 } from '../../../../shaders/shaderBuilder';
-import { assign, build, defInNamed, defOut, defUniformNamed, div, insert, main, normalize, sw, vec4 } from '../../../../shaders/shaderBuilder';
-import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
 
-export const pillarGridBodyFrag = ( tag: 'deferred' | 'depth' ) => build( () => {
+export const pillarGridBodyFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
 
   const vPosition = defInNamed( 'vec4', 'vPosition' );

@@ -1,8 +1,8 @@
 import { GL_CLAMP_TO_EDGE, GL_LINEAR } from '../../gl/constants';
+import { gl } from '../../globals/canvas';
 import { glSetTextureFromBitmap } from '../../gl/glSetTextureFromBitmap';
 import { glTextureFilter } from '../../gl/glTextureFilter';
 import { glTextureWrap } from '../../gl/glTextureWrap';
-import { gl } from '../../globals/canvas';
 
 export class CanvasTexture {
   public width: number;

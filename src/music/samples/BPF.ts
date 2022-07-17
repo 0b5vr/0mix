@@ -1,5 +1,5 @@
-import { sampleRate } from '../../globals/audio';
 import { BiquadFilter } from './BiquadFilter';
+import { sampleRate } from '../../globals/audio';
 
 export class BPF extends BiquadFilter {
   protected __a1a0: number;

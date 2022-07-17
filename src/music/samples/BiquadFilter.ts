@@ -17,7 +17,7 @@ export abstract class BiquadFilter {
     this.__y2 = 0.0;
   }
 
-  public process( x0: number ) {
+  public process( x0: number ): number {
     const y0 = (
       this.__b0a0 * x0
       + this.__b1a0 * this.__x1

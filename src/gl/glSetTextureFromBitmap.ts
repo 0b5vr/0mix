@@ -1,6 +1,6 @@
-import { gl } from '../globals/canvas';
-import { GL_TEXTURE_2D } from './constants';
 import { GLTextureFormatStuff, GLTextureFormatStuffRGBA8 } from './glSetTexture';
+import { GL_TEXTURE_2D } from './constants';
+import { gl } from '../globals/canvas';
 
 export function glSetTextureFromBitmap(
   texture: WebGLTexture,

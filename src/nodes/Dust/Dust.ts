@@ -1,3 +1,4 @@
+import { GL_POINTS, GL_TEXTURE_2D } from '../../gl/constants';
 import { GPUParticles } from '../utils/GPUParticles';
 import { Geometry } from '../../heck/Geometry';
 import { Material } from '../../heck/Material';
@@ -6,12 +7,11 @@ import { dummyRenderTarget1, dummyRenderTarget2 } from '../../globals/dummyRende
 import { dustComputeFrag } from './shaders/dustComputeFrag';
 import { dustRenderFrag } from './shaders/dustRenderFrag';
 import { dustRenderVert } from './shaders/dustRenderVert';
+import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
+import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { randomTexture } from '../../globals/randomTexture';
-import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
-import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
-import { GL_POINTS, GL_TEXTURE_2D } from '../../gl/constants';
 
 const particlesSqrt = 256;
 const particles = particlesSqrt * particlesSqrt;

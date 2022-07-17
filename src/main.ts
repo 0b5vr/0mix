@@ -1,13 +1,13 @@
 import { AutomatonWithGUI } from '@0b5vr/automaton-with-gui';
+import { DEV_CANVAS_RESOLUTION } from './config';
 import { Material } from './heck/Material';
+import { audio } from './globals/audio';
 import { automaton } from './globals/automaton';
 import { canvas } from './globals/canvas';
 import { dog, initDesktop } from './scene';
 import { getDivCanvasContainer } from './globals/dom';
 import { gui } from './globals/gui';
 import { music } from './globals/music';
-import { audio } from './globals/audio';
-import { DEV_CANVAS_RESOLUTION } from './config';
 
 // == dom ==========================================================================================
 document.body.style.margin = '0';

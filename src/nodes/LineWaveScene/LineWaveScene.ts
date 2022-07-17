@@ -1,16 +1,16 @@
+import { CameraStack } from '../CameraStack/CameraStack';
+import { EventType, emit } from '../../globals/globalEvent';
 import { GL_LINE_STRIP } from '../../gl/constants';
-import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
-import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
-import { dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
-import { emit, EventType } from '../../globals/globalEvent';
+import { Geometry } from '../../heck/Geometry';
 import { Lambda } from '../../heck/components/Lambda';
+import { MTL_UNLIT } from '../CameraStack/deferredConstants';
+import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
 import { SceneNode } from '../../heck/components/SceneNode';
-import { Geometry } from '../../heck/Geometry';
-import { Material } from '../../heck/Material';
 import { deferredColorFrag } from '../../shaders/common/deferredColorFrag';
-import { CameraStack } from '../CameraStack/CameraStack';
-import { MTL_UNLIT } from '../CameraStack/deferredConstants';
+import { dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
+import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
+import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 import { lineWaveVert } from './shaders/lineWaveVert';
 
 export class LineWaveScene extends SceneNode {
@@ -49,7 +49,7 @@ export class LineWaveScene extends SceneNode {
         ( { lineWaveVert } ) => {
           deferred.replaceShader( lineWaveVert, deferredColorFrag );
         }
-      )
+      );
     }
 
     // -- mesh -------------------------------------------------------------------------------------

@@ -1,3 +1,4 @@
+import { GL_NONE, GL_TRIANGLE_STRIP } from '../../gl/constants';
 import { Geometry } from '../../heck/Geometry';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material } from '../../heck/Material';
@@ -5,11 +6,10 @@ import { Mesh } from '../../heck/components/Mesh';
 import { RawVector3, TRIANGLE_STRIP_QUAD_3D, TRIANGLE_STRIP_QUAD_NORMAL, TRIANGLE_STRIP_QUAD_UV, quatFromAxisAngle, vecNormalize } from '@0b5vr/experimental';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
+import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
+import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 import { objectVert } from '../../shaders/common/objectVert';
 import { uvFrag } from '../../shaders/common/uvFrag';
-import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
-import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
-import { GL_NONE, GL_TRIANGLE_STRIP } from '../../gl/constants';
 
 export class Plane extends SceneNode {
   public constructor( options?: SceneNodeOptions ) {

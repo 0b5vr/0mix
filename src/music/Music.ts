@@ -1,14 +1,14 @@
-import { promiseGui } from '../globals/gui';
-import { Renderer } from './Renderer';
 import { BufferReaderNode } from './BufferReaderNode';
-import { shaderchunkPreLines } from './shaderchunks';
 import { MUSIC_BPM } from '../config';
-import { sample808HiHat } from './samples/sample808HiHat';
-import { sampleWhiteNoise } from './samples/sampleWhiteNoise';
-import { audio, sampleRate } from '../globals/audio';
-import { sampleClapNoise } from './samples/sampleClapNoise';
-import { perlinFBMTextureTarget } from '../textures/perlinFBMTextureTarget';
+import { Renderer } from './Renderer';
 import { ShaderEventManager } from './ShaderEventManager';
+import { audio, sampleRate } from '../globals/audio';
+import { perlinFBMTextureTarget } from '../textures/perlinFBMTextureTarget';
+import { promiseGui } from '../globals/gui';
+import { sample808HiHat } from './samples/sample808HiHat';
+import { sampleClapNoise } from './samples/sampleClapNoise';
+import { sampleWhiteNoise } from './samples/sampleWhiteNoise';
+import { shaderchunkPreLines } from './shaderchunks';
 
 const BEAT = 60.0 / MUSIC_BPM;
 const BAR = 240.0 / MUSIC_BPM;

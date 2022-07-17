@@ -1,4 +1,4 @@
-/*!
+/* !
  * voronoi2dBorder
  *
  * The idea is stolen from iq
@@ -8,7 +8,7 @@
  * Ref: https://www.shadertoy.com/view/ldl3W8
  */
 
-import { GLSLExpression, add, and, assign, cache, def, defConst, defFn, dot, eq, forLoop, ifThen, int, lt, mul, normalize, not, retFn, sub, sw, vec2, vec3, mod } from '../shaderBuilder';
+import { GLSLExpression, add, and, assign, cache, def, defConst, defFn, dot, eq, forLoop, ifThen, int, lt, mod, mul, normalize, not, retFn, sub, sw, vec2, vec3 } from '../shaderBuilder';
 import { pcg2df } from './pcg2df';
 
 const symbol = Symbol();

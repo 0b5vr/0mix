@@ -1,6 +1,6 @@
-import { gl } from '../globals/canvas';
-import { GL_CLAMP_TO_EDGE, GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, GL_FRAMEBUFFER, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR, GL_RENDERBUFFER, GL_RGBA32F, GL_TEXTURE_2D } from './constants';
 import { GLTextureFormatStuff } from './glSetTexture';
+import { GL_CLAMP_TO_EDGE, GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, GL_FRAMEBUFFER, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR, GL_RENDERBUFFER, GL_RGBA32F, GL_TEXTURE_2D } from './constants';
+import { gl } from '../globals/canvas';
 import { glTextureFilter } from './glTextureFilter';
 import { glTextureWrap } from './glTextureWrap';
 
@@ -65,7 +65,7 @@ export function glLazyMipmapFramebuffers(
   } catch ( e ) {
     gl.deleteTexture( texture );
     gl.deleteRenderbuffer( renderbuffer );
-    framebuffers!?.map( ( framebuffer ) => {
+    framebuffers?.map( ( framebuffer ) => {
       gl.deleteFramebuffer( framebuffer );
     } );
     throw e;

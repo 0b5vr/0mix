@@ -1,3 +1,4 @@
+import { GL_ONE } from '../../gl/constants';
 import { Geometry } from '../../heck/Geometry';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
@@ -5,10 +6,9 @@ import { SceneNode } from '../../heck/components/SceneNode';
 import { deferredUvFrag } from '../../shaders/common/deferredUvFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { genCylinder } from '../../geometries/genCylinder';
-import { objectVert } from '../../shaders/common/objectVert';
-import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 import { glVertexArrayBindIndexbuffer } from '../../gl/glVertexArrayBindIndexbuffer';
-import { GL_ONE } from '../../gl/constants';
+import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
+import { objectVert } from '../../shaders/common/objectVert';
 
 export class GeometryTestbed extends SceneNode {
   public constructor() {

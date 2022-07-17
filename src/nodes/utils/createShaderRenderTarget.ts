@@ -1,4 +1,4 @@
-import { RawBufferRenderTarget, BufferRenderTargetOptions } from '../../heck/RawBufferRenderTarget';
+import { BufferRenderTargetOptions, RawBufferRenderTarget } from '../../heck/RawBufferRenderTarget';
 import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
 

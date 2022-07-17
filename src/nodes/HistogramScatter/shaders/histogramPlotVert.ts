@@ -1,4 +1,4 @@
-import { GLSLExpression, assign, build, defIn, defUniformNamed, glPosition, main, texture, vec4, vec2, mix, defOutNamed, tern, eq, div } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, assign, build, defIn, defOutNamed, defUniformNamed, div, eq, glPosition, main, mix, tern, texture, vec2, vec4 } from '../../../shaders/shaderBuilder';
 
 export const histogramPlotVert = build( () => {
   const y = defIn( 'float' );

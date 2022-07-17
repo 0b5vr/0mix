@@ -1,4 +1,4 @@
-import { abs, defUniformNamed, div, GLSLExpression, min, mul, sub, sw } from '../../../../shaders/shaderBuilder';
+import { GLSLExpression, abs, defUniformNamed, div, min, mul, sub, sw } from '../../../../shaders/shaderBuilder';
 
 export function dofCalcCoC(
   depth: GLSLExpression<'float'>,

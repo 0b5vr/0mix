@@ -1,12 +1,12 @@
+import { GLBlendFactor } from '../gl/GLBlendFactor';
+import { GL_ONE, GL_TEXTURE0, GL_ZERO } from '../gl/constants';
 import { Geometry } from './Geometry';
+import { LazyProgramOptions } from '../gl/glLazyProgram';
 import { RenderTarget } from './RenderTarget';
 import { SHADERPOOL } from './ShaderPool';
 import { TaskProgress } from '../utils/TaskProgress';
 import { gl } from '../globals/canvas';
 import { sleep } from '../utils/sleep';
-import { LazyProgramOptions } from '../gl/glLazyProgram';
-import { GL_ONE, GL_TEXTURE0, GL_ZERO } from '../gl/constants';
-import { GLBlendFactor } from '../gl/GLBlendFactor';
 
 export declare type MaterialUniformType = '1f' | '2f' | '3f' | '4f' | '1i' | '2i' | '3i' | '4i';
 export declare type MaterialUniformVectorType = '1fv' | '2fv' | '3fv' | '4fv' | '1iv' | '2iv' | '3iv' | '4iv';
@@ -192,10 +192,10 @@ export class Material {
     Object.entries( this.__uniformTextures ).map( ( [ name, { target, textures } ] ) => {
       const location = gl.getUniformLocation( program, name );
       if ( location != null ) {
-          textures.map( ( texture, i ) => {
-            gl.activeTexture( GL_TEXTURE0 + currentUnit + i );
-            gl.bindTexture( target, texture );
-          } );
+        textures.map( ( texture, i ) => {
+          gl.activeTexture( GL_TEXTURE0 + currentUnit + i );
+          gl.bindTexture( target, texture );
+        } );
 
         gl.uniform1iv( location, textures.map( ( _, i ) => currentUnit + i ) );
 

@@ -1,7 +1,7 @@
+import { GOLDEN_ANGLE } from '../../../../utils/constants';
+import { add, addAssign, assign, build, cos, def, defInNamed, defOut, defUniformNamed, div, divAssign, float, forBreak, forLoop, ifThen, insert, lt, main, mix, mul, sin, sqrt, step, sub, sw, texture, vec2, vec4 } from '../../../../shaders/shaderBuilder';
 import { glslLinearstep } from '../../../../shaders/modules/glslLinearstep';
 import { glslSaturate } from '../../../../shaders/modules/glslSaturate';
-import { add, addAssign, assign, build, cos, def, defInNamed, defOut, defUniformNamed, div, divAssign, float, forBreak, forLoop, ifThen, insert, lt, main, mix, mul, sin, sqrt, step, sub, sw, texture, vec2, vec4 } from '../../../../shaders/shaderBuilder';
-import { GOLDEN_ANGLE } from '../../../../utils/constants';
 
 export const dofBlurFrag = build( () => {
   insert( 'precision highp float;' );

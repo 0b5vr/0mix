@@ -1,4 +1,5 @@
 import { CharCanvasTexture } from './CharCanvasTexture';
+import { GL_NONE, GL_ONE, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../gl/constants';
 import { Geometry } from '../../heck/Geometry';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
@@ -8,11 +9,10 @@ import { auto } from '../../globals/automaton';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { fuiFrag } from './shaders/fuiFrag';
 import { getYugoppText } from '../../utils/getYugoppText';
+import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
+import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 import { objectVert } from '../../shaders/common/objectVert';
 import { randomTexture } from '../../globals/randomTexture';
-import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
-import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
-import { GL_NONE, GL_ONE, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../gl/constants';
 
 export const charCanvasTexture = new CharCanvasTexture( 2048, 2048 );
 

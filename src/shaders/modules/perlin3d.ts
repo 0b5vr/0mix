@@ -1,5 +1,5 @@
+import { GLSLExpression, add, cache, cos, def, defFn, dot, floor, mix, mod, mul, retFn, sin, sq, sqrt, sub, sw, vec3 } from '../shaderBuilder';
 import { TAU } from '../../utils/constants';
-import { add, cache, cos, def, defFn, dot, floor, GLSLExpression, mix, mod, mul, retFn, sin, sq, sqrt, sub, sw, vec3 } from '../shaderBuilder';
 import { glslSmootherstep } from './glslSmootherstep';
 import { pcg3df } from './pcg3df';
 
@@ -13,7 +13,7 @@ export function perlin3d( v: GLSLExpression<'vec3'>, rep?: GLSLExpression<'vec3'
 
     const cellCoordS = def( 'vec3', glslSmootherstep( 0.0, 1.0, cellCoord ) );
 
-    const grad = ( off: GLSLExpression<'vec3'> ) => {
+    const grad = ( off: GLSLExpression<'vec3'> ): GLSLExpression<'float'> => {
       const xi = def( 'vec2', sw( pcg3df( mod( add( cellIndex, off ), rep ) ), 'xy' ) );
       const phi = def( 'float', mul( TAU, sw( xi, 'x' ) ) );
       const cosTheta = def( 'float', sub( mul( 2.0, sw( xi, 'y' ) ), 1.0 ) );

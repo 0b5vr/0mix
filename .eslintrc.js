@@ -1,7 +1,10 @@
 module.exports = {
   "root": true,
 
-  "plugins": [ "@typescript-eslint" ],
+  "plugins": [
+    "sort-imports-es6-autofix",
+    "@typescript-eslint",
+  ],
 
   "env": {
     "browser": true,
@@ -31,11 +34,17 @@ module.exports = {
       "ignoreTemplateLiterals": true, // templates are also okay
       "ignoreRegExpLiterals": true, // regexs are also okay too
     } ],
-    "sort-imports": [ "error" ], // imports have to be ordered
+    "sort-imports-es6-autofix/sort-imports-es6": [ "error" ], // imports have to be ordered
     "eol-last": [ "error", "always" ], // eof newline is cool
 
     // variables
-    "@typescript-eslint/no-unused-vars": [ "warn" ], // draw yellow line under unused vars
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+      },
+    ], // draw yellow line under unused vars
     "no-var": [ "error" ], // fuck you, var
     "prefer-const": [ "error" ], // const is better than let
 
@@ -58,7 +67,7 @@ module.exports = {
     "space-in-parens": [ "error", "always" ], // it kills `func (arg)`
     "space-infix-ops": [ "error" ], // it kills val1+val2
     "space-unary-ops": [ "error", { "words": true, "nonwords": false, "overrides": { "++": true, "--": true } } ], // it kills `val++`
-    "spaced-comment": [ "error", "always" ], // it kills `//this is comment`
+    "spaced-comment": [ "error", "always", { "markers": [ "/", "!" ] } ], // it kills `//this is comment`
 
     // ban spacing
     "func-call-spacing": [ "error", "never" ], // no-trailing-spaces. yea.
@@ -72,6 +81,7 @@ module.exports = {
     "no-console": [ "error", { allow: [ "info", "warn", "error" ] } ], // don't forget to remove `console.log` !
 
     // typescript-specifics
+    "@typescript-eslint/no-this-alias": [ "off" ], // we want to substitute `this` to variables for size
     "@typescript-eslint/no-explicit-any": [ "off" ], // Three.js sometimes forces us to deal with anys
     "@typescript-eslint/no-non-null-assertion": [ "off" ], // Three.js sometimes forces us to deal with bangs
     "@typescript-eslint/explicit-function-return-type": [ "error", { "allowExpressions": true } ], // return type is required

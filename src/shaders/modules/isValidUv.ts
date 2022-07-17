@@ -1,4 +1,4 @@
-import { GLSLExpression, sw, and, lt, gt } from '../shaderBuilder';
+import { GLSLExpression, and, gt, lt, sw } from '../shaderBuilder';
 
 export const isValidUv = ( v: GLSLExpression<'vec2'> ): GLSLExpression<'bool'> => {
   return and(

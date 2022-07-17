@@ -1,9 +1,9 @@
-import { Xorshift } from '@0b5vr/experimental';
 import { GL_LINEAR, GL_REPEAT } from '../gl/constants';
+import { Xorshift } from '@0b5vr/experimental';
+import { gl } from '../globals/canvas';
 import { glSetTexture } from '../gl/glSetTexture';
 import { glTextureFilter } from '../gl/glTextureFilter';
 import { glTextureWrap } from '../gl/glTextureWrap';
-import { gl } from '../globals/canvas';
 
 export class RandomTexture {
   private __texture: WebGLTexture;

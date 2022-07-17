@@ -158,7 +158,7 @@ export const defConstArray: {
 
 export const defIn: {
   <T extends string>( type: T, location?: number ): Tok<T>;
-} = ( type: string, location: number = 0 ) => __def( {
+} = ( type: string, location = 0 ) => __def( {
   type,
   location,
   modifier: 'in',
@@ -174,7 +174,7 @@ export const defInNamed: {
 
 export const defOut: {
   <T extends string>( type: T, location?: number ): Tok<T>;
-} = ( type: string, location: number = 0 ) => __def( {
+} = ( type: string, location = 0 ) => __def( {
   type,
   location,
   modifier: 'out',

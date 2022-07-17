@@ -1,3 +1,5 @@
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { GL_TEXTURE_2D } from '../../gl/constants';
 import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
 import { RenderTarget } from '../../heck/RenderTarget';
@@ -6,8 +8,6 @@ import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { fxaaFrag } from './shaders/fxaaFrag';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
-import { GL_TEXTURE_2D } from '../../gl/constants';
-import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 
 export interface FXAAOptions {
   input: BufferTextureRenderTarget;

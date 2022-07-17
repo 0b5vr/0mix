@@ -1,7 +1,7 @@
-import { gl } from '../globals/canvas';
-import { GL_CLAMP_TO_EDGE, GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, GL_FRAMEBUFFER, GL_LINEAR, GL_RENDERBUFFER, GL_TEXTURE_2D } from './constants';
-import { glCreateTexture } from './glCreateTexture';
 import { GLTextureFormatStuff, GLTextureFormatStuffRGBA32F } from './glSetTexture';
+import { GL_CLAMP_TO_EDGE, GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, GL_FRAMEBUFFER, GL_LINEAR, GL_RENDERBUFFER, GL_TEXTURE_2D } from './constants';
+import { gl } from '../globals/canvas';
+import { glCreateTexture } from './glCreateTexture';
 import { glTextureFilter } from './glTextureFilter';
 import { glTextureWrap } from './glTextureWrap';
 
@@ -62,7 +62,7 @@ export function glLazyMultiTargetFramebuffer(
     return { framebuffer, renderbuffer, textures };
 
   } catch ( e ) {
-    textures!?.map( ( texture ) => {
+    textures?.map( ( texture ) => {
       gl.deleteTexture( texture );
     } );
     gl.deleteRenderbuffer( renderbuffer );

@@ -1,3 +1,5 @@
+import { GL_TEXTURE_2D } from '../../gl/constants';
+import { Geometry } from '../../heck/Geometry';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
 import { RawVector3 } from '@0b5vr/experimental';
@@ -7,8 +9,6 @@ import { dummyRenderTarget1, dummyRenderTarget4 } from '../../globals/dummyRende
 import { genCube } from '../../geometries/genCube';
 import { objectVert } from '../../shaders/common/objectVert';
 import { randomTexture } from '../../globals/randomTexture';
-import { GL_TEXTURE_2D } from '../../gl/constants';
-import { Geometry } from '../../heck/Geometry';
 
 export interface RaymarcherNodeOptions extends SceneNodeOptions {
   geometry?: Geometry;

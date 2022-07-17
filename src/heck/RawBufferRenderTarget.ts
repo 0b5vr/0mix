@@ -1,7 +1,7 @@
+import { GL_FRAMEBUFFER } from '../gl/constants';
 import { RenderTarget } from './RenderTarget';
 import { gl } from '../globals/canvas';
 import { glDrawBuffersByNumber } from '../gl/glDrawBuffersByNumber';
-import { GL_FRAMEBUFFER } from '../gl/constants';
 
 export interface BufferRenderTargetOptions {
   viewport: [ number, number, number, number ];

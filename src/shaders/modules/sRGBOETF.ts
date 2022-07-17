@@ -1,4 +1,4 @@
-import { GLSLExpression, def, mix, mul, sub, pow, vec3, step } from '../shaderBuilder';
+import { GLSLExpression, def, mix, mul, pow, step, sub, vec3 } from '../shaderBuilder';
 import { glslSaturate } from './glslSaturate';
 
 export function sRGBOETF( x: GLSLExpression<'vec3'> ): GLSLExpression<'vec3'> {

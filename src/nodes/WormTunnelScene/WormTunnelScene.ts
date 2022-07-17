@@ -1,9 +1,9 @@
-import { NEAR, FAR } from '../../config';
-import { emit, EventType } from '../../globals/globalEvent';
-import { Lambda } from '../../heck/components/Lambda';
-import { SceneNode } from '../../heck/components/SceneNode';
 import { CameraStack } from '../CameraStack/CameraStack';
+import { EventType, emit } from '../../globals/globalEvent';
+import { FAR, NEAR } from '../../config';
+import { Lambda } from '../../heck/components/Lambda';
 import { PointLightNode } from '../Lights/PointLightNode';
+import { SceneNode } from '../../heck/components/SceneNode';
 import { WormTunnel } from './WormTunnel/WormTunnel';
 
 export class WormTunnelScene extends SceneNode {

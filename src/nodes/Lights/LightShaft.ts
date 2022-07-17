@@ -1,3 +1,4 @@
+import { GL_NONE, GL_ONE, GL_TEXTURE_2D } from '../../gl/constants';
 import { Geometry } from '../../heck/Geometry';
 import { Lambda } from '../../heck/components/Lambda';
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/deferredConstants';
@@ -8,14 +9,13 @@ import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { deferredColorFrag } from '../../shaders/common/deferredColorFrag';
 import { dummyRenderTarget1, dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { genCylinder } from '../../geometries/genCylinder';
+import { glVertexArrayBindIndexbuffer } from '../../gl/glVertexArrayBindIndexbuffer';
+import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 import { lightShaftFrag } from './shaders/lightShaftFrag';
 import { lightShaftVert } from './shaders/lightShaftVert';
 import { mat4Inverse, mat4Multiply } from '@0b5vr/experimental';
 import { objectVert } from '../../shaders/common/objectVert';
 import { randomTexture } from '../../globals/randomTexture';
-import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
-import { glVertexArrayBindIndexbuffer } from '../../gl/glVertexArrayBindIndexbuffer';
-import { GL_NONE, GL_ONE, GL_TEXTURE_2D } from '../../gl/constants';
 
 export const LightShaftTag = Symbol();
 

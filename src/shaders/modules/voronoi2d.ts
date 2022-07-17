@@ -1,4 +1,4 @@
-import { GLSLExpression, GLSLFloatExpression, add, assign, cache, def, defFn, floor, forLoop, ifThen, lt, num, retFn, sub, vec2, vec3, mod } from '../shaderBuilder';
+import { GLSLExpression, GLSLFloatExpression, add, assign, cache, def, defFn, floor, forLoop, ifThen, lt, mod, num, retFn, sub, vec2, vec3 } from '../shaderBuilder';
 import { minkowski2d } from './minkowski2d';
 import { pcg2df } from './pcg2df';
 
@@ -14,7 +14,7 @@ export function voronoi2d(
   v: GLSLExpression<'vec2'>,
   rep?: GLSLExpression<'vec2'>,
   p: GLSLFloatExpression = 2.0,
-  ): GLSLExpression<'vec3'> {
+): GLSLExpression<'vec3'> {
   const f = cache( symbol, () => defFn( 'vec3', [ 'vec2', 'vec2', 'float' ], ( v, rep, p ) => {
     const cell = def( 'vec2', floor( v ) );
 

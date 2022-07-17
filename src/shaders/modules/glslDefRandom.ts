@@ -9,7 +9,7 @@ export function glslDefRandom(): {
   random: () => GLSLExpression<'float'>,
   seed: GLSLToken<'vec4'>,
   init: ( seed: GLSLExpression<'vec4'> ) => void,
-} {
+  } {
   const seed = cache( symbolSeed, () => defGlobal( 'vec4' ) );
 
   const random = cache(

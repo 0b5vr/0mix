@@ -1,6 +1,6 @@
 import { ShaderRenderTarget } from '../nodes/utils/ShaderRenderTarget';
-import { quadVert } from '../shaders/common/quadVert';
 import { cellFrag } from './shaders/cellFrag';
+import { quadVert } from '../shaders/common/quadVert';
 
 /**
  * sex

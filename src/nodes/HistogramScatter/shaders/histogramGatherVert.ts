@@ -1,4 +1,4 @@
-import { GLSLExpression, assign, build, defIn, defUniformNamed, glPointSize, glPosition, main, texture, vec4, vec2, mix, defOutNamed } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, assign, build, defIn, defOutNamed, defUniformNamed, glPointSize, glPosition, main, mix, texture, vec2, vec4 } from '../../../shaders/shaderBuilder';
 
 export const histogramGatherVert = build( () => {
   const u = defIn( 'float' );

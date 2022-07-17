@@ -1,12 +1,12 @@
-import { Geometry } from '../heck/Geometry';
-import { HALF_PI, PI } from '../utils/constants';
-import { glCreateVertexbuffer } from '../gl/glCreateVertexbuffer';
-import { glVertexArrayBindVertexbuffer } from '../gl/glVertexArrayBindVertexbuffer';
-import { glVertexArrayBindIndexbuffer } from '../gl/glVertexArrayBindIndexbuffer';
-import { glCreateIndexbuffer } from '../gl/glCreateIndexbuffer';
-import { GL_TRIANGLES, GL_UNSIGNED_SHORT } from '../gl/constants';
 import { GLDrawMode } from '../gl/glDrawMode';
 import { GLIndexType } from '../gl/GLIndexType';
+import { GL_TRIANGLES, GL_UNSIGNED_SHORT } from '../gl/constants';
+import { Geometry } from '../heck/Geometry';
+import { HALF_PI, PI } from '../utils/constants';
+import { glCreateIndexbuffer } from '../gl/glCreateIndexbuffer';
+import { glCreateVertexbuffer } from '../gl/glCreateVertexbuffer';
+import { glVertexArrayBindIndexbuffer } from '../gl/glVertexArrayBindIndexbuffer';
+import { glVertexArrayBindVertexbuffer } from '../gl/glVertexArrayBindVertexbuffer';
 
 interface ResultGenCube {
   position: WebGLBuffer;
