@@ -12,6 +12,7 @@ import { PerspectiveCamera } from '../../heck/components/PerspectiveCamera';
 import { Quad } from '../../heck/components/Quad';
 import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
+import { auto } from '../../globals/automaton';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { deferredShadeFrag } from './shaders/deferredShadeFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
@@ -260,6 +261,15 @@ export class CameraStack extends SceneNode {
         target,
       } );
     }
+
+    // -- auto -------------------------------------------------------------------------------------
+    auto( 'Deferred/aoMix', ( { value } ) => {
+      shadingMaterial.addUniform( 'aoMix', '1f', value );
+    } );
+
+    auto( 'Deferred/aoInvert', ( { value } ) => {
+      shadingMaterial.addUniform( 'aoInvert', '1f', value );
+    } );
 
     // -- event listeners --------------------------------------------------------------------------
     on( EventType.Camera, ( o ) => {

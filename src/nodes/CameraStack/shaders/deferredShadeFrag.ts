@@ -26,6 +26,8 @@ export const deferredShadeFrag = ( { withAO }: {
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
   const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const fog = defUniformNamed( 'vec3', 'fog' );
+  const aoMix = defUniformNamed( 'float', 'aoMix' );
+  const aoInvert = defUniformNamed( 'float', 'aoInvert' );
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' ); // color.rgba
   const sampler1 = defUniformNamed( 'sampler2D', 'sampler1' ); // position.xyz, depth
   const sampler2 = defUniformNamed( 'sampler2D', 'sampler2' ); // normal.xyz
@@ -188,6 +190,12 @@ export const deferredShadeFrag = ( { withAO }: {
       fragColor,
       vec4( sw( fog, 'x' ) ),
       smoothstep( sw( fog, 'y' ), sw( fog, 'z' ), linearDepth ),
+    ) );
+
+    assign( fragColor, mix(
+      fragColor,
+      vec4( vec3( mix( ao, sub( 1.0, ao ), aoInvert ) ), 1.0 ),
+      aoMix,
     ) );
 
     assign( glFragDepth, add( 0.5, mul( 0.5, depth ) ) );
