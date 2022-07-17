@@ -3,6 +3,8 @@ import { Component, ComponentOptions } from './Component';
 import { RenderTarget } from '../RenderTarget';
 import { gl } from '../../globals/canvas';
 import { GL_COLOR_ATTACHMENT0, GL_COLOR_BUFFER_BIT, GL_DRAW_FRAMEBUFFER, GL_NEAREST, GL_READ_FRAMEBUFFER } from '../../gl/constants';
+import { GLBlitMask } from '../../gl/GLBlitMask';
+import { GLBlitFilter } from '../../gl/GLBlitFilter';
 
 export interface BlitOptions extends ComponentOptions {
   src?: RawBufferRenderTarget;
@@ -10,8 +12,8 @@ export interface BlitOptions extends ComponentOptions {
   srcRect?: [ number, number, number, number ] | null;
   dstRect?: [ number, number, number, number ] | null;
   attachment?: GLenum;
-  mask?: GLenum;
-  filter?: GLenum;
+  mask?: GLBlitMask;
+  filter?: GLBlitFilter;
 }
 
 /**
@@ -23,8 +25,8 @@ export class Blit extends Component {
   public srcRect?: [ number, number, number, number ] | null;
   public dstRect?: [ number, number, number, number ] | null;
   public attachment?: GLenum;
-  public mask: GLenum;
-  public filter: GLenum;
+  public mask: GLBlitMask;
+  public filter: GLBlitFilter;
 
   public constructor( options: BlitOptions ) {
     super( options );

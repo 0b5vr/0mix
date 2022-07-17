@@ -1,4 +1,6 @@
 import { GL_BYTE, GL_FLOAT, GL_HALF_FLOAT, GL_INT, GL_SHORT, GL_TRANSFORM_FEEDBACK, GL_TRIANGLES, GL_UNSIGNED_BYTE, GL_UNSIGNED_INT, GL_UNSIGNED_SHORT } from '../gl/constants';
+import { GLDrawMode } from '../gl/glDrawMode';
+import { GLIndexType } from '../gl/GLIndexType';
 import { gl } from '../globals/canvas';
 
 export class Geometry {
@@ -15,11 +17,11 @@ export class Geometry {
 
   public transformFeedback?: WebGLTransformFeedback | null;
 
-  public mode: GLenum = GL_TRIANGLES;
+  public mode: GLDrawMode = GL_TRIANGLES;
   public first = 0;
   public count = 0;
-  public indexType: GLenum | null = null; // null to not use index buffer
-  public primcount: GLenum | null = null; // null to not use instancing
+  public indexType: GLIndexType | null = null; // null to not use index buffer
+  public primcount: number | null = null; // null to not use instancing
 
   public vao: WebGLVertexArrayObject;
 

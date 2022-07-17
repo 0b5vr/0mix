@@ -6,6 +6,7 @@ import { gl } from '../globals/canvas';
 import { sleep } from '../utils/sleep';
 import { LazyProgramOptions } from '../gl/glLazyProgram';
 import { GL_ONE, GL_TEXTURE0, GL_ZERO } from '../gl/constants';
+import { GLBlendFactor } from '../gl/GLBlendFactor';
 
 export declare type MaterialUniformType = '1f' | '2f' | '3f' | '4f' | '1i' | '2i' | '3i' | '4i';
 export declare type MaterialUniformVectorType = '1fv' | '2fv' | '3fv' | '4fv' | '1iv' | '2iv' | '3iv' | '4iv';
@@ -91,7 +92,7 @@ export class Material {
     return this.__program;
   }
 
-  public blend: [ GLenum, GLenum ];
+  public blend: [ GLBlendFactor, GLBlendFactor ];
 
   /**
    * A handler which is called when the material is ready.
@@ -102,7 +103,7 @@ export class Material {
     vert: string,
     frag: string,
     { blend, linkOptions, initOptions }: {
-      blend?: [ GLenum, GLenum ],
+      blend?: [ GLBlendFactor, GLBlendFactor ],
       linkOptions?: LazyProgramOptions,
       initOptions?: MaterialInitOptions,
     } = {},

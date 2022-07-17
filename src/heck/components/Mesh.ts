@@ -3,13 +3,8 @@ import { Geometry } from '../Geometry';
 import { MaterialMap } from '../Material';
 import { gl } from '../../globals/canvas';
 import { mat3FromMat4Transpose, mat3Inverse } from '@0b5vr/experimental';
-import { GL_BACK, GL_CULL_FACE, GL_DEPTH_TEST, GL_FRONT, GL_FRONT_AND_BACK, GL_NONE } from '../../gl/constants';
-
-export type MeshCull =
-  | typeof GL_NONE
-  | typeof GL_BACK
-  | typeof GL_FRONT
-  | typeof GL_FRONT_AND_BACK;
+import { GL_BACK, GL_CULL_FACE, GL_DEPTH_TEST, GL_NONE } from '../../gl/constants';
+import { GLCullFaceType } from '../../gl/GLCullFaceType';
 
 export interface MeshOptions extends ComponentOptions {
   geometry: Geometry;
@@ -18,7 +13,7 @@ export interface MeshOptions extends ComponentOptions {
   /**
    * `GL_NONE` is accepted to disable culling
    */
-  cull?: MeshCull;
+  cull?: typeof GL_NONE | GLCullFaceType;
   depthWrite?: boolean;
   depthTest?: boolean;
 }
@@ -27,7 +22,10 @@ export class Mesh extends Component {
   public geometry: Geometry;
   public materials: MaterialMap;
 
-  public cull: MeshCull;
+  /**
+   * `GL_NONE` is accepted to disable culling
+   */
+  public cull: typeof GL_NONE | GLCullFaceType;
   public depthWrite: boolean;
   public depthTest: boolean;
 

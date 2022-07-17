@@ -1,0 +1,12 @@
+import { GL_STATIC_DRAW, GL_DYNAMIC_DRAW, GL_STREAM_DRAW, GL_STATIC_READ, GL_DYNAMIC_READ, GL_STREAM_READ, GL_STATIC_COPY, GL_DYNAMIC_COPY, GL_STREAM_COPY } from './constants';
+
+export type GLBufferUsage =
+  | typeof GL_STATIC_DRAW
+  | typeof GL_DYNAMIC_DRAW
+  | typeof GL_STREAM_DRAW
+  | typeof GL_STATIC_READ
+  | typeof GL_DYNAMIC_READ
+  | typeof GL_STREAM_READ
+  | typeof GL_STATIC_COPY
+  | typeof GL_DYNAMIC_COPY
+  | typeof GL_STREAM_COPY;

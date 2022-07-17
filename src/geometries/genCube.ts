@@ -5,6 +5,8 @@ import { glVertexArrayBindVertexbuffer } from '../gl/glVertexArrayBindVertexbuff
 import { glVertexArrayBindIndexbuffer } from '../gl/glVertexArrayBindIndexbuffer';
 import { glCreateIndexbuffer } from '../gl/glCreateIndexbuffer';
 import { GL_TRIANGLES, GL_UNSIGNED_SHORT } from '../gl/constants';
+import { GLDrawMode } from '../gl/glDrawMode';
+import { GLIndexType } from '../gl/GLIndexType';
 
 interface ResultGenCube {
   position: WebGLBuffer;
@@ -13,8 +15,8 @@ interface ResultGenCube {
   index: WebGLBuffer;
   geometry: Geometry;
   count: number;
-  mode: GLenum;
-  indexType: GLenum;
+  mode: GLDrawMode;
+  indexType: GLIndexType;
 }
 
 export function genCube( options?: {
