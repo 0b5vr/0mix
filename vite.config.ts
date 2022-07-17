@@ -45,6 +45,7 @@ export default defineConfig( ( { mode } ) => {
       minify: mode === 'prod' ? 'terser' : false,
       terserOptions: mode === 'prod' ? terserOptions : undefined,
       sourcemap: true,
+      polyfillModulePreload: false, // size
       rollupOptions: {
         plugins: [
           visualizer( {
