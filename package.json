@@ -7,6 +7,8 @@
     "build": "yarn build-js && yarn build-comp",
     "build-js": "vite build --mode prod",
     "build-comp": "node bin/compeko.js dist/assets/index.*.js dist/compeko.html",
+    "lint": "eslint \"src/**/*.ts\"",
+    "lint-fix": "eslint \"src/**/*.ts\" --fix",
     "typecheck": "tsc",
     "preview": "vite preview"
   },
@@ -20,6 +22,8 @@
     "@types/glob": "^7.2.0",
     "@types/node-zopfli": "^2.0.2",
     "@types/webxr": "^0.2.3",
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
+    "@typescript-eslint/parser": "^5.30.6",
     "eslint": "^8.14.0",
     "eslint-plugin-sort-imports-es6-autofix": "^0.6.0",
     "glob": "^8.0.1",
