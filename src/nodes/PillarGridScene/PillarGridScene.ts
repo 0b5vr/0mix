@@ -30,7 +30,7 @@ export class PillarGridScene extends SceneNode {
       shadowMapNear: NEAR,
       shadowMapFar: FAR,
     } );
-    lightB.transform.lookAt( [ -0.3, 3.0, 4.0 ], [ 0.0, 0.0, 1.0 ] );
+    lightB.transform.lookAt( [ 0.0, 3.5, 4.0 ], [ 0.0, 0.0, 1.0 ] );
     lightB.color = [ 100.0, 100.0, 100.0 ];
 
     if ( import.meta.env.DEV ) {

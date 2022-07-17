@@ -56,7 +56,7 @@ export const pillarGridBodyVert = build( () => {
     );
 
     assign( vNoiseCoord, mul( add(
-      1024.0,
+      1024.06,
       sw( vec4( position, 1.0 ), 'xyz' ),
       vec3( instance, 0.0 ),
     ), 4.0 ) );
