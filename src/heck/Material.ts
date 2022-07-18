@@ -1,9 +1,8 @@
 import { GLBlendFactor } from '../gl/GLBlendFactor';
 import { GL_ONE, GL_TEXTURE0, GL_ZERO } from '../gl/constants';
 import { Geometry } from './Geometry';
-import { LazyProgramOptions } from '../gl/glLazyProgram';
+import { LazyProgramOptions, glLazyProgram } from '../gl/glLazyProgram';
 import { RenderTarget } from './RenderTarget';
-import { SHADERPOOL } from './ShaderPool';
 import { TaskProgress } from '../utils/TaskProgress';
 import { gl } from '../globals/canvas';
 import { sleep } from '../utils/sleep';
@@ -117,8 +116,7 @@ export class Material {
       Material.d3dSucksList.push( async () => {
         initOptions.target.bind();
 
-        this.__program = await SHADERPOOL.getProgramAsync(
-          this,
+        this.__program = await glLazyProgram(
           this.vert,
           this.frag,
           this.__linkOptions,
@@ -216,8 +214,7 @@ export class Material {
       linkOptions?: LazyProgramOptions,
     },
   ): Promise<void> {
-    const program = await SHADERPOOL.getProgramAsync(
-      this,
+    const program = glLazyProgram(
       vert ?? this.__vert,
       frag ?? this.__frag,
       options?.linkOptions,
@@ -226,14 +223,14 @@ export class Material {
     } );
 
     if ( program ) {
-      const prevVert = this.vert;
-      const prevFrag = this.frag;
-
       vert && ( this.__vert = vert );
       frag && ( this.__frag = frag );
-      this.__program = program;
 
-      SHADERPOOL.discardProgram( this, prevVert, prevFrag );
+      if ( this.__program ) {
+        gl.deleteProgram( this.__program );
+      }
+
+      this.__program = program;
 
       this.onReady?.();
     }
