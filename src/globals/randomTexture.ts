@@ -1,14 +1,14 @@
-import { RANDOM_RESOLUTION, STATIC_RANDOM_RESOLUTION } from '../config';
+import { RANDOM_TEXTURE_SIZE, STATIC_RANDOM_TEXTURE_SIZE } from '../config';
 import { RandomTexture } from '../utils/RandomTexture';
 
 export const randomTexture = new RandomTexture(
-  RANDOM_RESOLUTION[ 0 ],
-  RANDOM_RESOLUTION[ 1 ]
+  RANDOM_TEXTURE_SIZE,
+  RANDOM_TEXTURE_SIZE
 );
 randomTexture.update();
 
 export const randomTextureStatic = new RandomTexture(
-  STATIC_RANDOM_RESOLUTION[ 0 ],
-  STATIC_RANDOM_RESOLUTION[ 1 ]
+  STATIC_RANDOM_TEXTURE_SIZE,
+  STATIC_RANDOM_TEXTURE_SIZE
 );
 randomTextureStatic.update();
