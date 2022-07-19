@@ -125,7 +125,7 @@ export class Trails extends GPUParticles {
     const lambdaUpdateShouldUpdate = new Lambda( {
       onUpdate: ( { time, deltaTime } ) => {
         const shouldUpdate
-          = Math.floor( 60.0 * time ) !== Math.floor( 60.0 * ( time - deltaTime ) );
+          = ~~( 60.0 * time ) !== ~~( 60.0 * ( time - deltaTime ) );
         materialCompute.addUniform( 'shouldUpdate', '1i', shouldUpdate ? 1 : 0 );
 
         materialCompute.addUniform( 'shouldInit', '1i', shouldInit );

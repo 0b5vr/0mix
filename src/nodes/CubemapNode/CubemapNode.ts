@@ -83,7 +83,7 @@ export class CubemapNode extends SceneNode {
     }
 
     const blitsCompile = targets.map( ( src, i ) => {
-      const x = 256 * Math.floor( i / 2 );
+      const x = 256 * ~~( i / 2 );
       const y = 256 * ( i % 2 );
       return new Blit( {
         src,

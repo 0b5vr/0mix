@@ -11,7 +11,7 @@ export function vdc( i: number, base: number ): number {
   while ( 0 < i ) {
     denom *= base;
     r += ( i % base ) / denom;
-    i = Math.floor( i / base );
+    i = ~~( i / base );
   }
 
   return r;

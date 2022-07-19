@@ -134,7 +134,7 @@ export class Music {
 
     this.cueStatus = 'applying';
 
-    this.__programSwapTime = Math.floor( this.time / BAR ) * BAR + BAR;
+    this.__programSwapTime = ~~( this.time / BAR ) * BAR + BAR;
 
     // this.__emit( 'error', { error: null } );
   }
@@ -169,7 +169,7 @@ export class Music {
     // we're very behind
     if ( blockAhead < 0 ) {
       this.__bufferWriteBlocks = (
-        Math.floor( readBlocks / BLOCKS_PER_RENDER ) + 1
+        ~~( readBlocks / BLOCKS_PER_RENDER ) + 1
       ) * BLOCKS_PER_RENDER;
     }
 
@@ -177,7 +177,7 @@ export class Music {
 
     // -- should I process the next program? -------------------------------------------------------
     let beginNext = this.cueStatus === 'applying'
-      ? Math.floor( ( this.__programSwapTime - genTime ) * sampleRate )
+      ? ~~( ( this.__programSwapTime - genTime ) * sampleRate )
       : FRAMES_PER_RENDER;
     beginNext = Math.min( beginNext, FRAMES_PER_RENDER );
 

@@ -77,7 +77,7 @@ if ( !import.meta.env.DEV ) {
       const taskname = [ 'shaders' ][ i ];
       a.textContent = `${ taskname }: 0%`;
       task.onProgress = ( progress ) => (
-        a.textContent = `${ taskname }: ${ Math.floor( progress * 100.0 ) }%`
+        a.textContent = `${ taskname }: ${ ~~( progress * 100.0 ) }%`
       );
       return task.promise;
     } ) );

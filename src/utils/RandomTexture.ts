@@ -42,7 +42,7 @@ export class RandomTexture {
     if ( seed ) { this.__rng.seed = seed; }
 
     for ( let i = 0; i < this.__array.length; i ++ ) {
-      this.__array[ i ] = Math.floor( this.__rng.gen() * 256.0 );
+      this.__array[ i ] = this.__rng.gen() * 256.0;
     }
 
     glSetTexture( this.__texture, this.__width, this.__height, this.__array );
