@@ -1,4 +1,4 @@
-import processorCode from './BufferReaderProcessor.js?raw';
+import processorCode from './BufferReaderProcessor.js?worklet';
 
 const BLOCK_SIZE = 128;
 const CHANNELS = 2;
@@ -18,11 +18,8 @@ export class BufferReaderNode extends AudioWorkletNode {
     return audio.audioWorklet.addModule( processorUrl );
   }
 
-  public setActive( value: boolean ): void {
-    this.port.postMessage( {
-      type: 'active',
-      value,
-    } );
+  public setActive( isActive: boolean ): void {
+    this.port.postMessage( isActive );
   }
 
   public constructor( audio: AudioContext ) {
@@ -46,10 +43,9 @@ export class BufferReaderNode extends AudioWorkletNode {
       + offset
     );
 
-    this.port.postMessage( {
-      type: 'write',
+    this.port.postMessage( [
       buffer,
-      offset: totalOffset,
-    } );
+      totalOffset,
+    ] );
   }
 }

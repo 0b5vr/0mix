@@ -4,11 +4,7 @@ import { Plugin } from 'vite';
 const fileRegex = /automaton\.json$/;
 
 export interface AutomatonMinifierPluginOptions {
-  /**
-   * True by default
-   */
   minify: boolean;
-
   minimizeOptions: MinimizeOptions;
 }
 
@@ -32,5 +28,5 @@ export const automatonMinifierPlugin: (
         };
       }
     }
-  }
-}
+  };
+};
