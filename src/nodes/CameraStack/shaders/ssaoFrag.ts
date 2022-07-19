@@ -1,9 +1,9 @@
+import { AO_ITER } from '../../../config';
 import { GLSLExpression, add, addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, div, divAssign, dot, forLoop, ifThen, insert, length, lt, main, mul, normalize, sq, sub, sw, texture, vec4 } from '../../../shaders/shaderBuilder';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslSaturate } from '../../../shaders/modules/glslSaturate';
 import { uniformHemisphere } from '../../../shaders/modules/uniformHemisphere';
 
-const AO_ITER = 64;
 const AO_BIAS = 0.0;
 const AO_RADIUS = 0.5;
 
