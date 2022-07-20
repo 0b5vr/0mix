@@ -1,8 +1,9 @@
-import { GLSLExpression, abs, add, addAssign, assign, build, def, defFn, defInNamed, defOutNamed, defUniformNamed, div, dot, float, gt, ifThen, insert, length, log2, main, max, min, mix, mul, mulAssign, normalize, pow, retFn, sqrt, step, sub, sw, tan, texture, unrollLoop, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, abs, add, addAssign, assign, build, def, defFn, defInNamed, defOutNamed, defUniformNamed, div, float, gt, ifThen, insert, length, main, max, min, mix, mul, mulAssign, normalize, retFn, sqrt, sub, sw, tan, texture, unrollLoop, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { PI } from '../../../utils/constants';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslLofi } from '../../../shaders/modules/glslLofi';
 import { glslSaturate } from '../../../shaders/modules/glslSaturate';
+import { liftGammaGain } from '../../../shaders/modules/liftGammaGain';
 import { sRGBOETF } from '../../../shaders/modules/sRGBOETF';
 import { tonemapACESHill } from '../../../shaders/modules/tonemapACESHill';
 
@@ -13,7 +14,6 @@ const BARREL_AMP = 0.03;
 const LIFT = vec4( -0.03, 0.01, 0.05, 0.0 );
 const GAMMA = vec4( -0.02, 0.02, -0.01, 0.0 );
 const GAIN = vec4( 1.04, 0.98, 1.02, 1.0 );
-const LUMA = vec3( 0.2126, 0.7152, 0.0722 );
 
 export const postFrag = build( () => {
   insert( 'precision highp float;' );
@@ -41,41 +41,6 @@ export const postFrag = build( () => {
     ) ) as GLSLExpression<'vec2'>;
     retFn( sw( texture( sampler0, p ), 'xyz' ) );
   } );
-
-  function liftGammaGain(
-    rgb: GLSLExpression<'vec3'>,
-    lift: GLSLExpression<'vec4'>,
-    gamma: GLSLExpression<'vec4'>,
-    gain: GLSLExpression<'vec4'>,
-  ): GLSLExpression<'vec3'> {
-    const liftt = def( 'vec4', (
-      sub( 1.0, pow( sub( 1.0, lift ), log2( add( gain, 1.0 ) ) ) )
-    ) );
-
-    const gammat = def( 'vec4', (
-      sub( gamma, vec4( 0.0, 0.0, 0.0, dot( vec4( LUMA, 0.0 ), gamma ) ) )
-    ) );
-    const gammatTemp = add( 1.0, mul( 4.0, abs( gammat ) ) );
-    assign( gammat, mix( gammatTemp, div( 1.0, gammatTemp ), step( 0.0, gammat ) ) );
-
-    const col = def( 'vec3', rgb );
-    const luma = def( 'float', dot( LUMA, col ) );
-
-    assign( col, pow( col, sw( gammat, 'rgb' ) ) );
-    mulAssign( col, pow( sw( gain, 'rgb' ), sw( gammat, 'rgb' ) ) );
-    assign(
-      col,
-      max( mix( mul( 2.0, sw( liftt, 'rgb' ) ), vec3( 1.0 ), col ), 0.0 )
-    );
-
-    assign( luma, pow( luma, sw( gammat, 'a' ) ) );
-    mulAssign( luma, pow( sw( gain, 'a' ), sw( gammat, 'a' ) ) );
-    assign( luma, max( mix( mul( 2.0, sw( liftt, 'a' ) ), 1.0, luma ), 0.0 ) );
-
-    addAssign( col, sub( luma, dot( LUMA, col ) ) );
-
-    return glslSaturate( col ) as GLSLExpression<'vec3'>;
-  }
 
   main( () => {
     const uv = def( 'vec2', vUv );
@@ -114,7 +79,7 @@ export const postFrag = build( () => {
     const col = def( 'vec3', tex );
     assign( col, tonemapACESHill( max( col, 0.0 ) ) );
     addAssign( col, mul( 0.002, vec3( sub( random(), 0.5 ) ) ) );
-    assign( col, glslSaturate( col ) as GLSLExpression<'vec3'> );
+    assign( col, glslSaturate( col ) );
     assign( col, sRGBOETF( col ) );
     assign( col, mix( col, sub( 1.0, col ), mixInvert ) );
     assign( col, liftGammaGain( col, LIFT, GAMMA, GAIN ) );
