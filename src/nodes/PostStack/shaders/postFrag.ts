@@ -4,6 +4,7 @@ import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslLofi } from '../../../shaders/modules/glslLofi';
 import { glslSaturate } from '../../../shaders/modules/glslSaturate';
 import { sRGBOETF } from '../../../shaders/modules/sRGBOETF';
+import { tonemapACESHill } from '../../../shaders/modules/tonemapACESHill';
 
 const BARREL_ITER = 10;
 const BARREL_OFFSET = 0.03;
@@ -76,13 +77,6 @@ export const postFrag = build( () => {
     return glslSaturate( col ) as GLSLExpression<'vec3'>;
   }
 
-  function aces( x: GLSLExpression<'vec3'> ): GLSLExpression<'vec3'> {
-    return glslSaturate( div(
-      mul( x, add( mul( 0.45, x ), 0.02 ) ),
-      add( mul( x, add( mul( 0.45, x ), 0.07 ) ), 0.2 )
-    ) ) as GLSLExpression<'vec3'>;
-  }
-
   main( () => {
     const uv = def( 'vec2', vUv );
 
@@ -118,7 +112,7 @@ export const postFrag = build( () => {
     assign( tex, mix( vec3( 0.0 ), tex, vig ) );
 
     const col = def( 'vec3', tex );
-    assign( col, div( aces( max( mul( 2.0, col ), 0.0 ) ), aces( vec3( 11.2 ) ) ) );
+    assign( col, tonemapACESHill( max( col, 0.0 ) ) );
     addAssign( col, mul( 0.002, vec3( sub( random(), 0.5 ) ) ) );
     assign( col, glslSaturate( col ) as GLSLExpression<'vec3'> );
     assign( col, sRGBOETF( col ) );
