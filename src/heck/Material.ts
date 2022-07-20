@@ -214,7 +214,7 @@ export class Material {
       linkOptions?: LazyProgramOptions,
     },
   ): Promise<void> {
-    const program = glLazyProgram(
+    const program = await glLazyProgram(
       vert ?? this.__vert,
       frag ?? this.__frag,
       options?.linkOptions,
