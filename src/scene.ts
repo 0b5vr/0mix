@@ -8,6 +8,7 @@ import { GL_NEAREST } from './gl/constants';
 import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
 import { Lambda } from './heck/components/Lambda';
 import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
+import { MetaballScene } from './nodes/MetaballScene/MetaballScene';
 import { Mixer } from './nodes/Mixer/Mixer';
 import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
 import { PostStack } from './nodes/PostStack/PostStack';
@@ -89,6 +90,7 @@ const iblLutCalc = new IBLLUTCalc();
 const spongeScene = new SpongeScene();
 const wormTunnelScene = new WormTunnelScene();
 const pillarGridScene = new PillarGridScene();
+const metaballScene = new MetaballScene();
 const lineWaveScene = new LineWaveScene();
 
 const cameraStackOptions = {
@@ -107,7 +109,8 @@ dog.root.children.push(
   // A
   // spongeScene,
   // wormTunnelScene,
-  pillarGridScene,
+  // pillarGridScene,
+  metaballScene,
 
   // B
   lineWaveScene,
@@ -144,6 +147,7 @@ export async function initDesktop( width: number, height: number ): Promise<void
   spongeScene.cameraProxy.children
     = wormTunnelScene.cameraProxy.children
     = pillarGridScene.cameraProxy.children
+    = metaballScene.cameraProxy.children
     = [ cameraStackA ];
 
   lineWaveScene.cameraProxy.children = [ cameraStackB ];

@@ -1,21 +1,18 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
-import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, forLoop, glFragCoord, glFragDepth, glslFalse, glslTrue, ifThen, insert, length, main, mul, mulAssign, normalize, retFn, sub, sw, texture, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { add, assign, build, def, defInNamed, defOut, defUniformNamed, discard, div, glFragCoord, glFragDepth, gt, ifThen, insert, length, main, mul, normalize, retFn, sub, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
-import { perlin3d } from '../../../../shaders/modules/perlin3d';
+import { defMetaballMap } from '../../defMetaballMap';
 import { raymarch } from '../../../../shaders/modules/raymarch';
 import { setupRoRd } from '../../../../shaders/modules/setupRoRd';
-import { triplanarMapping } from '../../../../shaders/modules/triplanarMapping';
 
-export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
+export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
 
   const vPositionWithoutModel = defInNamed( 'vec4', 'vPositionWithoutModel' );
   const pvm = defUniformNamed( 'mat4', 'pvm' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
   const normalMatrix = defUniformNamed( 'mat3', 'normalMatrix' );
-
-  const isAfterMarch = def( 'bool', glslFalse );
 
   const fragColor = defOut( 'vec4' );
   const fragPosition = defOut( 'vec4', 1 );
@@ -27,33 +24,8 @@ export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
   const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
   const inversePVM = defUniformNamed( 'mat4', 'inversePVM' );
-  const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
 
-  const map = defFn( 'vec4', [ 'vec3' ], ( p ) => {
-    const pt = def( 'vec3', p );
-
-    const scale = def( 'float', 1.0 );
-    forLoop( tag === 'depth' ? 1 : 4, () => {
-      addAssign( pt, div(
-        perlin3d( mul( add( p, mul( vec3( 0.0, 0.5, 0.5 ), time ) ), 0.3, scale ) ),
-        scale,
-      ) );
-      mulAssign( scale, 2.0 );
-    } );
-
-    const d = def( 'float', sub( 1.1, length( sw( pt, 'xy' ) ) ) );
-
-    ifThen( isAfterMarch, () => {
-      addAssign( d, mul( sw( triplanarMapping(
-        pt,
-        normalize( mul( pt, vec3( 1.0, 1.0, 0.0 ) ) ),
-        1.0,
-        ( uv ) => texture( sampler0, uv )
-      ), 'z' ), 0.1 ) );
-    } );
-
-    retFn( vec4( d, 0, 0, 0 ) );
-  } );
+  const map = defMetaballMap( time );
 
   main( () => {
     const p = def( 'vec2', div(
@@ -63,17 +35,15 @@ export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
 
     const { ro, rd } = setupRoRd( { inversePVM, p } );
 
-    const { rp } = raymarch( {
-      iter: tag === 'depth' ? 60 : 80,
+    const { isect, rp } = raymarch( {
+      iter: 30,
       ro,
       rd,
       map,
-      marchMultiplier: 0.9,
       initRl: length( sub( sw( vPositionWithoutModel, 'xyz' ), ro ) ),
     } );
 
-    // too much artifacts, how bout no hit test
-    // ifThen( gt( sw( isect, 'x' ), 1E-2 ), () => discard() );
+    ifThen( gt( sw( isect, 'x' ), 1E-2 ), () => discard() );
 
     const modelPos = def( 'vec4', mul( modelMatrix, vec4( rp, 1.0 ) ) );
 
@@ -88,17 +58,12 @@ export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
 
     }
 
-    assign( isAfterMarch, glslTrue );
-
     const N = def( 'vec3', calcNormal( { rp, map, delta: 1E-4 } ) );
-    const roughness = 0.13;
-    const metallic = 0.0;
-    const baseColor = vec3( 0.1 );
 
-    assign( fragColor, vec4( baseColor, 1.0 ) );
+    assign( fragColor, vec4( vec3( 0.5 ), 1.0 ) );
     assign( fragPosition, vec4( sw( modelPos, 'xyz' ), depth ) );
     assign( fragNormal, vec4( normalize( mul( normalMatrix, N ) ), MTL_PBR_ROUGHNESS_METALLIC ) );
-    assign( fragMisc, vec4( roughness, metallic, 0.0, 0.0 ) );
+    assign( fragMisc, vec4( 0.2, 0.0, 0.0, 0.0 ) );
 
   } );
 } );

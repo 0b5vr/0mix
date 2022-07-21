@@ -19,6 +19,7 @@ export interface GPUParticlesOptions extends SceneNodeOptions {
 }
 
 export class GPUParticles extends SceneNode {
+  public swapCompute: Swap<BufferTextureRenderTarget>;
   public meshRender: Mesh;
 
   public constructor( options: GPUParticlesOptions ) {
@@ -33,18 +34,13 @@ export class GPUParticles extends SceneNode {
       computeNumBuffers,
     } = options;
 
-    const swapCompute = new Swap(
+    const swapCompute = this.swapCompute = new Swap(
       new BufferTextureRenderTarget( computeWidth, computeHeight, computeNumBuffers ),
       new BufferTextureRenderTarget( computeWidth, computeHeight, computeNumBuffers ),
     );
 
     glTextureFilter( swapCompute.i.texture, GL_NEAREST );
     glTextureFilter( swapCompute.o.texture, GL_NEAREST );
-
-    if ( import.meta.env.DEV ) {
-      swapCompute.i.name = `${ this.name }/swap0`;
-      swapCompute.o.name = `${ this.name }/swap1`;
-    }
 
     // -- compute ----------------------------------------------------------------------------------
     const quadCompute = new Quad( {
@@ -105,10 +101,10 @@ export class GPUParticles extends SceneNode {
     }
 
     // -- rest of components -----------------------------------------------------------------------
-    this.children.push(
+    this.children = [
       swapper,
       quadCompute,
       this.meshRender,
-    );
+    ];
   }
 }

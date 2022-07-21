@@ -64,14 +64,14 @@ export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
     const depth = div( sw( projPos, 'z' ), sw( projPos, 'w' ) );
     assign( glFragDepth, add( 0.5, mul( 0.5, depth ) ) );
 
-    const N = def( 'vec3', calcNormal( { rp, map, delta: 1E-6 } ) );
-
     if ( tag === 'depth' ) {
       const len = length( sub( cameraPos, sw( modelPos, 'xyz' ) ) );
       assign( fragColor, calcShadowDepth( cameraNearFar, len ) );
       retFn();
 
     }
+
+    const N = def( 'vec3', calcNormal( { rp, map, delta: 1E-6 } ) );
 
     assign( fragColor, vec4( vec3( 0.7 ), 1.0 ) );
     assign( fragPosition, vec4( sw( modelPos, 'xyz' ), depth ) );

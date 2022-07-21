@@ -1,0 +1,92 @@
+import { CameraStack } from '../CameraStack/CameraStack';
+import { EventType, emit } from '../../globals/globalEvent';
+import { FAR, NEAR } from '../../config';
+import { Lambda } from '../../heck/components/Lambda';
+import { Metaball } from './Metaball/Metaball';
+import { MetaballParticles } from './MetaballParticles/MetaballParticles';
+import { PointLightNode } from '../Lights/PointLightNode';
+import { SceneNode } from '../../heck/components/SceneNode';
+import { quatRotationX } from '@0b5vr/experimental';
+
+export class MetaballScene extends SceneNode {
+  public cameraProxy: SceneNode;
+
+  public constructor() {
+    super();
+
+    const scene = this;
+
+    const lightT = new PointLightNode( {
+      scene,
+      shadowMapFov: 40.0,
+      shadowMapNear: NEAR,
+      shadowMapFar: FAR,
+    } );
+    lightT.transform.lookAt( [ 0.0, 4.0, 4.0 ], [ 0.0, 0.0, 0.0 ] );
+    lightT.color = [ 400.0, 400.0, 400.0 ];
+
+    const lightB = new PointLightNode( {
+      scene,
+      shadowMapFov: 40.0,
+      shadowMapNear: NEAR,
+      shadowMapFar: FAR,
+    } );
+    lightB.transform.lookAt( [ 1.0, -2.0, 5.0 ], [ 0.0, 0.0, 0.0 ] );
+    lightB.color = [ 100.0, 100.0, 100.0 ];
+
+    if ( import.meta.env.DEV ) {
+      lightT.name = 'lightT';
+      lightB.name = 'lightB';
+    }
+
+    const metaball = new Metaball();
+    metaball.transform.scale = [ 3.0, 3.0, 3.0 ];
+
+    const particles = new MetaballParticles();
+    particles.transform.scale = [ 3.0, 3.0, 3.0 ];
+
+    const lambdaSpeen = new Lambda( {
+      onUpdate( { time } ) {
+        metaball.transform.rotation = quatRotationX( 0.1 * time );
+      },
+    } );
+
+    if ( import.meta.env.DEV ) {
+      lambdaSpeen.name = 'lambdaSpeen';
+    }
+
+    this.cameraProxy = new SceneNode();
+    this.cameraProxy.transform.lookAt(
+      [ 0.0, 0.0, 5.0 ],
+      [ 0.0, 0.0, 0.0 ],
+      [ 0.0, 1.0, 0.0 ],
+      -0.2,
+    );
+
+    const lambdaUpdateCameraParams = new Lambda( {
+      onUpdate: () => {
+        emit( EventType.Camera, {
+          dof: [ 2.8, 1.0 ],
+          fog: [ 0.0, 3.0, 5.0 ],
+        } );
+        emit( EventType.CubeMap );
+
+        ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
+      },
+    } );
+
+    if ( import.meta.env.DEV ) {
+      lambdaUpdateCameraParams.name = 'lambdaUpdateCameraParams';
+    }
+
+    this.children = [
+      lightT,
+      lightB,
+      lambdaSpeen,
+      metaball,
+      particles,
+      lambdaUpdateCameraParams,
+      this.cameraProxy,
+    ];
+  }
+}
