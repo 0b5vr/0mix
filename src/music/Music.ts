@@ -53,7 +53,7 @@ export class Music {
   }
 
   public set time( value: number ) {
-    const t = BLOCK_SIZE / sampleRate * this.__bufferWriteBlocks;
+    const t = BLOCK_SIZE / sampleRate * this.__bufferReadBlocks;
     this.timeOffset = t - value;
   }
 
