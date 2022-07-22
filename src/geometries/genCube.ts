@@ -20,9 +20,11 @@ interface ResultGenCube {
 }
 
 export function genCube( options?: {
-  dimension?: [ number, number, number ]
+  dimension?: [ number, number, number ];
+  flipNormal?: boolean; // TODO: this sucks
 } ): ResultGenCube {
   const dimension = options?.dimension ?? [ 1, 1, 1 ];
+  const flipNormal = options?.flipNormal ?? false;
 
   const arrayPosition: number[] = [];
   const arrayNormal: number[] = [];
@@ -79,6 +81,12 @@ export function genCube( options?: {
     arrayNormal.push( ...chunkNormal.map( rotate ).flat() );
     arrayUv.push( ...chunkUv.flat() );
     arrayIndex.push( ...[ 0, 1, 3, 0, 3, 2 ].map( ( v ) => v + 4 * i ) );
+  }
+
+  if ( flipNormal ) {
+    arrayNormal.map( ( _, i ) => {
+      arrayNormal[ i ] *= -1.0;
+    } );
   }
 
   // -- buffers ------------------------------------------------------------------------------------

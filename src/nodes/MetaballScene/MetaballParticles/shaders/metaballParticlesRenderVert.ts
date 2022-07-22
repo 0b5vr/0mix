@@ -1,5 +1,5 @@
 import { PI } from '../../../../utils/constants';
-import { add, addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mul, pow, sin, smoothstep, sw, texture, vec4 } from '../../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mul, sin, smoothstep, sw, texture, vec4 } from '../../../../shaders/shaderBuilder';
 import { glslSaturate } from '../../../../shaders/modules/glslSaturate';
 import { rotate2D } from '../../../../shaders/modules/rotate2D';
 
@@ -40,9 +40,9 @@ export const metaballParticlesRenderVert = build( () => {
 
     const size = mul(
       sin( mul( PI, glslSaturate( vLife ) ) ),
-      pow( sw( vDice, 'x' ), 3.0 ),
-      0.03,
-      smoothstep( 0.0, 0.2, sw( tex1, 'w' ) ),
+      sw( vDice, 'x' ),
+      0.01,
+      smoothstep( 0.0, 0.1, sw( tex1, 'w' ) ),
     );
 
     const rotYZ = def( 'mat2', (

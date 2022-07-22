@@ -1,4 +1,4 @@
-import { GLSLExpression, add, assign, def, defFn, length, mad, mul, retFn, sin, sub, unrollLoop, vec3, vec4 } from '../../shaders/shaderBuilder';
+import { GLSLExpression, add, assign, def, defFn, length, mad, mul, retFn, sin, sub, sw, unrollLoop, vec3, vec4 } from '../../shaders/shaderBuilder';
 import { TAU } from '../../utils/constants';
 import { pcg3df } from '../../shaders/modules/pcg3df';
 import { smin } from '../../shaders/modules/smin';
@@ -11,20 +11,24 @@ export const defMetaballMap: {
     const d = def( 'float', length( pt ) );
 
     const off = def( 'vec3' );
+    const radius = def( 'vec3' );
+
     unrollLoop( 7, ( i ) => {
       assign( off, sin( vec3( mad(
         mul( TAU, pcg3df( vec3( i ) ) ),
-        add( 0.5, pcg3df( vec3( 20 + i ) ) ),
+        add( 0.5, pcg3df( vec3( i + 20 ) ) ),
         time,
       ) ) ) );
 
+      assign( radius, mad( 0.05, 0.1, pcg3df( vec3( i + 40 ) ) ) );
+
       assign( pt, mad( p, off, 0.2 ) );
-      assign( d, smin( d, length( pt ), 0.15 ) );
+      assign( d, smin( d, sub( length( pt ), sw( radius, 'x' ) ), 0.15 ) );
 
       assign( pt, mad( p, off, -0.2 ) );
-      assign( d, smin( d, length( pt ), 0.15 ) );
+      assign( d, smin( d, sub( length( pt ), sw( radius, 'y' ) ), 0.15 ) );
     } );
 
-    retFn( vec4( sub( d, 0.15 ), 0, 0, 0 ) );
+    retFn( vec4( d, 0, 0, 0 ) );
   } );
 };

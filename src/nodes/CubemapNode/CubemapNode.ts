@@ -1,10 +1,8 @@
 import { Blit } from '../../heck/components/Blit';
 import { CameraStack } from '../CameraStack/CameraStack';
 import { ComponentOptions } from '../../heck/components/Component';
-import { DustTag } from '../Dust/Dust';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material } from '../../heck/Material';
-import { PointLightTag } from '../Lights/PointLightNode';
 import { Quad } from '../../heck/components/Quad';
 import { RawQuaternion, Swap } from '@0b5vr/experimental';
 import { SceneNode } from '../../heck/components/SceneNode';
@@ -12,7 +10,6 @@ import { SceneNode } from '../../heck/components/SceneNode';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { GLTextureFormatStuffR11G11B10F } from '../../gl/glSetTexture';
 import { GL_TEXTURE_2D } from '../../gl/constants';
-import { UITag } from '../common/UITag';
 import { auto } from '../../globals/automaton';
 import { cubemapBlurFrag } from './shaders/cubemapBlurFrag';
 import { cubemapMergeFrag } from './shaders/cubemapMergeFrag';
@@ -34,6 +31,8 @@ const CUBEMAP_ROTATIONS: RawQuaternion[] = [ // 🔥
 
 export interface CubemapNodeOptions extends ComponentOptions {
   scene: SceneNode;
+  near?: number;
+  exclusionTags?: symbol[];
 }
 
 export class CubemapNode extends SceneNode {
@@ -60,9 +59,9 @@ export class CubemapNode extends SceneNode {
     const cameras = targets.map( ( target, i ) => {
       const cameraStack = new CameraStack( {
         scene,
-        exclusionTags: [ /* StuffTag, */ PointLightTag, DustTag, UITag ],
+        exclusionTags: options?.exclusionTags,
         target,
-        near: 2.9,
+        near: options.near ?? 1.0,
         fov: 90.0,
       } );
 

@@ -11,7 +11,9 @@ export interface MeshOptions extends ComponentOptions {
   materials: MaterialMap;
 
   /**
-   * `GL_NONE` is accepted to disable culling
+   * `GL_NONE` is accepted to disable culling.
+   *
+   * @default GL_BACK
    */
   cull?: typeof GL_NONE | GLCullFaceType;
   depthWrite?: boolean;
@@ -23,7 +25,9 @@ export class Mesh extends Component {
   public materials: MaterialMap;
 
   /**
-   * `GL_NONE` is accepted to disable culling
+   * `GL_NONE` is accepted to disable culling.
+   *
+   * @default GL_BACK
    */
   public cull: typeof GL_NONE | GLCullFaceType;
   public depthWrite: boolean;

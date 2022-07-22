@@ -273,9 +273,11 @@ export class CameraStack extends SceneNode {
 
     // -- event listeners --------------------------------------------------------------------------
     on( EventType.Camera, ( o ) => {
-      const fov = o?.fov ?? 40.0;
-      this.deferredCamera.fov = fov;
-      this.forwardCamera.fov = fov;
+      if ( !options.fov ) {
+        const fov = o?.fov ?? 40.0;
+        this.deferredCamera.fov = fov;
+        this.forwardCamera.fov = fov;
+      }
 
       const fog = o?.fog ?? [ 0.0, 100.0, 100.0 ];
       shadingMaterial.addUniform( 'fog', '3f', ...fog );

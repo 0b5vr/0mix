@@ -38,7 +38,7 @@ export class MetaballParticles extends GPUParticles {
     }
 
     // -- geometry render --------------------------------------------------------------------------
-    const { geometry } = genOctahedron( 1 );
+    const { geometry } = genOctahedron( 0 );
 
     const arrayComputeUV = new Float32Array( 2 * METABALL_PARTICLES_COUNT );
 

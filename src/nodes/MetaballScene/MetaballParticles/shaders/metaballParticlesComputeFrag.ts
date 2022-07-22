@@ -71,9 +71,9 @@ export const metaballParticlesComputeFrag: string = build( () => {
       0.5,
       dt,
       vec3(
-        perlin3d( mad( mad( 0.0, 0.2, time ), 4.0, pos ) ),
-        perlin3d( mad( mad( 10.0, 0.2, time ), 4.0, pos ) ),
-        perlin3d( mad( mad( 20.0, 0.2, time ), 4.0, pos ) ),
+        perlin3d( mad( mad( 0.0, 0.2, time ), 10.0, pos ) ),
+        perlin3d( mad( mad( 10.0, 0.2, time ), 10.0, pos ) ),
+        perlin3d( mad( mad( 20.0, 0.2, time ), 10.0, pos ) ),
       ),
     ) );
 
@@ -84,7 +84,7 @@ export const metaballParticlesComputeFrag: string = build( () => {
     addAssign( vel, mul(
       calcNormal( { rp: pos, map, delta: 1E-4 } ),
       sub( 0.01, d ),
-      4.0,
+      8.0,
       dt,
     ) );
 
