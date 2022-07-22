@@ -45,7 +45,11 @@ export const dofBlurFrag = build( () => {
     divAssign( sw( bg, 'xyz' ), mix( 1.0, sw( bg, 'w' ), step( 1E-6, sw( bg, 'w' ) ) ) ); // just `bg /= bg.w` but with zerodiv guard
     divAssign( sw( fg, 'xyz' ), mix( 1.0, sw( fg, 'w' ), step( 1E-6, sw( fg, 'w' ) ) ) ); // just `fg /= fg.w` but with zerodiv guard
 
-    const fga = glslLinearstep( 0.0, 0.5, sw( fg, 'a' ) );
+    const fga = glslLinearstep(
+      0.0,
+      0.9,
+      div( sw( fg, 'a' ), add( sw( bg, 'a' ), sw( fg, 'a' ) ) ),
+    );
     assign( fragColor, mix( bg, fg, fga ) );
     // assign( fragColor, fg );
     // assign( fragColor, bg );
