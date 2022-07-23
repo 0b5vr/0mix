@@ -25,7 +25,7 @@ export class MetaballScene extends SceneNode {
       shadowMapFar: FAR,
     } );
     light1.transform.lookAt( [ 3.0, 4.0, 0.0 ], [ 0.0, 0.0, 0.0 ] );
-    light1.color = [ 100.0, 100.0, 100.0 ];
+    light1.color = [ 1.0, 4.0, 20.0 ];
 
     const light2 = new PointLightNode( {
       scene,
@@ -34,7 +34,7 @@ export class MetaballScene extends SceneNode {
       shadowMapFar: FAR,
     } );
     light2.transform.lookAt( [ -3.0, 4.0, 0.0 ], [ 0.0, 0.0, 0.0 ] );
-    light2.color = [ 100.0, 100.0, 100.0 ];
+    light2.color = [ 1.0, 4.0, 20.0 ];
 
     if ( import.meta.env.DEV ) {
       light1.name = 'light1';
@@ -55,7 +55,6 @@ export class MetaballScene extends SceneNode {
 
     const cubemapNode = new CubemapNode( {
       scene,
-      near: 4.0,
       exclusionTags: [ cubemapExclusionTag ],
     } );
 

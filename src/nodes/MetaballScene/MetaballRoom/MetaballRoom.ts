@@ -2,11 +2,13 @@ import { GL_FRONT } from '../../../gl/constants';
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
 import { Material } from '../../../heck/Material';
 import { Mesh } from '../../../heck/components/Mesh';
+import { PI } from '../../../utils/constants';
 import { SceneNode } from '../../../heck/components/SceneNode';
 import { dummyRenderTarget4 } from '../../../globals/dummyRenderTarget';
 import { genCube } from '../../../geometries/genCube';
 import { metaballRoomFrag } from './shaders/metaballRoomFrag';
 import { objectVert } from '../../../shaders/common/objectVert';
+import { quatRotationY } from '@0b5vr/experimental';
 
 export class MetaballRoom extends SceneNode {
   public constructor() {
@@ -47,5 +49,6 @@ export class MetaballRoom extends SceneNode {
     // -- children ---------------------------------------------------------------------------------
     this.children = [ mesh ];
     this.transform.scale = [ 5.0, 5.0, 5.0 ];
+    this.transform.rotation = quatRotationY( PI / 4.0 );
   }
 }

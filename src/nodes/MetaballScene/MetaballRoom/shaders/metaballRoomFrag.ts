@@ -1,5 +1,5 @@
 import { MTL_PBR_EMISSIVE3_ROUGHNESS } from '../../../CameraStack/deferredConstants';
-import { abs, add, assign, build, defInNamed, defOut, defUniformNamed, div, insert, main, mix, mul, normalize, sin, step, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { add, assign, build, defInNamed, defOut, defUniformNamed, div, insert, main, mul, normalize, sin, step, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 
 export const metaballRoomFrag = build( () => {
   insert( 'precision highp float;' );
@@ -18,13 +18,9 @@ export const metaballRoomFrag = build( () => {
   main( () => {
     const depth = div( sw( vProjPosition, 'z' ), sw( vProjPosition, 'w' ) );
 
-    const emi = mix(
-      mul(
-        vec3( 100.0, 0.0, 0.0 ),
-        step( 0.99, sin( add( mul( 0.5, sw( vPosition, 'y' ) ), mul( 4.0, time ) ) ) ),
-      ),
-      vec3( 0.0 ),
-      abs( sw( vNormal, 'y' ) ),
+    const emi = mul(
+      vec3( 100.0, 0.0, 0.0 ),
+      step( 0.99, sin( add( mul( 0.5, sw( vPosition, 'y' ) ), mul( 4.0, time ) ) ) ),
     );
 
     assign( fragColor, vec4( 1.0 ) );

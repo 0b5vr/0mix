@@ -138,8 +138,8 @@ export const deferredShadeFrag = ( { withAO }: {
       } );
 
       const iblAmp = def( 'float', smoothstep(
-        3.0,
-        2.0,
+        9.0,
+        8.0,
         length( position ),
       ) ); // TODO
       divAssign( iblAmp, 25.0 ); // TODO
