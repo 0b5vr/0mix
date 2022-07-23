@@ -2,8 +2,7 @@ import { GL_TEXTURE_2D } from '../../../gl/constants';
 import { GPUParticles } from '../../utils/GPUParticles';
 import { METABALL_PARTICLES_COUNT, METABALL_PARTICLES_COUNT_SQRT } from './constants';
 import { Material } from '../../../heck/Material';
-import { depthFrag } from '../../../shaders/common/depthFrag';
-import { dummyRenderTarget1, dummyRenderTarget2, dummyRenderTarget4 } from '../../../globals/dummyRenderTarget';
+import { dummyRenderTarget2, dummyRenderTarget4 } from '../../../globals/dummyRenderTarget';
 import { genOctahedron } from '../../../geometries/genOctahedron';
 import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
@@ -67,22 +66,23 @@ export class MetaballParticles extends GPUParticles {
       },
     );
 
-    const depth = new Material(
-      metaballParticlesRenderVert,
-      depthFrag,
-      { initOptions: { geometry, target: dummyRenderTarget1 } },
-    );
+    // it's too expensive
+    // const depth = new Material(
+    //   metaballParticlesRenderVert,
+    //   depthFrag,
+    //   { initOptions: { geometry, target: dummyRenderTarget1 } },
+    // );
 
     deferred.addUniformTextures(
       'samplerRandomStatic',
       GL_TEXTURE_2D,
       randomTextureStatic.texture,
     );
-    depth.addUniformTextures(
-      'samplerRandomStatic',
-      GL_TEXTURE_2D,
-      randomTextureStatic.texture,
-    );
+    // depth.addUniformTextures(
+    //   'samplerRandomStatic',
+    //   GL_TEXTURE_2D,
+    //   randomTextureStatic.texture,
+    // );
 
     if ( import.meta.hot ) {
       import.meta.hot.accept(
@@ -92,7 +92,7 @@ export class MetaballParticles extends GPUParticles {
         ],
         ( [ v, f ] ) => {
           deferred.replaceShader( v?.metaballParticlesRenderVert, f?.metaballParticlesRenderFrag );
-          depth.replaceShader( v?.metaballParticlesRenderVert, undefined );
+          // depth.replaceShader( v?.metaballParticlesRenderVert, undefined );
         },
       );
     }
@@ -101,7 +101,10 @@ export class MetaballParticles extends GPUParticles {
     super( {
       materialCompute,
       geometryRender: geometry,
-      materialsRender: { deferred, depth },
+      materialsRender: {
+        deferred,
+        // depth,
+      },
       computeWidth: METABALL_PARTICLES_COUNT_SQRT,
       computeHeight: METABALL_PARTICLES_COUNT_SQRT,
       computeNumBuffers: 2,
