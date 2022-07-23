@@ -2,6 +2,7 @@ import { Blit } from './heck/components/Blit';
 import { BufferTextureRenderTarget } from './heck/BufferTextureRenderTarget';
 import { CameraStack } from './nodes/CameraStack/CameraStack';
 import { CanvasRenderTarget } from './heck/CanvasRenderTarget';
+import { Capture } from './nodes/Capture/Capture';
 import { Dog } from './heck/Dog';
 import { GLTextureFormatStuffRGBA8 } from './gl/glSetTexture';
 import { GL_NEAREST } from './gl/constants';
@@ -202,6 +203,10 @@ export async function initDesktop( width: number, height: number ): Promise<void
     } );
     dog.root.children.push( rtInspector );
 
+    const capture = new Capture();
+    dog.root.children.push( capture );
+
+    // component logger must be last
     const componentLogger = new ComponentLogger();
     dog.root.children.push( componentLogger );
   }
