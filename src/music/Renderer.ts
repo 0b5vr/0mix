@@ -1,16 +1,22 @@
 import { FRAMES_PER_RENDER } from './Music';
 import { GL_ARRAY_BUFFER, GL_DYNAMIC_COPY, GL_FLOAT, GL_NEAREST, GL_POINTS, GL_R32F, GL_RASTERIZER_DISCARD, GL_RED, GL_STATIC_DRAW, GL_TEXTURE0, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TRANSFORM_FEEDBACK, GL_TRANSFORM_FEEDBACK_BUFFER } from '../gl/constants';
+import { MUSIC_NON_BLOCKING } from '../config';
+import { Pool } from '@0b5vr/experimental';
 import { SAMPLE_TEXTURE_SIZE } from './constants';
 import { gl } from '../globals/canvas';
 import { glLazyProgram } from '../gl/glLazyProgram';
+import { poll } from '../utils/poll';
 import { shaderchunkPost, shaderchunkPre } from './shaderchunks';
 
 export class Renderer {
   public readonly __extParallel: any;
 
   private __offsetBuffer: WebGLBuffer;
-  private __tfBuffers: [ WebGLBuffer, WebGLBuffer ];
-  private __transformFeedback: WebGLTransformFeedback;
+  private __tfPool: Pool<[
+    WebGLBuffer,
+    WebGLBuffer,
+    WebGLTransformFeedback,
+  ]>;
 
   private __program: WebGLProgram | null;
   private __programCue: WebGLProgram | null;
@@ -23,11 +29,15 @@ export class Renderer {
     this.__extParallel = gl.getExtension( 'KHR_parallel_shader_compile' );
 
     this.__offsetBuffer = this.__createOffsetBuffer();
-    this.__tfBuffers = [
-      this.__createTFBuffer(),
-      this.__createTFBuffer(),
-    ];
-    this.__transformFeedback = this.__createTransformFeedback( this.__tfBuffers );
+    this.__tfPool = new Pool( [ ...Array( 32 ) ].map( () => {
+      const buffer0 = this.__createTFBuffer();
+      const buffer1 = this.__createTFBuffer();
+      return [
+        buffer0,
+        buffer1,
+        this.__createTransformFeedback( buffer0, buffer1 ),
+      ];
+    } ) );
 
     this.__dstArrays = [
       new Float32Array( FRAMES_PER_RENDER ),
@@ -45,10 +55,12 @@ export class Renderer {
    */
   public dispose(): void {
     gl.deleteBuffer( this.__offsetBuffer );
-    gl.deleteBuffer( this.__tfBuffers[ 0 ] );
-    gl.deleteBuffer( this.__tfBuffers[ 1 ] );
 
-    gl.deleteTransformFeedback( this.__transformFeedback );
+    this.__tfPool.array.map( ( [ buffer0, buffer1, tf ] ) => {
+      gl.deleteBuffer( buffer0 );
+      gl.deleteBuffer( buffer1 );
+      gl.deleteTransformFeedback( tf );
+    } );
 
     gl.deleteProgram( this.__program );
     gl.deleteProgram( this.__programCue );
@@ -204,6 +216,9 @@ export class Renderer {
       return this.__dstArrays;
     }
 
+    // pick a transform feedback
+    const [ buffer0, buffer1, tf ] = this.__tfPool.next();
+
     // attrib
     const attribLocation = gl.getAttribLocation( program, 'off' );
 
@@ -213,7 +228,7 @@ export class Renderer {
 
     // render
     gl.useProgram( program );
-    gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, this.__transformFeedback );
+    gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, tf );
     gl.enable( GL_RASTERIZER_DISCARD );
 
     gl.beginTransformFeedback( GL_POINTS );
@@ -224,8 +239,16 @@ export class Renderer {
     gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, null );
     gl.useProgram( null );
 
+    // sync
+    // ref: https://github.com/kainino0x/getBufferSubDataAsync-Demo
+    if ( MUSIC_NON_BLOCKING ) {
+      const sync = gl.fenceSync( gl.SYNC_GPU_COMMANDS_COMPLETE, 0 )!;
+      await poll( () => gl.getSyncParameter( sync, gl.SYNC_STATUS ) );
+      gl.deleteSync( sync );
+    }
+
     // feedback
-    gl.bindBuffer( GL_ARRAY_BUFFER, this.__tfBuffers[ 0 ] );
+    gl.bindBuffer( GL_ARRAY_BUFFER, buffer0 );
     gl.getBufferSubData(
       GL_ARRAY_BUFFER,
       0,
@@ -235,7 +258,7 @@ export class Renderer {
     );
     gl.bindBuffer( GL_ARRAY_BUFFER, null );
 
-    gl.bindBuffer( GL_ARRAY_BUFFER, this.__tfBuffers[ 1 ] );
+    gl.bindBuffer( GL_ARRAY_BUFFER, buffer1 );
     gl.getBufferSubData(
       GL_ARRAY_BUFFER,
       0,
@@ -276,13 +299,14 @@ export class Renderer {
   }
 
   private __createTransformFeedback(
-    tfBuffers: [ WebGLBuffer, WebGLBuffer ]
+    buffer0: WebGLBuffer,
+    buffer1: WebGLBuffer,
   ): WebGLTransformFeedback {
     const tf = gl.createTransformFeedback()!;
 
     gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, tf );
-    gl.bindBufferBase( GL_TRANSFORM_FEEDBACK_BUFFER, 0, tfBuffers[ 0 ] );
-    gl.bindBufferBase( GL_TRANSFORM_FEEDBACK_BUFFER, 1, tfBuffers[ 1 ] );
+    gl.bindBufferBase( GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer0 );
+    gl.bindBufferBase( GL_TRANSFORM_FEEDBACK_BUFFER, 1, buffer1 );
     gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, null );
 
     return tf;

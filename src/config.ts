@@ -6,6 +6,7 @@ export const
   AO_ITER = 16,
   IBLLUT_ITER = 400,
   IBLLUT_SIZE = 256,
+  MUSIC_NON_BLOCKING = true,
   NEAR = 0.1,
   FAR = 30.0,
   DEV_CANVAS_RESOLUTION = [ 1920, 1080 ],

@@ -17,7 +17,7 @@ const SIXTEEN_BAR = 3840.0 / MUSIC_BPM;
 export const BLOCK_SIZE = 128;
 export const BLOCKS_PER_RENDER = 16;
 export const FRAMES_PER_RENDER = BLOCK_SIZE * BLOCKS_PER_RENDER;
-export const LATENCY_BLOCKS = 32;
+export const LATENCY_BLOCKS = 128;
 
 interface MusicProgram {
   code: string;
@@ -56,7 +56,7 @@ export class Music {
         - buffeReaderNode.lastBlockTime
         + buffeReaderNode.readBlocks * BLOCK_SIZE / audio.sampleRate
       );
-    return t - this.timeOffset;
+      return t - this.timeOffset;
     } else {
       return 0.0;
     }
@@ -71,7 +71,7 @@ export class Music {
         - buffeReaderNode.lastBlockTime
         + buffeReaderNode.readBlocks * BLOCK_SIZE / audio.sampleRate
       );
-    this.timeOffset = t - value;
+      this.timeOffset = t - value;
     }
   }
 
@@ -213,7 +213,7 @@ export class Music {
 
     // -- render -----------------------------------------------------------------------------------
     if ( this.__program ) {
-      await this.__prepareBuffer( 0, beginNext );
+      this.__prepareBuffer( 0, beginNext );
     }
 
     // -- render the next program from the mid of the code -----------------------------------------
@@ -225,7 +225,7 @@ export class Music {
       this.__program = this.__programCue;
       this.__programCue = undefined;
 
-      await this.__prepareBuffer( beginNext, FRAMES_PER_RENDER - beginNext );
+      this.__prepareBuffer( beginNext, FRAMES_PER_RENDER - beginNext );
     }
 
     // -- update write blocks ----------------------------------------------------------------------
@@ -235,10 +235,10 @@ export class Music {
     // this.__emit( 'update' );
   }
 
-  private async __prepareBuffer(
+  private __prepareBuffer(
     first: number,
     count: number
-  ): Promise<void> {
+  ): void {
     const bufferReaderNode = this.__bufferReaderNode;
     if ( bufferReaderNode == null ) { return; }
 
@@ -273,21 +273,24 @@ export class Music {
       glslTime
     );
 
-    const [ outL, outR ] = await this.__renderer.render( first, count );
+    // bufferWriteBlocks can increment while we're rendering
+    const bufferWriteBlocks = this.__bufferWriteBlocks;
 
-    bufferReaderNode.write(
-      0,
-      this.__bufferWriteBlocks,
-      first,
-      outL.subarray( first, first + count ),
-    );
+    this.__renderer.render( first, count ).then( ( [ outL, outR ] ) => {
+      bufferReaderNode.write(
+        0,
+        bufferWriteBlocks,
+        first,
+        outL.subarray( first, first + count ),
+      );
 
-    bufferReaderNode.write(
-      1,
-      this.__bufferWriteBlocks,
-      first,
-      outR.subarray( first, first + count ),
-    );
+      bufferReaderNode.write(
+        1,
+        bufferWriteBlocks,
+        first,
+        outR.subarray( first, first + count ),
+      );
+    } );
   }
 
   private __processErrorMessage( error: any ): string | null {
