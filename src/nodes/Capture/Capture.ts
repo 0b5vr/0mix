@@ -15,8 +15,6 @@ export class Capture extends SceneNode {
         queueCapture = true;
       } );
 
-      const stream = canvas.captureStream( 60 );
-
       let currentRecorder: MediaRecorder | null = null;
 
       gui.button( 'Capture/record' ).on( 'click', () => {
@@ -26,6 +24,8 @@ export class Capture extends SceneNode {
           currentRecorder = null;
         } else {
           // start
+          const stream = canvas.captureStream( 60 );
+
           currentRecorder = new MediaRecorder( stream, {
             mimeType: 'video/webm; codecs=vp9',
             videoBitsPerSecond: 6_000_000,
@@ -42,10 +42,8 @@ export class Capture extends SceneNode {
         }
       } );
 
-      const lambdaUpdateStatus = new Lambda( {
+      const lambdaUpdate = new Lambda( {
         onUpdate() {
-          ( stream.getTracks()[ 0 ] as CanvasCaptureMediaStreamTrack ).requestFrame();
-
           if ( queueCapture ) {
             canvas.toBlob( ( blob ) => {
               downloadBlob( blob!, 'screenshot.png' );
@@ -58,7 +56,7 @@ export class Capture extends SceneNode {
           gui.monitor( 'Capture/status', text );
         },
       } );
-      this.children.push( lambdaUpdateStatus );
+      this.children.push( lambdaUpdate );
     } );
   }
 }
