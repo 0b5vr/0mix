@@ -1,4 +1,4 @@
-import { GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../../gl/constants';
+import { GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../../gl/constants';
 import { Geometry } from '../../../heck/Geometry';
 import { Lambda } from '../../../heck/components/Lambda';
 import { Material } from '../../../heck/Material';
@@ -47,7 +47,7 @@ export class Code extends SceneNode {
       codeRenderFrag,
       {
         initOptions: { geometry, target: dummyRenderTarget1 },
-        blend: [ GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ],
+        blend: [ GL_ONE, GL_ONE_MINUS_SRC_ALPHA ],
       },
     );
 

@@ -2,7 +2,7 @@ import { Blit } from '../../heck/components/Blit';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { CanvasTexture } from '../utils/CanvasTexture';
 import { Component } from '../../heck/components/Component';
-import { GL_COLOR_ATTACHMENT0, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
+import { GL_COLOR_ATTACHMENT0, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
@@ -159,7 +159,7 @@ export class RTInspector extends SceneNode {
       dryFrag,
       {
         initOptions: { target: dummyRenderTarget1, geometry: quadGeometry },
-        blend: [ GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ],
+        blend: [ GL_ONE, GL_ONE_MINUS_SRC_ALPHA ],
       },
     );
     materialMultipleText.addUniformTextures( 'sampler0', GL_TEXTURE_2D, textureText.texture );
