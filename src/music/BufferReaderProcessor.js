@@ -13,10 +13,10 @@ class BufferReaderProcessor extends AudioWorkletProcessor {
     this.buffer = new Float32Array( CHANNELS * BUFFER_SIZE_PER_CHANNEL );
 
     this.port.onmessage = ( { data } ) => {
-      if ( typeof data === 'boolean' ) {
-        this.active = data;
-      } else {
+      if ( Array.isArray( data ) ) {
         this.buffer.set( ...data );
+      } else {
+        this.active = data;
       }
     };
   }

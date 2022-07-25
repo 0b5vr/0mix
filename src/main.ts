@@ -63,6 +63,8 @@ if ( !import.meta.env.DEV ) {
   } );
 
   buttons[ 1 ].addEventListener( 'click', async () => {
+    audio.resume();
+
     // -- set resolution ---------------------------------------------------------------------------
     const resostr = selects[ 0 ].value.split( 'x' );
 
@@ -94,7 +96,6 @@ if ( !import.meta.env.DEV ) {
     // -- let's go ---------------------------------------------------------------------------------
     dog.active = true;
 
-    audio.resume();
     music.time = 0.0;
     music.isPlaying = true;
   } );
