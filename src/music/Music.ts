@@ -48,31 +48,13 @@ export class Music {
   private __samples: string[];
 
   public get time(): number {
-    const buffeReaderNode = this.__bufferReaderNode;
-
-    if ( buffeReaderNode ) {
-      const t = (
-        audio.currentTime
-        - buffeReaderNode.lastBlockTime
-        + buffeReaderNode.readBlocks * BLOCK_SIZE / audio.sampleRate
-      );
-      return t - this.timeOffset;
-    } else {
-      return 0.0;
-    }
+    const t = BLOCK_SIZE / sampleRate * this.__bufferReadBlocks;
+    return t - this.timeOffset;
   }
 
   public set time( value: number ) {
-    const buffeReaderNode = this.__bufferReaderNode;
-
-    if ( buffeReaderNode ) {
-      const t = (
-        audio.currentTime
-        - buffeReaderNode.lastBlockTime
-        + buffeReaderNode.readBlocks * BLOCK_SIZE / audio.sampleRate
-      );
-      this.timeOffset = t - value;
-    }
+    const t = BLOCK_SIZE / sampleRate * this.__bufferReadBlocks;
+    this.timeOffset = t - value;
   }
 
   private get __bufferReadBlocks(): number {

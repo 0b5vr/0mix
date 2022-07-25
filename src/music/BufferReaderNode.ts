@@ -8,7 +8,6 @@ const processorBlob = new Blob( [ processorCode ], { type: 'text/javascript' } )
 const processorUrl = URL.createObjectURL( processorBlob );
 
 export class BufferReaderNode extends AudioWorkletNode {
-  public lastBlockTime: number;
   private __readBlocks: number;
 
   public get readBlocks(): number {
@@ -32,11 +31,8 @@ export class BufferReaderNode extends AudioWorkletNode {
 
     this.__readBlocks = 0;
 
-    this.lastBlockTime = 0.0;
-
     this.port.onmessage = ( ( { data } ) => {
       this.__readBlocks = data;
-      this.lastBlockTime = audio.currentTime;
     } );
   }
 
