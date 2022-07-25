@@ -109,53 +109,53 @@ export class DCT extends SceneNode {
         materialDecodeH.replaceShader( quadVert, dctEncodeFrag( false, true ) );
         materialDecodeV.replaceShader( quadVert, dctEncodeFrag( true, true ) );
       } );
-
-      // -- quads ------------------------------------------------------------------------------------
-      const quadEncodeH = new Quad( {
-        target: targetEncodeH,
-        material: materialEncodeH,
-      } );
-      const quadEncodeV = new Quad( {
-        target: targetEncodeV,
-        material: materialEncodeV,
-      } );
-      const quadDecodeH = new Quad( {
-        target: targetDecodeH,
-        material: materialDecodeH,
-      } );
-      const quadDecodeV = new Quad( {
-        target,
-        material: materialDecodeV,
-      } );
-
-      if ( import.meta.env.DEV ) {
-        quadEncodeH.name = 'quadEncodeH';
-        quadEncodeV.name = 'quadEncodeV';
-        quadDecodeH.name = 'quadDecodeH';
-        quadDecodeV.name = 'quadDecodeV';
-      }
-
-      // -- event listener ---------------------------------------------------------------------------
-      auto( 'DCT/amp', ( { value } ) => {
-        const enable = value > 0.0;
-
-        blitDry.active = !enable;
-        quadEncodeH.active = enable;
-        quadEncodeV.active = enable;
-        quadDecodeH.active = enable;
-        quadDecodeV.active = enable;
-
-        materialEncodeV.addUniform( 'amp', '1f', value );
-      } );
-
-      // -- children ---------------------------------------------------------------------------------
-      this.children = [
-        blitDry,
-        quadEncodeH,
-        quadEncodeV,
-        quadDecodeH,
-        quadDecodeV,
-      ];
     }
+
+    // -- quads ------------------------------------------------------------------------------------
+    const quadEncodeH = new Quad( {
+      target: targetEncodeH,
+      material: materialEncodeH,
+    } );
+    const quadEncodeV = new Quad( {
+      target: targetEncodeV,
+      material: materialEncodeV,
+    } );
+    const quadDecodeH = new Quad( {
+      target: targetDecodeH,
+      material: materialDecodeH,
+    } );
+    const quadDecodeV = new Quad( {
+      target,
+      material: materialDecodeV,
+    } );
+
+    if ( import.meta.env.DEV ) {
+      quadEncodeH.name = 'quadEncodeH';
+      quadEncodeV.name = 'quadEncodeV';
+      quadDecodeH.name = 'quadDecodeH';
+      quadDecodeV.name = 'quadDecodeV';
+    }
+
+    // -- event listener ---------------------------------------------------------------------------
+    auto( 'DCT/amp', ( { value } ) => {
+      const enable = value > 0.0;
+
+      blitDry.active = !enable;
+      quadEncodeH.active = enable;
+      quadEncodeV.active = enable;
+      quadDecodeH.active = enable;
+      quadDecodeV.active = enable;
+
+      materialEncodeV.addUniform( 'amp', '1f', value );
+    } );
+
+    // -- children ---------------------------------------------------------------------------------
+    this.children = [
+      blitDry,
+      quadEncodeH,
+      quadEncodeV,
+      quadDecodeH,
+      quadDecodeV,
+    ];
   }
 }
