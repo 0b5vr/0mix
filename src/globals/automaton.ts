@@ -1,5 +1,6 @@
 import { Automaton } from '@0b5vr/automaton';
 import { AutomatonWithGUI } from '@0b5vr/automaton-with-gui';
+import { MUSIC_BPM } from '../config';
 import { Music } from '../music/Music';
 import { fxDefinitions } from './automaton-fxs/fxDefinitions';
 import { getDivAutomaton } from './dom';
@@ -48,6 +49,16 @@ export function automatonSetupMusic( music: Music ): void {
       music.shaderEventManager.reset();
 
       automatonWithGUI.reset();
+    } );
+
+    window.addEventListener( 'keydown', ( event ) => {
+      if ( event.key === ' ' ) {
+        automatonWithGUI.togglePlay();
+      } else if ( event.key === 'ArrowLeft' ) {
+        automatonWithGUI.seek( automaton.time - 240.0 / MUSIC_BPM );
+      } else if ( event.key === 'ArrowRight' ) {
+        automatonWithGUI.seek( automaton.time + 240.0 / MUSIC_BPM );
+      }
     } );
   }
 }
