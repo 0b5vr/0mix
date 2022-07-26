@@ -47,7 +47,7 @@ export class Trails extends GPUParticles {
     }
 
     // -- geometry render --------------------------------------------------------------------------
-    const { geometry } = genCylinder( {
+    const geometry = genCylinder( {
       heightSegs: trailLength,
       radialSegs: 16,
     } );

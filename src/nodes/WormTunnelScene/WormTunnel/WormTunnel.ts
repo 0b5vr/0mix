@@ -7,7 +7,7 @@ import { wormTunnelFrag } from './shaders/wormTunnelFrag';
 
 export class WormTunnel extends RaymarcherNode {
   public constructor() {
-    const { geometry } = genCylinder( {
+    const geometry = genCylinder( {
       height: -100.0,
       radius: 0.1,
     } );

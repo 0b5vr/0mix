@@ -34,8 +34,8 @@ export class TransparentShell extends SceneNode {
     } = options ?? {};
 
     // -- shell ------------------------------------------------------------------------------------
-    const geometryShellFront = genCube( { dimension: [ 0.5, 0.5, 0.5 ] } ).geometry;
-    const geometryShellBack = genCube( { dimension: [ -0.5, -0.5, -0.5 ] } ).geometry;
+    const geometryShellFront = genCube( { dimension: [ 0.5, 0.5, 0.5 ] } );
+    const geometryShellBack = genCube( { dimension: [ -0.5, -0.5, -0.5 ] } );
 
     const forwardShell = new Material(
       objectVert,

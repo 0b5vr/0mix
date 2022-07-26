@@ -6,12 +6,11 @@ import { RawVector3 } from '@0b5vr/experimental';
 import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { createRaymarchCameraUniformsLambda } from './createRaymarchCameraUniformsLambda';
 import { dummyRenderTarget1, dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
-import { genCube } from '../../geometries/genCube';
 import { objectVert } from '../../shaders/common/objectVert';
 import { randomTexture } from '../../globals/randomTexture';
 
 export interface RaymarcherNodeOptions extends SceneNodeOptions {
-  geometry?: Geometry;
+  geometry: Geometry;
   dimension?: RawVector3;
 }
 
@@ -23,15 +22,12 @@ export class RaymarcherNode extends SceneNode {
 
   public constructor(
     builder: ( tag: 'deferred' | 'depth' ) => string,
-    options?: RaymarcherNodeOptions,
+    options: RaymarcherNodeOptions,
   ) {
     super( options );
 
     // -- render -----------------------------------------------------------------------------------
-    const geometry = (
-      options?.geometry
-      ?? genCube( { dimension: options?.dimension ?? [ 0.55, 0.55, 0.55 ] } ).geometry
-    );
+    const geometry = options.geometry;
 
     const deferred = new Material(
       objectVert,

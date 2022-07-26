@@ -15,7 +15,7 @@ export class MetaballRoom extends SceneNode {
     super();
 
     // -- geometry ---------------------------------------------------------------------------------
-    const { geometry } = genCube( { flipNormal: true } );
+    const geometry = genCube( { flipNormal: true } );
 
     // -- material ---------------------------------------------------------------------------------
     const deferred = new Material(

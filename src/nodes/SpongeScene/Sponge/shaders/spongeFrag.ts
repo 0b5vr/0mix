@@ -27,13 +27,13 @@ export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
 
   const map = defFn( 'vec4', [ 'vec3' ], ( p ) => {
     // const d = def( 'float', sub( length( p ), 0.1 ) );
-    const d = def( 'float', sdbox( p, vec3( 0.5 ) ) );
+    const d = def( 'float', sdbox( p, vec3( 1.0 ) ) );
 
     let scale = 1.0;
     unrollLoop( tag === 'depth' ? 3 : 5, () => {
-      const pt = def( 'vec3', abs( sub( mod( add( p, scale / 2.0 ), scale ), scale / 2.0 ) ) );
+      const pt = def( 'vec3', abs( sub( mod( add( p, scale ), 2.0 * scale ), scale ) ) );
       assign( pt, sortVec3Components( pt ) );
-      assign( d, max( d, neg( sdbox( pt, vec3( scale / 6.0, scale / 6.0, 9 ) ) ) ) );
+      assign( d, max( d, neg( sdbox( pt, vec3( scale / 3.0, scale / 3.0, 9 ) ) ) ) );
       scale /= 3.0;
     } );
 

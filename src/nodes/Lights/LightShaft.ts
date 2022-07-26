@@ -1,5 +1,4 @@
 import { GL_NONE, GL_ONE, GL_TEXTURE_2D } from '../../gl/constants';
-import { Geometry } from '../../heck/Geometry';
 import { Lambda } from '../../heck/components/Lambda';
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/deferredConstants';
 import { Material } from '../../heck/Material';
@@ -9,8 +8,6 @@ import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { deferredColorFrag } from '../../shaders/common/deferredColorFrag';
 import { dummyRenderTarget1, dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { genCylinder } from '../../geometries/genCylinder';
-import { glVertexArrayBindIndexbuffer } from '../../gl/glVertexArrayBindIndexbuffer';
-import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 import { lightShaftFrag } from './shaders/lightShaftFrag';
 import { lightShaftVert } from './shaders/lightShaftVert';
 import { mat4Inverse, mat4Multiply } from '@0b5vr/experimental';
@@ -35,18 +32,9 @@ export class LightShaft extends SceneNode {
     const { light, intensity } = options;
 
     // -- geometry ---------------------------------------------------------------------------------
-    const cylinder = genCylinder( {
+    const geometry = genCylinder( {
       radialSegs: 64,
     } );
-
-    const geometry = new Geometry();
-
-    glVertexArrayBindVertexbuffer( geometry.vao, cylinder.position, 0, 3 );
-    glVertexArrayBindIndexbuffer( geometry.vao, cylinder.index );
-
-    geometry.count = cylinder.count;
-    geometry.mode = cylinder.mode;
-    geometry.indexType = cylinder.indexType;
 
     // -- materials --------------------------------------------------------------------------------
     const forward = this.__forward = new Material(

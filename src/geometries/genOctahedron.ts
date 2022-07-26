@@ -1,5 +1,3 @@
-import { GLDrawMode } from '../gl/glDrawMode';
-import { GL_TRIANGLES } from '../gl/constants';
 import { Geometry } from '../heck/Geometry';
 import { HALF_PI } from '../utils/constants';
 import { glCreateVertexbuffer } from '../gl/glCreateVertexbuffer';
@@ -7,15 +5,7 @@ import { glVertexArrayBindVertexbuffer } from '../gl/glVertexArrayBindVertexbuff
 import { range, vecAdd, vecMultiply, vecNormalize } from '@0b5vr/experimental';
 import { vec3AzimuthAltitude } from '../utils/vec3AzimuthAltitude';
 
-interface ResultGenOctahedron {
-  position: WebGLBuffer;
-  normal: WebGLBuffer;
-  geometry: Geometry;
-  count: number;
-  mode: GLDrawMode;
-}
-
-export function genOctahedron( subdiv = 0 ): ResultGenOctahedron {
+export function genOctahedron( subdiv = 0 ): Geometry {
   const arrayPosition: number[] = [];
   const arrayNormal: number[] = [];
 
@@ -89,18 +79,10 @@ export function genOctahedron( subdiv = 0 ): ResultGenOctahedron {
 
   // -- geometry -----------------------------------------------------------------------------------
   const geometry = new Geometry();
+  geometry.count = arrayPosition.length / 3;
 
   glVertexArrayBindVertexbuffer( geometry.vao, position, 0, 3 );
   glVertexArrayBindVertexbuffer( geometry.vao, normal, 1, 3 );
 
-  const count = geometry.count = arrayPosition.length / 3;
-  const mode = geometry.mode = GL_TRIANGLES;
-
-  return {
-    position,
-    normal,
-    geometry,
-    count,
-    mode,
-  };
+  return geometry;
 }

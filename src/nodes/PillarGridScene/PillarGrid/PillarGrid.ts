@@ -23,7 +23,7 @@ export class PillarGrid extends SceneNode {
     super();
 
     // -- geometry body ----------------------------------------------------------------------------
-    const { geometry } = genCube( {
+    const geometry = genCube( {
       dimension: [ 0.1, 0.1, 1.0 ],
     } );
     geometry.primcount = 1024;

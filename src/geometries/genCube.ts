@@ -1,6 +1,4 @@
-import { GLDrawMode } from '../gl/glDrawMode';
-import { GLIndexType } from '../gl/GLIndexType';
-import { GL_TRIANGLES, GL_UNSIGNED_SHORT } from '../gl/constants';
+import { GL_UNSIGNED_SHORT } from '../gl/constants';
 import { Geometry } from '../heck/Geometry';
 import { HALF_PI, PI } from '../utils/constants';
 import { glCreateIndexbuffer } from '../gl/glCreateIndexbuffer';
@@ -8,21 +6,10 @@ import { glCreateVertexbuffer } from '../gl/glCreateVertexbuffer';
 import { glVertexArrayBindIndexbuffer } from '../gl/glVertexArrayBindIndexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../gl/glVertexArrayBindVertexbuffer';
 
-interface ResultGenCube {
-  position: WebGLBuffer;
-  normal: WebGLBuffer;
-  uv: WebGLBuffer;
-  index: WebGLBuffer;
-  geometry: Geometry;
-  count: number;
-  mode: GLDrawMode;
-  indexType: GLIndexType;
-}
-
 export function genCube( options?: {
   dimension?: [ number, number, number ];
   flipNormal?: boolean; // TODO: this sucks
-} ): ResultGenCube {
+} ): Geometry {
   const dimension = options?.dimension ?? [ 1, 1, 1 ];
   const flipNormal = options?.flipNormal ?? false;
 
@@ -97,24 +84,13 @@ export function genCube( options?: {
 
   // -- geometry -----------------------------------------------------------------------------------
   const geometry = new Geometry();
+  geometry.count = arrayIndex.length;
+  geometry.indexType = GL_UNSIGNED_SHORT;
 
   glVertexArrayBindVertexbuffer( geometry.vao, position, 0, 3 );
   glVertexArrayBindVertexbuffer( geometry.vao, normal, 1, 3 );
   glVertexArrayBindVertexbuffer( geometry.vao, uv, 2, 2 );
   glVertexArrayBindIndexbuffer( geometry.vao, index );
 
-  const count = geometry.count = arrayIndex.length;
-  const mode = geometry.mode = GL_TRIANGLES;
-  const indexType = geometry.indexType = GL_UNSIGNED_SHORT;
-
-  return {
-    position,
-    normal,
-    uv,
-    index,
-    geometry,
-    count,
-    mode,
-    indexType,
-  };
+  return geometry;
 }

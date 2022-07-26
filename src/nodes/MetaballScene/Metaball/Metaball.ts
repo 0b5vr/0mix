@@ -5,7 +5,7 @@ import { objectVert } from '../../../shaders/common/objectVert';
 
 export class Metaball extends RaymarcherNode {
   public constructor() {
-    const { geometry } = genOctahedron( 3 );
+    const geometry = genOctahedron( 3 );
 
     super( metaballFrag, { geometry } );
 

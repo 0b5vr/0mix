@@ -1,10 +1,13 @@
 import { RaymarcherNode } from '../../utils/RaymarcherNode';
+import { genCube } from '../../../geometries/genCube';
 import { objectVert } from '../../../shaders/common/objectVert';
 import { spongeFrag } from './shaders/spongeFrag';
 
 export class Sponge extends RaymarcherNode {
   public constructor() {
-    super( spongeFrag );
+    const geometry = genCube();
+
+    super( spongeFrag, { geometry } );
 
     if ( import.meta.hot ) {
       import.meta.hot.accept(

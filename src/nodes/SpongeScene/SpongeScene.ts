@@ -51,7 +51,6 @@ export class SpongeScene extends SceneNode {
     }
 
     const sponge = new Sponge();
-    sponge.transform.scale = [ 3.0, 3.0, 3.0 ];
 
     const dust = new Dust();
     dust.transform.scale = [ 3.0, 3.0, 3.0 ];
@@ -69,7 +68,7 @@ export class SpongeScene extends SceneNode {
 
     this.cameraProxy = new SceneNode();
     this.cameraProxy.transform.lookAt(
-      [ 0.0, 0.2, 3.0 ],
+      [ 0.0, 0.2, 2.0 ],
       [ 0.0, 0.0, 0.0 ],
       [ 0.0, 1.0, 0.0 ],
       0.4,
@@ -78,7 +77,7 @@ export class SpongeScene extends SceneNode {
     const lambdaUpdateCameraParams = new Lambda( {
       onUpdate: () => {
         emit( EventType.Camera, {
-          dof: [ 1.5, 8.0 ],
+          dof: [ 1.0, 8.0 ],
         } );
         emit( EventType.CubeMap, cubemapNode );
 
