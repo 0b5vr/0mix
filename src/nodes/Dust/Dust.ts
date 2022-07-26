@@ -2,6 +2,7 @@ import { GL_POINTS, GL_TEXTURE_2D } from '../../gl/constants';
 import { GPUParticles } from '../utils/GPUParticles';
 import { Geometry } from '../../heck/Geometry';
 import { Material } from '../../heck/Material';
+import { auto } from '../../globals/automaton';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { dummyRenderTarget1, dummyRenderTarget2 } from '../../globals/dummyRenderTarget';
 import { dustComputeFrag } from './shaders/dustComputeFrag';
@@ -9,6 +10,7 @@ import { dustRenderFrag } from './shaders/dustRenderFrag';
 import { dustRenderVert } from './shaders/dustRenderVert';
 import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
+import { music } from '../../globals/music';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { randomTexture } from '../../globals/randomTexture';
@@ -97,6 +99,16 @@ export class Dust extends GPUParticles {
       computeNumBuffers: 2,
       tags: [ DustTag ],
     } );
+
+    auto( 'SpongeScene/Dust/update', () => {
+      const { time, deltaTime } = music;
+      this.updateParticles( { time, deltaTime } );
+    } );
+
+    if ( import.meta.env.DEV ) {
+      this.swapCompute.i.name = 'SpongeScene/Dust/swap/0';
+      this.swapCompute.o.name = 'SpongeScene/Dust/swap/1';
+    }
 
     this.children.unshift( lambdaLightUniforms );
   }

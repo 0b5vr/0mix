@@ -16,7 +16,7 @@ import { PostStack } from './nodes/PostStack/PostStack';
 import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
 import { WebGLMemory } from './nodes/WebGLMemory/WebGLMemory';
 import { WormTunnelScene } from './nodes/WormTunnelScene/WormTunnelScene';
-import { automaton } from './globals/automaton';
+import { auto, automaton } from './globals/automaton';
 import { canvas } from './globals/canvas';
 import { glTextureFilter } from './gl/glTextureFilter';
 import { music } from './globals/music';
@@ -104,20 +104,31 @@ const cameraStackOptions = {
 // plane.transform.position = [ 0.0, 3.0, 5.0 ];
 // plane.transform.scale = [ 1.0, 1.0, 1.0 ];
 
+const scenesA = [
+  spongeScene,
+  wormTunnelScene,
+  pillarGridScene,
+  metaballScene,
+];
+
+const scenesB = [
+  lineWaveScene,
+];
+
 dog.root.children.push(
   iblLutCalc,
-
-  // A
-  // spongeScene,
-  // wormTunnelScene,
-  // pillarGridScene,
-  metaballScene,
-
-  // B
-  lineWaveScene,
-
+  ...scenesA,
+  ...scenesB,
   // plane,
 );
+
+auto( 'A', ( { value } ) => {
+  scenesA.map( ( scene, i ) => scene.active = value === i + 1 );
+} );
+
+auto( 'B', ( { value } ) => {
+  scenesB.map( ( scene, i ) => scene.active = value === i + 1 );
+} );
 
 // -- desktop --------------------------------------------------------------------------------------
 export async function initDesktop( width: number, height: number ): Promise<void> {

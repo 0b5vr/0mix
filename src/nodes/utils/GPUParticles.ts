@@ -1,7 +1,7 @@
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { ComponentUpdateEvent } from '../../heck/components/Component';
 import { GL_NEAREST, GL_TEXTURE_2D } from '../../gl/constants';
 import { Geometry } from '../../heck/Geometry';
-import { Lambda } from '../../heck/components/Lambda';
 import { Material, MaterialMap } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
 import { Quad } from '../../heck/components/Quad';
@@ -21,6 +21,7 @@ export interface GPUParticlesOptions extends SceneNodeOptions {
 export class GPUParticles extends SceneNode {
   public swapCompute: Swap<BufferTextureRenderTarget>;
   public meshRender: Mesh;
+  private __updateParticles: ( updateEvent?: Partial<ComponentUpdateEvent> ) => void;
 
   public constructor( options: GPUParticlesOptions ) {
     super( options );
@@ -71,40 +72,37 @@ export class GPUParticles extends SceneNode {
       );
     } );
 
-    // -- swapper ----------------------------------------------------------------------------------
-    const swapper = new Lambda( {
-      onUpdate: () => {
-        swapCompute.swap();
+    // -- update -----------------------------------------------------------------------------------
+    this.__updateParticles = ( updateEvent ) => {
+      swapCompute.swap();
 
-        for ( let i = 0; i < computeNumBuffers; i ++ ) {
-          materialCompute.addUniformTextures(
+      for ( let i = 0; i < computeNumBuffers; i ++ ) {
+        materialCompute.addUniformTextures(
+          `samplerCompute${ i }`,
+          GL_TEXTURE_2D,
+          swapCompute.i.textures[ i ],
+        );
+
+        Object.values( materialsRender ).map( ( material ) => {
+          material?.addUniformTextures(
             `samplerCompute${ i }`,
             GL_TEXTURE_2D,
-            swapCompute.i.textures[ i ],
+            swapCompute.o.textures[ i ],
           );
+        } );
+      }
 
-          Object.values( materialsRender ).map( ( material ) => {
-            material?.addUniformTextures(
-              `samplerCompute${ i }`,
-              GL_TEXTURE_2D,
-              swapCompute.o.textures[ i ],
-            );
-          } );
-        }
-
-        quadCompute.target = swapCompute.o;
-      },
-    } );
-
-    if ( import.meta.env.DEV ) {
-      swapper.name = 'swapper';
-    }
+      quadCompute.target = swapCompute.o;
+      quadCompute.drawImmediate( updateEvent );
+    };
 
     // -- rest of components -----------------------------------------------------------------------
     this.children = [
-      swapper,
-      quadCompute,
       this.meshRender,
     ];
+  }
+
+  public updateParticles( updateEvent?: Partial<ComponentUpdateEvent> ): void {
+    this.__updateParticles( updateEvent );
   }
 }
