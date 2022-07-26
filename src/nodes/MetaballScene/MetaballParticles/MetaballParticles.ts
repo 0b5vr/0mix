@@ -4,7 +4,7 @@ import { METABALL_PARTICLES_COUNT, METABALL_PARTICLES_COUNT_SQRT } from './const
 import { Material } from '../../../heck/Material';
 import { auto } from '../../../globals/automaton';
 import { dummyRenderTarget2, dummyRenderTarget4 } from '../../../globals/dummyRenderTarget';
-import { genOctahedron } from '../../../geometries/genOctahedron';
+import { genTetrahedron } from '../../../geometries/genTetrahedron';
 import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
 import { metaballParticlesComputeFrag } from './shaders/metaballParticlesComputeFrag';
@@ -39,7 +39,7 @@ export class MetaballParticles extends GPUParticles {
     }
 
     // -- geometry render --------------------------------------------------------------------------
-    const geometry = genOctahedron( 0 );
+    const geometry = genTetrahedron();
 
     const arrayComputeUV = new Float32Array( 2 * METABALL_PARTICLES_COUNT );
 

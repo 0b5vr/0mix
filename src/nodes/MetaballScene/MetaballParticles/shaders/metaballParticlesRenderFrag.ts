@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
-import { assign, build, defInNamed, defOut, div, insert, main, normalize, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { assign, build, defInNamed, defOut, div, insert, main, normalize, sw, vec4 } from '../../../../shaders/shaderBuilder';
 
 export const metaballParticlesRenderFrag = build( () => {
   insert( 'precision highp float;' );
@@ -16,10 +16,10 @@ export const metaballParticlesRenderFrag = build( () => {
   main( () => {
     const depth = div( sw( vProjPosition, 'z' ), sw( vProjPosition, 'w' ) );
 
-    assign( fragColor, vec4( vec3( 0.5 ), 1.0 ) );
+    assign( fragColor, vec4( 1.0 ) );
     assign( fragPosition, vec4( sw( vPosition, 'xyz' ), depth ) );
     assign( fragNormal, vec4( normalize( vNormal ), MTL_PBR_ROUGHNESS_METALLIC ) );
-    assign( fragMisc, vec4( 0.2, 0.0, 0.0, 0.0 ) );
+    assign( fragMisc, vec4( 0.1, 0.5, 0.0, 0.0 ) );
     return;
   } );
 } );
