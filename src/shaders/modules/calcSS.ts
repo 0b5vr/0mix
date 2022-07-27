@@ -5,7 +5,7 @@ import { sampleLambert } from './sampleLambert';
 // https://www.shadertoy.com/view/lllBDM
 export function calcSS( {
   rp,
-  V,
+  rd,
   L,
   N,
   map,
@@ -16,7 +16,7 @@ export function calcSS( {
   power = 3.0,
 }: {
   rp: GLSLExpression<'vec3'>,
-  V: GLSLExpression<'vec3'>,
+  rd: GLSLExpression<'vec3'>,
   L: GLSLExpression<'vec3'>,
   N: GLSLExpression<'vec3'>,
   map: ( p: GLSLExpression<'vec3'> ) => GLSLExpression<'vec4'>,
@@ -26,7 +26,7 @@ export function calcSS( {
   intensity?: GLSLFloatExpression,
   power?: GLSLFloatExpression,
 } ): GLSLToken<'float'> {
-  const sd = def( 'vec3', refract( neg( V ), N, eta ?? 1.0 / 1.5 ) );
+  const sd = def( 'vec3', refract( rd, N, eta ?? 1.0 / 1.5 ) );
   const len = def( 'float', num( lenMultiplier ) );
   const accum = def( 'float', 0.0 );
 

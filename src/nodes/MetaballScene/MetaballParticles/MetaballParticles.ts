@@ -3,7 +3,8 @@ import { GPUParticles } from '../../utils/GPUParticles';
 import { METABALL_PARTICLES_COUNT, METABALL_PARTICLES_COUNT_SQRT } from './constants';
 import { Material } from '../../../heck/Material';
 import { auto } from '../../../globals/automaton';
-import { dummyRenderTarget2, dummyRenderTarget4 } from '../../../globals/dummyRenderTarget';
+import { depthFrag } from '../../../shaders/common/depthFrag';
+import { dummyRenderTarget1, dummyRenderTarget2, dummyRenderTarget4 } from '../../../globals/dummyRenderTarget';
 import { genTetrahedron } from '../../../geometries/genTetrahedron';
 import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
@@ -68,23 +69,22 @@ export class MetaballParticles extends GPUParticles {
       },
     );
 
-    // it's too expensive
-    // const depth = new Material(
-    //   metaballParticlesRenderVert,
-    //   depthFrag,
-    //   { initOptions: { geometry, target: dummyRenderTarget1 } },
-    // );
+    const depth = new Material(
+      metaballParticlesRenderVert,
+      depthFrag,
+      { initOptions: { geometry, target: dummyRenderTarget1 } },
+    );
 
     deferred.addUniformTextures(
       'samplerRandomStatic',
       GL_TEXTURE_2D,
       randomTextureStatic.texture,
     );
-    // depth.addUniformTextures(
-    //   'samplerRandomStatic',
-    //   GL_TEXTURE_2D,
-    //   randomTextureStatic.texture,
-    // );
+    depth.addUniformTextures(
+      'samplerRandomStatic',
+      GL_TEXTURE_2D,
+      randomTextureStatic.texture,
+    );
 
     if ( import.meta.hot ) {
       import.meta.hot.accept(
@@ -105,7 +105,7 @@ export class MetaballParticles extends GPUParticles {
       geometryRender: geometry,
       materialsRender: {
         deferred,
-        // depth,
+        depth,
       },
       computeWidth: METABALL_PARTICLES_COUNT_SQRT,
       computeHeight: METABALL_PARTICLES_COUNT_SQRT,

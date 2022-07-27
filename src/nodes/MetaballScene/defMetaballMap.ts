@@ -8,7 +8,7 @@ export const defMetaballMap: {
 } = ( time ) => {
   return defFn( 'vec4', [ 'vec3' ], ( p ) => {
     const pt = def( 'vec3', p );
-    const d = def( 'float', length( pt ) );
+    const d = def( 'float', sub( length( pt ), 0.1 ) );
 
     const off = def( 'vec3' );
     const radius = def( 'vec3' );

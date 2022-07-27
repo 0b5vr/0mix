@@ -1,14 +1,11 @@
 import { CameraStack } from '../CameraStack/CameraStack';
-import { CubemapNode } from '../CubemapNode/CubemapNode';
 import { EventType, emit } from '../../globals/globalEvent';
 import { FAR, NEAR } from '../../config';
 import { Lambda } from '../../heck/components/Lambda';
 import { Metaball } from './Metaball/Metaball';
 import { MetaballParticles } from './MetaballParticles/MetaballParticles';
-import { MetaballRoom } from './MetaballRoom/MetaballRoom';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { SceneNode } from '../../heck/components/SceneNode';
-import { quatRotationY, vec3ApplyQuaternion } from '@0b5vr/experimental';
 
 export class MetaballScene extends SceneNode {
   public cameraProxy: SceneNode;
@@ -24,8 +21,8 @@ export class MetaballScene extends SceneNode {
       shadowMapNear: NEAR,
       shadowMapFar: FAR,
     } );
-    light1.transform.lookAt( [ 3.0, 4.0, 0.0 ], [ 0.0, 0.0, 0.0 ] );
-    light1.color = [ 1.0, 4.0, 20.0 ];
+    light1.transform.lookAt( [ 0.0, 4.0, -5.0 ] );
+    light1.color = [ 3000.0, 3000.0, 3000.0 ];
 
     const light2 = new PointLightNode( {
       scene,
@@ -33,15 +30,23 @@ export class MetaballScene extends SceneNode {
       shadowMapNear: NEAR,
       shadowMapFar: FAR,
     } );
-    light2.transform.lookAt( [ -3.0, 4.0, 0.0 ], [ 0.0, 0.0, 0.0 ] );
-    light2.color = [ 1.0, 4.0, 20.0 ];
+    light2.transform.lookAt( [ 3.0, -2.0, -1.0 ] );
+    light2.color = [ 6.0, 6.0, 6.0 ];
+
+    const light3 = new PointLightNode( {
+      scene,
+      shadowMapFov: 40.0,
+      shadowMapNear: NEAR,
+      shadowMapFar: FAR,
+    } );
+    light3.transform.lookAt( [ -3.0, 0.0, 3.0 ] );
+    light3.color = [ 4.0, 5.0, 6.0 ];
 
     if ( import.meta.env.DEV ) {
       light1.name = 'light1';
       light2.name = 'light2';
+      light3.name = 'light3';
     }
-
-    const room = new MetaballRoom();
 
     const cubemapExclusionTag = Symbol();
 
@@ -53,36 +58,23 @@ export class MetaballScene extends SceneNode {
     particles.transform.scale = [ 3.0, 3.0, 3.0 ];
     particles.tags.push( cubemapExclusionTag );
 
-    const cubemapNode = new CubemapNode( {
-      scene,
-      exclusionTags: [ cubemapExclusionTag ],
-    } );
-
     this.cameraProxy = new SceneNode();
     this.cameraProxy.transform.lookAt(
       [ 0.0, 0.0, 3.2 ],
-      [ -0.6, 0.3, 0.0 ],
+      [ -0.6, 0.0, 0.0 ],
       [ 0.0, 1.0, 0.0 ],
       -0.2,
     );
 
     const lambdaUpdateCameraParams = new Lambda( {
-      onUpdate: ( { time } ) => {
+      onUpdate: () => {
         emit( EventType.Camera, {
           dof: [ 2.5, 4.0 ],
           fog: [ 0.0, 20.0, 20.0 ],
         } );
-        emit( EventType.CubeMap, cubemapNode );
+        emit( EventType.CubeMap );
 
         ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
-
-        const quat = quatRotationY( 0.2 * time );
-        this.cameraProxy.transform.lookAt(
-          vec3ApplyQuaternion( [ 0.0, 0.6, 3.2 ], quat ),
-          vec3ApplyQuaternion( [ -0.6, 0.0, 0.0 ], quat ),
-          [ 0.0, 1.0, 0.0 ],
-          0.2,
-        );
       },
     } );
 
@@ -93,10 +85,9 @@ export class MetaballScene extends SceneNode {
     this.children = [
       light1,
       light2,
-      room,
+      light3,
       metaball,
       particles,
-      cubemapNode,
       lambdaUpdateCameraParams,
       this.cameraProxy,
     ];

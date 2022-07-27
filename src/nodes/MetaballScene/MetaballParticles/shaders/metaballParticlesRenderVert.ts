@@ -41,6 +41,7 @@ export const metaballParticlesRenderVert = build( () => {
     const size = mul(
       sin( mul( PI, glslSaturate( vLife ) ) ),
       sw( vDice, 'x' ),
+      sw( vDice, 'x' ),
       0.005,
       smoothstep( 0.0, 0.1, sw( tex1, 'w' ) ),
     );
