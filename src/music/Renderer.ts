@@ -1,22 +1,17 @@
 import { FRAMES_PER_RENDER } from './Music';
 import { GL_ARRAY_BUFFER, GL_DYNAMIC_COPY, GL_FLOAT, GL_NEAREST, GL_POINTS, GL_R32F, GL_RASTERIZER_DISCARD, GL_RED, GL_STATIC_DRAW, GL_TEXTURE0, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TRANSFORM_FEEDBACK, GL_TRANSFORM_FEEDBACK_BUFFER } from '../gl/constants';
-import { MUSIC_NON_BLOCKING } from '../config';
-import { Pool } from '@0b5vr/experimental';
 import { SAMPLE_TEXTURE_SIZE } from './constants';
 import { gl } from '../globals/canvas';
 import { glLazyProgram } from '../gl/glLazyProgram';
-import { poll } from '../utils/poll';
 import { shaderchunkPost, shaderchunkPre } from './shaderchunks';
 
 export class Renderer {
   public readonly __extParallel: any;
 
   private __offsetBuffer: WebGLBuffer;
-  private __tfPool: Pool<[
-    WebGLBuffer,
-    WebGLBuffer,
-    WebGLTransformFeedback,
-  ]>;
+  private __tfBuffer0: WebGLBuffer;
+  private __tfBuffer1: WebGLBuffer;
+  private __tf: WebGLTransformFeedback;
 
   private __program: WebGLProgram | null;
   private __programCue: WebGLProgram | null;
@@ -29,15 +24,9 @@ export class Renderer {
     this.__extParallel = gl.getExtension( 'KHR_parallel_shader_compile' );
 
     this.__offsetBuffer = this.__createOffsetBuffer();
-    this.__tfPool = new Pool( [ ...Array( 32 ) ].map( () => {
-      const buffer0 = this.__createTFBuffer();
-      const buffer1 = this.__createTFBuffer();
-      return [
-        buffer0,
-        buffer1,
-        this.__createTransformFeedback( buffer0, buffer1 ),
-      ];
-    } ) );
+    this.__tfBuffer0 = this.__createTFBuffer();
+    this.__tfBuffer1 = this.__createTFBuffer();
+    this.__tf = this.__createTransformFeedback( this.__tfBuffer0, this.__tfBuffer1 );
 
     this.__dstArrays = [
       new Float32Array( FRAMES_PER_RENDER ),
@@ -56,11 +45,9 @@ export class Renderer {
   public dispose(): void {
     gl.deleteBuffer( this.__offsetBuffer );
 
-    this.__tfPool.array.map( ( [ buffer0, buffer1, tf ] ) => {
-      gl.deleteBuffer( buffer0 );
-      gl.deleteBuffer( buffer1 );
-      gl.deleteTransformFeedback( tf );
-    } );
+    gl.deleteBuffer( this.__tfBuffer0 );
+    gl.deleteBuffer( this.__tfBuffer1 );
+    gl.deleteTransformFeedback( this.__tf );
 
     gl.deleteProgram( this.__program );
     gl.deleteProgram( this.__programCue );
@@ -210,14 +197,11 @@ export class Renderer {
   /**
    * Render and return a buffer.
    */
-  public async render( first: number, count: number ): Promise<[ Float32Array, Float32Array ]> {
+  public render( first: number, count: number ): [ Float32Array, Float32Array ] {
     const { __program: program } = this;
     if ( program == null ) {
       return this.__dstArrays;
     }
-
-    // pick a transform feedback
-    const [ buffer0, buffer1, tf ] = this.__tfPool.next();
 
     // attrib
     const attribLocation = gl.getAttribLocation( program, 'off' );
@@ -228,7 +212,7 @@ export class Renderer {
 
     // render
     gl.useProgram( program );
-    gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, tf );
+    gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, this.__tf );
     gl.enable( GL_RASTERIZER_DISCARD );
 
     gl.beginTransformFeedback( GL_POINTS );
@@ -239,16 +223,8 @@ export class Renderer {
     gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, null );
     gl.useProgram( null );
 
-    // sync
-    // ref: https://github.com/kainino0x/getBufferSubDataAsync-Demo
-    if ( MUSIC_NON_BLOCKING ) {
-      const sync = gl.fenceSync( gl.SYNC_GPU_COMMANDS_COMPLETE, 0 )!;
-      await poll( () => gl.getSyncParameter( sync, gl.SYNC_STATUS ) );
-      gl.deleteSync( sync );
-    }
-
     // feedback
-    gl.bindBuffer( GL_ARRAY_BUFFER, buffer0 );
+    gl.bindBuffer( GL_ARRAY_BUFFER, this.__tfBuffer0 );
     gl.getBufferSubData(
       GL_ARRAY_BUFFER,
       0,
@@ -258,7 +234,7 @@ export class Renderer {
     );
     gl.bindBuffer( GL_ARRAY_BUFFER, null );
 
-    gl.bindBuffer( GL_ARRAY_BUFFER, buffer1 );
+    gl.bindBuffer( GL_ARRAY_BUFFER, this.__tfBuffer1 );
     gl.getBufferSubData(
       GL_ARRAY_BUFFER,
       0,

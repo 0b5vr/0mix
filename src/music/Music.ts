@@ -17,7 +17,7 @@ const SIXTEEN_BAR = 3840.0 / MUSIC_BPM;
 export const BLOCK_SIZE = 128;
 export const BLOCKS_PER_RENDER = 16;
 export const FRAMES_PER_RENDER = BLOCK_SIZE * BLOCKS_PER_RENDER;
-export const LATENCY_BLOCKS = 128;
+export const LATENCY_BLOCKS = 64;
 
 interface MusicProgram {
   code: string;
@@ -258,21 +258,21 @@ export class Music {
     // bufferWriteBlocks can increment while we're rendering
     const bufferWriteBlocks = this.__bufferWriteBlocks;
 
-    this.__renderer.render( first, count ).then( ( [ outL, outR ] ) => {
-      bufferReaderNode.write(
-        0,
-        bufferWriteBlocks,
-        first,
-        outL.subarray( first, first + count ),
-      );
+    const [ outL, outR ] = this.__renderer.render( first, count );
 
-      bufferReaderNode.write(
-        1,
-        bufferWriteBlocks,
-        first,
-        outR.subarray( first, first + count ),
-      );
-    } );
+    bufferReaderNode.write(
+      0,
+      bufferWriteBlocks,
+      first,
+      outL.subarray( first, first + count ),
+    );
+
+    bufferReaderNode.write(
+      1,
+      bufferWriteBlocks,
+      first,
+      outR.subarray( first, first + count ),
+    );
   }
 
   private __processErrorMessage( error: any ): string | null {
