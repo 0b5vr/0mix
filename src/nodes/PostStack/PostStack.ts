@@ -4,6 +4,7 @@ import { Code } from './Code/Code';
 import { ComponentOptions } from '../../heck/components/Component';
 import { DCT } from './DCT/DCT';
 import { FXAA } from './FXAA';
+import { Kaleidoscope } from './Kaleidoscope/Kaleidoscope';
 import { Post } from './Post';
 import { RawBufferRenderTarget } from '../../heck/RawBufferRenderTarget';
 import { RenderTarget } from '../../heck/RenderTarget';
@@ -42,6 +43,12 @@ export class PostStack extends SceneNode {
     } );
 
     postSwap.swap();
+    const kaleidoscope = new Kaleidoscope( {
+      input: postSwap.o,
+      target: postSwap.i,
+    } );
+
+    postSwap.swap();
     const post = new Post( {
       input: postSwap.o,
       target: postSwap.i,
@@ -66,6 +73,7 @@ export class PostStack extends SceneNode {
     // -- components -------------------------------------------------------------------------------
     this.children = [
       bloom,
+      kaleidoscope,
       post,
       fxaa,
       dct,
