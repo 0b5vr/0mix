@@ -1,6 +1,5 @@
 import { CameraStack } from '../CameraStack/CameraStack';
 import { EventType, emit } from '../../globals/globalEvent';
-import { FAR, NEAR } from '../../config';
 import { Lambda } from '../../heck/components/Lambda';
 import { PillarGrid } from './PillarGrid/PillarGrid';
 import { PointLightNode } from '../Lights/PointLightNode';
@@ -18,8 +17,6 @@ export class PillarGridScene extends SceneNode {
     const lightT = new PointLightNode( {
       scene,
       shadowMapFov: 40.0,
-      shadowMapNear: NEAR,
-      shadowMapFar: FAR,
     } );
     lightT.transform.lookAt( [ 5.0, -3.0, 2.0 ], [ 0.0, 0.0, 1.0 ] );
     lightT.color = [ 500.0, 500.0, 500.0 ];
@@ -27,8 +24,6 @@ export class PillarGridScene extends SceneNode {
     const lightB = new PointLightNode( {
       scene,
       shadowMapFov: 40.0,
-      shadowMapNear: NEAR,
-      shadowMapFar: FAR,
     } );
     lightB.transform.lookAt( [ 0.0, 3.5, 4.0 ], [ 0.0, 0.0, 1.0 ] );
     lightB.color = [ 100.0, 100.0, 100.0 ];

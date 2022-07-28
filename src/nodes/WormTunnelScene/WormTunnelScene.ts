@@ -1,6 +1,5 @@
 import { CameraStack } from '../CameraStack/CameraStack';
 import { EventType, emit } from '../../globals/globalEvent';
-import { FAR, NEAR } from '../../config';
 import { Lambda } from '../../heck/components/Lambda';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { SceneNode } from '../../heck/components/SceneNode';
@@ -17,8 +16,6 @@ export class WormTunnelScene extends SceneNode {
     const lightRim = new PointLightNode( {
       scene,
       shadowMapFov: 10.0,
-      shadowMapNear: NEAR,
-      shadowMapFar: FAR,
     } );
     lightRim.transform.lookAt( [ 0.0, 0.0, -10.0 ] );
     lightRim.color = [ 100.0, 100.0, 100.0 ];
@@ -26,8 +23,6 @@ export class WormTunnelScene extends SceneNode {
     const lightFront = new PointLightNode( {
       scene,
       shadowMapFov: 10.0,
-      shadowMapNear: NEAR,
-      shadowMapFar: FAR,
     } );
     lightFront.transform.lookAt( [ 0.0, 0.0, 10.0 ] );
     lightFront.color = [ 20.0, 20.0, 20.0 ];

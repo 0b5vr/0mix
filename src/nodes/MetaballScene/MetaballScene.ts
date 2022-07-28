@@ -1,6 +1,5 @@
 import { CameraStack } from '../CameraStack/CameraStack';
 import { EventType, emit } from '../../globals/globalEvent';
-import { FAR, NEAR } from '../../config';
 import { Lambda } from '../../heck/components/Lambda';
 import { Metaball } from './Metaball/Metaball';
 import { MetaballParticles } from './MetaballParticles/MetaballParticles';
@@ -18,8 +17,6 @@ export class MetaballScene extends SceneNode {
     const light1 = new PointLightNode( {
       scene,
       shadowMapFov: 40.0,
-      shadowMapNear: NEAR,
-      shadowMapFar: FAR,
     } );
     light1.transform.lookAt( [ 0.0, 4.0, -5.0 ] );
     light1.color = [ 3000.0, 3000.0, 3000.0 ];
@@ -27,8 +24,6 @@ export class MetaballScene extends SceneNode {
     const light2 = new PointLightNode( {
       scene,
       shadowMapFov: 40.0,
-      shadowMapNear: NEAR,
-      shadowMapFar: FAR,
     } );
     light2.transform.lookAt( [ 3.0, -2.0, -1.0 ] );
     light2.color = [ 6.0, 6.0, 6.0 ];
@@ -36,8 +31,6 @@ export class MetaballScene extends SceneNode {
     const light3 = new PointLightNode( {
       scene,
       shadowMapFov: 40.0,
-      shadowMapNear: NEAR,
-      shadowMapFar: FAR,
     } );
     light3.transform.lookAt( [ -3.0, 0.0, 3.0 ] );
     light3.color = [ 4.0, 5.0, 6.0 ];

@@ -1,4 +1,5 @@
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { FAR, NEAR } from '../../config';
 import { GLTextureFormatStuffRG16F } from '../../gl/glSetTexture';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 import { Material } from '../../heck/Material';
@@ -60,8 +61,8 @@ export class PointLightNode extends SceneNode {
 
     // -- camera -----------------------------------------------------------------------------------
     const fov = options.shadowMapFov ?? 45.0;
-    const near = options.shadowMapNear ?? 0.1;
-    const far = options.shadowMapFar ?? 100.0;
+    const near = options.shadowMapNear ?? NEAR;
+    const far = options.shadowMapFar ?? FAR;
 
     this.camera = new PerspectiveCamera( {
       fov,

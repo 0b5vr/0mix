@@ -2,7 +2,6 @@ import { CameraStack } from '../CameraStack/CameraStack';
 import { CubemapNode } from '../CubemapNode/CubemapNode';
 import { Dust } from '../Dust/Dust';
 import { EventType, emit } from '../../globals/globalEvent';
-import { FAR, NEAR } from '../../config';
 import { Lambda } from '../../heck/components/Lambda';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { SceneNode } from '../../heck/components/SceneNode';
@@ -20,8 +19,6 @@ export class SpongeScene extends SceneNode {
     const lightL = new PointLightNode( {
       scene,
       shadowMapFov: 60.0,
-      shadowMapNear: NEAR,
-      shadowMapFar: FAR,
     } );
     lightL.transform.lookAt( [ -6.0, 0.0, 0.0 ] );
     lightL.color = [ 10.0, 30.0, 40.0 ];
@@ -29,8 +26,6 @@ export class SpongeScene extends SceneNode {
     const lightR = new PointLightNode( {
       scene,
       shadowMapFov: 60.0,
-      shadowMapNear: NEAR,
-      shadowMapFar: FAR,
     } );
     lightR.transform.lookAt( [ 5.0, 0.0, -2.0 ] );
     lightR.color = [ 50.0, 50.0, 50.0 ];
@@ -38,8 +33,6 @@ export class SpongeScene extends SceneNode {
     const lightF = new PointLightNode( {
       scene,
       shadowMapFov: 60.0,
-      shadowMapNear: NEAR,
-      shadowMapFar: FAR,
     } );
     lightF.transform.lookAt( [ 1.0, 1.0, 7.0 ] );
     lightF.color = [ 10.0, 10.0, 10.0 ];
