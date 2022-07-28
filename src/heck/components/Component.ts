@@ -84,7 +84,7 @@ export class Component {
       if ( Component.updateHaveReachedBreakpoint && !this.ignoreBreakpoints ) { return; }
 
       const path = `${ event.path }/${ this.name ?? '(no name)' }`;
-      emit( EventType.ComponentUpdate, path );
+      emit( EventType.ComponentUpdate, { component: this, event, path } );
 
       if ( this.name != null ) {
         guiMeasureUpdate( this.name!, () => {

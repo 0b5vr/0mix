@@ -1,3 +1,4 @@
+import { Component, ComponentUpdateEvent } from '../heck/components/Component';
 import type { CubemapNode } from '../nodes/CubemapNode/CubemapNode';
 
 export enum EventType {
@@ -8,7 +9,11 @@ export enum EventType {
 }
 
 export type Event = {
-  [ EventType.ComponentUpdate ]: string;
+  [ EventType.ComponentUpdate ]: {
+    component: Component;
+    event: ComponentUpdateEvent;
+    path: string;
+  };
   [ EventType.Camera ]: {
     fov?: number;
     dof?: [ depth: number, size: number ];

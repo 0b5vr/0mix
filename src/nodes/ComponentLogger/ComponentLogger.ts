@@ -1,3 +1,4 @@
+import { Component } from '../../heck/components/Component';
 import { EventType, on } from '../../globals/globalEvent';
 import { Lambda } from '../../heck/components/Lambda';
 import { SceneNode } from '../../heck/components/SceneNode';
@@ -7,7 +8,7 @@ import { gui } from '../../globals/gui';
 export class ComponentLogger extends SceneNode {
   private __isActive: boolean;
   private __dom: HTMLDivElement;
-  private __updateArray: string[];
+  private __updateArray: { component: Component, path: string }[];
 
   public constructor() {
     super();
@@ -21,9 +22,9 @@ export class ComponentLogger extends SceneNode {
 
     this.name = 'ComponentLogger';
 
-    on( EventType.ComponentUpdate, ( string ) => {
+    on( EventType.ComponentUpdate, ( { component, path } ) => {
       if ( this.__isActive ) {
-        this.__updateArray.push( string );
+        this.__updateArray.push( { component, path } );
       }
     } );
 
@@ -33,7 +34,15 @@ export class ComponentLogger extends SceneNode {
         this.__dom.style.display = this.__isActive ? 'block' : 'none';
 
         if ( this.__isActive ) {
-          this.__dom.textContent = this.__updateArray.join( '\n' );
+          this.__dom.innerHTML = '';
+
+          this.__updateArray.map( ( { component, path } ) => {
+            const div = document.createElement( 'div' );
+            div.textContent = path;
+            div.addEventListener( 'pointerdown', () => console.info( component ) );
+            this.__dom.appendChild( div );
+          } );
+
           this.__updateArray = [];
         }
       },
