@@ -31,7 +31,7 @@ export function genCylinder( options?: {
 
       const t = TAU * ir / radialSegs;
       const x = Math.cos( t );
-      const y = Math.sin( t );
+      const y = -Math.sin( t );
 
       arrayPosition.push( radius * x, radius * y, height * z );
       arrayNormal.push( x, y, 0.0 );

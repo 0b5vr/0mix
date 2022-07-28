@@ -19,6 +19,7 @@ export class RaymarcherNode extends SceneNode {
     deferred: Material,
     depth: Material,
   };
+  public mesh: Mesh;
 
   public constructor(
     builder: ( tag: 'deferred' | 'depth' ) => string,
@@ -54,7 +55,7 @@ export class RaymarcherNode extends SceneNode {
 
     const materials = this.materials = { depth, deferred };
 
-    const mesh = new Mesh( {
+    const mesh = this.mesh = new Mesh( {
       geometry,
       materials,
     } );

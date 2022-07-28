@@ -1,8 +1,8 @@
-import { abs, addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mix, mul, smoothstep, step, sub, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
-import { maxOfVec3 } from '../../../shaders/modules/maxOfVec3';
-import { orthBas } from '../../../shaders/modules/orthBas';
+import { REC_TRAILS_LENGTH } from '../constants';
+import { addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, mad, main, mix, mul, step, sub, sw, texture, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { orthBas } from '../../../../shaders/modules/orthBas';
 
-export const trailsRenderVert = ( trailLength: number ): string => build( () => {
+export const trailsRenderVert: string = build( () => {
   const position = defIn( 'vec3', 0 );
   const normal = defIn( 'vec3', 1 );
   const computeV = defIn( 'float', 3 );
@@ -28,7 +28,7 @@ export const trailsRenderVert = ( trailLength: number ): string => build( () => 
   main( () => {
     // -- fetch texture ----------------------------------------------------------------------------
     const computeUV = vec2(
-      mix( 0.5, sub( 1.0, 0.5 / trailLength ), sw( position, 'z' ) ),
+      mix( 0.5, sub( 1.0, 0.5 * REC_TRAILS_LENGTH ), sw( position, 'z' ) ),
       computeV,
     );
     const tex0 = texture( samplerCompute0, computeUV );
@@ -43,11 +43,8 @@ export const trailsRenderVert = ( trailLength: number ): string => build( () => 
     assign( vPositionWithoutModel, vec4( sw( tex0, 'xyz' ), 1.0 ) );
     // assign( vPositionWithoutModel, vec4( 0.0, 0.0, 0.0, 1.0 ) );
 
-    const size = mul(
-      sw( vDice, 'x' ),
-      smoothstep( 0.5, 0.49, maxOfVec3( abs( sw( vPositionWithoutModel, 'xyz' ) ) ) ),
-      0.01,
-    );
+    const size = mad( 0.001, 0.004, sw( vDice, 'x' ) );
+
     addAssign( vJumpFlag, step( size, 1E-4 ) ); // utilizing the jump flag
 
     const b = orthBas( sw( tex1, 'xyz' ) );

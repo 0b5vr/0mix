@@ -1,6 +1,6 @@
-import { MTL_PBR_EMISSIVE3_ROUGHNESS } from '../../CameraStack/deferredConstants';
-import { assign, build, defInNamed, defOut, defUniformNamed, discard, div, fract, gt, ifThen, insert, length, main, mix, mul, normalize, retFn, step, sub, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
-import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
+import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
+import { assign, build, defInNamed, defOut, defUniformNamed, discard, div, fract, gt, ifThen, insert, length, main, mul, normalize, retFn, sub, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
 
 export const trailsRenderFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
@@ -34,20 +34,11 @@ export const trailsRenderFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     const depth = div( sw( vProjPosition, 'z' ), sw( vProjPosition, 'w' ) );
 
     const haha = fract( mul( 100.0, vDice ) );
-    const color = mix(
-      vec3( 0.5 ),
-      mix(
-        vec3( 0.8, 0.1, 0.2 ),
-        vec3( 0.8, 0.3, 0.1 ),
-        sw( haha, 'x' ),
-      ),
-      step( sw( haha, 'y' ), 0.6 ),
-    );
 
-    assign( fragColor, vec4( color, 1.0 ) );
+    assign( fragColor, vec4( vec3( mul( sw( haha, 'x' ), sw( haha, 'x' ) ) ), 1.0 ) );
     assign( fragPosition, vec4( sw( vPosition, 'xyz' ), depth ) );
-    assign( fragNormal, vec4( normalize( vNormal ), MTL_PBR_EMISSIVE3_ROUGHNESS ) );
-    assign( fragMisc, vec4( 0.1, 0.0, 0.0, 0.8 ) );
+    assign( fragNormal, vec4( normalize( vNormal ), MTL_PBR_ROUGHNESS_METALLIC ) );
+    assign( fragMisc, vec4( 0.2, 0.0, 0.0, 0.0 ) );
     return;
   } );
 } );

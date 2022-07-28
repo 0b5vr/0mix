@@ -1,4 +1,4 @@
-import { GL_TEXTURE_2D } from '../../../gl/constants';
+import { GL_FRONT, GL_TEXTURE_2D } from '../../../gl/constants';
 import { RaymarcherNode } from '../../utils/RaymarcherNode';
 import { cellTextureTarget } from '../../../textures/cellTextureTarget';
 import { genCylinder } from '../../../geometries/genCylinder';
@@ -19,6 +19,8 @@ export class WormTunnel extends RaymarcherNode {
       GL_TEXTURE_2D,
       cellTextureTarget.texture,
     );
+
+    this.mesh.cull = GL_FRONT;
 
     if ( import.meta.hot ) {
       import.meta.hot.accept(

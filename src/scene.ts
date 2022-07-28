@@ -14,6 +14,7 @@ import { Mixer } from './nodes/Mixer/Mixer';
 import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
 import { PostStack } from './nodes/PostStack/PostStack';
 import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
+import { TrailsScene } from './nodes/TrailsScene/TrailsScene';
 import { WebGLMemory } from './nodes/WebGLMemory/WebGLMemory';
 import { WormTunnelScene } from './nodes/WormTunnelScene/WormTunnelScene';
 import { auto, automaton } from './globals/automaton';
@@ -92,6 +93,7 @@ const spongeScene = new SpongeScene();
 const wormTunnelScene = new WormTunnelScene();
 const pillarGridScene = new PillarGridScene();
 const metaballScene = new MetaballScene();
+const trailsScene = new TrailsScene();
 const lineWaveScene = new LineWaveScene();
 
 const cameraStackOptions = {
@@ -109,6 +111,7 @@ const scenesA = [
   wormTunnelScene,
   pillarGridScene,
   metaballScene,
+  trailsScene,
 ];
 
 const scenesB = [
@@ -160,6 +163,7 @@ export async function initDesktop( width: number, height: number ): Promise<void
     = wormTunnelScene.cameraProxy.children
     = pillarGridScene.cameraProxy.children
     = metaballScene.cameraProxy.children
+    = trailsScene.cameraProxy.children
     = [ cameraStackA ];
 
   lineWaveScene.cameraProxy.children = [ cameraStackB ];
