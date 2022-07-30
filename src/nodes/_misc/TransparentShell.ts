@@ -1,4 +1,5 @@
 import { Component } from '../../heck/components/Component';
+import { CubemapNode } from '../CubemapNode/CubemapNode';
 import { EventType, on } from '../../globals/globalEvent';
 import { GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
 import { Material } from '../../heck/Material';
@@ -18,6 +19,7 @@ export interface TransparentShellOptions extends SceneNodeOptions {
   metallic?: number;
   opacity?: number;
   insideChildren?: Component[];
+  cubemapNode?: CubemapNode;
 }
 
 export class TransparentShell extends SceneNode {
@@ -31,6 +33,7 @@ export class TransparentShell extends SceneNode {
       metallic,
       opacity,
       insideChildren,
+      cubemapNode,
     } = options ?? {};
 
     // -- shell ------------------------------------------------------------------------------------
@@ -50,6 +53,17 @@ export class TransparentShell extends SceneNode {
     forwardShell.addUniform( 'roughnessNoise', '1f', roughnessNoise ?? 0.1 );
     forwardShell.addUniform( 'metallic', '1f', metallic ?? 0.0 );
     forwardShell.addUniform( 'opacity', '1f', opacity ?? 0.01 );
+
+    forwardShell.addUniformTextures(
+      'samplerEnvDry',
+      GL_TEXTURE_2D,
+      cubemapNode?.targetDry?.texture ?? zeroTexture,
+    );
+    forwardShell.addUniformTextures(
+      'samplerEnvWet',
+      GL_TEXTURE_2D,
+      cubemapNode?.targetWet?.texture ?? zeroTexture,
+    );
 
     const meshShellFront = new Mesh( {
       geometry: geometryShellFront,
@@ -72,19 +86,6 @@ export class TransparentShell extends SceneNode {
         'samplerIBLLUT',
         GL_TEXTURE_2D,
         ibllutTexture,
-      );
-    } );
-
-    on( EventType.CubeMap, ( cubemapNode ) => {
-      forwardShell.addUniformTextures(
-        'samplerEnvDry',
-        GL_TEXTURE_2D,
-        cubemapNode?.targetDry?.texture ?? zeroTexture,
-      );
-      forwardShell.addUniformTextures(
-        'samplerEnvWet',
-        GL_TEXTURE_2D,
-        cubemapNode?.targetWet?.texture ?? zeroTexture,
       );
     } );
 

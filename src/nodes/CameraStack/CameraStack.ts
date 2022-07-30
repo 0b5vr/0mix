@@ -1,10 +1,10 @@
-import { AO_RESOLUTION_RATIO, FAR, NEAR } from '../../config';
-import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
+import { CameraStackResources, createCameraStackResources } from './CameraStackResources';
 import { Component, ComponentOptions } from '../../heck/components/Component';
+import { CubemapNode } from '../CubemapNode/CubemapNode';
 import { DoF } from './DoF/DoF';
 import { EventType, on } from '../../globals/globalEvent';
-import { GLTextureFormatStuffR16F, GLTextureFormatStuffRGBA16F } from '../../gl/glSetTexture';
-import { GL_NEAREST, GL_TEXTURE_2D } from '../../gl/constants';
+import { FAR, NEAR } from '../../config';
+import { GL_TEXTURE_2D } from '../../gl/constants';
 import { Lambda } from '../../heck/components/Lambda';
 import { LightShaft, LightShaftTag } from '../Lights/LightShaft';
 import { Material } from '../../heck/Material';
@@ -16,7 +16,6 @@ import { auto } from '../../globals/automaton';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { deferredShadeFrag } from './shaders/deferredShadeFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
-import { glTextureFilter } from '../../gl/glTextureFilter';
 import { mat4Inverse, mat4Multiply } from '@0b5vr/experimental';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
@@ -31,13 +30,20 @@ export interface CameraStackOptions extends ComponentOptions {
   near?: number;
   far?: number;
   fov?: number;
-  withAO?: boolean;
-  withDoF?: boolean;
+  fog?: [ number, number, number ];
+  dofParams?: [
+    depth: number,
+    size: number,
+  ];
+  cubemapNode?: CubemapNode;
+  resources?: CameraStackResources;
 }
 
 export class CameraStack extends SceneNode {
   public deferredCamera: PerspectiveCamera;
   public forwardCamera: PerspectiveCamera;
+  public resources: CameraStackResources;
+  public dof?: DoF;
 
   public constructor( options: CameraStackOptions ) {
     super( options );
@@ -46,28 +52,20 @@ export class CameraStack extends SceneNode {
 
     const near = options.near ?? NEAR;
     const far = options.far ?? FAR;
-    const withDoF = options.withDoF ?? false;
-    const withAO = options.withAO ?? false;
+    const fov = options.fov ?? 40.0;
+    const fog = options.fog ?? [ 0.0, 100.0, 100.0 ];
 
-    const { target, scene, exclusionTags, fov } = options;
-    const cameraTarget = withDoF ? new BufferTextureRenderTarget(
-      target.width,
-      target.height,
-      1,
-      GLTextureFormatStuffRGBA16F,
-    ) : target;
+    const { target, scene, exclusionTags, resources, dofParams, cubemapNode } = options;
+
+    // -- resources --------------------------------------------------------------------------------
+    const [
+      deferredTarget,
+      aoTarget,
+      preDoFTarget,
+      dofResources,
+    ] = this.resources = resources ?? createCameraStackResources();
 
     // -- deferred g rendering ---------------------------------------------------------------------
-    const deferredTarget = new BufferTextureRenderTarget(
-      target.width,
-      target.height,
-      4,
-    );
-
-    deferredTarget.textures.map( ( texture ) => (
-      glTextureFilter( texture, GL_NEAREST )
-    ) );
-
     const deferredCamera = this.deferredCamera = new PerspectiveCamera( {
       scene,
       exclusionTags,
@@ -80,16 +78,8 @@ export class CameraStack extends SceneNode {
 
     // -- ambient occlusion ------------------------------------------------------------------------
     let aoComponents: Component[] = [];
-    let aoTarget: BufferTextureRenderTarget | undefined;
 
-    if ( withAO ) {
-      aoTarget = new BufferTextureRenderTarget(
-        AO_RESOLUTION_RATIO * target.width,
-        AO_RESOLUTION_RATIO * target.height,
-        1,
-        GLTextureFormatStuffR16F,
-      );
-
+    if ( aoTarget ) {
       const aoMaterial = new Material(
         quadVert,
         ssaoFrag,
@@ -146,7 +136,7 @@ export class CameraStack extends SceneNode {
     // -- deferred ---------------------------------------------------------------------------------
     const shadingMaterial = new Material(
       quadVert,
-      deferredShadeFrag( { withAO } ),
+      deferredShadeFrag( { withAO: !!aoTarget } ),
       {
         initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 },
       },
@@ -154,7 +144,7 @@ export class CameraStack extends SceneNode {
 
     if ( import.meta.hot ) {
       import.meta.hot.accept( './shaders/deferredShadeFrag', ( { deferredShadeFrag } ) => {
-        shadingMaterial.replaceShader( quadVert, deferredShadeFrag( { withAO } ) );
+        shadingMaterial.replaceShader( quadVert, deferredShadeFrag( { withAO: !!aoTarget } ) );
       } );
     }
 
@@ -209,12 +199,25 @@ export class CameraStack extends SceneNode {
       aoTarget.texture,
     );
 
+    shadingMaterial.addUniformTextures(
+      'samplerEnvDry',
+      GL_TEXTURE_2D,
+      cubemapNode?.targetDry?.texture ?? zeroTexture,
+    );
+    shadingMaterial.addUniformTextures(
+      'samplerEnvWet',
+      GL_TEXTURE_2D,
+      cubemapNode?.targetWet?.texture ?? zeroTexture,
+    );
+
     // shadingMaterial.addUniformTextures( 'samplerEnv', textureEnv );
     shadingMaterial.addUniformTextures( 'samplerRandom', GL_TEXTURE_2D, randomTexture.texture );
 
+    shadingMaterial.addUniform( 'fog', '3f', ...fog );
+
     const shadingQuad = new Quad( {
       material: shadingMaterial,
-      target: cameraTarget,
+      target: dofParams ? preDoFTarget : target,
       clear: [],
     } );
 
@@ -238,7 +241,7 @@ export class CameraStack extends SceneNode {
     const forwardCamera = this.forwardCamera = new PerspectiveCamera( {
       scene,
       exclusionTags,
-      target: cameraTarget,
+      target: dofParams ? preDoFTarget : target,
       near,
       far,
       fov,
@@ -253,11 +256,13 @@ export class CameraStack extends SceneNode {
     // -- dof --------------------------------------------------------------------------------------
     let dof: DoF | undefined;
 
-    if ( withDoF ) {
-      dof = new DoF( {
-        input: cameraTarget as BufferTextureRenderTarget,
+    if ( dofParams ) {
+      dof = this.dof = new DoF( {
+        input: preDoFTarget!,
         deferredCamera,
         deferredTarget,
+        resources: dofResources!,
+        params: dofParams,
         target,
       } );
     }
@@ -272,17 +277,6 @@ export class CameraStack extends SceneNode {
     } );
 
     // -- event listeners --------------------------------------------------------------------------
-    on( EventType.Camera, ( o ) => {
-      if ( !options.fov ) {
-        const fov = o?.fov ?? 40.0;
-        this.deferredCamera.fov = fov;
-        this.forwardCamera.fov = fov;
-      }
-
-      const fog = o?.fog ?? [ 0.0, 100.0, 100.0 ];
-      shadingMaterial.addUniform( 'fog', '3f', ...fog );
-    } );
-
     on( EventType.IBLLUT, ( ibllutTexture ) => {
       shadingMaterial.addUniformTextures(
         'samplerIBLLUT',
@@ -291,28 +285,11 @@ export class CameraStack extends SceneNode {
       );
     } );
 
-    on( EventType.CubeMap, ( cubemapNode ) => {
-      shadingMaterial.addUniformTextures(
-        'samplerEnvDry',
-        GL_TEXTURE_2D,
-        cubemapNode?.targetDry?.texture ?? zeroTexture,
-      );
-      shadingMaterial.addUniformTextures(
-        'samplerEnvWet',
-        GL_TEXTURE_2D,
-        cubemapNode?.targetWet?.texture ?? zeroTexture,
-      );
-    } );
-
     // -- buffer names -----------------------------------------------------------------------------
     if ( import.meta.env.DEV ) {
       const id = Math.floor( 1E9 * Math.random() );
 
       deferredTarget.name = `CameraStack${ id }/deferredTarget`;
-
-      if ( aoTarget != null ) {
-        aoTarget.name = `CameraStack${ id }/aoTarget`;
-      }
     }
 
     // -- components -------------------------------------------------------------------------------
@@ -326,10 +303,5 @@ export class CameraStack extends SceneNode {
       forwardCamera,
       ...( dof ? [ dof ] : [] ),
     ];
-  }
-
-  public setScene( scene: SceneNode ): void {
-    this.deferredCamera.scene = scene;
-    this.forwardCamera.scene = scene;
   }
 }

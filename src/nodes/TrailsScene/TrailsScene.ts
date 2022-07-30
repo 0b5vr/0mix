@@ -1,14 +1,12 @@
 import { CameraStack } from '../CameraStack/CameraStack';
-import { EventType, emit } from '../../globals/globalEvent';
-import { Lambda } from '../../heck/components/Lambda';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { Trails } from './Trails/Trails';
+import { cameraStackATarget } from '../../globals/cameraStackTargets';
+import { mainCameraStackResources } from '../CameraStack/mainCameraStackResources';
 import { swapShadowMap1 } from '../../globals/swapShadowMap';
 
 export class TrailsScene extends SceneNode {
-  public cameraProxy: SceneNode;
-
   public constructor() {
     super();
 
@@ -23,31 +21,23 @@ export class TrailsScene extends SceneNode {
 
     const trails = new Trails();
 
-    this.cameraProxy = new SceneNode();
-    this.cameraProxy.transform.lookAt(
+    const camera = new CameraStack( {
+      scene,
+      resources: mainCameraStackResources,
+      target: cameraStackATarget,
+      dofParams: [ 1.0, 4.0 ],
+    } );
+    camera.transform.lookAt(
       [ 0.0, 0.0, 2.0 ],
       [ 0.0, 0.0, 0.0 ],
       [ 0.0, 1.0, 0.0 ],
       -0.4
     );
 
-    const lambdaUpdateCameraParams = new Lambda( {
-      onUpdate: () => {
-        emit( EventType.Camera, {
-          dof: [ 1.0, 4.0 ],
-          fog: [ 0.0, 20.0, 20.0 ],
-        } );
-        emit( EventType.CubeMap );
-
-        ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
-      },
-    } );
-
     this.children = [
       light1,
       trails,
-      lambdaUpdateCameraParams,
-      this.cameraProxy,
+      camera,
     ];
   }
 }

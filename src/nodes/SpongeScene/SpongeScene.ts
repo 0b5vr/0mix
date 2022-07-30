@@ -1,17 +1,16 @@
 import { CameraStack } from '../CameraStack/CameraStack';
 import { CubemapNode } from '../CubemapNode/CubemapNode';
 import { Dust } from '../Dust/Dust';
-import { EventType, emit } from '../../globals/globalEvent';
 import { Lambda } from '../../heck/components/Lambda';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { Sponge } from './Sponge/Sponge';
+import { cameraStackATarget } from '../../globals/cameraStackTargets';
+import { mainCameraStackResources } from '../CameraStack/mainCameraStackResources';
 import { quatFromAxisAngle } from '@0b5vr/experimental';
 import { swapShadowMap1, swapShadowMap2, swapShadowMap3 } from '../../globals/swapShadowMap';
 
 export class SpongeScene extends SceneNode {
-  public cameraProxy: SceneNode;
-
   public constructor() {
     super();
 
@@ -63,28 +62,19 @@ export class SpongeScene extends SceneNode {
       scene,
     } );
 
-    this.cameraProxy = new SceneNode();
-    this.cameraProxy.transform.lookAt(
+    const camera = new CameraStack( {
+      scene,
+      resources: mainCameraStackResources,
+      target: cameraStackATarget,
+      dofParams: [ 1.0, 8.0 ],
+      cubemapNode,
+    } );
+    camera.transform.lookAt(
       [ 0.0, 0.2, 2.0 ],
       [ 0.0, 0.0, 0.0 ],
       [ 0.0, 1.0, 0.0 ],
       0.4,
     );
-
-    const lambdaUpdateCameraParams = new Lambda( {
-      onUpdate: () => {
-        emit( EventType.Camera, {
-          dof: [ 1.0, 8.0 ],
-        } );
-        emit( EventType.CubeMap, cubemapNode );
-
-        ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
-      },
-    } );
-
-    if ( import.meta.env.DEV ) {
-      lambdaUpdateCameraParams.name = 'lambdaUpdateCameraParams';
-    }
 
     this.children = [
       lambdaSpeen,
@@ -94,8 +84,7 @@ export class SpongeScene extends SceneNode {
       sponge,
       dust,
       cubemapNode,
-      lambdaUpdateCameraParams,
-      this.cameraProxy,
+      camera,
     ];
   }
 }

@@ -1,19 +1,18 @@
 import { AutomatonWithGUI } from '@0b5vr/automaton-with-gui';
-import { DEV_CANVAS_RESOLUTION } from './config';
+import { EventType, emit } from './globals/globalEvent';
 import { Material } from './heck/Material';
 import { audio } from './globals/audio';
 import { automaton } from './globals/automaton';
 import { canvas } from './globals/canvas';
-import { dog, initDesktop } from './scene';
+import { dog } from './scene';
 import { getDivCanvasContainer } from './globals/dom';
-import { gui } from './globals/gui';
+import { gui, promiseGui } from './globals/gui';
 import { music } from './globals/music';
 
 // == dom ==========================================================================================
-document.body.style.margin = '0';
-document.body.style.padding = '0';
-
 if ( import.meta.env.DEV ) {
+  document.body.style.margin = '0';
+  document.body.style.padding = '0';
   document.body.style.background = '#000';
   document.body.style.width = '100%';
 
@@ -42,17 +41,30 @@ if ( import.meta.env.DEV ) {
       return task.promise;
     } );
 
-    initDesktop( DEV_CANVAS_RESOLUTION[ 0 ], DEV_CANVAS_RESOLUTION[ 1 ] );
+    emit( EventType.Resize, [ 1920, 1080 ] );
     dog.active = true;
     ( automaton as AutomatonWithGUI ).play();
   };
+
+  promiseGui.then( ( gui ) => {
+    gui.input( 'resolution', 1080, {
+      options: {
+        '640x360': 360,
+        '960x540': 540,
+        '1280x720': 720,
+        '1920x1080': 1080,
+      },
+    } )?.on( 'change', ( { value } ) => {
+      emit( EventType.Resize, [ value * 16 / 9, value ] );
+    } );
+  } );
 
   kickstartDev();
 }
 
 // == prod kickstarter =============================================================================
 if ( !import.meta.env.DEV ) {
-  document.body.innerHTML = '<select><option>640x360</option><option>1280x720</option><option selected>1920x1080</option><option>2560x1440</option><option>3840x2160</option></select><button>fullscreen (click this first)</button><button>start</button><a></a>1920x1080 is intended<style>a,button{display:block}canvas{position:fixed;left:0;top:0;width:100%;height:100%;cursor:none}</style>';
+  document.body.innerHTML = '<select><option>640x360</option><option>960x540</option><option>1280x720</option><option selected>1920x1080</option><option>2560x1440</option><option>3840x2160</option></select><br><button>fullscreen (click this first)</button><br><button>start</button><br><a>1920x1080 is intended';
 
   const selects = document.querySelectorAll( 'select' );
   const anchors = document.querySelectorAll( 'a' );
@@ -64,12 +76,6 @@ if ( !import.meta.env.DEV ) {
 
   buttons[ 1 ].addEventListener( 'click', async () => {
     audio.resume();
-
-    // -- set resolution ---------------------------------------------------------------------------
-    const resostr = selects[ 0 ].value.split( 'x' );
-
-    document.body.appendChild( canvas );
-    await initDesktop( parseInt( resostr[ 0 ] ), parseInt( resostr[ 1 ] ) );
 
     // -- prepare stuff ----------------------------------------------------------------------------
     await Promise.all( [
@@ -83,6 +89,16 @@ if ( !import.meta.env.DEV ) {
       );
       return task.promise;
     } ) );
+
+    // -- set resolution ---------------------------------------------------------------------------
+    const reso = selects[ 0 ].value.split( 'x' )
+      .map( ( v ) => parseInt( v ) ) as [ number, number ];
+
+    emit( EventType.Resize, reso );
+
+    // -- prepare canvas ---------------------------------------------------------------------------
+    document.body.innerHTML = '<style>body{margin:0;display:flex;background:#000}canvas{max-width:100%;max-height:100%;margin:auto;cursor:none}</style>';
+    document.body.appendChild( canvas );
 
     // -- esc handler ------------------------------------------------------------------------------
     window.addEventListener( 'keydown', ( event ) => {

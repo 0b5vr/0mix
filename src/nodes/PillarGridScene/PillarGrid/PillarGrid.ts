@@ -1,8 +1,5 @@
-import { CameraStack } from '../../CameraStack/CameraStack';
-import { EventType, emit } from '../../../globals/globalEvent';
 import { GL_LINES } from '../../../gl/constants';
 import { Geometry } from '../../../heck/Geometry';
-import { Lambda } from '../../../heck/components/Lambda';
 import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
 import { Material } from '../../../heck/Material';
 import { Mesh } from '../../../heck/components/Mesh';
@@ -151,23 +148,10 @@ export class PillarGrid extends SceneNode {
       0.0,
     );
 
-    const lambdaUpdateCameraParams = new Lambda( {
-      onUpdate: () => {
-        emit( EventType.Camera );
-
-        ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
-      },
-    } );
-
-    if ( import.meta.env.DEV ) {
-      lambdaUpdateCameraParams.name = 'lambdaUpdateCameraParams';
-    }
-
     // -- children ---------------------------------------------------------------------------------
     this.children = [
       meshBody,
       meshFrame,
-      lambdaUpdateCameraParams,
       this.cameraProxy,
     ];
   }

@@ -1,5 +1,5 @@
-import { add, addAssign, assign, build, clamp, def, defFn, defInNamed, defOut, defUniformNamed, div, dot, insert, lt, main, max, mix, mul, retFn, sub, sw, tern, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
-import { downsampleTap13 } from '../../../shaders/modules/downsampleTap13';
+import { add, addAssign, assign, build, clamp, def, defFn, defInNamed, defOut, defUniformNamed, div, dot, insert, lt, main, max, mix, mul, retFn, sub, sw, tern, texture, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { downsampleTap13 } from '../../../../shaders/modules/downsampleTap13';
 
 export const bloomDownFrag = ( useLevelModifier: boolean ): string => build( () => {
   insert( 'precision highp float;' );

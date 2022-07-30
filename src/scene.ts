@@ -1,9 +1,9 @@
 import { Blit } from './heck/components/Blit';
 import { BufferTextureRenderTarget } from './heck/BufferTextureRenderTarget';
-import { CameraStack } from './nodes/CameraStack/CameraStack';
 import { CanvasRenderTarget } from './heck/CanvasRenderTarget';
 import { Capture } from './nodes/Capture/Capture';
 import { Dog } from './heck/Dog';
+import { EventType, on } from './globals/globalEvent';
 import { GLTextureFormatStuffRGBA8 } from './gl/glSetTexture';
 import { GL_NEAREST } from './gl/constants';
 import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
@@ -18,6 +18,7 @@ import { TrailsScene } from './nodes/TrailsScene/TrailsScene';
 import { WebGLMemory } from './nodes/WebGLMemory/WebGLMemory';
 import { WormTunnelScene } from './nodes/WormTunnelScene/WormTunnelScene';
 import { auto, automaton } from './globals/automaton';
+import { cameraStackATarget, cameraStackBTarget } from './globals/cameraStackTargets';
 import { canvas } from './globals/canvas';
 import { glTextureFilter } from './gl/glTextureFilter';
 import { music } from './globals/music';
@@ -96,12 +97,6 @@ const metaballScene = new MetaballScene();
 const trailsScene = new TrailsScene();
 const lineWaveScene = new LineWaveScene();
 
-const cameraStackOptions = {
-  scene: dog.root,
-  withAO: true,
-  withDoF: true,
-};
-
 // const plane = new Plane();
 // plane.transform.position = [ 0.0, 3.0, 5.0 ];
 // plane.transform.scale = [ 1.0, 1.0, 1.0 ];
@@ -133,104 +128,91 @@ auto( 'B', ( { value } ) => {
   scenesB.map( ( scene, i ) => scene.active = value === i + 1 );
 } );
 
-// -- desktop --------------------------------------------------------------------------------------
-export async function initDesktop( width: number, height: number ): Promise<void> {
+// == camera =======================================================================================
+const mixerTarget = new BufferTextureRenderTarget( 4, 4 );
+
+const canvasRenderTarget = new CanvasRenderTarget();
+
+// == post =========================================================================================
+const mixer = new Mixer( {
+  inputA: cameraStackATarget,
+  inputB: cameraStackBTarget,
+  target: mixerTarget,
+} );
+
+const postTarget = import.meta.env.DEV
+  ? new BufferTextureRenderTarget( 4, 4, 1, GLTextureFormatStuffRGBA8 )
+  : canvasRenderTarget;
+
+if ( import.meta.env.DEV ) {
+  glTextureFilter( ( postTarget as BufferTextureRenderTarget ).texture, GL_NEAREST );
+}
+
+const postStack = new PostStack( {
+  input: mixerTarget,
+  target: postTarget,
+} );
+
+dog.root.children.push( mixer, postStack );
+
+// == dev specific =================================================================================
+if ( import.meta.env.DEV ) {
+  const { HistogramScatter } = await import( './nodes/HistogramScatter/HistogramScatter' );
+  const { RTInspector } = await import( './nodes/RTInspector/RTInspector' );
+  const { ComponentLogger } = await import( './nodes/ComponentLogger/ComponentLogger' );
+
+  const blit = new Blit( {
+    src: postTarget as BufferTextureRenderTarget,
+    dst: canvasRenderTarget,
+  } );
+  dog.root.children.push( blit );
+
+  const histogramScatter = new HistogramScatter( {
+    input: postTarget as BufferTextureRenderTarget,
+    target: canvasRenderTarget,
+    active: false,
+  } );
+  dog.root.children.push( histogramScatter );
+
+  promiseGui.then( ( gui ) => (
+    gui.input( 'HistogramScatter/active', false )?.on( 'change', ( { value } ) => {
+      histogramScatter.active = value;
+    } )
+  ) );
+
+  const rtInspector = new RTInspector( {
+    target: canvasRenderTarget,
+  } );
+  dog.root.children.push( rtInspector );
+
+  const capture = new Capture();
+  dog.root.children.push( capture );
+
+  // component logger must be last
+  const componentLogger = new ComponentLogger();
+  dog.root.children.push( componentLogger );
+}
+
+// == update =======================================================================================
+const update = function(): void {
+  dog.update();
+
+  requestAnimationFrame( update );
+};
+
+update();
+
+// == resize handler ===============================================================================
+on( EventType.Resize, ( [ width, height ] ) => {
   canvas.width = width;
   canvas.height = height;
+  canvasRenderTarget.viewport = [ 0, 0, width, height ];
 
-  const cameraStackTargetA = new BufferTextureRenderTarget( width, height );
-  const cameraStackTargetB = new BufferTextureRenderTarget( width, height );
-  const mixerTarget = new BufferTextureRenderTarget( width, height );
-
-  const canvasRenderTarget = new CanvasRenderTarget();
-
-  const cameraStackA = new CameraStack( {
-    ...cameraStackOptions,
-    target: cameraStackTargetA,
-  } );
-
-  const cameraStackB = new CameraStack( {
-    ...cameraStackOptions,
-    target: cameraStackTargetB,
-  } );
+  cameraStackATarget.resize( width, height );
+  cameraStackBTarget.resize( width, height );
+  mixerTarget.resize( width, height );
 
   if ( import.meta.env.DEV ) {
-    cameraStackA.name = 'cameraStackA';
-    cameraStackB.name = 'cameraStackB';
+    ( postTarget as BufferTextureRenderTarget ).resize( width, height );
   }
-
-  spongeScene.cameraProxy.children
-    = wormTunnelScene.cameraProxy.children
-    = pillarGridScene.cameraProxy.children
-    = metaballScene.cameraProxy.children
-    = trailsScene.cameraProxy.children
-    = [ cameraStackA ];
-
-  lineWaveScene.cameraProxy.children = [ cameraStackB ];
-
-  const mixer = new Mixer( {
-    inputA: cameraStackTargetA,
-    inputB: cameraStackTargetB,
-    target: mixerTarget,
-  } );
-
-  const postTarget = import.meta.env.DEV
-    ? new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffRGBA8 )
-    : canvasRenderTarget;
-
-  if ( import.meta.env.DEV ) {
-    glTextureFilter( ( postTarget as BufferTextureRenderTarget ).texture, GL_NEAREST );
-  }
-
-  const postStack = new PostStack( {
-    input: mixerTarget,
-    target: postTarget,
-  } );
-
-  dog.root.children.push( mixer, postStack );
-
-  if ( import.meta.env.DEV ) {
-    const { HistogramScatter } = await import( './nodes/HistogramScatter/HistogramScatter' );
-    const { RTInspector } = await import( './nodes/RTInspector/RTInspector' );
-    const { ComponentLogger } = await import( './nodes/ComponentLogger/ComponentLogger' );
-
-    const blit = new Blit( {
-      src: postTarget as BufferTextureRenderTarget,
-      dst: canvasRenderTarget,
-    } );
-    dog.root.children.push( blit );
-
-    const histogramScatter = new HistogramScatter( {
-      input: postTarget as BufferTextureRenderTarget,
-      target: canvasRenderTarget,
-      active: false,
-    } );
-    dog.root.children.push( histogramScatter );
-
-    promiseGui.then( ( gui ) => (
-      gui.input( 'HistogramScatter/active', false )?.on( 'change', ( { value } ) => {
-        histogramScatter.active = value;
-      } )
-    ) );
-
-    const rtInspector = new RTInspector( {
-      target: canvasRenderTarget,
-    } );
-    dog.root.children.push( rtInspector );
-
-    const capture = new Capture();
-    dog.root.children.push( capture );
-
-    // component logger must be last
-    const componentLogger = new ComponentLogger();
-    dog.root.children.push( componentLogger );
-  }
-
-  const update = function(): void {
-    dog.update();
-
-    requestAnimationFrame( update );
-  };
-
-  update();
-}
+} );

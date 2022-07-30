@@ -1,14 +1,14 @@
-import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
-import { GL_TEXTURE_2D } from '../../gl/constants';
-import { Material } from '../../heck/Material';
-import { Quad } from '../../heck/components/Quad';
-import { RenderTarget } from '../../heck/RenderTarget';
-import { SceneNode } from '../../heck/components/SceneNode';
-import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
+import { BufferTextureRenderTarget } from '../../../heck/BufferTextureRenderTarget';
+import { GL_TEXTURE_2D } from '../../../gl/constants';
+import { Material } from '../../../heck/Material';
+import { Quad } from '../../../heck/components/Quad';
+import { RenderTarget } from '../../../heck/RenderTarget';
+import { SceneNode } from '../../../heck/components/SceneNode';
+import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
 import { postFrag } from './shaders/postFrag';
-import { quadGeometry } from '../../globals/quadGeometry';
-import { quadVert } from '../../shaders/common/quadVert';
-import { randomTexture } from '../../globals/randomTexture';
+import { quadGeometry } from '../../../globals/quadGeometry';
+import { quadVert } from '../../../shaders/common/quadVert';
+import { randomTexture } from '../../../globals/randomTexture';
 
 export interface PostOptions {
   input: BufferTextureRenderTarget;

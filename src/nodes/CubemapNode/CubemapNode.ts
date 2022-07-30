@@ -17,6 +17,7 @@ import { cubemapSampleFrag } from './shaders/cubemapSampleFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
+import { resizeCameraStackResources } from '../CameraStack/CameraStackResources';
 
 const INV_SQRT2 = 1.0 / Math.sqrt( 2.0 );
 
@@ -35,6 +36,14 @@ export interface CubemapNodeOptions extends ComponentOptions {
   exclusionTags?: symbol[];
 }
 
+const targets = [ ...Array( 6 ) ].map( () => (
+  new BufferTextureRenderTarget( 256, 256, 1, GLTextureFormatStuffR11G11B10F )
+) );
+
+if ( import.meta.env.DEV ) {
+  targets.map( ( target, i ) => target.name = `cubemapTarget${ i }` );
+}
+
 export class CubemapNode extends SceneNode {
   public targetDry: BufferTextureRenderTarget;
   public targetWet: BufferTextureRenderTarget;
@@ -46,15 +55,6 @@ export class CubemapNode extends SceneNode {
 
     const { scene } = options;
 
-    // -- cubemap ----------------------------------------------------------------------------------
-    const targets = [ ...Array( 6 ) ].map( () => (
-      new BufferTextureRenderTarget( 256, 256, 1, GLTextureFormatStuffR11G11B10F )
-    ) );
-
-    if ( import.meta.env.DEV ) {
-      targets.map( ( target, i ) => target.name = `cubemapTarget${ i }` );
-    }
-
     // -- cameras ----------------------------------------------------------------------------------
     const cameras = targets.map( ( target, i ) => {
       const cameraStack = new CameraStack( {
@@ -64,6 +64,7 @@ export class CubemapNode extends SceneNode {
         near: options.near ?? 1.0,
         fov: 90.0,
       } );
+      resizeCameraStackResources( cameraStack.resources, 256, 256 );
 
       if ( import.meta.env.DEV ) {
         cameraStack.name = `cubemapCameraStack${ i }`;

@@ -1,5 +1,5 @@
-import { add, addAssign, assign, build, clamp, def, defInNamed, defOut, defUniformNamed, div, insert, main, mix, mul, sub, sw, texture, vec4 } from '../../../shaders/shaderBuilder';
-import { upsampleTap9 } from '../../../shaders/modules/upsampleTap9';
+import { add, addAssign, assign, build, clamp, def, defInNamed, defOut, defUniformNamed, div, insert, main, mix, mul, sub, sw, texture, vec4 } from '../../../../shaders/shaderBuilder';
+import { upsampleTap9 } from '../../../../shaders/modules/upsampleTap9';
 
 export const bloomUpFrag = build( () => {
   insert( 'precision highp float;' );

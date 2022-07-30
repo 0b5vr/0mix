@@ -1,14 +1,12 @@
 import { CameraStack } from '../CameraStack/CameraStack';
-import { EventType, emit } from '../../globals/globalEvent';
-import { Lambda } from '../../heck/components/Lambda';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { WormTunnel } from './WormTunnel/WormTunnel';
+import { cameraStackATarget } from '../../globals/cameraStackTargets';
+import { mainCameraStackResources } from '../CameraStack/mainCameraStackResources';
 import { swapShadowMap1, swapShadowMap2 } from '../../globals/swapShadowMap';
 
 export class WormTunnelScene extends SceneNode {
-  public cameraProxy: SceneNode;
-
   public constructor() {
     super();
 
@@ -37,33 +35,22 @@ export class WormTunnelScene extends SceneNode {
 
     const tunnel = new WormTunnel();
 
-    this.cameraProxy = new SceneNode();
-    this.cameraProxy.transform.lookAt(
+    const camera = new CameraStack( {
+      scene,
+      resources: mainCameraStackResources,
+      target: cameraStackATarget,
+      fog: [ 20.0, 5.0, 20.0 ],
+      dofParams: [ 4.0, 5.0 ],
+    } );
+    camera.transform.lookAt(
       [ -0.0, -0.0, 3.0 ],
     );
-
-    const lambdaUpdateCameraParams = new Lambda( {
-      onUpdate: () => {
-        emit( EventType.Camera, {
-          dof: [ 4.0, 5.0 ],
-          fog: [ 20.0, 5.0, 20.0 ],
-        } );
-        emit( EventType.CubeMap );
-
-        ( this.cameraProxy.children[ 0 ] as CameraStack | undefined )?.setScene( this );
-      },
-    } );
-
-    if ( import.meta.env.DEV ) {
-      lambdaUpdateCameraParams.name = 'lambdaUpdateCameraParams';
-    }
 
     this.children = [
       lightRim,
       lightFront,
       tunnel,
-      lambdaUpdateCameraParams,
-      this.cameraProxy,
+      camera,
     ];
   }
 }

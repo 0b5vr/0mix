@@ -1,5 +1,6 @@
 import { Blit } from '../../../heck/components/Blit';
 import { BufferTextureRenderTarget } from '../../../heck/BufferTextureRenderTarget';
+import { EventType, on } from '../../../globals/globalEvent';
 import { GL_NEAREST, GL_TEXTURE_2D } from '../../../gl/constants';
 import { Material } from '../../../heck/Material';
 import { Quad } from '../../../heck/components/Quad';
@@ -38,6 +39,12 @@ export class DCT extends SceneNode {
     const targetEncodeH = new BufferTextureRenderTarget( width, height );
     const targetEncodeV = new BufferTextureRenderTarget( width, height );
     const targetDecodeH = new BufferTextureRenderTarget( width, height );
+
+    on( EventType.Resize, ( [ width, height ] ) => {
+      targetEncodeH.resize( width, height );
+      targetEncodeV.resize( width, height );
+      targetDecodeH.resize( width, height );
+    } );
 
     glTextureFilter( targetEncodeH.texture, GL_NEAREST );
     glTextureFilter( targetEncodeV.texture, GL_NEAREST );

@@ -1,18 +1,19 @@
-import { Blit } from '../../heck/components/Blit';
-import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
-import { GLTextureFormatStuffRGBA16F } from '../../gl/glSetTexture';
-import { GL_ONE, GL_TEXTURE_2D } from '../../gl/constants';
-import { Material } from '../../heck/Material';
-import { ONE_SUB_ONE_POINT_FIVE_POW_I } from '../../utils/constants';
-import { Quad } from '../../heck/components/Quad';
-import { RenderTarget } from '../../heck/RenderTarget';
-import { SceneNode } from '../../heck/components/SceneNode';
+import { Blit } from '../../../heck/components/Blit';
+import { BufferTextureRenderTarget } from '../../../heck/BufferTextureRenderTarget';
+import { EventType, on } from '../../../globals/globalEvent';
+import { GLTextureFormatStuffRGBA16F } from '../../../gl/glSetTexture';
+import { GL_ONE, GL_TEXTURE_2D } from '../../../gl/constants';
+import { Material } from '../../../heck/Material';
+import { ONE_SUB_ONE_POINT_FIVE_POW_I } from '../../../utils/constants';
+import { Quad } from '../../../heck/components/Quad';
+import { RenderTarget } from '../../../heck/RenderTarget';
+import { SceneNode } from '../../../heck/components/SceneNode';
 import { Swap } from '@0b5vr/experimental';
 import { bloomDownFrag } from './shaders/bloomDownFrag';
 import { bloomUpFrag } from './shaders/bloomUpFrag';
-import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
-import { quadGeometry } from '../../globals/quadGeometry';
-import { quadVert } from '../../shaders/common/quadVert';
+import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
+import { quadGeometry } from '../../../globals/quadGeometry';
+import { quadVert } from '../../../shaders/common/quadVert';
 
 export interface BloomOptions {
   input: BufferTextureRenderTarget;
@@ -23,12 +24,15 @@ export class Bloom extends SceneNode {
   public constructor( options: BloomOptions ) {
     super();
 
-    const { width, height } = options.target;
-
     const swap = new Swap(
-      new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffRGBA16F ),
-      new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffRGBA16F ),
+      new BufferTextureRenderTarget( 4, 4, 1, GLTextureFormatStuffRGBA16F ),
+      new BufferTextureRenderTarget( 4, 4, 1, GLTextureFormatStuffRGBA16F ),
     );
+
+    on( EventType.Resize, ( [ width, height ] ) => {
+      swap.i.resize( width, height );
+      swap.o.resize( width, height );
+    } );
 
     if ( import.meta.env.DEV ) {
       swap.i.name = 'Bloom/swap0';

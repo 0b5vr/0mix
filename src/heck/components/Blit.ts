@@ -28,18 +28,18 @@ export class Blit extends Component {
   public mask: GLBlitMask;
   public filter: GLBlitFilter;
 
-  public constructor( options: BlitOptions ) {
+  public constructor( options?: BlitOptions ) {
     super( options );
 
     this.visible = false;
 
-    this.src = options.src;
-    this.dst = options.dst;
-    this.srcRect = options.srcRect;
-    this.dstRect = options.dstRect;
-    this.attachment = options.attachment;
-    this.mask = options.mask ?? GL_COLOR_BUFFER_BIT;
-    this.filter = options.filter ?? GL_NEAREST;
+    this.src = options?.src;
+    this.dst = options?.dst;
+    this.srcRect = options?.srcRect;
+    this.dstRect = options?.dstRect;
+    this.attachment = options?.attachment;
+    this.mask = options?.mask ?? GL_COLOR_BUFFER_BIT;
+    this.filter = options?.filter ?? GL_NEAREST;
   }
 
   protected __updateImpl(): void {

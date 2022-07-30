@@ -5,16 +5,22 @@ import { glTextureFilter } from '../../gl/glTextureFilter';
 import { glTextureWrap } from '../../gl/glTextureWrap';
 
 export class CanvasTexture {
-  public width: number;
-  public height: number;
   public canvas: HTMLCanvasElement;
   public context: CanvasRenderingContext2D;
   public texture: WebGLTexture;
 
+  public get width(): number {
+    return this.canvas.width;
+  }
+
+  public get height(): number {
+    return this.canvas.height;
+  }
+
   public constructor( width: number, height: number ) {
     this.canvas = document.createElement( 'canvas' );
-    this.canvas.width = this.width = width;
-    this.canvas.height = this.height = height;
+    this.canvas.width = width;
+    this.canvas.height = height;
 
     this.context = this.canvas.getContext( '2d' )!;
 

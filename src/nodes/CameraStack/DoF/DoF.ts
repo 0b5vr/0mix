@@ -1,7 +1,6 @@
 import { BufferTextureRenderTarget } from '../../../heck/BufferTextureRenderTarget';
-import { EventType, on } from '../../../globals/globalEvent';
-import { GLTextureFormatStuffR11G11B10F, GLTextureFormatStuffRG16F, GLTextureFormatStuffRGBA16F } from '../../../gl/glSetTexture';
-import { GL_NEAREST, GL_TEXTURE_2D } from '../../../gl/constants';
+import { DoFResources } from './DoFResources';
+import { GL_TEXTURE_2D } from '../../../gl/constants';
 import { Material } from '../../../heck/Material';
 import { PerspectiveCamera } from '../../../heck/components/PerspectiveCamera';
 import { Quad } from '../../../heck/components/Quad';
@@ -13,7 +12,6 @@ import { dofPresortFrag } from './shaders/dofPresortFrag';
 import { dofTileGatherFrag } from './shaders/dofTileGatherFrag';
 import { dofTileMaxFrag } from './shaders/dofTileMaxFrag';
 import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
-import { glTextureFilter } from '../../../gl/glTextureFilter';
 import { quadGeometry } from '../../../globals/quadGeometry';
 import { quadVert } from '../../../shaders/common/quadVert';
 
@@ -22,59 +20,36 @@ export interface DoFOptions {
   deferredCamera: PerspectiveCamera;
   deferredTarget: BufferTextureRenderTarget;
   target: RenderTarget;
+  params: [
+    depth: number,
+    size: number,
+  ];
+  resources: DoFResources;
 }
 
 export class DoF extends SceneNode {
+  public resources: DoFResources;
+
   public constructor( options: DoFOptions ) {
     super();
 
-    const { input, deferredCamera, deferredTarget, target } = options;
-    const { width, height } = target;
+    const {
+      input,
+      deferredCamera,
+      deferredTarget,
+      target,
+      params,
+      resources,
+    } = options;
 
     // -- buffers ----------------------------------------------------------------------------------
-    const targetTileMaxH = new BufferTextureRenderTarget(
-      width / 16,
-      height,
-      1,
-      GLTextureFormatStuffRG16F,
-    );
-    const targetTileMaxV = new BufferTextureRenderTarget(
-      width / 16,
-      height / 16,
-      1,
-      GLTextureFormatStuffRG16F,
-    );
-    const targetTileGather = new BufferTextureRenderTarget(
-      width / 16,
-      height / 16,
-      1,
-      GLTextureFormatStuffRG16F,
-    );
-    const targetPresort = new BufferTextureRenderTarget(
-      width,
-      height,
-      1,
-      GLTextureFormatStuffR11G11B10F,
-    );
-    const targetBlur = new BufferTextureRenderTarget(
-      width,
-      height,
-      1,
-      GLTextureFormatStuffRGBA16F,
-    );
-
-    glTextureFilter( targetTileMaxH.texture, GL_NEAREST );
-    glTextureFilter( targetTileMaxV.texture, GL_NEAREST );
-    glTextureFilter( targetTileGather.texture, GL_NEAREST );
-    glTextureFilter( targetPresort.texture, GL_NEAREST );
-
-    if ( import.meta.env.DEV ) {
-      targetTileMaxH.name = 'DoF/TileMaxH';
-      targetTileMaxV.name = 'DoF/TileMaxV';
-      targetTileGather.name = 'DoF/TileGather';
-      targetPresort.name = 'DoF/Presort';
-      targetBlur.name = 'DoF/Blur';
-    }
+    const [
+      targetTileMaxH,
+      targetTileMaxV,
+      targetTileGather,
+      targetPresort,
+      targetBlur,
+    ] = this.resources = resources;
 
     // -- materials --------------------------------------------------------------------------------
     const materialTileMaxH = new Material(
@@ -85,6 +60,7 @@ export class DoF extends SceneNode {
       },
     );
     materialTileMaxH.addUniform( 'cameraNearFar', '2f', deferredCamera.near, deferredCamera.far );
+    materialTileMaxH.addUniform( 'dofDepthSize', '2f', ...params );
     materialTileMaxH.addUniformTextures(
       'sampler0',
       GL_TEXTURE_2D,
@@ -126,6 +102,7 @@ export class DoF extends SceneNode {
       },
     );
     materialPresort.addUniform( 'cameraNearFar', '2f', deferredCamera.near, deferredCamera.far );
+    materialPresort.addUniform( 'dofDepthSize', '2f', ...params );
     materialPresort.addUniformTextures(
       'sampler0',
       GL_TEXTURE_2D,
@@ -226,16 +203,6 @@ export class DoF extends SceneNode {
       quadBlur.name = 'quadBlur';
       quadPost.name = 'quadPost';
     }
-
-    // -- event listener ---------------------------------------------------------------------------
-    on( EventType.Camera, ( o ) => {
-      const [ depth, size ] = o?.dof ?? [ 0.0, 0.0 ];
-
-      // TODO: blitDry
-
-      materialTileMaxH.addUniform( 'dofDepthSize', '2f', depth, size );
-      materialPresort.addUniform( 'dofDepthSize', '2f', depth, size );
-    } );
 
     // -- children ---------------------------------------------------------------------------------
     this.children = [
