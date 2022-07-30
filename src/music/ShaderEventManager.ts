@@ -1,6 +1,9 @@
+import { EventType, emit } from '../globals/globalEvent';
 import { MUSIC_BPM } from '../config';
 import { ShaderEventRange } from './ShaderEventRange';
 import { ShaderEventType, shaderEvents } from './shaderEvents';
+
+let shaderEventsProxy = shaderEvents;
 
 export class ShaderEventManager {
   public lines: string[];
@@ -10,19 +13,15 @@ export class ShaderEventManager {
   public eventBeatAccum: number;
   public eventIndexHead: number;
 
-  public onApply: ( code: string ) => void;
-  public onAlter?: ( change: ShaderEventRange ) => void;
-
   public get code(): string {
     return this.lines.join( '\n' );
   }
 
-  public constructor( onApply: ( code: string ) => void ) {
+  public constructor() {
     this.lines = [ '' ];
     this.select = [ 0, 0, 0, 0 ];
     this.eventBeatAccum = 0.0;
     this.eventIndexHead = 0;
-    this.onApply = onApply;
   }
 
   public reset(): void {
@@ -34,7 +33,7 @@ export class ShaderEventManager {
 
   public update( time: number ): void {
     for ( ;; ) {
-      const event = shaderEvents[ this.eventIndexHead ];
+      const event = shaderEventsProxy[ this.eventIndexHead ];
       if ( !event ) { break; }
 
       const eventBeat = this.eventBeatAccum + event[ 0 ];
@@ -57,11 +56,11 @@ export class ShaderEventManager {
         const alterRange: ShaderEventRange = [ this.select[ 0 ], a.length, selectLine, selectCol ];
         this.select = [ selectLine, selectCol, selectLine, selectCol ];
 
-        this.onAlter?.( alterRange );
+        emit( EventType.ShaderEventAlter, alterRange );
       } else if ( event[ 1 ] === ShaderEventType.Select ) {
         this.select = event[ 2 ];
 
-        this.onAlter?.( [ 0, 0, 0, 0 ] );
+        emit( EventType.ShaderEventAlter, [ 0, 0, 0, 0 ] );
       } else if ( event[ 1 ] === ShaderEventType.Comment ) {
         const lines = this.lines.splice(
           this.select[ 0 ],
@@ -79,13 +78,22 @@ export class ShaderEventManager {
         const alterRange: ShaderEventRange = [ this.select[ 0 ], 0, selectLine, selectCol ];
         this.select = [ selectLine, selectCol, selectLine, selectCol ];
 
-        this.onAlter?.( alterRange );
+        emit( EventType.ShaderEventAlter, alterRange );
       } else if ( event[ 1 ] === ShaderEventType.Apply ) {
-        this.onApply( this.code );
+        emit( EventType.ShaderEventApply, this.code );
       }
 
       this.eventBeatAccum += event[ 0 ];
       this.eventIndexHead ++;
     }
   }
+}
+
+export const shaderEventManager = new ShaderEventManager();
+
+if ( import.meta.hot ) {
+  import.meta.hot.accept( './shaderEvents', ( { shaderEvents } ) => {
+    shaderEventsProxy = shaderEvents;
+    shaderEventManager.reset();
+  } );
 }

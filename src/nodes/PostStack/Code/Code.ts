@@ -1,3 +1,4 @@
+import { EventType, on } from '../../../globals/globalEvent';
 import { GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../../gl/constants';
 import { Geometry } from '../../../heck/Geometry';
 import { Lambda } from '../../../heck/components/Lambda';
@@ -15,6 +16,7 @@ import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVert
 import { music } from '../../../globals/music';
 import { promiseGui } from '../../../globals/gui';
 import { quadBuffer } from '../../../globals/quadGeometry';
+import { shaderEventManager } from '../../../music/ShaderEventManager';
 import { withinShaderEventRange } from '../../../music/withinShaderEventRange';
 
 const chars = 65536;
@@ -100,8 +102,7 @@ export class Code extends SceneNode {
     } );
 
     // -- set code ---------------------------------------------------------------------------------
-    const { shaderEventManager } = music;
-    shaderEventManager.onAlter = ( change ) => {
+    on( EventType.ShaderEventAlter, ( change ) => {
       let head = 0;
 
       shaderEventManager.lines.map( ( line, iLine ) => {
@@ -129,7 +130,7 @@ export class Code extends SceneNode {
       gl.bindBuffer( GL_ARRAY_BUFFER, null );
 
       scrollTarget = shaderEventManager.select[ 2 ];
-    };
+    } );
 
     // -- components -------------------------------------------------------------------------------
     this.children = [

@@ -1,13 +1,15 @@
 import { BufferReaderNode } from './BufferReaderNode';
+import { EventType, on } from '../globals/globalEvent';
 import { MUSIC_BPM } from '../config';
 import { Renderer } from './Renderer';
-import { ShaderEventManager } from './ShaderEventManager';
 import { audio, sampleRate } from '../globals/audio';
+import { createDebounce } from '../utils/createDebounce';
 import { perlinFBMTextureTarget } from '../textures/perlinFBMTextureTarget';
 import { promiseGui } from '../globals/gui';
 import { sample808HiHat } from './samples/sample808HiHat';
 import { sampleClapNoise } from './samples/sampleClapNoise';
 import { sampleWhiteNoise } from './samples/sampleWhiteNoise';
+import { shaderEventManager } from './ShaderEventManager';
 import { shaderchunkPreLines } from './shaderchunks';
 
 const BEAT = 60.0 / MUSIC_BPM;
@@ -19,6 +21,8 @@ export const BLOCKS_PER_RENDER = 16;
 export const FRAMES_PER_RENDER = BLOCK_SIZE * BLOCKS_PER_RENDER;
 export const LATENCY_BLOCKS = 64;
 
+const debounceShaderApply = createDebounce();
+
 interface MusicProgram {
   code: string;
 }
@@ -28,7 +32,6 @@ export class Music {
   public timeOffset: number;
   public deltaTime: number;
 
-  public shaderEventManager: ShaderEventManager;
   public cueStatus: 'none' | 'compiling' | 'applying' = 'none';
 
   // private __lastUpdatedTime: number;
@@ -69,7 +72,7 @@ export class Music {
     this.__prevTime = 0.0;
 
     // -- shaderEventManager -----------------------------------------------------------------------
-    this.shaderEventManager = new ShaderEventManager( ( code ) => this.compile( code ) );
+    on( EventType.ShaderEventApply, ( code ) => debounceShaderApply( () => this.compile( code ) ) );
 
     // -- audio ------------------------------------------------------------------------------------
     this.__musicDest = audio.createGain();
@@ -145,7 +148,7 @@ export class Music {
 
     this.__bufferReaderNode?.setActive( this.isPlaying );
 
-    this.shaderEventManager.update( now - this.timeOffset );
+    shaderEventManager.update( now - this.timeOffset );
 
     if ( this.isPlaying ) {
       this.deltaTime = now - this.__prevTime;
