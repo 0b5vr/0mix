@@ -1,8 +1,8 @@
 import { Component, ComponentOptions, ComponentUpdateEvent } from './Component';
+import { GLCullFaceType } from '../../gl/GLCullFaceType';
 import { GL_CULL_FACE, GL_DEPTH_TEST, GL_NONE } from '../../gl/constants';
 import { Geometry } from '../Geometry';
 import { Material } from '../Material';
-import { MeshCull } from './Mesh';
 import { RenderTarget } from '../RenderTarget';
 import { gl } from '../../globals/canvas';
 import { glClear } from '../../gl/glClear';
@@ -14,7 +14,13 @@ export interface QuadOptions extends ComponentOptions {
   target?: RenderTarget;
   range?: [ number, number, number, number ];
   clear?: Array<number | undefined> | false;
-  cull?: MeshCull;
+
+  /**
+   * `GL_NONE` is accepted to disable culling.
+   *
+   * @default GL_NONE
+   */
+  cull?: typeof GL_NONE | GLCullFaceType;
   depthWrite?: boolean;
   depthTest?: boolean;
 }
@@ -28,7 +34,13 @@ export class Quad extends Component {
   public range: [ number, number, number, number ];
   public clear: Array<number | undefined> | false;
   public geometry: Geometry;
-  public cull: MeshCull;
+
+  /**
+   * `GL_NONE` is accepted to disable culling.
+   *
+   * @default GL_NONE
+   */
+  public cull: typeof GL_NONE | GLCullFaceType;
   public depthWrite: boolean;
   public depthTest: boolean;
 
