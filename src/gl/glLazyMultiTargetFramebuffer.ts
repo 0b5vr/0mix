@@ -15,7 +15,7 @@ export function glLazyMultiTargetFramebuffer(
   renderbuffer: WebGLRenderbuffer;
   textures: WebGLTexture[];
 } {
-  let textures: WebGLTexture[];
+  let textures: WebGLTexture[] | undefined;
   const renderbuffer: WebGLRenderbuffer = gl.createRenderbuffer()!;
   const framebuffer: WebGLFramebuffer = gl.createFramebuffer()!;
 

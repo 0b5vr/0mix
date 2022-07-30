@@ -16,7 +16,7 @@ export function glLazyMipmapFramebuffers(
 } {
   const texture: WebGLTexture = gl.createTexture()!;
   const renderbuffer: WebGLRenderbuffer = gl.createRenderbuffer()!;
-  let framebuffers: WebGLFramebuffer[];
+  let framebuffers: WebGLFramebuffer[] | undefined;
 
   try {
     // == texture ==================================================================================
