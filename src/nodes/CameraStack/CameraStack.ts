@@ -71,7 +71,7 @@ export class CameraStack extends SceneNode {
     const deferredCamera = this.deferredCamera = new PerspectiveCamera( {
       scene,
       exclusionTags,
-      renderTarget: deferredTarget,
+      target: deferredTarget,
       near,
       far,
       fov,
@@ -238,7 +238,7 @@ export class CameraStack extends SceneNode {
     const forwardCamera = this.forwardCamera = new PerspectiveCamera( {
       scene,
       exclusionTags,
-      renderTarget: cameraTarget,
+      target: cameraTarget,
       near,
       far,
       fov,

@@ -7,7 +7,7 @@ import { Transform } from '../Transform';
 import { glClear } from '../../gl/glClear';
 
 export interface CameraOptions extends ComponentOptions {
-  renderTarget?: RenderTarget;
+  target?: RenderTarget;
   projectionMatrix: RawMatrix4;
   materialTag: MaterialTag;
   exclusionTags?: symbol[];
@@ -18,7 +18,7 @@ export interface CameraOptions extends ComponentOptions {
 export abstract class Camera extends Component {
   public projectionMatrix: RawMatrix4;
 
-  public renderTarget?: RenderTarget;
+  public target?: RenderTarget;
 
   public scene?: SceneNode;
 
@@ -35,11 +35,11 @@ export abstract class Camera extends Component {
   public constructor( options: CameraOptions ) {
     super( options );
 
-    const { renderTarget, scene, exclusionTags, projectionMatrix, materialTag, clear } = options;
+    const { target, scene, exclusionTags, projectionMatrix, materialTag, clear } = options;
 
     this.visible = false;
 
-    this.renderTarget = renderTarget;
+    this.target = target;
     this.scene = scene;
     this.exclusionTags = exclusionTags ?? [];
     this.projectionMatrix = projectionMatrix;
@@ -54,10 +54,10 @@ export abstract class Camera extends Component {
     time,
     path,
   }: ComponentUpdateEvent ): void {
-    const { renderTarget, scene, materialTag } = this;
+    const { target, scene, materialTag } = this;
 
-    if ( !renderTarget ) {
-      throw import.meta.env.DEV && new Error( 'You must assign a renderTarget to the Camera' );
+    if ( !target ) {
+      throw import.meta.env.DEV && new Error( 'You must assign a target to the Camera' );
     }
 
     if ( !scene ) {
@@ -71,7 +71,7 @@ export abstract class Camera extends Component {
 
     const viewMatrix = mat4Inverse( globalTransform.matrix );
 
-    renderTarget.bind();
+    target.bind();
 
     if ( this.clear ) {
       glClear( ...this.clear );
@@ -80,7 +80,7 @@ export abstract class Camera extends Component {
     scene.draw( {
       frameCount,
       time: time,
-      renderTarget,
+      target,
       cameraTransform: globalTransform,
       globalTransform: new Transform(),
       componentsByTag,

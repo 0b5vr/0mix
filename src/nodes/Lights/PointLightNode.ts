@@ -68,7 +68,7 @@ export class PointLightNode extends SceneNode {
       fov,
       near,
       far,
-      renderTarget: swap.o,
+      target: swap.o,
       scene: options.scene,
       exclusionTags: [ PointLightTag ],
       materialTag: 'depth',

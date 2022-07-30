@@ -7,7 +7,7 @@ import { mat4Perspective } from '@0b5vr/experimental';
 
 export interface PerspectiveCameraOptions extends ComponentOptions {
   materialTag: MaterialTag;
-  renderTarget?: RenderTarget;
+  target?: RenderTarget;
   near?: number;
   far?: number;
   fov?: number;

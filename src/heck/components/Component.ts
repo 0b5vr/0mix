@@ -25,7 +25,7 @@ export interface ComponentDrawEvent {
   camera: Camera;
   cameraTransform: Transform;
   materialTag: MaterialTag;
-  renderTarget: RenderTarget;
+  target: RenderTarget;
   globalTransform: Transform;
   viewMatrix: RawMatrix4;
   projectionMatrix: RawMatrix4;
