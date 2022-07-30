@@ -3,6 +3,7 @@ import { LightShaft } from './LightShaft';
 import { PointLightNode } from './PointLightNode';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { auto } from '../../globals/automaton';
+import { swapShadowMap1, swapShadowMap2, swapShadowMap3 } from '../../globals/swapShadowMap';
 import { vecScale } from '@0b5vr/experimental';
 
 export class Lights extends SceneNode {
@@ -11,6 +12,7 @@ export class Lights extends SceneNode {
 
     const lightRight = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap1,
       shadowMapFov: 60.0,
       shadowMapNear: NEAR,
       shadowMapFar: FAR,
@@ -34,6 +36,7 @@ export class Lights extends SceneNode {
 
     const lightLeft = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap2,
       shadowMapFov: 60.0,
       shadowMapNear: NEAR,
       shadowMapFar: FAR,
@@ -57,6 +60,7 @@ export class Lights extends SceneNode {
 
     const lightTop = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap3,
       shadowMapFov: 60.0,
       shadowMapNear: NEAR,
       shadowMapFar: FAR,

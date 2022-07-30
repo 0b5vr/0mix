@@ -4,6 +4,7 @@ import { Lambda } from '../../heck/components/Lambda';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { WormTunnel } from './WormTunnel/WormTunnel';
+import { swapShadowMap1, swapShadowMap2 } from '../../globals/swapShadowMap';
 
 export class WormTunnelScene extends SceneNode {
   public cameraProxy: SceneNode;
@@ -15,6 +16,7 @@ export class WormTunnelScene extends SceneNode {
 
     const lightRim = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap1,
       shadowMapFov: 10.0,
     } );
     lightRim.transform.lookAt( [ 0.0, 0.0, -10.0 ] );
@@ -22,6 +24,7 @@ export class WormTunnelScene extends SceneNode {
 
     const lightFront = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap2,
       shadowMapFov: 10.0,
     } );
     lightFront.transform.lookAt( [ 0.0, 0.0, 10.0 ] );

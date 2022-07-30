@@ -4,6 +4,7 @@ import { Lambda } from '../../heck/components/Lambda';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { Trails } from './Trails/Trails';
+import { swapShadowMap1 } from '../../globals/swapShadowMap';
 
 export class TrailsScene extends SceneNode {
   public cameraProxy: SceneNode;
@@ -15,6 +16,7 @@ export class TrailsScene extends SceneNode {
 
     const light1 = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap1,
     } );
     light1.transform.lookAt( [ 3.0, 3.0, 3.0 ] );
     light1.color = [ 100.0, 100.0, 100.0 ];

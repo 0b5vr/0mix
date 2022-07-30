@@ -1,6 +1,5 @@
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { FAR, NEAR } from '../../config';
-import { GLTextureFormatStuffRG16F } from '../../gl/glSetTexture';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 import { Material } from '../../heck/Material';
 import { PerspectiveCamera } from '../../heck/components/PerspectiveCamera';
@@ -16,6 +15,7 @@ export const PointLightTag = Symbol();
 
 export interface PointLightNodeOptions extends SceneNodeOptions {
   scene: SceneNode;
+  swapShadowMap: Swap<BufferTextureRenderTarget>;
   shadowMapFov?: number;
   shadowMapNear?: number;
   shadowMapFar?: number;
@@ -44,20 +44,9 @@ export class PointLightNode extends SceneNode {
   public constructor( options: PointLightNodeOptions ) {
     super( options );
 
+    const swap = options.swapShadowMap;
+
     this.tags.push( PointLightTag );
-
-    const shadowMapSize = options.shadowMapSize ?? 1024;
-
-    const swap = new Swap(
-      new BufferTextureRenderTarget( shadowMapSize, shadowMapSize, 1, GLTextureFormatStuffRG16F ),
-      new BufferTextureRenderTarget( shadowMapSize, shadowMapSize, 1, GLTextureFormatStuffRG16F )
-    );
-
-    if ( import.meta.env.DEV ) {
-      const id = Math.floor( 1E9 * Math.random() );
-      swap.i.name = `PointLightNode${ id }/shadow/0`;
-      swap.o.name = `PointLightNode${ id }/shadow/1`;
-    }
 
     // -- camera -----------------------------------------------------------------------------------
     const fov = options.shadowMapFov ?? 45.0;

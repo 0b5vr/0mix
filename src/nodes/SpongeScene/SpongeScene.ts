@@ -7,6 +7,7 @@ import { PointLightNode } from '../Lights/PointLightNode';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { Sponge } from './Sponge/Sponge';
 import { quatFromAxisAngle } from '@0b5vr/experimental';
+import { swapShadowMap1, swapShadowMap2, swapShadowMap3 } from '../../globals/swapShadowMap';
 
 export class SpongeScene extends SceneNode {
   public cameraProxy: SceneNode;
@@ -18,6 +19,7 @@ export class SpongeScene extends SceneNode {
 
     const lightL = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap1,
       shadowMapFov: 60.0,
     } );
     lightL.transform.lookAt( [ -6.0, 0.0, 0.0 ] );
@@ -25,6 +27,7 @@ export class SpongeScene extends SceneNode {
 
     const lightR = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap2,
       shadowMapFov: 60.0,
     } );
     lightR.transform.lookAt( [ 5.0, 0.0, -2.0 ] );
@@ -32,6 +35,7 @@ export class SpongeScene extends SceneNode {
 
     const lightF = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap3,
       shadowMapFov: 60.0,
     } );
     lightF.transform.lookAt( [ 1.0, 1.0, 7.0 ] );

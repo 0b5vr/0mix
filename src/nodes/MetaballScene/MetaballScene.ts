@@ -5,6 +5,7 @@ import { Metaball } from './Metaball/Metaball';
 import { MetaballParticles } from './MetaballParticles/MetaballParticles';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { SceneNode } from '../../heck/components/SceneNode';
+import { swapShadowMap1, swapShadowMap2, swapShadowMap3 } from '../../globals/swapShadowMap';
 
 export class MetaballScene extends SceneNode {
   public cameraProxy: SceneNode;
@@ -16,6 +17,7 @@ export class MetaballScene extends SceneNode {
 
     const light1 = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap1,
       shadowMapFov: 40.0,
     } );
     light1.transform.lookAt( [ 0.0, 4.0, -5.0 ] );
@@ -23,6 +25,7 @@ export class MetaballScene extends SceneNode {
 
     const light2 = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap2,
       shadowMapFov: 40.0,
     } );
     light2.transform.lookAt( [ 3.0, -2.0, -1.0 ] );
@@ -30,6 +33,7 @@ export class MetaballScene extends SceneNode {
 
     const light3 = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap3,
       shadowMapFov: 40.0,
     } );
     light3.transform.lookAt( [ -3.0, 0.0, 3.0 ] );

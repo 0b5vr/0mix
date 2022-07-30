@@ -5,6 +5,7 @@ import { PillarGrid } from './PillarGrid/PillarGrid';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { quatRotationZ } from '@0b5vr/experimental';
+import { swapShadowMap1, swapShadowMap2 } from '../../globals/swapShadowMap';
 
 export class PillarGridScene extends SceneNode {
   public cameraProxy: SceneNode;
@@ -16,6 +17,7 @@ export class PillarGridScene extends SceneNode {
 
     const lightT = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap1,
       shadowMapFov: 40.0,
     } );
     lightT.transform.lookAt( [ 5.0, -3.0, 2.0 ], [ 0.0, 0.0, 1.0 ] );
@@ -23,6 +25,7 @@ export class PillarGridScene extends SceneNode {
 
     const lightB = new PointLightNode( {
       scene,
+      swapShadowMap: swapShadowMap2,
       shadowMapFov: 40.0,
     } );
     lightB.transform.lookAt( [ 0.0, 3.5, 4.0 ], [ 0.0, 0.0, 1.0 ] );
