@@ -305,6 +305,10 @@ export const add: {
   ( ...args: ( Exf | Ex<'vec2'> )[] ): Ex<'vec2'>;
   ( ...args: ( Exf | Ex<'vec3'> )[] ): Ex<'vec3'>;
   ( ...args: ( Exf | Ex<'vec4'> )[] ): Ex<'vec4'>;
+  ( ...args: ( Ex<'int'> )[] ): Ex<'int'>;
+  ( ...args: ( Ex<'int'> | Ex<'ivec2'> )[] ): Ex<'ivec2'>;
+  ( ...args: ( Ex<'int'> | Ex<'ivec3'> )[] ): Ex<'ivec3'>;
+  ( ...args: ( Ex<'int'> | Ex<'ivec4'> )[] ): Ex<'ivec4'>;
   ( ...args: ( Ex<'uint'> )[] ): Ex<'uint'>;
   ( ...args: ( Ex<'uint'> | Ex<'uvec2'> )[] ): Ex<'uvec2'>;
   ( ...args: ( Ex<'uint'> | Ex<'uvec3'> )[] ): Ex<'uvec3'>;
@@ -319,6 +323,10 @@ export const sub: {
   ( ...args: ( Exf | Ex<'vec2'> )[] ): Ex<'vec2'>;
   ( ...args: ( Exf | Ex<'vec3'> )[] ): Ex<'vec3'>;
   ( ...args: ( Exf | Ex<'vec4'> )[] ): Ex<'vec4'>;
+  ( ...args: ( Ex<'int'> )[] ): Ex<'int'>;
+  ( ...args: ( Ex<'int'> | Ex<'ivec2'> )[] ): Ex<'ivec2'>;
+  ( ...args: ( Ex<'int'> | Ex<'ivec3'> )[] ): Ex<'ivec3'>;
+  ( ...args: ( Ex<'int'> | Ex<'ivec4'> )[] ): Ex<'ivec4'>;
   ( ...args: ( Ex<'uint'> )[] ): Ex<'uint'>;
   ( ...args: ( Ex<'uint'> | Ex<'uvec2'> )[] ): Ex<'uvec2'>;
   ( ...args: ( Ex<'uint'> | Ex<'uvec3'> )[] ): Ex<'uvec3'>;
@@ -333,6 +341,10 @@ export const mul: {
   ( ...args: ( Exf | Ex<'vec2'> | Ex<'mat2'> )[] ): Ex<'vec2'>;
   ( ...args: ( Exf | Ex<'vec3'> | Ex<'mat3'> )[] ): Ex<'vec3'>;
   ( ...args: ( Exf | Ex<'vec4'> | Ex<'mat4'> )[] ): Ex<'vec4'>;
+  ( ...args: ( Ex<'int'> )[] ): Ex<'int'>;
+  ( ...args: ( Ex<'int'> | Ex<'ivec2'> )[] ): Ex<'ivec2'>;
+  ( ...args: ( Ex<'int'> | Ex<'ivec3'> )[] ): Ex<'ivec3'>;
+  ( ...args: ( Ex<'int'> | Ex<'ivec4'> )[] ): Ex<'ivec4'>;
   ( ...args: ( Ex<'uint'> )[] ): Ex<'uint'>;
   ( ...args: ( Ex<'uint'> | Ex<'uvec2'> )[] ): Ex<'uvec2'>;
   ( ...args: ( Ex<'uint'> | Ex<'uvec3'> )[] ): Ex<'uvec3'>;
@@ -347,6 +359,10 @@ export const div: {
   ( ...args: ( Exf | Ex<'vec2'> )[] ): Ex<'vec2'>;
   ( ...args: ( Exf | Ex<'vec3'> )[] ): Ex<'vec3'>;
   ( ...args: ( Exf | Ex<'vec4'> )[] ): Ex<'vec4'>;
+  ( ...args: ( Ex<'int'> )[] ): Ex<'int'>;
+  ( ...args: ( Ex<'int'> | Ex<'ivec2'> )[] ): Ex<'ivec2'>;
+  ( ...args: ( Ex<'int'> | Ex<'ivec3'> )[] ): Ex<'ivec3'>;
+  ( ...args: ( Ex<'int'> | Ex<'ivec4'> )[] ): Ex<'ivec4'>;
   ( ...args: ( Ex<'uint'> )[] ): Ex<'uint'>;
   ( ...args: ( Ex<'uint'> | Ex<'uvec2'> )[] ): Ex<'uvec2'>;
   ( ...args: ( Ex<'uint'> | Ex<'uvec3'> )[] ): Ex<'uvec3'>;

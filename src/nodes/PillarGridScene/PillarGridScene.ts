@@ -52,7 +52,7 @@ export class PillarGridScene extends SceneNode {
       resources: mainCameraStackResources,
       target: cameraStackATarget,
       fog: [ 0.0, 3.0, 5.0 ],
-      dofParams: [ 2.8, 8.0 ],
+      dofParams: [ 2.8, 24.0 ],
     } );
     camera.transform.lookAt(
       [ 0.0, -2.0, 3.0 ],

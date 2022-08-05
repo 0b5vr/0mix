@@ -1,5 +1,5 @@
 import { GOLDEN_ANGLE } from '../../../../utils/constants';
-import { add, addAssign, assign, build, cos, def, defInNamed, defOut, defUniformNamed, div, divAssign, float, forBreak, forLoop, ifThen, insert, lt, main, mix, mul, sin, sqrt, step, sub, sw, texture, vec2, vec4 } from '../../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, cos, def, defInNamed, defOut, defUniformNamed, div, divAssign, float, forBreak, forLoop, glFragCoord, ifThen, insert, int, ivec2, lt, main, mix, mul, sin, sqrt, step, sub, sw, texelFetch, texture, vec2, vec4 } from '../../../../shaders/shaderBuilder';
 import { glslLinearstep } from '../../../../shaders/modules/glslLinearstep';
 import { glslSaturate } from '../../../../shaders/modules/glslSaturate';
 
@@ -15,28 +15,29 @@ export const dofBlurFrag = build( () => {
   const samplerPresort = defUniformNamed( 'sampler2D', 'samplerPresort' );
 
   main( () => {
-    const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
-    const kernelScale = def( 'vec2', mul( 0.002, vec2( 1.0, aspect ) ) );
-
-    const cocMax = def( 'float', sw( texture( samplerTile, vUv ), 'y' ) );
+    const kernelScale = def( 'float', div( sw( resolution, 'y' ), 1080.0 ) );
+    const cocMax = def( 'float', add( 1.0, sw( texture( samplerTile, vUv ), 'y' ) ) );
 
     const bg = def( 'vec4', vec4( 0.0 ) );
     const fg = def( 'vec4', vec4( 0.0 ) );
 
     forLoop( 64, ( i ) => {
-      const r = mul( sqrt( float( i ) ), cocMax, 0.1 );
+      const r = def( 'float', sqrt( float( i ) ) );
       ifThen( lt( cocMax, r ), () => forBreak() );
 
       const p = mul( GOLDEN_ANGLE, float( i ) );
-      const offset = mul( kernelScale, r, vec2( cos( p ), sin( p ) ) );
-      const uv = def( 'vec2', add( vUv, offset ) );
+      const coord = def( 'ivec2', ivec2( add(
+        sw( glFragCoord, 'xy' ),
+        mul( kernelScale, r, vec2( cos( p ), sin( p ) ) ),
+      ) ) );
 
-      const texPresort = def( 'vec4', texture( samplerPresort, uv ) );
+      const texPresort = def( 'vec4', texelFetch( samplerPresort, coord, int( 0 ) ) );
       const coc = sw( texPresort, 'x' );
 
       const weight = glslSaturate( sub( coc, r, -1.0 ) );
 
-      const tex0 = def( 'vec4', vec4( sw( texture( sampler0, uv ), 'xyz' ), 1.0 ) );
+      const tex0 = def( 'vec4', texelFetch( sampler0, coord, int( 0 ) ) );
+      assign( sw( tex0, 'w' ), 1.0 );
 
       addAssign( bg, mul( sw( texPresort, 'y' ), weight, tex0 ) );
       addAssign( fg, mul( sw( texPresort, 'z' ), weight, tex0 ) );

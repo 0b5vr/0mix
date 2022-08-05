@@ -25,7 +25,7 @@ export class TrailsScene extends SceneNode {
       scene,
       resources: mainCameraStackResources,
       target: cameraStackATarget,
-      dofParams: [ 1.0, 4.0 ],
+      dofParams: [ 1.0, 12.0 ],
     } );
     camera.transform.lookAt(
       [ 0.0, 0.0, 2.0 ],

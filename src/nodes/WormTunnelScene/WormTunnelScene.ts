@@ -40,7 +40,7 @@ export class WormTunnelScene extends SceneNode {
       resources: mainCameraStackResources,
       target: cameraStackATarget,
       fog: [ 20.0, 5.0, 20.0 ],
-      dofParams: [ 4.0, 5.0 ],
+      dofParams: [ 4.0, 16.0 ],
     } );
     camera.transform.lookAt(
       [ -0.0, -0.0, 3.0 ],

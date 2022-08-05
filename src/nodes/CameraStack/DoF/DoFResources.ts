@@ -21,7 +21,6 @@ export function createDoFResources(): DoFResources {
   glTextureFilter( targetTileMaxH.texture, GL_NEAREST );
   glTextureFilter( targetTileMaxV.texture, GL_NEAREST );
   glTextureFilter( targetTileGather.texture, GL_NEAREST );
-  glTextureFilter( targetPresort.texture, GL_NEAREST );
 
   if ( import.meta.env.DEV ) {
     targetTileMaxH.name = 'DoF/TileMaxH';
@@ -44,6 +43,6 @@ export function resizeDoFResources( resources: DoFResources, width: number, heig
   resources[ 0 ].resize( width / 16, height );
   resources[ 1 ].resize( width / 16, height / 16 );
   resources[ 2 ].resize( width / 16, height / 16 );
-  resources[ 3 ].resize( width / 2, height / 2 );
-  resources[ 4 ].resize( width / 2, height / 2 );
+  resources[ 3 ].resize( width, height );
+  resources[ 4 ].resize( width, height );
 }

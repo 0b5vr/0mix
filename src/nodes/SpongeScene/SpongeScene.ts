@@ -66,7 +66,7 @@ export class SpongeScene extends SceneNode {
       scene,
       resources: mainCameraStackResources,
       target: cameraStackATarget,
-      dofParams: [ 1.0, 8.0 ],
+      dofParams: [ 1.0, 24.0 ],
       cubemapNode,
     } );
     camera.transform.lookAt(
