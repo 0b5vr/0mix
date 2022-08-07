@@ -24,10 +24,9 @@ export class LineWaveScene extends SceneNode {
     geometry.mode = GL_LINE_STRIP;
 
     const bufferInstanceArray = new Float32Array( 513 ).map( ( _, i ) => i / 512 * 4.0 - 2.0 );
-    const bufferInstanceA = glCreateVertexbuffer( bufferInstanceArray ); // TODO
     const bufferInstance = glCreateVertexbuffer( bufferInstanceArray );
 
-    glVertexArrayBindVertexbuffer( geometry.vao, bufferInstanceA, 0, 1 );
+    glVertexArrayBindVertexbuffer( geometry.vao, bufferInstance, 0, 1 );
     glVertexArrayBindVertexbuffer( geometry.vao, bufferInstance, 1, 1, 1 );
 
     // -- material ---------------------------------------------------------------------------------
