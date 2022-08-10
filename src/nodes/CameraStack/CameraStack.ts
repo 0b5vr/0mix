@@ -30,7 +30,7 @@ export interface CameraStackOptions extends ComponentOptions {
   near?: number;
   far?: number;
   fov?: number;
-  fog?: [ number, number, number ];
+  fog?: [ brightness: number, near: number, far: number ];
   dofParams?: [
     depth: number,
     size: number,

@@ -1,8 +1,7 @@
-import { add, addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, mad, main, mul, mulAssign, sw, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
-import { orthBas } from '../../../shaders/modules/orthBas';
-import { perlin3d } from '../../../shaders/modules/perlin3d';
+import { TAU } from '../../../utils/constants';
+import { add, assign, build, cos, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mod, mul, sin, sw, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 
-export const lineWaveVert = build( () => {
+export const lineTriTunnelVert = build( () => {
   const x = defIn( 'float', 0 );
   const y = defIn( 'float', 1 );
 
@@ -18,41 +17,12 @@ export const lineWaveVert = build( () => {
 
   main( () => {
     // -- create local position --------------------------------------------------------------------
+    const t = add( mul( -0.1, y ), mul( TAU / 3.0, x ), mul( 0.1, time ) );
     const position = def( 'vec4', vec4(
-      mad( -2.0, 1.0 / 128.0, vec2( x, y ) ),
-      0.0,
+      vec2( cos( t ), sin( t ) ),
+      add( -25.0, mul( 0.3, mod( add( y, mul( 2.0, time ) ), 512.0 ) ) ),
       1.0,
     ) );
-
-    // -- apply noise ------------------------------------------------------------------------------
-    const t = def( 'float', mul( 0.4, time ) );
-    const noisePxy = def( 'vec3', mul(
-      5.0,
-      sw( position, 'xyz' ),
-      orthBas( vec3( -1.0, -2.0, 3.0 ) ),
-    ) );
-    const noise = def( 'vec3', add(
-      mul( 0.1, vec3(
-        perlin3d( add( noisePxy, 0.0, t ) ),
-        perlin3d( add( noisePxy, 1.0, t ) ),
-        perlin3d( add( noisePxy, 2.0, t ) ),
-      ) ),
-    ) );
-
-    mulAssign( t, 2.0 );
-    mulAssign( noisePxy, mul(
-      4.0,
-      orthBas( vec3( -3.0, -5.0, -1.0 ) ),
-    ) );
-    addAssign( noise, add(
-      mul( 0.01, vec3(
-        perlin3d( add( noisePxy, 0.0, t ) ),
-        perlin3d( add( noisePxy, 1.0, t ) ),
-        perlin3d( add( noisePxy, 2.0, t ) ),
-      ) ),
-    ) );
-
-    addAssign( sw( position, 'xyz' ), noise );
 
     // -- send the vertex position -----------------------------------------------------------------
     assign( vPosition, mul( modelMatrix, position ) );

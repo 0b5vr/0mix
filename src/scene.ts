@@ -8,6 +8,8 @@ import { GLTextureFormatStuffRGBA8 } from './gl/glSetTexture';
 import { GL_NEAREST } from './gl/constants';
 import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
 import { Lambda } from './heck/components/Lambda';
+import { LineRingsScene } from './nodes/LineRingsScene/LineRingsScene';
+import { LineTriTunnelScene } from './nodes/LineTriTunnelScene/LineTriTunnelScene';
 import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
 import { MetaballScene } from './nodes/MetaballScene/MetaballScene';
 import { Mixer } from './nodes/Mixer/Mixer';
@@ -96,6 +98,8 @@ const pillarGridScene = new PillarGridScene();
 const metaballScene = new MetaballScene();
 const trailsScene = new TrailsScene();
 const lineWaveScene = new LineWaveScene();
+const lineRingsScene = new LineRingsScene();
+const lineTriTunnelScene = new LineTriTunnelScene();
 
 // const plane = new Plane();
 // plane.transform.position = [ 0.0, 3.0, 5.0 ];
@@ -111,6 +115,8 @@ const scenesA = [
 
 const scenesB = [
   lineWaveScene,
+  lineRingsScene,
+  lineTriTunnelScene,
 ];
 
 dog.root.children.push(
