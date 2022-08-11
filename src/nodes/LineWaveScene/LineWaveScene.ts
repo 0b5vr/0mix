@@ -29,9 +29,6 @@ export class LineWaveScene extends SceneNode {
     } );
     camera.transform.lookAt(
       [ 0.0, -0.8, 0.8 ],
-      [ 0.0, 0.0, 0.0 ],
-      [ 0.0, 1.0, 0.0 ],
-      0.0,
     );
 
     // -- children ---------------------------------------------------------------------------------

@@ -81,8 +81,8 @@ export class Transform {
     this.__isIdentity = true;
   }
 
-  public lookAt( position: RawVector3, target?: RawVector3, up?: RawVector3, roll?: number ): void {
-    this.matrix = mat4LookAt( position, target, up, roll );
+  public lookAt( position: RawVector3, target?: RawVector3, roll?: number ): void {
+    this.matrix = mat4LookAt( position, target, undefined, roll );
   }
 
   public multiply( transform: Transform ): Transform {

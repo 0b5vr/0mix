@@ -14,8 +14,6 @@ import { pillarGridFrameFrag } from './shaders/pillarGridFrameFrag';
 import { pillarGridFrameVert } from './shaders/pillarGridFrameVert';
 
 export class PillarGrid extends SceneNode {
-  public cameraProxy: SceneNode;
-
   public constructor() {
     super();
 
@@ -139,20 +137,10 @@ export class PillarGrid extends SceneNode {
       meshFrame.name = 'meshFrame';
     }
 
-    // -- camera proxy -----------------------------------------------------------------------------
-    this.cameraProxy = new SceneNode();
-    this.cameraProxy.transform.lookAt(
-      [ 0.8, -0.8, 0.8 ],
-      [ 0.0, 0.0, 0.0 ],
-      [ 0.0, 1.0, 0.0 ],
-      0.0,
-    );
-
     // -- children ---------------------------------------------------------------------------------
     this.children = [
       meshBody,
       meshFrame,
-      this.cameraProxy,
     ];
   }
 }

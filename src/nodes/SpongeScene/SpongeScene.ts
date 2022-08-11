@@ -72,7 +72,6 @@ export class SpongeScene extends SceneNode {
     camera.transform.lookAt(
       [ 0.0, 0.2, 2.0 ],
       [ 0.0, 0.0, 0.0 ],
-      [ 0.0, 1.0, 0.0 ],
       0.4,
     );
 
