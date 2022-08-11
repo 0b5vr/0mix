@@ -8,7 +8,7 @@ export function rotate2D(
   const f = cache( symbol, () => defFn( 'mat2', [ 'float' ], ( t ) => {
     const c = def( 'float', cos( t ) );
     const s = def( 'float', sin( t ) );
-    retFn( mat2( c, neg( s ), s, c ) );
+    retFn( mat2( c, s, neg( s ), c ) );
   } ) );
 
   return f( num( v ) );

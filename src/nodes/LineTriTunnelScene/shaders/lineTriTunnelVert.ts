@@ -1,5 +1,5 @@
 import { TAU } from '../../../utils/constants';
-import { add, assign, build, cos, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mod, mul, sin, sw, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { add, assign, build, cos, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mod, mul, sin, sw, vec2, vec4 } from '../../../shaders/shaderBuilder';
 
 export const lineTriTunnelVert = build( () => {
   const x = defIn( 'float', 0 );
@@ -7,7 +7,6 @@ export const lineTriTunnelVert = build( () => {
 
   const vPosition = defOutNamed( 'vec4', 'vPosition' );
   const vProjPosition = defOutNamed( 'vec4', 'vProjPosition' );
-  const vNormal = defOutNamed( 'vec3', 'vNormal' );
 
   const time = defUniformNamed( 'float', 'time' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
@@ -32,8 +31,5 @@ export const lineTriTunnelVert = build( () => {
     const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( outPos, 'x' ), aspect );
     assign( glPosition, outPos );
-
-    // -- haha -------------------------------------------------------------------------------------
-    assign( vNormal, vec3( 0.0, 0.0, 1.0 ) );
   } );
 } );

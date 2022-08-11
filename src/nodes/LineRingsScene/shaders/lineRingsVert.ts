@@ -1,5 +1,5 @@
 import { TAU } from '../../../utils/constants';
-import { addAssign, assign, build, cos, def, defIn, defOutNamed, defUniformNamed, div, divAssign, floor, glPosition, mad, main, mix, mod, mul, sin, sw, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { addAssign, assign, build, cos, def, defIn, defOutNamed, defUniformNamed, div, divAssign, floor, glPosition, mad, main, mix, mod, mul, sin, sw, vec2, vec4 } from '../../../shaders/shaderBuilder';
 
 export const lineRingsVert = build( () => {
   const x = defIn( 'float', 0 );
@@ -7,7 +7,6 @@ export const lineRingsVert = build( () => {
 
   const vPosition = defOutNamed( 'vec4', 'vPosition' );
   const vProjPosition = defOutNamed( 'vec4', 'vProjPosition' );
-  const vNormal = defOutNamed( 'vec3', 'vNormal' );
 
   const time = defUniformNamed( 'float', 'time' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
@@ -35,8 +34,5 @@ export const lineRingsVert = build( () => {
     const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( outPos, 'x' ), aspect );
     assign( glPosition, outPos );
-
-    // -- haha -------------------------------------------------------------------------------------
-    assign( vNormal, vec3( 0.0, 0.0, 1.0 ) );
   } );
 } );

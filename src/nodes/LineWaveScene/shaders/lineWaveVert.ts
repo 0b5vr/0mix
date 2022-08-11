@@ -8,7 +8,6 @@ export const lineWaveVert = build( () => {
 
   const vPosition = defOutNamed( 'vec4', 'vPosition' );
   const vProjPosition = defOutNamed( 'vec4', 'vProjPosition' );
-  const vNormal = defOutNamed( 'vec3', 'vNormal' );
 
   const time = defUniformNamed( 'float', 'time' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
@@ -62,8 +61,5 @@ export const lineWaveVert = build( () => {
     const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( outPos, 'x' ), aspect );
     assign( glPosition, outPos );
-
-    // -- haha -------------------------------------------------------------------------------------
-    assign( vNormal, vec3( 0.0, 0.0, 1.0 ) );
   } );
 } );
