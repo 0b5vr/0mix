@@ -13,6 +13,7 @@ import { LineTriTunnelScene } from './nodes/LineTriTunnelScene/LineTriTunnelScen
 import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
 import { MetaballScene } from './nodes/MetaballScene/MetaballScene';
 import { Mixer } from './nodes/Mixer/Mixer';
+import { NoisePlaneScene } from './nodes/NoisePlaneScene/NoisePlaneScene';
 import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
 import { PlexusScene } from './nodes/PlexusScene/PlexusScene';
 import { PostStack } from './nodes/PostStack/PostStack';
@@ -102,6 +103,7 @@ const lineWaveScene = new LineWaveScene();
 const lineRingsScene = new LineRingsScene();
 const lineTriTunnelScene = new LineTriTunnelScene();
 const plexusScene = new PlexusScene();
+const noisePlaneScene = new NoisePlaneScene();
 
 // const plane = new Plane();
 // plane.transform.position = [ 0.0, 3.0, 5.0 ];
@@ -120,6 +122,7 @@ const scenesB = [
   lineRingsScene,
   lineTriTunnelScene,
   plexusScene,
+  noisePlaneScene,
 ];
 
 dog.root.children.push(
