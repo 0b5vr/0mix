@@ -1,5 +1,7 @@
 import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
-import { assign, build, defInNamed, defOut, discard, div, glPointCoord, gt, ifThen, insert, length, lt, main, or, smoothstep, sub, sw, vec4 } from '../../../shaders/shaderBuilder';
+import { assign, build, defInNamed, defOut, discard, div, glPointCoord, gt, ifThen, insert, length, lt, mad, main, or, smoothstep, sub, sw, vec4 } from '../../../shaders/shaderBuilder';
+import { bayerPattern4 } from '../../../shaders/modules/bayerPattern4';
+import { glslLinearstep } from '../../../shaders/modules/glslLinearstep';
 
 export const plexusFrag = build( () => {
   insert( 'precision highp float;' );
@@ -20,6 +22,10 @@ export const plexusFrag = build( () => {
       or(
         gt( vLength, 0.5 ), // connection is too far
         lt( 0.5, length( sub( glPointCoord, 0.5 ) ) ), // point sprite shape
+        gt(
+          bayerPattern4(),
+          mad( -1.0, 17.0, glslLinearstep( 0.0, 0.5, sw( vProjPosition, 'z' ) ) ),
+        ), // is too near to camera
       ),
       () => discard(),
     );
