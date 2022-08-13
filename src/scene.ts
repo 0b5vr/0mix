@@ -14,6 +14,7 @@ import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
 import { MetaballScene } from './nodes/MetaballScene/MetaballScene';
 import { Mixer } from './nodes/Mixer/Mixer';
 import { NoisePlaneScene } from './nodes/NoisePlaneScene/NoisePlaneScene';
+import { OctreeTunnelScene } from './nodes/OctreeTunnelScene/OctreeTunnelScene';
 import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
 import { PlexusScene } from './nodes/PlexusScene/PlexusScene';
 import { PostStack } from './nodes/PostStack/PostStack';
@@ -104,6 +105,7 @@ const lineRingsScene = new LineRingsScene();
 const lineTriTunnelScene = new LineTriTunnelScene();
 const plexusScene = new PlexusScene();
 const noisePlaneScene = new NoisePlaneScene();
+const octreeTunnelScene = new OctreeTunnelScene();
 
 // const plane = new Plane();
 // plane.transform.position = [ 0.0, 3.0, 5.0 ];
@@ -115,6 +117,7 @@ const scenesA = [
   pillarGridScene,
   metaballScene,
   trailsScene,
+  octreeTunnelScene,
 ];
 
 const scenesB = [

@@ -629,6 +629,11 @@ export const exp: {
   <T extends GLSLGenType>( x: Ex<T> ): Ex<T>;
 } = __callFn( 'exp' ) as any;
 
+export const exp2: {
+  ( x: Exf ): Ex<'float'>;
+  <T extends GLSLGenType>( x: Ex<T> ): Ex<T>;
+} = __callFn( 'exp' ) as any;
+
 export const floor: {
   ( x: Exf ): Ex<'float'>;
   <T extends GLSLGenType>( x: Ex<T> ): Ex<T>;
