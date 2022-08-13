@@ -15,6 +15,7 @@ import { MetaballScene } from './nodes/MetaballScene/MetaballScene';
 import { Mixer } from './nodes/Mixer/Mixer';
 import { NoisePlaneScene } from './nodes/NoisePlaneScene/NoisePlaneScene';
 import { OctreeTunnelScene } from './nodes/OctreeTunnelScene/OctreeTunnelScene';
+import { ParticlesStudioScene } from './nodes/ParticlesStudioScene/ParticlesStudioScene';
 import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
 import { PlexusScene } from './nodes/PlexusScene/PlexusScene';
 import { PostStack } from './nodes/PostStack/PostStack';
@@ -95,37 +96,26 @@ if ( import.meta.env.DEV ) {
 
 const iblLutCalc = new IBLLUTCalc();
 
-const spongeScene = new SpongeScene();
-const wormTunnelScene = new WormTunnelScene();
-const pillarGridScene = new PillarGridScene();
-const metaballScene = new MetaballScene();
-const trailsScene = new TrailsScene();
-const lineWaveScene = new LineWaveScene();
-const lineRingsScene = new LineRingsScene();
-const lineTriTunnelScene = new LineTriTunnelScene();
-const plexusScene = new PlexusScene();
-const noisePlaneScene = new NoisePlaneScene();
-const octreeTunnelScene = new OctreeTunnelScene();
-
 // const plane = new Plane();
 // plane.transform.position = [ 0.0, 3.0, 5.0 ];
 // plane.transform.scale = [ 1.0, 1.0, 1.0 ];
 
 const scenesA = [
-  spongeScene,
-  wormTunnelScene,
-  pillarGridScene,
-  metaballScene,
-  trailsScene,
-  octreeTunnelScene,
+  new SpongeScene(),
+  new WormTunnelScene(),
+  new PillarGridScene(),
+  new MetaballScene(),
+  new TrailsScene(),
+  new OctreeTunnelScene(),
+  new ParticlesStudioScene(),
 ];
 
 const scenesB = [
-  lineWaveScene,
-  lineRingsScene,
-  lineTriTunnelScene,
-  plexusScene,
-  noisePlaneScene,
+  new LineWaveScene(),
+  new LineRingsScene(),
+  new LineTriTunnelScene(),
+  new PlexusScene(),
+  new NoisePlaneScene(),
 ];
 
 dog.root.children.push(
