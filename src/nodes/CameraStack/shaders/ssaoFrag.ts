@@ -14,11 +14,11 @@ export const ssaoFrag = build( () => {
 
   const fragColor = defOut( 'float' );
 
+  const time = defUniformNamed( 'float', 'time' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
   const cameraPV = defUniformNamed( 'mat4', 'cameraPV' );
   const sampler1 = defUniformNamed( 'sampler2D', 'sampler1' ); // position.xyz, depth
   const sampler2 = defUniformNamed( 'sampler2D', 'sampler2' ); // normal.xyz
-  const samplerRandom = defUniformNamed( 'sampler2D', 'samplerRandom' );
 
   const { init, random } = glslDefRandom();
 
@@ -57,7 +57,7 @@ export const ssaoFrag = build( () => {
   }
 
   main( () => {
-    init( texture( samplerRandom, vUv ) );
+    init( vec4( vUv, time, 1.0 ) );
 
     const tex1 = texture( sampler1, vUv );
     const tex2 = texture( sampler2, vUv );

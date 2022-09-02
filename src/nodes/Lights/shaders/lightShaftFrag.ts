@@ -14,6 +14,7 @@ export const lightShaftFrag = build( () => {
 
   const fragColor = defOut( 'vec4' );
 
+  const time = defUniformNamed( 'float', 'time' );
   const intensity = defUniformNamed( 'float', 'intensity' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
   const lightNearFar = defUniformNamed( 'vec2', 'lightNearFar' );
@@ -25,7 +26,6 @@ export const lightShaftFrag = build( () => {
   const projectionMatrix = defUniformNamed( 'mat4', 'projectionMatrix' );
   const viewMatrix = defUniformNamed( 'mat4', 'viewMatrix' );
   const samplerShadow = defUniformNamed( 'sampler2D', 'samplerShadow' );
-  const samplerRandom = defUniformNamed( 'sampler2D', 'samplerRandom' );
   const samplerDeferred1 = defUniformNamed( 'sampler2D', 'samplerDeferred1' );
 
   const { random, init } = glslDefRandom();
@@ -65,7 +65,7 @@ export const lightShaftFrag = build( () => {
     const uv = def( 'vec2', div( sw( glFragCoord, 'xy' ), resolution ) );
     const p = def( 'vec2', sub( mul( uv, 2.0 ), 1.0 ) );
     mulAssign( sw( p, 'x' ), div( sw( resolution, 'x' ), sw( resolution, 'y' ) ) );
-    init( texture( samplerRandom, p ) );
+    init( vec4( uv, time, 1.0 ) );
 
     const texDeferred1 = texture( samplerDeferred1, uv );
     assign( cameraDepth, sub( mul( 2.0, sw( texDeferred1, 'w' ) ), 1.0 ) );

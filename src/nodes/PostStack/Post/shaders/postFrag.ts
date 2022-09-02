@@ -22,11 +22,11 @@ export const postFrag = build( () => {
 
   const vUv = defInNamed( 'vec2', 'vUv' );
 
+  const time = defUniformNamed( 'float', 'time' );
   const mosaicAmp = defUniformNamed( 'float', 'mosaicAmp' );
   const mixInvert = defUniformNamed( 'float', 'mixInvert' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
-  const samplerRandom = defUniformNamed( 'sampler2D', 'samplerRandom' );
 
   const { init, random } = glslDefRandom();
 
@@ -45,7 +45,7 @@ export const postFrag = build( () => {
   main( () => {
     const uv = def( 'vec2', vUv );
 
-    init( texture( samplerRandom, uv ) );
+    init( vec4( vUv, time, 1.0 ) );
 
     const mosaic = mul( mosaicAmp, sw( resolution, 'y' ) );
     ifThen( gt( mosaic, 1.0 ), () => {

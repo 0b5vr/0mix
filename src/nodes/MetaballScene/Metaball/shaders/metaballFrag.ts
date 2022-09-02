@@ -1,6 +1,6 @@
 import { INV_PI } from '../../../../utils/constants';
 import { MTL_PBR_EMISSIVE3_ROUGHNESS } from '../../../CameraStack/deferredConstants';
-import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, discard, div, glFragCoord, glFragDepth, gt, ifThen, insert, length, mad, main, mul, normalize, retFn, sq, sub, sw, texture, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, discard, div, glFragCoord, glFragDepth, gt, ifThen, insert, length, mad, main, mul, normalize, retFn, sq, sub, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcL } from '../../../../shaders/modules/calcL';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
 import { calcSS } from '../../../../shaders/modules/calcSS';
@@ -31,7 +31,6 @@ export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () =
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
   const modelMatrixT3 = defUniformNamed( 'mat3', 'modelMatrixT3' );
   const inversePVM = defUniformNamed( 'mat4', 'inversePVM' );
-  const samplerRandom = defUniformNamed( 'sampler2D', 'samplerRandom' );
 
   const { init } = glslDefRandom();
 
@@ -45,7 +44,7 @@ export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () =
       sub( mul( 2.0, sw( glFragCoord, 'xy' ) ), resolution ),
       sw( resolution, 'y' ),
     ) );
-    init( texture( samplerRandom, p ) );
+    init( vec4( p, time, 1.0 ) );
 
     const { ro, rd } = setupRoRd( { inversePVM, p } );
 

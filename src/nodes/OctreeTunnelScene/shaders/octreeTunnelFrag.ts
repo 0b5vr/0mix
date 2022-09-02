@@ -1,5 +1,5 @@
 import { FAR } from '../../../config';
-import { GLSLExpression, GLSLToken, abs, add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, discard, div, divAssign, dot, eq, floor, forBreak, forLoop, glFragCoord, glFragDepth, glslFalse, glslTrue, gt, ifThen, insert, length, lt, mad, main, max, min, mod, mul, mulAssign, neg, normalize, not, num, or, reflect, retFn, sin, smoothstep, sq, sub, subAssign, sw, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, GLSLToken, abs, add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, discard, div, divAssign, dot, eq, floor, forBreak, forLoop, glFragCoord, glFragDepth, glslFalse, glslTrue, gt, ifThen, insert, length, lt, mad, main, max, min, mul, mulAssign, neg, normalize, not, num, or, reflect, retFn, sin, smoothstep, sq, sub, subAssign, sw, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
 import { TAU } from '../../../utils/constants';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
@@ -27,7 +27,6 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
   const density = defUniformNamed( 'float', 'density' );
   const diceSize = defUniformNamed( 'float', 'diceSize' );
   const time = defUniformNamed( 'float', 'time' );
-  const frameCount = defUniformNamed( 'float', 'frameCount' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
   const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
@@ -91,7 +90,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
       sub( mul( 2.0, sw( glFragCoord, 'xy' ) ), resolution ),
       sw( resolution, 'y' ),
     ) );
-    init( vec4( p, mod( frameCount, 256.0 ), 0.0 ) );
+    init( vec4( p, time, 1.0 ) );
 
     const { ro, rd } = setupRoRd( { inversePVM, p } );
     const initRl = def( 'float', length( sub( sw( vPositionWithoutModel, 'xyz' ), ro ) ) );

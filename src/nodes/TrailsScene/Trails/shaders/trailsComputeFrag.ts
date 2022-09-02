@@ -1,5 +1,5 @@
 import { REC_TRAILS_LENGTH, TRAILS_COUNT, TRAILS_SPAWN_LENGTH } from '../constants';
-import { add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, div, exp, floor, gt, ifThen, insert, length, lt, lte, mad, main, max, min, mix, mul, mulAssign, normalize, sin, sub, subAssign, sw, texture, vec3 } from '../../../../shaders/shaderBuilder';
+import { add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, div, exp, floor, gt, ifThen, insert, length, lt, lte, mad, main, max, min, mix, mul, mulAssign, normalize, sin, sub, subAssign, sw, texture, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { glslDefRandom } from '../../../../shaders/modules/glslDefRandom';
 import { glslLofi } from '../../../../shaders/modules/glslLofi';
 import { perlin3d } from '../../../../shaders/modules/perlin3d';
@@ -19,7 +19,6 @@ export const trailsComputeFrag: string = build( () => {
   const deltaTime = defUniformNamed( 'float', 'deltaTime' );
   const samplerCompute0 = defUniformNamed( 'sampler2D', 'samplerCompute0' );
   const samplerCompute1 = defUniformNamed( 'sampler2D', 'samplerCompute1' );
-  const samplerRandom = defUniformNamed( 'sampler2D', 'samplerRandom' );
 
   const { init } = glslDefRandom();
 
@@ -47,8 +46,7 @@ export const trailsComputeFrag: string = build( () => {
 
     }, () => {
       // -- prepare some vars ----------------------------------------------------------------------
-      const seed = texture( samplerRandom, uv );
-      init( seed );
+      init( vec4( vUv, time, 1.0 ) );
 
       assign( tex0, texture( samplerCompute0, uv ) );
       assign( tex1, texture( samplerCompute1, uv ) );

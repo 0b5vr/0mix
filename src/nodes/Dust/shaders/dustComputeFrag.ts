@@ -1,4 +1,4 @@
-import { add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, div, dot, exp, floor, ifThen, insert, lt, lte, main, max, mix, mul, mulAssign, sin, sub, subAssign, sw, texture, vec2, vec3 } from '../../../shaders/shaderBuilder';
+import { add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, div, dot, exp, floor, ifThen, insert, lt, lte, main, max, mix, mul, mulAssign, sin, sub, subAssign, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { cyclicNoise } from '../../../shaders/modules/cyclicNoise';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslLofi } from '../../../shaders/modules/glslLofi';
@@ -20,7 +20,6 @@ export const dustComputeFrag = (
   const deltaTime = defUniformNamed( 'float', 'deltaTime' );
   const samplerCompute0 = defUniformNamed( 'sampler2D', 'samplerCompute0' );
   const samplerCompute1 = defUniformNamed( 'sampler2D', 'samplerCompute1' );
-  const samplerRandom = defUniformNamed( 'sampler2D', 'samplerRandom' );
 
   const { init, random } = glslDefRandom();
 
@@ -28,8 +27,7 @@ export const dustComputeFrag = (
     const dt = def( 'float', deltaTime );
 
     // -- prepare some vars ------------------------------------------------------------------------
-    const seed = texture( samplerRandom, vUv );
-    init( seed );
+    init( vec4( vUv, time, 1.0 ) );
 
     const tex0 = def( 'vec4', texture( samplerCompute0, vUv ) );
     const tex1 = def( 'vec4', texture( samplerCompute1, vUv ) );

@@ -1,5 +1,5 @@
 import { METABALL_PARTICLES_COUNT, METABALL_PARTICLES_COUNT_SQRT, METABALL_PARTICLES_SPAWN_LENGTH } from '../constants';
-import { add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, div, dot, exp, floor, ifThen, insert, lt, lte, mad, main, max, mix, mul, mulAssign, sub, subAssign, sw, texture, vec2, vec3 } from '../../../../shaders/shaderBuilder';
+import { add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, div, dot, exp, floor, ifThen, insert, lt, lte, mad, main, max, mix, mul, mulAssign, sub, subAssign, sw, texture, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
 import { defMetaballMap } from '../../defMetaballMap';
 import { glslDefRandom } from '../../../../shaders/modules/glslDefRandom';
@@ -18,7 +18,6 @@ export const metaballParticlesComputeFrag: string = build( () => {
   const deltaTime = defUniformNamed( 'float', 'deltaTime' );
   const samplerCompute0 = defUniformNamed( 'sampler2D', 'samplerCompute0' );
   const samplerCompute1 = defUniformNamed( 'sampler2D', 'samplerCompute1' );
-  const samplerRandom = defUniformNamed( 'sampler2D', 'samplerRandom' );
 
   const map = defMetaballMap( time );
 
@@ -28,8 +27,7 @@ export const metaballParticlesComputeFrag: string = build( () => {
     const dt = def( 'float', deltaTime );
 
     // -- prepare some vars ------------------------------------------------------------------------
-    const seed = texture( samplerRandom, vUv );
-    init( seed );
+    init( vec4( vUv, time, 1.0 ) );
 
     const tex0 = def( 'vec4', texture( samplerCompute0, vUv ) );
     const tex1 = def( 'vec4', texture( samplerCompute1, vUv ) );

@@ -1,5 +1,5 @@
 import { PARTICLES_COUNT, PARTICLES_COUNT_SQRT, PARTICLES_SPAWN_LENGTH } from '../constants';
-import { add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, div, dot, exp, floor, ifThen, insert, length, lt, lte, mad, main, max, mix, mul, mulAssign, normalize, sub, subAssign, sw, texture, vec2, vec3 } from '../../../shaders/shaderBuilder';
+import { add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, div, dot, exp, floor, ifThen, insert, length, lt, lte, mad, main, max, mix, mul, mulAssign, normalize, sub, subAssign, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslLofi } from '../../../shaders/modules/glslLofi';
 import { perlin3d } from '../../../shaders/modules/perlin3d';
@@ -17,7 +17,6 @@ export const particlesComputeFrag: string = build( () => {
   const deltaTime = defUniformNamed( 'float', 'deltaTime' );
   const samplerCompute0 = defUniformNamed( 'sampler2D', 'samplerCompute0' );
   const samplerCompute1 = defUniformNamed( 'sampler2D', 'samplerCompute1' );
-  const samplerRandom = defUniformNamed( 'sampler2D', 'samplerRandom' );
 
   const { init, random } = glslDefRandom();
 
@@ -25,8 +24,7 @@ export const particlesComputeFrag: string = build( () => {
     const dt = def( 'float', deltaTime );
 
     // -- prepare some vars ------------------------------------------------------------------------
-    const seed = texture( samplerRandom, vUv );
-    init( seed );
+    init( vec4( vUv, time, 1.0 ) );
 
     const tex0 = def( 'vec4', texture( samplerCompute0, vUv ) );
     const tex1 = def( 'vec4', texture( samplerCompute1, vUv ) );
