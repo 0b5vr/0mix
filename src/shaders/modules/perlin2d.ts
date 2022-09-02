@@ -14,7 +14,7 @@ export function perlin2d( v: GLSLExpression<'vec2'>, rep?: GLSLExpression<'vec2'
     const cellCoordS = def( 'vec2', glslSmootherstep( 0.0, 1.0, cellCoord ) );
 
     const grad = ( off: GLSLExpression<'vec2'> ): GLSLExpression<'float'> => {
-      const phi = mul( TAU, sw( pcg3df( vec3( mod( add( cellIndex, off ), rep ), 1.0 ) ), 'x' ) );
+      const phi = mul( TAU, sw( pcg3df( vec3( mod( add( cellIndex, off ), rep ), 0.0 ) ), 'x' ) );
       return dot(
         vec2( cos( phi ), sin( phi ) ),
         sub( cellCoord, off ),

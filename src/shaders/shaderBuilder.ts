@@ -604,6 +604,20 @@ function __callFn( name: string ): ( ...args: ( string | number )[] ) => string 
   );
 }
 
+export const uintBitsToFloat: {
+  ( x: Ex<'uint'> ): Ex<'float'>;
+  ( x: Ex<'uvec2'> ): Ex<'vec2'>;
+  ( x: Ex<'uvec3'> ): Ex<'vec3'>;
+  ( x: Ex<'uvec4'> ): Ex<'vec4'>;
+} = __callFn( 'uintBitsToFloat' ) as any;
+
+export const floatBitsToUint: {
+  ( x: Ex<'float'> ): Ex<'uint'>;
+  ( x: Ex<'vec2'> ): Ex<'uvec2'>;
+  ( x: Ex<'vec3'> ): Ex<'uvec3'>;
+  ( x: Ex<'vec4'> ): Ex<'uvec4'>;
+} = __callFn( 'floatBitsToUint' ) as any;
+
 export const pow: {
   ( x: Exf, y: Exf ): Ex<'float'>;
   <T extends GLSLGenType>( x: Ex<T>, y: Ex<T> ): Ex<T>;

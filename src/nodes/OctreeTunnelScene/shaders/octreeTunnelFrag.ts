@@ -43,7 +43,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     hole: GLSLToken<'bool'>,
   } => {
     const haha = def( 'float', sw( pcg3df(
-      mod( floor( mul( vec3( 2.0, 2.0, 0.0 ), mad( ro, rd, 1E-2 ) ) ), 2048.0 )
+      floor( mul( vec3( 2.0, 2.0, 0.0 ), mad( ro, rd, 1E-2 ) ) ),
     ), 'x' ) );
     assign( haha, mul(
       2.0,
@@ -64,9 +64,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
         glslLofi( add( rot, mul( rd, 0.01, size ) ), size ),
         div( size, 2.0 ),
       ) );
-      assign( dice, (
-        pcg3df( mul( diceSize, mod( cell, 2048.0 ) ) )
-      ) );
+      assign( dice, pcg3df( floor( mul( diceSize, cell ) ) ) );
       assign( hole, or(
         lt( density, sw( dice, 'y' ) ),
         and(

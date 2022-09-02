@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
-import { addAssign, def, length, mad, mul, mulAssign, retFn, sub, unrollLoop, vec3 } from '../../../../shaders/shaderBuilder';
+import { addAssign, def, floor, length, mad, mul, mulAssign, retFn, sub, unrollLoop, vec3 } from '../../../../shaders/shaderBuilder';
 import { assign, build, defInNamed, defOut, defUniformNamed, div, insert, main, normalize, sw, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
 import { glslLofir } from '../../../../shaders/modules/glslLofir';
@@ -38,7 +38,7 @@ export const pillarGridBodyFrag = ( tag: 'deferred' | 'depth' ): string => build
     const v = def( 'vec3', vec3( 0.0 ) );
 
     unrollLoop( 8, () => {
-      const dice = def( 'vec3', pcg3df( glslLofir( p, 0.01 ) ) );
+      const dice = def( 'vec3', pcg3df( floor( p ) ) );
       addAssign( v, dice );
       assign( p, mad( glslLofir( mul( 1.3, p ), 0.01 ), dice, 2.0 ) );
     } );

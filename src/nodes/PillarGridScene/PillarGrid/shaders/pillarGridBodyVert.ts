@@ -22,7 +22,7 @@ export const pillarGridBodyVert = build( () => {
   main( () => {
     assign( vPosition, vec4( position, 1.0 ) );
 
-    const dice = def( 'vec3', pcg3df( mad( 128.0, vec3( instance, 0.0 ), 16.0 ) ) );
+    const dice = def( 'vec3', pcg3df( vec3( instance, 0.0 ) ) );
 
     // change size per instance
     subAssign(

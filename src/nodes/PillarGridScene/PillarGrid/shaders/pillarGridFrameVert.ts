@@ -1,4 +1,4 @@
-import { add, addAssign, mad, sin, vec3 } from '../../../../shaders/shaderBuilder';
+import { add, addAssign, sin, vec3 } from '../../../../shaders/shaderBuilder';
 import { assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mul, sw, vec4 } from '../../../../shaders/shaderBuilder';
 import { pcg3df } from '../../../../shaders/modules/pcg3df';
 
@@ -19,9 +19,7 @@ export const pillarGridFrameVert = build( () => {
   main( () => {
     assign( vPosition, vec4( position, 1.0 ) );
     const z = mul( 0.2, sin( add(
-      mul( 3.0, sw( pcg3df(
-        mad( 128.0, vec3( instance, 0.0 ), 16.0 ),
-      ), 'x' ) ),
+      mul( 3.0, sw( pcg3df( vec3( instance, 0.0 ) ), 'x' ) ),
       sw( instance, 'x' ),
       sw( instance, 'y' ),
       time,
