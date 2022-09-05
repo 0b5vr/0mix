@@ -1,9 +1,9 @@
 import { BufferTextureRenderTarget } from '../../../heck/BufferTextureRenderTarget';
-import { DenoiserResources } from './DenoiserResources';
 import { GL_TEXTURE_2D } from '../../../gl/constants';
 import { Material } from '../../../heck/Material';
 import { Quad } from '../../../heck/components/Quad';
 import { SceneNode } from '../../../heck/components/SceneNode';
+import { Swap } from '@0b5vr/experimental';
 import { denoiserFrag } from './shaders/denoiserFrag';
 import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../../globals/quadGeometry';
@@ -12,28 +12,23 @@ import { quadVert } from '../../../shaders/common/quadVert';
 export interface DenoiserOptions {
   shadeTarget: BufferTextureRenderTarget;
   deferredTarget: BufferTextureRenderTarget;
-  resources: DenoiserResources;
+  swap: Swap<BufferTextureRenderTarget>;
+  iter: number;
 }
 
 export class Denoiser extends SceneNode {
-  public resources: DenoiserResources;
-
   public constructor( options: DenoiserOptions ) {
     super();
 
     const {
       shadeTarget,
       deferredTarget,
-      resources,
+      swap,
+      iter,
     } = options;
 
-    // -- buffers ----------------------------------------------------------------------------------
-    const [
-      swap,
-    ] = this.resources = resources;
-
     // -- quads ------------------------------------------------------------------------------------
-    const quads = [ ...Array( 4 ) ].map( ( _, i ) => {
+    const quads = [ ...Array( iter ) ].map( ( _, i ) => {
       // :: material :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       const material = new Material(
         quadVert,
@@ -61,7 +56,7 @@ export class Denoiser extends SceneNode {
 
       // :: quad :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       const quadDenoiser = new Quad( {
-        target: i === 3 ? shadeTarget : swap.i,
+        target: ( i === iter - 1 ) ? shadeTarget : swap.i,
         material: material,
       } );
 

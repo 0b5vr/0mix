@@ -36,6 +36,7 @@ export interface CameraStackOptions extends ComponentOptions {
     depth: number,
     size: number,
   ];
+  useAO?: boolean;
   useDenoiser?: boolean;
   cubemapNode?: CubemapNode;
   resources?: CameraStackResources;
@@ -63,6 +64,7 @@ export class CameraStack extends SceneNode {
       exclusionTags,
       resources,
       dofParams,
+      useAO,
       useDenoiser,
       cubemapNode,
     } = options;
@@ -71,8 +73,9 @@ export class CameraStack extends SceneNode {
     const [
       deferredTarget,
       aoTarget,
+      aoDenoiserSwap,
       shadeTarget,
-      denoiserResources,
+      denoiserSwap,
       dofResources,
     ] = this.resources = resources ?? createCameraStackResources();
 
@@ -89,7 +92,8 @@ export class CameraStack extends SceneNode {
     this.children = [ deferredCamera ];
 
     // -- ambient occlusion ------------------------------------------------------------------------
-    if ( aoTarget ) {
+    if ( useAO && aoTarget ) {
+      // :: material :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       const aoMaterial = new Material(
         quadVert,
         ssaoFrag,
@@ -102,6 +106,7 @@ export class CameraStack extends SceneNode {
         } );
       }
 
+      // :: lambda :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       const lambdaAoSetCameraUniforms = new Lambda( {
         onUpdate: ( { globalTransform } ) => {
           const cameraView = mat4Inverse( globalTransform.matrix );
@@ -128,6 +133,7 @@ export class CameraStack extends SceneNode {
 
       aoMaterial.addUniformTextures( 'samplerRandom', GL_TEXTURE_2D, randomTexture.texture );
 
+      // :: quad :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       const aoQuad = new Quad( {
         material: aoMaterial,
         target: aoTarget,
@@ -137,16 +143,30 @@ export class CameraStack extends SceneNode {
         aoQuad.name = 'aoQuad';
       }
 
+      // :: denoiser :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+      const denoiser = new Denoiser( {
+        deferredTarget,
+        shadeTarget: aoTarget,
+        swap: aoDenoiserSwap!,
+        iter: 2,
+      } );
+
+      if ( import.meta.env.DEV ) {
+        denoiser.name = 'aoDenoiser';
+      }
+
+      // :: children :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       this.children.push(
         lambdaAoSetCameraUniforms,
         aoQuad,
+        denoiser,
       );
     }
 
     // -- deferred ---------------------------------------------------------------------------------
     const shadingMaterial = new Material(
       quadVert,
-      deferredShadeFrag( { withAO: !!aoTarget } ),
+      deferredShadeFrag( { withAO: !!( aoTarget && useAO ) } ),
       {
         initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 },
       },
@@ -238,11 +258,12 @@ export class CameraStack extends SceneNode {
     }
 
     // -- denoiser ---------------------------------------------------------------------------------
-    if ( useDenoiser && denoiserResources ) {
+    if ( useDenoiser && denoiserSwap ) {
       this.children.push( new Denoiser( {
-        resources: denoiserResources!,
+        swap: denoiserSwap!,
         deferredTarget,
         shadeTarget: shadeTarget!,
+        iter: 4,
       } ) );
     }
 

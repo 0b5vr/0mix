@@ -58,6 +58,7 @@ export class MetaballScene extends SceneNode {
       resources: mainCameraStackResources,
       target: cameraStackATarget,
       dofParams: [ 2.5, 12.0 ],
+      useAO: true,
     } );
     camera.transform.lookAt(
       [ 0.0, 0.0, 3.2 ],
