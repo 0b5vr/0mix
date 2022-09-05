@@ -148,7 +148,7 @@ export class CameraStack extends SceneNode {
         deferredTarget,
         shadeTarget: aoTarget,
         swap: aoDenoiserSwap!,
-        iter: 2,
+        iter: 3,
       } );
 
       if ( import.meta.env.DEV ) {
@@ -263,7 +263,7 @@ export class CameraStack extends SceneNode {
         swap: denoiserSwap!,
         deferredTarget,
         shadeTarget: shadeTarget!,
-        iter: 4,
+        iter: 5,
       } ) );
     }
 
