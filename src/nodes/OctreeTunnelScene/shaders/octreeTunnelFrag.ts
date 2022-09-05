@@ -123,7 +123,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
       mulAssign( colRem, fresnelSchlick( dotVH, num( 0.3 ), num( 1.0 ) ) );
     };
 
-    forLoop( 50, () => {
+    forLoop( 80, () => {
       const qtr = qt( ro, rd );
 
       const isect = def( 'vec4', vec4( FAR ) );

@@ -1,6 +1,7 @@
 import { CameraStackResources, createCameraStackResources } from './CameraStackResources';
-import { Component, ComponentOptions } from '../../heck/components/Component';
+import { ComponentOptions } from '../../heck/components/Component';
 import { CubemapNode } from '../CubemapNode/CubemapNode';
+import { Denoiser } from './Denoiser/Denoiser';
 import { DoF } from './DoF/DoF';
 import { EventType, on } from '../../globals/globalEvent';
 import { FAR, NEAR } from '../../config';
@@ -35,6 +36,7 @@ export interface CameraStackOptions extends ComponentOptions {
     depth: number,
     size: number,
   ];
+  useDenoiser?: boolean;
   cubemapNode?: CubemapNode;
   resources?: CameraStackResources;
 }
@@ -55,13 +57,22 @@ export class CameraStack extends SceneNode {
     const fov = options.fov ?? 40.0;
     const fog = options.fog ?? [ 0.0, 100.0, 100.0 ];
 
-    const { target, scene, exclusionTags, resources, dofParams, cubemapNode } = options;
+    const {
+      target,
+      scene,
+      exclusionTags,
+      resources,
+      dofParams,
+      useDenoiser,
+      cubemapNode,
+    } = options;
 
     // -- resources --------------------------------------------------------------------------------
     const [
       deferredTarget,
       aoTarget,
-      preDoFTarget,
+      shadeTarget,
+      denoiserResources,
       dofResources,
     ] = this.resources = resources ?? createCameraStackResources();
 
@@ -75,10 +86,9 @@ export class CameraStack extends SceneNode {
       fov,
       materialTag: 'deferred',
     } );
+    this.children = [ deferredCamera ];
 
     // -- ambient occlusion ------------------------------------------------------------------------
-    let aoComponents: Component[] = [];
-
     if ( aoTarget ) {
       const aoMaterial = new Material(
         quadVert,
@@ -127,10 +137,10 @@ export class CameraStack extends SceneNode {
         aoQuad.name = 'aoQuad';
       }
 
-      aoComponents = [
+      this.children.push(
         lambdaAoSetCameraUniforms,
         aoQuad,
-      ];
+      );
     }
 
     // -- deferred ---------------------------------------------------------------------------------
@@ -178,12 +188,13 @@ export class CameraStack extends SceneNode {
         );
       },
     } );
+    this.children.push( lambdaDeferredCameraUniforms );
 
     if ( import.meta.env.DEV ) {
       lambdaDeferredCameraUniforms.name = 'lambdaDeferredCameraUniforms';
     }
 
-    const lambdaLightUniforms = createLightUniformsLambda( [ shadingMaterial ] );
+    this.children.push( createLightUniformsLambda( [ shadingMaterial ] ) );
 
     for ( let i = 0; i < 4; i ++ ) {
       shadingMaterial.addUniformTextures(
@@ -217,12 +228,22 @@ export class CameraStack extends SceneNode {
 
     const shadingQuad = new Quad( {
       material: shadingMaterial,
-      target: dofParams ? preDoFTarget : target,
+      target: dofParams ? shadeTarget : target,
       clear: [],
     } );
+    this.children.push( shadingQuad );
 
     if ( import.meta.env.DEV ) {
       shadingQuad.name = 'shadingQuad';
+    }
+
+    // -- denoiser ---------------------------------------------------------------------------------
+    if ( useDenoiser && denoiserResources ) {
+      this.children.push( new Denoiser( {
+        resources: denoiserResources!,
+        deferredTarget,
+        shadeTarget: shadeTarget!,
+      } ) );
     }
 
     // -- forward ----------------------------------------------------------------------------------
@@ -233,38 +254,39 @@ export class CameraStack extends SceneNode {
         } );
       },
     } );
+    this.children.push( lambdaUpdateLightShaftDeferredRenderTarget );
 
     if ( import.meta.env.DEV ) {
       lambdaUpdateLightShaftDeferredRenderTarget.name = 'lambdaUpdateLightShaftDeferredRenderTarget';
     }
 
-    const forwardCamera = this.forwardCamera = new PerspectiveCamera( {
+    this.forwardCamera = new PerspectiveCamera( {
       scene,
       exclusionTags,
-      target: dofParams ? preDoFTarget : target,
+      target: dofParams ? shadeTarget : target,
       near,
       far,
       fov,
       clear: false,
       materialTag: 'forward',
     } );
+    this.children.push( this.forwardCamera );
 
     if ( import.meta.env.DEV ) {
-      forwardCamera.name = 'forwardCamera';
+      this.forwardCamera.name = 'forwardCamera';
     }
 
     // -- dof --------------------------------------------------------------------------------------
-    let dof: DoF | undefined;
-
     if ( dofParams ) {
-      dof = this.dof = new DoF( {
-        input: preDoFTarget!,
+      this.dof = new DoF( {
+        input: shadeTarget!,
         deferredCamera,
         deferredTarget,
         resources: dofResources!,
         params: dofParams,
         target,
       } );
+      this.children.push( this.dof );
     }
 
     // -- auto -------------------------------------------------------------------------------------
@@ -291,17 +313,5 @@ export class CameraStack extends SceneNode {
 
       deferredTarget.name = `CameraStack${ id }/deferredTarget`;
     }
-
-    // -- components -------------------------------------------------------------------------------
-    this.children = [
-      deferredCamera,
-      ...aoComponents,
-      lambdaDeferredCameraUniforms,
-      lambdaLightUniforms,
-      shadingQuad,
-      lambdaUpdateLightShaftDeferredRenderTarget,
-      forwardCamera,
-      ...( dof ? [ dof ] : [] ),
-    ];
   }
 }
