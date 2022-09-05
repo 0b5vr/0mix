@@ -19,6 +19,7 @@ import { ParticlesStudioScene } from './nodes/ParticlesStudioScene/ParticlesStud
 import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
 import { PlexusScene } from './nodes/PlexusScene/PlexusScene';
 import { PostStack } from './nodes/PostStack/PostStack';
+import { SphereArrayScene } from './nodes/SphereArrayScene/SphereArrayScene';
 import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
 import { TrailsScene } from './nodes/TrailsScene/TrailsScene';
 import { WebGLMemory } from './nodes/WebGLMemory/WebGLMemory';
@@ -112,6 +113,7 @@ const scenesA = [
   new TrailsScene(),
   new OctreeTunnelScene(),
   new ParticlesStudioScene(),
+  new SphereArrayScene(),
 ];
 
 const scenesB = [
