@@ -1,5 +1,5 @@
 import { AO_ITER } from '../../../config';
-import { GLSLExpression, add, addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, div, divAssign, dot, forLoop, ifThen, insert, length, lt, main, mul, normalize, sq, sub, sw, texture, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, add, addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, div, divAssign, dot, eq, forLoop, ifThen, insert, length, lt, main, mul, normalize, sq, sub, sw, texture, vec4 } from '../../../shaders/shaderBuilder';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslSaturate } from '../../../shaders/modules/glslSaturate';
 import { uniformHemisphere } from '../../../shaders/modules/uniformHemisphere';
@@ -39,17 +39,21 @@ export const ssaoFrag = build( () => {
       const screenPos = def( 'vec4', mul( cameraPV, vec4( pt, 1.0 ) ) );
       divAssign( sw( screenPos, 'x' ), aspect );
       const screenUv = add( 0.5, mul( 0.5, div( sw( screenPos, 'xy' ), sw( screenPos, 'w' ) ) ) );
-      const s1 = sw( texture( sampler1, screenUv ), 'xyz' );
+      const s1 = texture( sampler1, screenUv );
 
-      const dDir = def( 'vec3', sub( s1, position ) );
-      ifThen( lt( length( dDir ), 1E-2 ), () => {
+      ifThen( eq( sw( s1, 'w' ), 1.0 ), () => {
         addAssign( accum, 1.0 );
       }, () => {
-        const dNor = dot( normalize( normal ), normalize( dDir ) );
-        addAssign(
-          accum,
-          sub( 1.0, div( glslSaturate( sub( dNor, AO_BIAS ) ), add( length( dDir ), 1.0 ) ) )
-        );
+        const dDir = def( 'vec3', sub( sw( s1, 'xyz' ), position ) );
+        ifThen( lt( length( dDir ), 1E-2 ), () => {
+          addAssign( accum, 1.0 );
+        }, () => {
+          const dNor = dot( normalize( normal ), normalize( dDir ) );
+          addAssign(
+            accum,
+            sub( 1.0, div( glslSaturate( sub( dNor, AO_BIAS ) ), add( length( dDir ), 1.0 ) ) )
+          );
+        } );
       } );
     } );
 
@@ -65,7 +69,6 @@ export const ssaoFrag = build( () => {
     const position = def( 'vec3', sw( tex1, 'xyz' ) );
     const normal = def( 'vec3', sw( tex2, 'xyz' ) );
 
-    const ao = ssao( position, normal );
-    assign( fragColor, ao );
+    assign( fragColor, ssao( position, normal ) );
   } );
 } );
