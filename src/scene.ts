@@ -87,6 +87,10 @@ if ( import.meta.env.DEV ) {
         }
       }
     } );
+
+    gui.button( 'Fullscreen' ).on( 'click', () => {
+      canvas.requestFullscreen();
+    } );
   } );
 }
 
