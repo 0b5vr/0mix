@@ -1,4 +1,5 @@
 import { CameraStack } from '../CameraStack/CameraStack';
+import { HALF_SQRT3 } from '../../utils/constants';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
 import { PointLightNode } from '../Lights/PointLightNode';
@@ -26,16 +27,16 @@ export class SphereArrayScene extends SceneNode {
       swapShadowMap: swapShadowMap1,
       shadowMapFov: 40.0,
     } );
-    lightT.transform.lookAt( [ 5.0, -3.0, 2.0 ], [ 0.0, 0.0, 1.0 ] );
+    lightT.transform.lookAt( [ 0.0, 3.0, 3.0 ], [ 0.0, 0.0, 1.0 ] );
     lightT.color = [ 500.0, 500.0, 500.0 ];
 
     const lightB = new PointLightNode( {
       scene,
       swapShadowMap: swapShadowMap2,
-      shadowMapFov: 40.0,
+      shadowMapFov: 20.0,
     } );
-    lightB.transform.lookAt( [ 0.0, 3.5, 4.0 ], [ 0.0, 0.0, 1.0 ] );
-    lightB.color = [ 300.0, 10.0, 10.0 ];
+    lightB.transform.lookAt( [ 0.0, -10.0, -20.0 ], [ 0.0, 0.0, 0.0 ] );
+    lightB.color = [ 100000.0, 100000.0, 100000.0 ];
 
     if ( import.meta.env.DEV ) {
       lightT.name = 'lightT';
@@ -50,8 +51,8 @@ export class SphereArrayScene extends SceneNode {
 
     const arrayInstance = new Float32Array( 2048 );
     for ( let i = 0; i < 1024; i ++ ) {
-      arrayInstance[ i * 2     ] = ( ( i % 32 ) - 15.5 ) * 0.2;
-      arrayInstance[ i * 2 + 1 ] = ( ( ~~( i / 32 ) ) - 15.5 ) * 0.2;
+      arrayInstance[ i * 2     ] = ( ( i % 32 ) - 16 ) * 0.2 + ( ~~( i / 32 ) % 2 ) * 0.1;
+      arrayInstance[ i * 2 + 1 ] = ( ( ~~( i / 32 ) ) - 15.5 ) * 0.2 * HALF_SQRT3;
     }
 
     const bufferInstance = glCreateVertexbuffer( arrayInstance );
@@ -69,7 +70,7 @@ export class SphereArrayScene extends SceneNode {
 
     const depth = new Material(
       sphereArrayVert,
-      sphereArrayFrag( 'deferred' ),
+      sphereArrayFrag( 'depth' ),
       {
         initOptions: { geometry, target: dummyRenderTarget4 },
       },
@@ -104,6 +105,8 @@ export class SphereArrayScene extends SceneNode {
       scene,
       resources: mainCameraStackResources,
       target: cameraStackATarget,
+      useAO: true,
+      clear: [ 0.8, 0.8, 0.8, 1.0 ],
     } );
     camera.transform.lookAt(
       [ 0.0, 0.0, 2.0 ],
