@@ -1,5 +1,5 @@
 import { FAR } from '../../../config';
-import { GLSLExpression, GLSLToken, abs, add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, discard, div, divAssign, dot, eq, floor, forBreak, forLoop, glFragCoord, glFragDepth, glslFalse, glslTrue, gt, ifThen, insert, length, lt, mad, main, max, min, mul, mulAssign, neg, normalize, not, num, or, reflect, retFn, sin, smoothstep, sq, sub, subAssign, sw, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, GLSLToken, abs, add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, discard, div, divAssign, dot, eq, floor, forBreak, forLoop, glFragCoord, glFragDepth, glslFalse, glslTrue, gt, ifThen, insert, length, lt, mad, main, max, min, mix, mul, mulAssign, neg, normalize, not, num, or, reflect, refract, retFn, sin, smoothstep, sq, step, sub, subAssign, sw, tern, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
 import { TAU } from '../../../utils/constants';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
@@ -7,9 +7,12 @@ import { fresnelSchlick } from '../../../shaders/modules/fresnelSchlick';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslLofi } from '../../../shaders/modules/glslLofi';
 import { isectBox } from '../../../shaders/modules/isectBox';
+import { isectInBox } from '../../../shaders/modules/isectInBox';
 import { pcg3df } from '../../../shaders/modules/pcg3df';
 import { sampleGGX } from '../../../shaders/modules/sampleGGX';
 import { setupRoRd } from '../../../shaders/modules/setupRoRd';
+
+const IOR = 1.6;
 
 export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
@@ -81,6 +84,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     const len = def( 'float', min( sw( b, 'x' ), min( sw( b, 'y' ), sw( b, 'z' ) ) ) );
 
     subAssign( sw( cell, 'z' ), haha );
+    divAssign( size, 2.0 );
 
     return { size, cell, len, dice, hole };
   };
@@ -103,11 +107,18 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
 
     const N0 = def( 'vec3' );
     const rough0 = def( 'float' );
+    const inMedium = def( 'bool', glslFalse );
+    const inMedium0 = def( 'bool' );
     const col = def( 'vec3', vec3( 0.0 ) );
     const colRem = def( 'vec3', vec3( 1.0 ) );
     const samples = def( 'float', 1.0 );
 
-    const doReflection = ( N: GLSLExpression<'vec3'>, rough: GLSLExpression<'float'> ): void => {
+    const doPlastic = ( N: GLSLExpression<'vec3'> ): void => {
+      assign( rd, refract( rd, N, 1.0 / IOR ) );
+      assign( inMedium, glslTrue );
+    };
+
+    const doMetal = ( N: GLSLExpression<'vec3'>, rough: GLSLExpression<'float'> ): void => {
       // reflective
       const h = def( 'vec3', sampleGGX(
         vec2( random(), random() ),
@@ -117,8 +128,6 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
       const dotVH = def( 'float', max( 0.001, dot( neg( rd ), h ) ) );
 
       assign( rd, reflect( rd, h ) );
-
-      addAssign( ro, mul( rd, 0.01 ) );
 
       mulAssign( colRem, fresnelSchlick( dotVH, num( 0.3 ), num( 1.0 ) ) );
     };
@@ -130,24 +139,39 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
       const N = sw( isect, 'xyz' );
       const isectlen = sw( isect, 'w' );
 
+      const rough = sw( qtr.dice, 'z' );
+
       ifThen( not( qtr.hole ), () => {
-        const size = sub( mul( 0.5, qtr.size ), 0.01 );
-        assign( isect, isectBox( sub( ro, qtr.cell ), rd, vec3( size ) ) );
+        ifThen( inMedium, () => {
+          const size = sub( qtr.size, 0.04 );
+          assign( isect, mix(
+            isect,
+            isectBox( sub( ro, qtr.cell ), rd, vec3( size ) ),
+            step( 0.0, size ),
+          ) );
+        }, () => {
+          const size = sub( qtr.size, 0.01 );
+          assign( isect, isectBox( sub( ro, qtr.cell ), rd, vec3( size ) ) );
+        } );
       } );
 
       ifThen( lt( isectlen, FAR ), () => {
-        // update ray origin, calc roughness
+        // cringe
+        mulAssign( colRem, smoothstep( 0.01, 0.02, abs( sw( ro, 'x' ) ) ) );
+        mulAssign( colRem, smoothstep( 0.01, 0.02, abs( sw( ro, 'y' ) ) ) );
+
+        // update ray origin
         addAssign( ro, mul( rd, isectlen ) );
-        const rough = sw( qtr.dice, 'z' );
 
         // record the first ray
         ifThen( isFirstRay, () => {
           assign( ro0, ro );
           assign( N0, N );
           assign( rough0, rough );
+          assign( inMedium0, inMedium );
         } );
 
-        ifThen( gt( rough, 0.7 ), () => {
+        ifThen( inMedium, () => {
           // emissive
           addAssign( col, mul( rough, colRem ) );
           mulAssign( colRem, 0.0 );
@@ -155,12 +179,34 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
           ifThen( isFirstRay, () => forBreak() );
         } );
 
-        doReflection( N, rough );
-        assign( isFirstRay, glslFalse );
+        ifThen( gt( rough, 0.8 ), () => {
+          doPlastic( N );
+
+        }, () => {
+          doMetal( N, rough );
+          assign( isFirstRay, glslFalse );
+        } );
 
       }, () => {
-        // update ray origin
-        addAssign( ro, mul( rd, qtr.len ) );
+        ifThen( inMedium, () => {
+          const size = sub( qtr.size, 0.01 );
+          assign( isect, isectInBox( sub( ro, qtr.cell ), rd, vec3( size ) ) );
+
+          // update ray origin
+          addAssign( ro, mul( rd, isectlen ) );
+
+          // refractive
+          const refr = def( 'vec3', refract( rd, N, IOR ) );
+          const isRefl = eq( refr, vec3( 0.0 ) );
+
+          assign( rd, tern( isRefl, reflect( rd, N ), refr ) );
+          assign( inMedium, isRefl );
+
+        }, () => {
+          // update ray origin
+          addAssign( ro, mul( rd, qtr.len ) );
+
+        } );
       } );
 
       ifThen( lt( sw( colRem, 'x' ), 0.04 ), () => {
@@ -169,8 +215,17 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
 
         assign( ro, ro0 );
         assign( rd, rd0 );
+        assign( inMedium, glslFalse );
 
-        doReflection( N0, rough0 );
+        // cringe
+        mulAssign( colRem, smoothstep( 0.01, 0.02, abs( sw( ro, 'x' ) ) ) );
+        mulAssign( colRem, smoothstep( 0.01, 0.02, abs( sw( ro, 'y' ) ) ) );
+
+        ifThen( inMedium0, () => {
+          doPlastic( N );
+        }, () => {
+          doMetal( N0, rough0 );
+        } );
 
       } );
     } );
