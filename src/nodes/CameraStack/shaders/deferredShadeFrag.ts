@@ -1,5 +1,5 @@
 import { DIELECTRIC_SPECULAR, ONE_SUB_DIELECTRIC_SPECULAR, TAU } from '../../../utils/constants';
-import { GLSLExpression, GLSLFloatExpression, abs, add, addAssign, assign, build, clamp, cos, def, defFn, defInNamed, defOut, defUniformArrayNamed, defUniformNamed, div, divAssign, dot, eq, glFragDepth, gt, ifChain, ifThen, insert, length, main, max, mix, mul, mulAssign, neg, normalize, num, pow, retFn, smoothstep, sq, step, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, GLSLFloatExpression, abs, add, addAssign, assign, build, clamp, cos, def, defFn, defInNamed, defOut, defUniformArrayNamed, defUniformNamed, discard, div, divAssign, dot, eq, glFragDepth, gt, ifChain, ifThen, insert, length, main, max, mix, mul, mulAssign, neg, normalize, num, pow, retFn, smoothstep, sq, step, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { MTL_IRIDESCENT, MTL_NONE, MTL_PBR_EMISSIVE3_ROUGHNESS, MTL_PBR_ROUGHNESS_METALLIC, MTL_PBR_SHEEN, MTL_UNLIT } from '../deferredConstants';
 import { brdfSheen } from '../../../shaders/modules/brdfSheen';
 import { calcAlbedoF0 } from '../../../shaders/modules/calcAlbedoF0';
@@ -46,10 +46,12 @@ export const deferredShadeFrag = ( { withAO }: {
   } );
 
   main( () => {
-    const tex0 = texture( sampler0, vUv );
-    const tex1 = texture( sampler1, vUv );
-    const tex2 = texture( sampler2, vUv );
-    const tex3 = texture( sampler3, vUv );
+    const tex1 = def( 'vec4', texture( sampler1, vUv ) );
+    ifThen( eq( sw( tex1, 'w' ), 1.0 ), () => discard() );
+
+    const tex0 = def( 'vec4', texture( sampler0, vUv ) );
+    const tex2 = def( 'vec4', texture( sampler2, vUv ) );
+    const tex3 = def( 'vec4', texture( sampler3, vUv ) );
 
     const color = sw( tex0, 'xyz' );
     const position = sw( tex1, 'xyz' );

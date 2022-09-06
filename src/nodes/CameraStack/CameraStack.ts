@@ -36,6 +36,7 @@ export interface CameraStackOptions extends ComponentOptions {
     depth: number,
     size: number,
   ];
+  clear?: number[] | false;
   useAO?: boolean;
   useDenoiser?: boolean;
   cubemapNode?: CubemapNode;
@@ -64,6 +65,7 @@ export class CameraStack extends SceneNode {
       exclusionTags,
       resources,
       dofParams,
+      clear,
       useAO,
       useDenoiser,
       cubemapNode,
@@ -249,7 +251,7 @@ export class CameraStack extends SceneNode {
     const shadingQuad = new Quad( {
       material: shadingMaterial,
       target: dofParams ? shadeTarget : target,
-      clear: [],
+      clear: clear ?? [],
     } );
     this.children.push( shadingQuad );
 

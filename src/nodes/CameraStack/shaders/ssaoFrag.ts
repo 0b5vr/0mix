@@ -66,9 +66,13 @@ export const ssaoFrag = build( () => {
     const tex1 = texture( sampler1, vUv );
     const tex2 = texture( sampler2, vUv );
 
-    const position = def( 'vec3', sw( tex1, 'xyz' ) );
+    const position = def( 'vec4', tex1 );
     const normal = def( 'vec3', sw( tex2, 'xyz' ) );
 
-    assign( fragColor, ssao( position, normal ) );
+    ifThen( eq( sw( position, 'w' ), 1.0 ), () => {
+      assign( fragColor, 1.0 );
+    }, () => {
+      assign( fragColor, ssao( sw( position, 'xyz' ), normal ) );
+    } );
   } );
 } );

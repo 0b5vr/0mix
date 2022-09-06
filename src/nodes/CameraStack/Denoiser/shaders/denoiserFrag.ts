@@ -1,4 +1,4 @@
-import { abs, add, addAssign, arrayIndex, assign, build, def, defInNamed, defOut, defUniformArrayNamed, defUniformNamed, div, dot, eq, exp, forLoop, insert, int, length, mad, main, max, mul, neg, pow, sqrt, step, sub, sw, tern, texture, vec2, vec4 } from '../../../../shaders/shaderBuilder';
+import { abs, add, addAssign, arrayIndex, assign, build, def, defInNamed, defOut, defUniformArrayNamed, defUniformNamed, discard, div, dot, eq, exp, forLoop, ifThen, insert, int, length, mad, main, max, mul, neg, pow, sqrt, step, sub, sw, tern, texture, vec2, vec4 } from '../../../../shaders/shaderBuilder';
 import { glslGaussian } from '../../../../shaders/modules/glslGaussian';
 
 const SIGMA_RT = 0.4;
@@ -16,11 +16,14 @@ export const denoiserFrag = ( iter: number ): string => build( () => {
   const sampler1 = defUniformNamed( 'sampler2D', 'sampler1' );
 
   main( () => {
+    const ppTex = def( 'vec4', texture( arrayIndex( sampler0, int( 1 ) ), vUv ) );
+    ifThen( eq( sw( ppTex, 'w' ), 1.0 ), () => discard() );
+
     const delta = def( 'vec2', div( 2 ** iter, resolution ) );
 
     const ci = def( 'vec3', sw( texture( sampler1, vUv ), 'xyz' ) );
     const rtp = sw( ci, 'x' );
-    const pp = def( 'vec3', sw( texture( arrayIndex( sampler0, int( 1 ) ), vUv ), 'xyz' ) );
+    const pp = sw( ppTex, 'xyz' );
     const np = def( 'vec3', sw( texture( arrayIndex( sampler0, int( 2 ) ), vUv ), 'xyz' ) );
     const ci1 = def( 'vec4', vec4( 0.0 ) );
 
