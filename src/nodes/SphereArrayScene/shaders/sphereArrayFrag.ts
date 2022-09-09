@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
-import { abs, add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, discard, div, eq, glFragCoord, glFragDepth, glslFalse, glslTrue, gt, ifThen, insert, length, lt, main, max, mul, mulAssign, normalize, retFn, sub, subAssign, sw, tern, vec4 } from '../../../shaders/shaderBuilder';
+import { abs, add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, eq, glFragCoord, glFragDepth, glslFalse, glslTrue, ifThen, insert, length, lt, main, max, mul, mulAssign, normalize, retFn, sub, subAssign, sw, tern, vec4 } from '../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 import { perlin2d } from '../../../shaders/modules/perlin2d';
@@ -74,9 +74,8 @@ export const sphereArrayFrag = ( tag: 'deferred' | 'depth' ): string => build( (
       ro,
       rd,
       map,
+      discardThreshold: 1E-2,
     } );
-
-    ifThen( gt( sw( isect, 'x' ), 1E-2 ), () => discard() );
 
     const modelPos = def( 'vec4', mul( modelMatrix, vec4( rp, 1.0 ) ) );
 

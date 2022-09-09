@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
-import { abs, add, assign, build, def, defFn, defOut, defUniformNamed, discard, div, glFragCoord, glFragDepth, gt, ifThen, insert, length, main, max, mod, mul, neg, normalize, retFn, sub, sw, unrollLoop, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { abs, add, assign, build, def, defFn, defOut, defUniformNamed, div, glFragCoord, glFragDepth, insert, length, main, max, mod, mul, neg, normalize, retFn, sub, sw, unrollLoop, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
 import { raymarch } from '../../../../shaders/modules/raymarch';
@@ -45,14 +45,13 @@ export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
 
     const [ ro, rd ] = setupRoRd( p );
 
-    const { isect, rp } = raymarch( {
+    const { rp } = raymarch( {
       iter: 80,
       ro,
       rd,
       map,
+      discardThreshold: 1E-2,
     } );
-
-    ifThen( gt( sw( isect, 'x' ), 1E-2 ), () => discard() );
 
     const modelPos = def( 'vec4', mul( modelMatrix, vec4( rp, 1.0 ) ) );
 

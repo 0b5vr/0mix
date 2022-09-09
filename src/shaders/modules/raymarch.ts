@@ -1,4 +1,4 @@
-import { GLSLExpression, GLSLFloatExpression, GLSLToken, abs, add, addAssign, assign, def, defInNamed, forBreak, forLoop, gt, ifThen, length, lt, mul, sub, sw } from '../shaderBuilder';
+import { GLSLExpression, GLSLFloatExpression, GLSLToken, abs, add, addAssign, assign, def, defInNamed, discard, forBreak, forLoop, gt, ifThen, length, lt, mul, sub, sw } from '../shaderBuilder';
 
 export function raymarch( {
   iter,
@@ -9,6 +9,7 @@ export function raymarch( {
   eps,
   far,
   marchMultiplier,
+  discardThreshold,
 }: {
   iter: number,
   ro: GLSLExpression<'vec3'>,
@@ -18,6 +19,7 @@ export function raymarch( {
   eps?: GLSLFloatExpression,
   far?: GLSLFloatExpression,
   marchMultiplier?: GLSLFloatExpression,
+  discardThreshold?: GLSLFloatExpression,
 } ): {
     isect: GLSLToken<'vec4'>,
     rl: GLSLToken<'float'>,
@@ -43,6 +45,10 @@ export function raymarch( {
       ifThen( gt( rl, far ), () => forBreak() );
     }
   } );
+
+  if ( discardThreshold ) {
+    ifThen( gt( sw( isect, 'x' ), discardThreshold ), () => discard() );
+  }
 
   return { isect, rl, rp };
 }

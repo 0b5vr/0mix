@@ -49,10 +49,8 @@ export const studioBackgroundFrag = ( tag: 'deferred' | 'depth' ): string => bui
       rd,
       map,
       marchMultiplier: 0.9,
+      // discardThreshold: 1E-2, // too much artifacts, how bout no hit test
     } );
-
-    // too much artifacts, how bout no hit test
-    // ifThen( gt( sw( isect, 'x' ), 1E-2 ), () => discard() );
 
     const modelPos = def( 'vec4', mul( modelMatrix, vec4( rp, 1.0 ) ) );
 

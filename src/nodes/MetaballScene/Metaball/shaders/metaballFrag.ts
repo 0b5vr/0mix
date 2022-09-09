@@ -1,6 +1,6 @@
 import { INV_PI } from '../../../../utils/constants';
 import { MTL_PBR_EMISSIVE3_ROUGHNESS } from '../../../CameraStack/deferredConstants';
-import { add, addAssign, assign, build, def, defFn, defOut, defUniformNamed, discard, div, glFragCoord, glFragDepth, gt, ifThen, insert, length, mad, main, mul, normalize, retFn, sq, sub, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defFn, defOut, defUniformNamed, div, glFragCoord, glFragDepth, insert, length, mad, main, mul, normalize, retFn, sq, sub, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcL } from '../../../../shaders/modules/calcL';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
 import { calcSS } from '../../../../shaders/modules/calcSS';
@@ -45,14 +45,13 @@ export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () =
 
     const [ ro, rd ] = setupRoRd( p );
 
-    const { isect, rp } = raymarch( {
+    const { rp } = raymarch( {
       iter: 50,
       ro,
       rd,
       map,
+      discardThreshold: tag === 'depth' ? 1E-1 : 1E-2,
     } );
-
-    ifThen( gt( sw( isect, 'x' ), tag === 'depth' ? 1E-1 : 1E-2 ), () => discard() );
 
     const modelPos = def( 'vec4', mul( modelMatrix, vec4( rp, 1.0 ) ) );
 
