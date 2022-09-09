@@ -176,7 +176,10 @@ export class CameraStack extends SceneNode {
 
     if ( import.meta.hot ) {
       import.meta.hot.accept( './shaders/deferredShadeFrag', ( { deferredShadeFrag } ) => {
-        shadingMaterial.replaceShader( quadVert, deferredShadeFrag( { withAO: !!aoTarget } ) );
+        shadingMaterial.replaceShader(
+          quadVert,
+          deferredShadeFrag( { withAO: !!( aoTarget && useAO ) } )
+        );
       } );
     }
 
