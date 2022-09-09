@@ -13,7 +13,6 @@ export const fuiFrag = ( tag: 'forward' | 'depth' ): string => build( () => {
   const time = defUniformNamed( 'float', 'time' );
   const opacity = defUniformNamed( 'float', 'opacity' );
   const samplerChar = defUniformNamed( 'sampler2D', 'samplerChar' );
-  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
 
   main( () => {
@@ -45,7 +44,7 @@ export const fuiFrag = ( tag: 'forward' | 'depth' ): string => build( () => {
       const posXYZ = sw( vPosition, 'xyz' );
 
       const len = length( sub( cameraPos, posXYZ ) );
-      assign( fragColor, calcShadowDepth( cameraNearFar, len ) );
+      assign( fragColor, calcShadowDepth( len ) );
       return;
 
     }

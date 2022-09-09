@@ -1,4 +1,4 @@
-import { GLSLExpression, GLSLFloatExpression, GLSLToken, abs, add, addAssign, assign, def, forBreak, forLoop, gt, ifThen, lt, mul, sw } from '../shaderBuilder';
+import { GLSLExpression, GLSLFloatExpression, GLSLToken, abs, add, addAssign, assign, def, defInNamed, forBreak, forLoop, gt, ifThen, length, lt, mul, sub, sw } from '../shaderBuilder';
 
 export function raymarch( {
   iter,
@@ -23,8 +23,13 @@ export function raymarch( {
     rl: GLSLToken<'float'>,
     rp: GLSLToken<'vec3'>,
   } {
+  const vPositionWithoutModel = defInNamed( 'vec4', 'vPositionWithoutModel' );
+
   const isect = def( 'vec4' );
-  const rl = def( 'float', initRl ?? 1E-2 );
+  const rl = def(
+    'float',
+    initRl ?? length( sub( sw( vPositionWithoutModel, 'xyz' ), ro ) ),
+  );
   const rp = def( 'vec3', add( ro, mul( rd, rl ) ) );
 
   forLoop( iter, () => {

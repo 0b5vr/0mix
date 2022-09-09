@@ -1,12 +1,13 @@
-import { GLSLExpression, div, mul, sub, sw } from '../shaderBuilder';
+import { GLSLExpression, defUniformNamed, div, mul, sub, sw } from '../shaderBuilder';
 
 /**
  * It probably returns a negative value.
  */
 export function invCalcDepth(
   depth: GLSLExpression<'float'>,
-  cameraNearFar: GLSLExpression<'vec2'>,
 ): GLSLExpression<'float'> {
+  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
+
   const near = sw( cameraNearFar, 'x' );
   const far = sw( cameraNearFar, 'y' );
   return div(

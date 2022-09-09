@@ -16,7 +16,6 @@ export const trailsRenderFrag = ( tag: 'deferred' | 'depth' ): string => build( 
   const fragNormal = defOut( 'vec4', 2 );
   const fragMisc = defOut( 'vec4', 3 );
 
-  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
 
   main( () => {
@@ -26,7 +25,7 @@ export const trailsRenderFrag = ( tag: 'deferred' | 'depth' ): string => build( 
       const posXYZ = sw( vPosition, 'xyz' );
 
       const len = length( sub( cameraPos, posXYZ ) );
-      assign( fragColor, calcShadowDepth( cameraNearFar, len ) );
+      assign( fragColor, calcShadowDepth( len ) );
       retFn();
 
     }

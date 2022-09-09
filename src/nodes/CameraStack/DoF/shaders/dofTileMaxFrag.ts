@@ -9,7 +9,6 @@ export const dofTileMaxFrag = ( isVert: boolean ): string => build( () => {
   const fragColor = defOut( 'vec4' );
 
   const resolution = defUniformNamed( 'vec2', 'resolution' );
-  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
 
   main( () => {
@@ -30,7 +29,7 @@ export const dofTileMaxFrag = ( isVert: boolean ): string => build( () => {
       const tex = def( 'vec4', texture( sampler0, uv ) );
       const depth = isVert
         ? sw( tex, 'x' )
-        : def( 'float', neg( invCalcDepth( sw( tex, 'w' ), cameraNearFar ) ) );
+        : def( 'float', neg( invCalcDepth( sw( tex, 'w' ) ) ) );
       assign( depthNearest, min( depthNearest, depth ) );
 
       const coc = isVert

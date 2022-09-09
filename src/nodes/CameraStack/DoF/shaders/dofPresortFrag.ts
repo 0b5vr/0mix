@@ -8,14 +8,13 @@ export const dofPresortFrag = build( () => {
   const vUv = defInNamed( 'vec2', 'vUv' );
   const fragColor = defOut( 'vec4' );
 
-  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
   const samplerTile = defUniformNamed( 'sampler2D', 'samplerTile' );
 
   main( () => {
     const tex0 = def( 'vec4', texture( sampler0, vUv ) );
     const texTile = def( 'vec4', texture( samplerTile, vUv ) );
-    const depth = def( 'float', neg( invCalcDepth( sw( tex0, 'w' ), cameraNearFar ) ) );
+    const depth = def( 'float', neg( invCalcDepth( sw( tex0, 'w' ) ) ) );
 
     const coc = def( 'float', dofCalcCoC( depth ) );
 

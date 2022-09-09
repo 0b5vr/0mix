@@ -1,6 +1,6 @@
 import { INV_PI } from '../../../../utils/constants';
 import { MTL_PBR_EMISSIVE3_ROUGHNESS } from '../../../CameraStack/deferredConstants';
-import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, discard, div, glFragCoord, glFragDepth, gt, ifThen, insert, length, mad, main, mul, normalize, retFn, sq, sub, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defFn, defOut, defUniformNamed, discard, div, glFragCoord, glFragDepth, gt, ifThen, insert, length, mad, main, mul, normalize, retFn, sq, sub, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcL } from '../../../../shaders/modules/calcL';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
 import { calcSS } from '../../../../shaders/modules/calcSS';
@@ -15,7 +15,6 @@ import { setupRoRd } from '../../../../shaders/modules/setupRoRd';
 export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
 
-  const vPositionWithoutModel = defInNamed( 'vec4', 'vPositionWithoutModel' );
   const pvm = defUniformNamed( 'mat4', 'pvm' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
   const normalMatrix = defUniformNamed( 'mat3', 'normalMatrix' );
@@ -27,10 +26,8 @@ export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () =
 
   const time = defUniformNamed( 'float', 'time' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
-  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
   const modelMatrixT3 = defUniformNamed( 'mat3', 'modelMatrixT3' );
-  const inversePVM = defUniformNamed( 'mat4', 'inversePVM' );
 
   const { init } = glslDefRandom();
 
@@ -46,14 +43,13 @@ export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () =
     ) );
     init( vec4( p, time, 1.0 ) );
 
-    const { ro, rd } = setupRoRd( { inversePVM, p } );
+    const [ ro, rd ] = setupRoRd( p );
 
     const { isect, rp } = raymarch( {
       iter: 50,
       ro,
       rd,
       map,
-      initRl: length( sub( sw( vPositionWithoutModel, 'xyz' ), ro ) ),
     } );
 
     ifThen( gt( sw( isect, 'x' ), tag === 'depth' ? 1E-1 : 1E-2 ), () => discard() );
@@ -66,7 +62,7 @@ export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () =
 
     if ( tag === 'depth' ) {
       const len = length( sub( cameraPos, sw( modelPos, 'xyz' ) ) );
-      assign( fragColor, calcShadowDepth( cameraNearFar, len ) );
+      assign( fragColor, calcShadowDepth( len ) );
       retFn();
 
     }

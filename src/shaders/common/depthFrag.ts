@@ -8,14 +8,13 @@ export const depthFrag = build( () => {
 
   const fragColor = defOut( 'vec4' );
 
-  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
 
   main( () => {
     const posXYZ = sw( vPosition, 'xyz' );
 
     const len = length( sub( cameraPos, posXYZ ) );
-    assign( fragColor, calcShadowDepth( cameraNearFar, len ) );
+    assign( fragColor, calcShadowDepth( len ) );
     return;
   } );
 } );

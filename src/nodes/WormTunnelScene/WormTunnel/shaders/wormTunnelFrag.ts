@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
-import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, forLoop, glFragCoord, glFragDepth, glslFalse, glslTrue, ifThen, insert, length, main, mul, mulAssign, normalize, retFn, sub, sw, texture, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defFn, defOut, defUniformNamed, div, forLoop, glFragCoord, glFragDepth, glslFalse, glslTrue, ifThen, insert, length, main, mul, mulAssign, normalize, retFn, sub, sw, texture, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
 import { perlin3d } from '../../../../shaders/modules/perlin3d';
@@ -10,7 +10,6 @@ import { triplanarMapping } from '../../../../shaders/modules/triplanarMapping';
 export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
 
-  const vPositionWithoutModel = defInNamed( 'vec4', 'vPositionWithoutModel' );
   const pvm = defUniformNamed( 'mat4', 'pvm' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
   const normalMatrix = defUniformNamed( 'mat3', 'normalMatrix' );
@@ -24,9 +23,7 @@ export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
 
   const time = defUniformNamed( 'float', 'time' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
-  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
-  const inversePVM = defUniformNamed( 'mat4', 'inversePVM' );
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
 
   const map = defFn( 'vec4', [ 'vec3' ], ( p ) => {
@@ -61,7 +58,7 @@ export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
       sw( resolution, 'y' ),
     ) );
 
-    const { ro, rd } = setupRoRd( { inversePVM, p } );
+    const [ ro, rd ] = setupRoRd( p );
 
     const { rp } = raymarch( {
       iter: tag === 'depth' ? 60 : 80,
@@ -69,7 +66,6 @@ export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
       rd,
       map,
       marchMultiplier: 0.9,
-      initRl: length( sub( sw( vPositionWithoutModel, 'xyz' ), ro ) ),
     } );
 
     // too much artifacts, how bout no hit test
@@ -83,7 +79,7 @@ export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
 
     if ( tag === 'depth' ) {
       const len = length( sub( cameraPos, sw( modelPos, 'xyz' ) ) );
-      assign( fragColor, calcShadowDepth( cameraNearFar, len ) );
+      assign( fragColor, calcShadowDepth( len ) );
       retFn();
 
     }

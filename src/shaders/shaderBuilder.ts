@@ -39,7 +39,7 @@ export const glslTrue = 'true' as GLSLExpression<'bool'>;
 // †† the sacred zone of global state ††††††††††††††††††††††††††††††††††††††††††††††††††††††††††††††
 const __stack: string[] = [];
 
-const __cache: Map<symbol, any> = new Map();
+const __cache: Map<string | symbol, any> = new Map();
 
 let __charIndex = 0;
 // †† end of the sacred zone of global state †††††††††††††††††††††††††††††††††††††††††††††††††††††††
@@ -55,7 +55,7 @@ export function genToken(): string {
   return token;
 }
 
-export function cache<T>( id: symbol, create: () => T ): T {
+export function cache<T>( id: string | symbol, create: () => T ): T {
   let func = __cache.get( id ) as T | undefined;
   if ( func == null ) {
     func = create();
@@ -166,11 +166,14 @@ export const defIn: {
 
 export const defInNamed: {
   <T extends string>( type: T, name: string ): Tok<T>;
-} = ( type: string, name: string ) => __def( {
-  type,
+} = ( type: string, name: string ) => cache(
   name,
-  modifier: 'in',
-} ) as any;
+  () => __def( {
+    type,
+    name,
+    modifier: 'in',
+  } ) as any,
+);
 
 export const defOut: {
   <T extends string>( type: T, location?: number ): Tok<T>;
@@ -190,20 +193,26 @@ export const defOutNamed: {
 
 export const defUniformNamed: {
   <T extends string>( type: T, name: string ): Tok<T>;
-} = ( type: string, name: string ) => __def( {
-  type,
+} = ( type: string, name: string ) => cache(
   name,
-  modifier: 'uniform',
-} ) as any;
+  () => __def( {
+    type,
+    name,
+    modifier: 'uniform',
+  } ) as any,
+);
 
 export const defUniformArrayNamed: {
   <T extends string>( type: T, name: string, size: number ): Tok<`${ T }[]`>;
-} = ( type: string, name: string, size: number ) => __def( {
-  type,
+} = ( type: string, name: string, size: number ) => cache(
   name,
-  modifier: 'uniform',
-  size,
-} ) as any;
+  () => __def( {
+    type,
+    name,
+    modifier: 'uniform',
+    size,
+  } ) as any,
+);
 
 export const assign: {
   ( dst: Tok<'float'>, src: number ): void;

@@ -1,10 +1,9 @@
-import { GLSLExpression, def, mul, sw, vec4 } from '../shaderBuilder';
+import { GLSLExpression, def, defUniformNamed, mul, sw, vec4 } from '../shaderBuilder';
 import { glslLinearstep } from './glslLinearstep';
 
-export function calcShadowDepth(
-  cameraNearFar: GLSLExpression<'vec2'>,
-  distance: GLSLExpression<'float'>,
-): GLSLExpression<'vec4'> {
+export function calcShadowDepth( distance: GLSLExpression<'float'> ): GLSLExpression<'vec4'> {
+  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
+
   const depth = def( 'float', glslLinearstep(
     sw( cameraNearFar, 'x' ),
     sw( cameraNearFar, 'y' ),

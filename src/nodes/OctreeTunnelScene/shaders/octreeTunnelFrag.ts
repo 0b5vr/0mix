@@ -31,9 +31,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
   const diceSize = defUniformNamed( 'float', 'diceSize' );
   const time = defUniformNamed( 'float', 'time' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
-  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
-  const inversePVM = defUniformNamed( 'mat4', 'inversePVM' );
 
   const { init, random } = glslDefRandom();
 
@@ -96,7 +94,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     ) );
     init( vec4( p, time, 1.0 ) );
 
-    const { ro, rd } = setupRoRd( { inversePVM, p } );
+    const [ ro, rd ] = setupRoRd( p );
     const initRl = def( 'float', length( sub( sw( vPositionWithoutModel, 'xyz' ), ro ) ) );
     addAssign( ro, mul( rd, initRl ) );
 
@@ -243,7 +241,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
 
     if ( tag === 'depth' ) {
       const len = length( sub( cameraPos, sw( modelPos, 'xyz' ) ) );
-      assign( fragColor, calcShadowDepth( cameraNearFar, len ) );
+      assign( fragColor, calcShadowDepth( len ) );
       retFn();
 
     }

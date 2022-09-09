@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
-import { abs, add, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, discard, div, glFragCoord, glFragDepth, gt, ifThen, insert, length, main, max, mod, mul, neg, normalize, retFn, sub, sw, unrollLoop, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { abs, add, assign, build, def, defFn, defOut, defUniformNamed, discard, div, glFragCoord, glFragDepth, gt, ifThen, insert, length, main, max, mod, mul, neg, normalize, retFn, sub, sw, unrollLoop, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
 import { raymarch } from '../../../../shaders/modules/raymarch';
@@ -10,7 +10,6 @@ import { sortVec3Components } from '../../../../shaders/modules/sortVec3Componen
 export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
 
-  const vPositionWithoutModel = defInNamed( 'vec4', 'vPositionWithoutModel' );
   const pvm = defUniformNamed( 'mat4', 'pvm' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
   const normalMatrix = defUniformNamed( 'mat3', 'normalMatrix' );
@@ -21,9 +20,7 @@ export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
   const fragMisc = defOut( 'vec4', 3 );
 
   const resolution = defUniformNamed( 'vec2', 'resolution' );
-  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
-  const inversePVM = defUniformNamed( 'mat4', 'inversePVM' );
 
   const map = defFn( 'vec4', [ 'vec3' ], ( p ) => {
     // const d = def( 'float', sub( length( p ), 0.1 ) );
@@ -46,14 +43,13 @@ export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
       sw( resolution, 'y' ),
     ) );
 
-    const { ro, rd } = setupRoRd( { inversePVM, p } );
+    const [ ro, rd ] = setupRoRd( p );
 
     const { isect, rp } = raymarch( {
       iter: 80,
       ro,
       rd,
       map,
-      initRl: length( sub( sw( vPositionWithoutModel, 'xyz' ), ro ) ),
     } );
 
     ifThen( gt( sw( isect, 'x' ), 1E-2 ), () => discard() );
@@ -66,7 +62,7 @@ export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
 
     if ( tag === 'depth' ) {
       const len = length( sub( cameraPos, sw( modelPos, 'xyz' ) ) );
-      assign( fragColor, calcShadowDepth( cameraNearFar, len ) );
+      assign( fragColor, calcShadowDepth( len ) );
       retFn();
 
     }

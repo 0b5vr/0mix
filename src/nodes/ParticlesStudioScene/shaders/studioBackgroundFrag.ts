@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
-import { add, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, glFragCoord, glFragDepth, glslFalse, glslTrue, gt, insert, length, main, mul, normalize, retFn, sub, sw, tern, vec4 } from '../../../shaders/shaderBuilder';
+import { add, assign, build, def, defFn, defOut, defUniformNamed, div, glFragCoord, glFragDepth, glslFalse, glslTrue, gt, insert, length, main, mul, normalize, retFn, sub, sw, tern, vec4 } from '../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 import { raymarch } from '../../../shaders/modules/raymarch';
@@ -9,7 +9,6 @@ import { setupRoRd } from '../../../shaders/modules/setupRoRd';
 export const studioBackgroundFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
 
-  const vPositionWithoutModel = defInNamed( 'vec4', 'vPositionWithoutModel' );
   const pvm = defUniformNamed( 'mat4', 'pvm' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
   const normalMatrix = defUniformNamed( 'mat3', 'normalMatrix' );
@@ -22,9 +21,7 @@ export const studioBackgroundFrag = ( tag: 'deferred' | 'depth' ): string => bui
   const fragMisc = defOut( 'vec4', 3 );
 
   const resolution = defUniformNamed( 'vec2', 'resolution' );
-  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
-  const inversePVM = defUniformNamed( 'mat4', 'inversePVM' );
 
   const map = defFn( 'vec4', [ 'vec3' ], ( p ) => {
     assign( p, tern( gt( sw( p, 'z' ), sw( p, 'y' ) ), sw( p, 'xzy' ), p ) );
@@ -44,7 +41,7 @@ export const studioBackgroundFrag = ( tag: 'deferred' | 'depth' ): string => bui
       sw( resolution, 'y' ),
     ) );
 
-    const { ro, rd } = setupRoRd( { inversePVM, p } );
+    const [ ro, rd ] = setupRoRd( p );
 
     const { rp } = raymarch( {
       iter: 20,
@@ -52,7 +49,6 @@ export const studioBackgroundFrag = ( tag: 'deferred' | 'depth' ): string => bui
       rd,
       map,
       marchMultiplier: 0.9,
-      initRl: length( sub( sw( vPositionWithoutModel, 'xyz' ), ro ) ),
     } );
 
     // too much artifacts, how bout no hit test
@@ -66,7 +62,7 @@ export const studioBackgroundFrag = ( tag: 'deferred' | 'depth' ): string => bui
 
     if ( tag === 'depth' ) {
       const len = length( sub( cameraPos, sw( modelPos, 'xyz' ) ) );
-      assign( fragColor, calcShadowDepth( cameraNearFar, len ) );
+      assign( fragColor, calcShadowDepth( len ) );
       retFn();
 
     }

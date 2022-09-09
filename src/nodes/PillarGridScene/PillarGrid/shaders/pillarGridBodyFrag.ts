@@ -19,14 +19,13 @@ export const pillarGridBodyFrag = ( tag: 'deferred' | 'depth' ): string => build
   const fragMisc = defOut( 'vec4', 3 );
 
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
-  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
 
   main( () => {
     if ( tag === 'depth' ) {
       const posXYZ = sw( vPosition, 'xyz' );
 
       const len = length( sub( cameraPos, posXYZ ) );
-      assign( fragColor, calcShadowDepth( cameraNearFar, len ) );
+      assign( fragColor, calcShadowDepth( len ) );
       retFn();
 
     }

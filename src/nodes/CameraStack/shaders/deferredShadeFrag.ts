@@ -24,7 +24,6 @@ export const deferredShadeFrag = ( { withAO }: {
   const fragColor = defOut( 'vec4' );
 
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
-  const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
   const fog = defUniformNamed( 'vec3', 'fog' );
   const aoMix = defUniformNamed( 'float', 'aoMix' );
   const aoInvert = defUniformNamed( 'float', 'aoInvert' );
@@ -187,7 +186,7 @@ export const deferredShadeFrag = ( { withAO }: {
 
     assign( fragColor, vec4( clamp( outColor, 0.0, 1E3 ), 1.0 ) );
 
-    const linearDepth = neg( invCalcDepth( depth, cameraNearFar ) );
+    const linearDepth = neg( invCalcDepth( depth ) );
 
     assign( fragColor, mix(
       fragColor,
