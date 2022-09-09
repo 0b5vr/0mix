@@ -1,6 +1,6 @@
 import { INV_PI } from '../../../../utils/constants';
 import { MTL_PBR_EMISSIVE3_ROUGHNESS } from '../../../CameraStack/deferredConstants';
-import { add, addAssign, assign, build, def, defFn, defOut, defUniformNamed, div, glFragCoord, glFragDepth, insert, length, mad, main, mul, normalize, retFn, sq, sub, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defFn, defOut, defUniformNamed, div, glFragCoord, glFragDepth, insert, mad, main, mul, normalize, retFn, sq, sub, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcL } from '../../../../shaders/modules/calcL';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
 import { calcSS } from '../../../../shaders/modules/calcSS';
@@ -26,7 +26,6 @@ export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () =
 
   const time = defUniformNamed( 'float', 'time' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
-  const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
   const modelMatrixT3 = defUniformNamed( 'mat3', 'modelMatrixT3' );
 
   const { init } = glslDefRandom();
@@ -60,8 +59,7 @@ export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () =
     assign( glFragDepth, add( 0.5, mul( 0.5, depth ) ) );
 
     if ( tag === 'depth' ) {
-      const len = length( sub( cameraPos, sw( modelPos, 'xyz' ) ) );
-      assign( fragColor, calcShadowDepth( len ) );
+      assign( fragColor, calcShadowDepth( projPos ) );
       retFn();
 
     }

@@ -23,7 +23,6 @@ export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
 
   const time = defUniformNamed( 'float', 'time' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
-  const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
 
   const map = defFn( 'vec4', [ 'vec3' ], ( p ) => {
@@ -76,8 +75,7 @@ export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
     assign( glFragDepth, add( 0.5, mul( 0.5, depth ) ) );
 
     if ( tag === 'depth' ) {
-      const len = length( sub( cameraPos, sw( modelPos, 'xyz' ) ) );
-      assign( fragColor, calcShadowDepth( len ) );
+      assign( fragColor, calcShadowDepth( projPos ) );
       retFn();
 
     }

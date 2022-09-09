@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
-import { abs, add, assign, build, def, defFn, defOut, defUniformNamed, div, glFragCoord, glFragDepth, insert, length, main, max, mod, mul, neg, normalize, retFn, sub, sw, unrollLoop, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { abs, add, assign, build, def, defFn, defOut, defUniformNamed, div, glFragCoord, glFragDepth, insert, main, max, mod, mul, neg, normalize, retFn, sub, sw, unrollLoop, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
 import { raymarch } from '../../../../shaders/modules/raymarch';
@@ -20,7 +20,6 @@ export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
   const fragMisc = defOut( 'vec4', 3 );
 
   const resolution = defUniformNamed( 'vec2', 'resolution' );
-  const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
 
   const map = defFn( 'vec4', [ 'vec3' ], ( p ) => {
     // const d = def( 'float', sub( length( p ), 0.1 ) );
@@ -60,8 +59,7 @@ export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
     assign( glFragDepth, add( 0.5, mul( 0.5, depth ) ) );
 
     if ( tag === 'depth' ) {
-      const len = length( sub( cameraPos, sw( modelPos, 'xyz' ) ) );
-      assign( fragColor, calcShadowDepth( len ) );
+      assign( fragColor, calcShadowDepth( projPos ) );
       retFn();
 
     }

@@ -1,20 +1,15 @@
-import { assign, build, defInNamed, defOut, defUniformNamed, insert, length, main, sub, sw } from '../shaderBuilder';
+import { assign, build, defInNamed, defOut, insert, main } from '../shaderBuilder';
 import { calcShadowDepth } from '../modules/calcShadowDepth';
 
 export const depthFrag = build( () => {
   insert( 'precision highp float;' );
 
-  const vPosition = defInNamed( 'vec4', 'vPosition' );
+  const vProjPosition = defInNamed( 'vec4', 'vProjPosition' );
 
   const fragColor = defOut( 'vec4' );
 
-  const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
-
   main( () => {
-    const posXYZ = sw( vPosition, 'xyz' );
-
-    const len = length( sub( cameraPos, posXYZ ) );
-    assign( fragColor, calcShadowDepth( len ) );
+    assign( fragColor, calcShadowDepth( vProjPosition ) );
     return;
   } );
 } );

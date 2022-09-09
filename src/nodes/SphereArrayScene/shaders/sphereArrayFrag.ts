@@ -22,7 +22,6 @@ export const sphereArrayFrag = ( tag: 'deferred' | 'depth' ): string => build( (
 
   const time = defUniformNamed( 'float', 'time' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
-  const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
   const normalMatrix = defUniformNamed( 'mat3', 'normalMatrix' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
   const pvm = defUniformNamed( 'mat4', 'pvm' );
@@ -84,8 +83,7 @@ export const sphereArrayFrag = ( tag: 'deferred' | 'depth' ): string => build( (
     assign( glFragDepth, add( 0.5, mul( 0.5, depth ) ) );
 
     if ( tag === 'depth' ) {
-      const len = length( sub( cameraPos, sw( modelPos, 'xyz' ) ) );
-      assign( fragColor, calcShadowDepth( len ) );
+      assign( fragColor, calcShadowDepth( projPos ) );
       retFn();
 
     }

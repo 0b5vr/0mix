@@ -1,4 +1,4 @@
-import { add, assign, build, def, defInNamed, defOutNamed, defUniformNamed, discard, ifThen, insert, length, lt, main, max, mul, mulAssign, sin, sub, sw, texture, vec2, vec4 } from '../../../shaders/shaderBuilder';
+import { add, assign, build, def, defInNamed, defOutNamed, defUniformNamed, discard, ifThen, insert, lt, main, max, mul, mulAssign, sin, sub, sw, texture, vec2, vec4 } from '../../../shaders/shaderBuilder';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 import { glslLinearstep } from '../../../shaders/modules/glslLinearstep';
 import { sdcapsule } from '../../../shaders/modules/sdcapsule';
@@ -6,14 +6,13 @@ import { sdcapsule } from '../../../shaders/modules/sdcapsule';
 export const fuiFrag = ( tag: 'forward' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
 
-  const vPosition = defInNamed( 'vec4', 'vPosition' );
+  const vProjPosition = defInNamed( 'vec4', 'vProjPosition' );
   const vUv = defInNamed( 'vec2', 'vUv' );
   const fragColor = defOutNamed( 'vec4', 'fragColor' );
 
   const time = defUniformNamed( 'float', 'time' );
   const opacity = defUniformNamed( 'float', 'opacity' );
   const samplerChar = defUniformNamed( 'sampler2D', 'samplerChar' );
-  const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
 
   main( () => {
     const p = def( 'vec2', sub( mul( vUv, 2.0 ), 1.0 ) );
@@ -41,10 +40,7 @@ export const fuiFrag = ( tag: 'forward' | 'depth' ): string => build( () => {
     } else if ( tag === 'depth' ) {
       ifThen( lt( haha, 0.5 ), () => discard() );
 
-      const posXYZ = sw( vPosition, 'xyz' );
-
-      const len = length( sub( cameraPos, posXYZ ) );
-      assign( fragColor, calcShadowDepth( len ) );
+      assign( fragColor, calcShadowDepth( vProjPosition ) );
       return;
 
     }

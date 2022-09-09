@@ -31,7 +31,6 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
   const diceSize = defUniformNamed( 'float', 'diceSize' );
   const time = defUniformNamed( 'float', 'time' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
-  const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
 
   const { init, random } = glslDefRandom();
 
@@ -240,8 +239,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     assign( glFragDepth, add( 0.5, mul( 0.5, depth ) ) );
 
     if ( tag === 'depth' ) {
-      const len = length( sub( cameraPos, sw( modelPos, 'xyz' ) ) );
-      assign( fragColor, calcShadowDepth( len ) );
+      assign( fragColor, calcShadowDepth( projPos ) );
       retFn();
 
     }

@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
-import { assign, build, defInNamed, defOut, defUniformNamed, discard, div, fract, gt, ifThen, insert, length, main, mul, normalize, retFn, sub, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { assign, build, defInNamed, defOut, discard, div, fract, gt, ifThen, insert, main, mul, normalize, retFn, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
 
 export const trailsRenderFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
@@ -16,16 +16,11 @@ export const trailsRenderFrag = ( tag: 'deferred' | 'depth' ): string => build( 
   const fragNormal = defOut( 'vec4', 2 );
   const fragMisc = defOut( 'vec4', 3 );
 
-  const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
-
   main( () => {
     ifThen( gt( vJumpFlag, 1E-4 ), () => discard() );
 
     if ( tag === 'depth' ) {
-      const posXYZ = sw( vPosition, 'xyz' );
-
-      const len = length( sub( cameraPos, posXYZ ) );
-      assign( fragColor, calcShadowDepth( len ) );
+      assign( fragColor, calcShadowDepth( vProjPosition ) );
       retFn();
 
     }
