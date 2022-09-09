@@ -120,7 +120,13 @@ export class Material {
           this.vert,
           this.frag,
           this.__linkOptions,
-        );
+        ).catch( ( e ) => {
+          if ( import.meta.env.DEV ) {
+            console.error( this );
+          }
+
+          throw e;
+        } );
 
         gl.useProgram( this.__program );
         initOptions.geometry.drawElementsOrArrays();
