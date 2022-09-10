@@ -5,12 +5,11 @@ export const sphereArrayVert = build( () => {
   const instance = defIn( 'vec2', 3 );
 
   const vPositionWithoutModel = defOutNamed( 'vec4', 'vPositionWithoutModel' );
+  const vProjPosition = defOutNamed( 'vec4', 'vProjPosition' );
   const vInstance = defOutNamed( 'vec2', 'vInstance' );
 
   const resolution = defUniformNamed( 'vec2', 'resolution' );
-  const projectionMatrix = defUniformNamed( 'mat4', 'projectionMatrix' );
-  const viewMatrix = defUniformNamed( 'mat4', 'viewMatrix' );
-  const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
+  const pvm = defUniformNamed( 'mat4', 'pvm' );
 
   main( () => {
     assign( vPositionWithoutModel, vec4( position, 1.0 ) );
@@ -19,7 +18,8 @@ export const sphereArrayVert = build( () => {
 
     addAssign( sw( vPositionWithoutModel, 'xy' ), instance );
 
-    assign( glPosition, mul( projectionMatrix, viewMatrix, modelMatrix, vPositionWithoutModel ) );
+    assign( vProjPosition, mul( pvm, vPositionWithoutModel ) );
+    assign( glPosition, vProjPosition );
 
     const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( glPosition, 'x' ), aspect );

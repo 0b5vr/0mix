@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
-import { abs, add, assign, build, def, defFn, defOut, defUniformNamed, div, glFragCoord, glFragDepth, insert, main, max, mod, mul, neg, normalize, retFn, sub, sw, unrollLoop, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { abs, add, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, glFragDepth, insert, main, max, mod, mul, neg, normalize, retFn, sub, sw, unrollLoop, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
 import { raymarch } from '../../../../shaders/modules/raymarch';
@@ -10,6 +10,8 @@ import { sortVec3Components } from '../../../../shaders/modules/sortVec3Componen
 export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
 
+  const vProjPosition = defInNamed( 'vec4', 'vProjPosition' );
+
   const pvm = defUniformNamed( 'mat4', 'pvm' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
   const normalMatrix = defUniformNamed( 'mat3', 'normalMatrix' );
@@ -18,8 +20,6 @@ export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
   const fragPosition = defOut( 'vec4', 1 );
   const fragNormal = defOut( 'vec4', 2 );
   const fragMisc = defOut( 'vec4', 3 );
-
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
 
   const map = defFn( 'vec4', [ 'vec3' ], ( p ) => {
     // const d = def( 'float', sub( length( p ), 0.1 ) );
@@ -37,10 +37,7 @@ export const spongeFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
   } );
 
   main( () => {
-    const p = def( 'vec2', div(
-      sub( mul( 2.0, sw( glFragCoord, 'xy' ) ), resolution ),
-      sw( resolution, 'y' ),
-    ) );
+    const p = def( 'vec2', div( sw( vProjPosition, 'xy' ), sw( vProjPosition, 'w' ) ) );
 
     const [ ro, rd ] = setupRoRd( p );
 

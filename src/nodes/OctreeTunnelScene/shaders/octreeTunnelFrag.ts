@@ -1,5 +1,5 @@
 import { FAR } from '../../../config';
-import { GLSLExpression, GLSLToken, abs, add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, discard, div, divAssign, dot, eq, floor, forBreak, forLoop, glFragCoord, glFragDepth, glslFalse, glslTrue, gt, ifThen, insert, length, lt, mad, main, max, min, mix, mul, mulAssign, neg, normalize, not, num, or, reflect, refract, retFn, sin, smoothstep, sq, step, sub, subAssign, sw, tern, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, GLSLToken, abs, add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, discard, div, divAssign, dot, eq, floor, forBreak, forLoop, glFragDepth, glslFalse, glslTrue, gt, ifThen, insert, length, lt, mad, main, max, min, mix, mul, mulAssign, neg, normalize, not, num, or, reflect, refract, retFn, sin, smoothstep, sq, step, sub, subAssign, sw, tern, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
 import { TAU } from '../../../utils/constants';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
@@ -17,7 +17,9 @@ const IOR = 1.6;
 export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
 
+  const vProjPosition = defInNamed( 'vec4', 'vProjPosition' );
   const vPositionWithoutModel = defInNamed( 'vec4', 'vPositionWithoutModel' );
+
   const pvm = defUniformNamed( 'mat4', 'pvm' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
   const normalMatrix = defUniformNamed( 'mat3', 'normalMatrix' );
@@ -30,7 +32,6 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
   const density = defUniformNamed( 'float', 'density' );
   const diceSize = defUniformNamed( 'float', 'diceSize' );
   const time = defUniformNamed( 'float', 'time' );
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
 
   const { init, random } = glslDefRandom();
 
@@ -87,10 +88,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
   };
 
   main( () => {
-    const p = def( 'vec2', div(
-      sub( mul( 2.0, sw( glFragCoord, 'xy' ) ), resolution ),
-      sw( resolution, 'y' ),
-    ) );
+    const p = def( 'vec2', div( sw( vProjPosition, 'xy' ), sw( vProjPosition, 'w' ) ) );
     init( vec4( p, time, 1.0 ) );
 
     const [ ro, rd ] = setupRoRd( p );

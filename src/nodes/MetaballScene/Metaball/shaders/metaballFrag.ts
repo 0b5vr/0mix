@@ -1,6 +1,6 @@
 import { INV_PI } from '../../../../utils/constants';
 import { MTL_PBR_EMISSIVE3_ROUGHNESS } from '../../../CameraStack/deferredConstants';
-import { add, addAssign, assign, build, def, defFn, defOut, defUniformNamed, div, glFragCoord, glFragDepth, insert, mad, main, mul, normalize, retFn, sq, sub, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, glFragDepth, insert, mad, main, mul, normalize, retFn, sq, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { calcL } from '../../../../shaders/modules/calcL';
 import { calcNormal } from '../../../../shaders/modules/calcNormal';
 import { calcSS } from '../../../../shaders/modules/calcSS';
@@ -15,6 +15,8 @@ import { setupRoRd } from '../../../../shaders/modules/setupRoRd';
 export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
 
+  const vProjPosition = defInNamed( 'vec4', 'vProjPosition' );
+
   const pvm = defUniformNamed( 'mat4', 'pvm' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
   const normalMatrix = defUniformNamed( 'mat3', 'normalMatrix' );
@@ -25,7 +27,6 @@ export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () =
   const fragMisc = defOut( 'vec4', 3 );
 
   const time = defUniformNamed( 'float', 'time' );
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
   const modelMatrixT3 = defUniformNamed( 'mat3', 'modelMatrixT3' );
 
   const { init } = glslDefRandom();
@@ -36,10 +37,7 @@ export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () =
   } );
 
   main( () => {
-    const p = def( 'vec2', div(
-      sub( mul( 2.0, sw( glFragCoord, 'xy' ) ), resolution ),
-      sw( resolution, 'y' ),
-    ) );
+    const p = def( 'vec2', div( sw( vProjPosition, 'xy' ), sw( vProjPosition, 'w' ) ) );
     init( vec4( p, time, 1.0 ) );
 
     const [ ro, rd ] = setupRoRd( p );

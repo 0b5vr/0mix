@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
-import { abs, add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, eq, glFragCoord, glFragDepth, glslFalse, glslTrue, ifThen, insert, length, lt, main, max, mul, mulAssign, normalize, retFn, sub, subAssign, sw, tern, vec4 } from '../../../shaders/shaderBuilder';
+import { abs, add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, eq, glFragDepth, glslFalse, glslTrue, ifThen, insert, length, lt, main, max, mul, mulAssign, normalize, retFn, sub, subAssign, sw, tern, vec4 } from '../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 import { perlin2d } from '../../../shaders/modules/perlin2d';
@@ -11,6 +11,7 @@ import { setupRoRd } from '../../../shaders/modules/setupRoRd';
 export const sphereArrayFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
 
+  const vProjPosition = defInNamed( 'vec4', 'vProjPosition' );
   const vInstance = defInNamed( 'vec2', 'vInstance' );
 
   const isAfterMarch = def( 'bool', glslFalse );
@@ -21,7 +22,6 @@ export const sphereArrayFrag = ( tag: 'deferred' | 'depth' ): string => build( (
   const fragMisc = defOut( 'vec4', 3 );
 
   const time = defUniformNamed( 'float', 'time' );
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
   const normalMatrix = defUniformNamed( 'mat3', 'normalMatrix' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
   const pvm = defUniformNamed( 'mat4', 'pvm' );
@@ -61,10 +61,7 @@ export const sphereArrayFrag = ( tag: 'deferred' | 'depth' ): string => build( (
   } );
 
   main( () => {
-    const p = def( 'vec2', div(
-      sub( mul( 2.0, sw( glFragCoord, 'xy' ) ), resolution ),
-      sw( resolution, 'y' ),
-    ) );
+    const p = def( 'vec2', div( sw( vProjPosition, 'xy' ), sw( vProjPosition, 'w' ) ) );
 
     const [ ro, rd ] = setupRoRd( p );
 
