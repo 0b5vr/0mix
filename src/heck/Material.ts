@@ -112,9 +112,27 @@ export class Material {
     this.__linkOptions = linkOptions ?? {};
     this.blend = blend ?? [ GL_ONE, GL_ZERO ];
 
-    if ( initOptions ) {
+    if ( import.meta.env.DEV ) {
+      if ( initOptions ) {
+        glLazyProgram(
+          this.vert,
+          this.frag,
+          this.__linkOptions,
+        ).catch( ( e ) => {
+          if ( import.meta.env.DEV ) {
+            console.error( this );
+          }
+
+          throw e;
+        } ).then( ( value ) => {
+          this.__program = value;
+        } );
+      } else {
+        throw new Error( 'Material created without initOptions' );
+      }
+    } else {
       Material.d3dSucksList.push( async () => {
-        initOptions.target.bind();
+        initOptions!.target.bind();
 
         this.__program = await glLazyProgram(
           this.vert,
@@ -129,14 +147,10 @@ export class Material {
         } );
 
         gl.useProgram( this.__program );
-        initOptions.geometry.drawElementsOrArrays();
+        initOptions!.geometry.drawElementsOrArrays();
 
         this.onReady?.();
       } );
-    } else {
-      if ( import.meta.env.DEV ) {
-        console.warn( 'Material created without initOptions' );
-      }
     }
   }
 

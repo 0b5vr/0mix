@@ -6,8 +6,8 @@ import { automaton } from './globals/automaton';
 import { canvas } from './globals/canvas';
 import { dog } from './scene';
 import { getDivCanvasContainer } from './globals/dom';
-import { gui, promiseGui } from './globals/gui';
 import { music } from './globals/music';
+import { promiseGui } from './globals/gui';
 
 // == dom ==========================================================================================
 if ( import.meta.env.DEV ) {
@@ -29,17 +29,6 @@ if ( import.meta.env.DEV ) {
 if ( import.meta.env.DEV ) {
   const kickstartDev = async (): Promise<void> => {
     console.info( dog );
-
-    [
-      Material.d3dSucks(),
-    ].map( ( task, i ) => {
-      const taskname = [ 'shaders', 'music' ][ i ];
-      task.onProgress = ( progress ) => {
-        const gui_ = gui;
-        gui_?.monitor( `tasks/${ taskname }`, `${ Math.floor( progress * 100.0 ) }%` );
-      };
-      return task.promise;
-    } );
 
     emit( EventType.Resize, [ 1920, 1080 ] );
     dog.active = true;
