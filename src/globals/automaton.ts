@@ -51,6 +51,8 @@ export function automatonSetupMusic( music: Music ): void {
       automatonWithGUI.reset();
     } );
 
+    automatonWithGUI.resume( 'glsl-techno-set-resume' );
+
     window.addEventListener( 'keydown', ( event ) => {
       if ( event.key === ' ' ) {
         automatonWithGUI.togglePlay();

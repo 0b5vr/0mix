@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@0b5vr/automaton-with-gui@^4.2.1":
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/@0b5vr/automaton-with-gui/-/automaton-with-gui-4.2.1.tgz#21d2de5cb6ed21a474e6294b1f3678b8d4a32d4f"
-  integrity sha512-geV9rf392z7GOvcMPJi5jt+sD+tQwQVZlhn5WEi+o+fkbPD4+ORzqLDcWjsraNz17Bam8GDZ+2xb/zU7Cq4L+A==
+"@0b5vr/automaton-with-gui@^4.3.0-alpha.0":
+  version "4.3.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@0b5vr/automaton-with-gui/-/automaton-with-gui-4.3.0-alpha.0.tgz#10d07951fe1d71c73217dee61f4aef1193bd898f"
+  integrity sha512-B+LZAlwP4LWlu/bh4aitT+iwZB7JSc1Sdp+U30/8exwuT+ZYnawxg7+io0TAcvBbMUrtzc8VwWHwMzGYpTR+wA==
   dependencies:
     "@0b5vr/automaton" "4.2.1"
 
