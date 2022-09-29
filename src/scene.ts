@@ -4,6 +4,7 @@ import { CanvasRenderTarget } from './heck/CanvasRenderTarget';
 import { Capture } from './nodes/Capture/Capture';
 import { Dog } from './heck/Dog';
 import { EventType, on } from './globals/globalEvent';
+import { FluidScene } from './nodes/FluidScene/FluidScene';
 import { GLTextureFormatStuffRGBA8 } from './gl/glSetTexture';
 import { GL_NEAREST } from './gl/constants';
 import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
@@ -114,6 +115,7 @@ const scenesA = [
   new OctreeTunnelScene(),
   new ParticlesStudioScene(),
   new SphereArrayScene(),
+  new FluidScene(),
 ];
 
 const scenesB = [
