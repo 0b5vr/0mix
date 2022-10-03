@@ -126,6 +126,7 @@ export class Material {
           throw e;
         } ).then( ( value ) => {
           this.__program = value;
+          this.onReady?.();
         } );
       } else {
         throw new Error( 'Material created without initOptions' );
