@@ -1,5 +1,5 @@
 import { GRID_RESO } from '../constants';
-import { add, assign, build, def, defConst, defInNamed, defOut, defUniformNamed, insert, main, neg, sub, sw, vec2, vec4 } from '../../../shaders/shaderBuilder';
+import { add, assign, build, def, defConst, defInNamed, defOut, defUniformNamed, insert, main, mul, neg, sub, sw, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { defFluidSampleNearest3D } from './defFluidSampleNearest3D';
 import { fluidClampToGrid } from './fluidClampToGrid';
 import { fluidUvToPos } from './fluidUvToPos';
@@ -28,9 +28,11 @@ export const fluidCurlFrag: string = build( () => {
     const pz = def( 'vec4', sampleNearest3D( samplerVelocity, fluidClampToGrid( add( pos, sw( d, 'xxy' ) ) ) ) );
 
     assign( fragColor, vec4(
-      add( sw( nz, 'y' ), sw( py, 'z' ), neg( sw( pz, 'y' ) ), neg( sw( ny, 'z' ) ) ),
-      add( sw( nx, 'z' ), sw( pz, 'x' ), neg( sw( px, 'z' ) ), neg( sw( nz, 'x' ) ) ),
-      add( sw( ny, 'x' ), sw( px, 'y' ), neg( sw( py, 'x' ) ), neg( sw( nx, 'y' ) ) ),
+      mul( 0.5, vec3(
+        add( sw( nz, 'y' ), sw( py, 'z' ), neg( sw( pz, 'y' ) ), neg( sw( ny, 'z' ) ) ),
+        add( sw( nx, 'z' ), sw( pz, 'x' ), neg( sw( px, 'z' ) ), neg( sw( nz, 'x' ) ) ),
+        add( sw( ny, 'x' ), sw( px, 'y' ), neg( sw( py, 'x' ) ), neg( sw( nx, 'y' ) ) ),
+      ) ),
       1.0
     ) );
   } );

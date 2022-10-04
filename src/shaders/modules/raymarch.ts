@@ -18,19 +18,30 @@ export function raymarch( {
   initRl?: GLSLFloatExpression,
   eps?: GLSLFloatExpression,
   far?: GLSLFloatExpression,
+
+  /**
+   * `1.0` by default
+   */
   marchMultiplier?: GLSLFloatExpression,
+
+  /**
+   * Does not discard if it does not exist.
+   * You probably want to give it something like `1E-2`
+   */
   discardThreshold?: GLSLFloatExpression,
 } ): {
     isect: GLSLToken<'vec4'>,
     rl: GLSLToken<'float'>,
     rp: GLSLToken<'vec3'>,
   } {
-  const vPositionWithoutModel = defInNamed( 'vec4', 'vPositionWithoutModel' );
+  const vPositionWithoutModel = initRl != null
+    ? null
+    : defInNamed( 'vec4', 'vPositionWithoutModel' );
 
   const isect = def( 'vec4' );
   const rl = def(
     'float',
-    initRl ?? length( sub( sw( vPositionWithoutModel, 'xyz' ), ro ) ),
+    initRl ?? length( sub( sw( vPositionWithoutModel!, 'xyz' ), ro ) ),
   );
   const rp = def( 'vec3', add( ro, mul( rd, rl ) ) );
 

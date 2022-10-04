@@ -1,12 +1,13 @@
 import { BUFFER_RESO } from './constants';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { GLTextureFormatStuffR16F, GLTextureFormatStuffRGBA16F } from '../../gl/glSetTexture';
-import { GL_NEAREST, GL_ONE, GL_TEXTURE_2D } from '../../gl/constants';
+import { GL_NEAREST, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
 import { Quad } from '../../heck/components/Quad';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { Swap } from '@0b5vr/experimental';
+import { auto } from '../../globals/automaton';
 import { colorFrag } from '../../shaders/common/colorFrag';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { createRaymarchCameraUniformsLambda } from '../utils/createRaymarchCameraUniformsLambda';
@@ -20,11 +21,14 @@ import { fluidRenderFrag } from './shaders/fluidRenderFrag';
 import { fluidResolvePressureFrag } from './shaders/fluidResolvePressureFrag';
 import { genCube } from '../../geometries/genCube';
 import { glTextureFilter } from '../../gl/glTextureFilter';
+import { music } from '../../globals/music';
 import { objectVert } from '../../shaders/common/objectVert';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 
 export class Fluid extends SceneNode {
+  public forward: Material;
+
   public constructor() {
     super();
 
@@ -144,7 +148,7 @@ export class Fluid extends SceneNode {
 
     swapPressure.swap();
 
-    const quadPressures = [ ...Array( 11 ) ].map( ( _, i ) => {
+    const quadPressures = [ ...Array( 24 ) ].map( ( _, i ) => {
       const material = new Material(
         quadVert,
         fluidPressureFrag( i === 0 ),
@@ -261,12 +265,12 @@ export class Fluid extends SceneNode {
     // -- render -----------------------------------------------------------------------------------
     const geometry = genCube( { dimension: [ 0.5, 0.5, 0.5 ] } );
 
-    const forward = new Material(
+    const forward = this.forward = new Material(
       objectVert,
       fluidRenderFrag,
       {
         initOptions: { geometry, target: dummyRenderTarget1 },
-        blend: [ GL_ONE, GL_ONE ],
+        blend: [ GL_ONE, GL_ONE_MINUS_SRC_ALPHA ],
       },
     );
     forward.addUniformTextures(
@@ -297,6 +301,20 @@ export class Fluid extends SceneNode {
       } );
     }
 
+    /// -- lambda to say update --------------------------------------------------------------------
+    auto( 'Fluid/update', () => {
+      const { time, deltaTime } = music;
+
+      quadPokeDensity.drawImmediate( { time, deltaTime } );
+      quadCurl.drawImmediate( { time, deltaTime } );
+      quadDivergence.drawImmediate( { time, deltaTime } );
+      quadPressureInit.drawImmediate( { time, deltaTime } );
+      quadPressures.map( ( quad ) => quad.drawImmediate( { time, deltaTime } ) );
+      quadResolvePressure.drawImmediate( { time, deltaTime } );
+      quadAdvectionVelocity.drawImmediate( { time, deltaTime } );
+      quadAdvectionDensity.drawImmediate( { time, deltaTime } );
+    } );
+
     // -- names ------------------------------------------------------------------------------------
     if ( import.meta.env.DEV ) {
       quadPokeDensity.name = 'quadPokeDensity';
@@ -314,14 +332,6 @@ export class Fluid extends SceneNode {
 
     // -- components -------------------------------------------------------------------------------
     this.children = [
-      quadPokeDensity,
-      quadCurl,
-      quadDivergence,
-      quadPressureInit,
-      ...quadPressures,
-      quadResolvePressure,
-      quadAdvectionVelocity,
-      quadAdvectionDensity,
       lambdaLightUniforms,
       lambdaRaymarchCameraUniforms,
       mesh,

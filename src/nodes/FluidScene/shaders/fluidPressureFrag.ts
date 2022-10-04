@@ -39,8 +39,8 @@ export const fluidPressureFrag = ( isInit: boolean ): string => build( () => {
 
     if ( isInit ) {
       addAssign( pressure, mul(
-        5.0,
         deltaTime,
+        5.0,
         add( 1.0, perlin3d( add( mul( 4.0, pos ), mul( 0.1, time ) ) ) ),
       ) );
     }

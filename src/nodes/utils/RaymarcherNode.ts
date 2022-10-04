@@ -1,4 +1,3 @@
-import { GL_TEXTURE_2D } from '../../gl/constants';
 import { Geometry } from '../../heck/Geometry';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
@@ -7,7 +6,6 @@ import { SceneNode, SceneNodeOptions } from '../../heck/components/SceneNode';
 import { createRaymarchCameraUniformsLambda } from './createRaymarchCameraUniformsLambda';
 import { dummyRenderTarget1, dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { objectVert } from '../../shaders/common/objectVert';
-import { randomTexture } from '../../globals/randomTexture';
 
 export interface RaymarcherNodeOptions extends SceneNodeOptions {
   geometry: Geometry;
@@ -37,7 +35,6 @@ export class RaymarcherNode extends SceneNode {
         initOptions: { geometry, target: dummyRenderTarget4 },
       },
     );
-    deferred.addUniformTextures( 'samplerRandom', GL_TEXTURE_2D, randomTexture.texture );
 
     const depth = new Material(
       objectVert,
@@ -46,7 +43,6 @@ export class RaymarcherNode extends SceneNode {
         initOptions: { geometry, target: dummyRenderTarget1 },
       },
     );
-    depth.addUniformTextures( 'samplerRandom', GL_TEXTURE_2D, randomTexture.texture );
 
     const lambdaRaymarchCameraUniforms = createRaymarchCameraUniformsLambda( [
       deferred,
