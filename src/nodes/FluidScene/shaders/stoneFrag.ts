@@ -91,7 +91,7 @@ export const stoneFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
       addAssign( ssAccum, mul(
         lightColor,
         div( 1.0, sq( lenL ) ), // falloff
-        1.0, // subsurfaceColor
+        // 1.0, // subsurfaceColor
         calcSS( {
           rp,
           rd,

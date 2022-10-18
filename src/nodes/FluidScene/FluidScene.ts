@@ -1,6 +1,7 @@
 import { CameraStack } from '../CameraStack/CameraStack';
 import { Fluid } from './Fluid';
 import { GL_TEXTURE_2D } from '../../gl/constants';
+import { InstancedLines } from '../utils/InstancedLines';
 import { Lambda } from '../../heck/components/Lambda';
 import { PlaneBackground } from '../utils/PlaneBackground';
 import { PointLightNode } from '../Lights/PointLightNode';
@@ -10,6 +11,7 @@ import { buildPlaneBackgroundFrag } from '../utils/shaders/buildPlaneBackgroundF
 import { cameraStackATarget } from '../../globals/cameraStackTargets';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { defDrawFluidBackground } from './shaders/defDrawFluidBackground';
+import { fluidRingsVert } from './shaders/fluidRingsVert';
 import { genOctahedron } from '../../geometries/genOctahedron';
 import { mainCameraStackResources } from '../CameraStack/mainCameraStackResources';
 import { objectVert } from '../../shaders/common/objectVert';
@@ -29,7 +31,7 @@ export class FluidScene extends SceneNode {
       swapShadowMap: swapShadowMap1,
       shadowMapFov: 40.0,
     } );
-    lightF.transform.lookAt( [ 0.0, -3.0, 3.0 ], [ 0.0, 0.0, 0.0 ] );
+    lightF.transform.lookAt( [ 0.0, -2.0, 3.0 ], [ 0.0, 0.0, 0.0 ] );
     lightF.color = [ 20.0, 20.0, 20.0 ];
 
     const lightR = new PointLightNode( {
@@ -37,7 +39,7 @@ export class FluidScene extends SceneNode {
       swapShadowMap: swapShadowMap1,
       shadowMapFov: 40.0,
     } );
-    lightR.transform.lookAt( [ 0.0, 4.0, -1.0 ], [ 0.0, 0.0, 0.0 ] );
+    lightR.transform.lookAt( [ 0.0, 3.0, -2.0 ], [ 0.0, 0.0, 0.0 ] );
     lightR.color = [ 100.0, 100.0, 100.0 ];
 
     if ( import.meta.env.DEV ) {
@@ -55,6 +57,18 @@ export class FluidScene extends SceneNode {
           const frag = buildPlaneBackgroundFrag( defDrawFluidBackground );
           background.deferred.replaceShader( undefined, frag );
         }
+      );
+    }
+
+    // == rings ====================================================================================
+    const lines = new InstancedLines( fluidRingsVert, 512, 4 );
+
+    if ( import.meta.hot ) {
+      import.meta.hot.accept(
+        './shaders/fluidRingsVert',
+        ( { fluidRingsVert } ) => {
+          lines.materials.deferred!.replaceShader( fluidRingsVert );
+        },
       );
     }
 
@@ -121,6 +135,7 @@ export class FluidScene extends SceneNode {
       lightR,
       lightUniformsLambda,
       stone,
+      lines,
       background,
       fluid,
       lambdaCameraSpeen,
