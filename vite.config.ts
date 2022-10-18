@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
-import { automatonMinifierPlugin } from './vite-automaton-minifier-plugin';
+import { automatonMinifierPlugin } from './vite-plugins/vite-automaton-minifier-plugin';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { workletMinifierPlugin } from './vite-worklet-minifier-plugin';
+import { workletMinifierPlugin } from './vite-plugins/vite-worklet-minifier-plugin';
 import { terserMinifyOptions } from './terserMinifyOptions';
 import Inspect from 'vite-plugin-inspect';
 
