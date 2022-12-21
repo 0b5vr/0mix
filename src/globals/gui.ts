@@ -1,4 +1,3 @@
-import { GPUMeasureHandler } from './gui/GPUMeasureHandler';
 import { GPUTimer } from './gui/GPUTimer';
 import { NullMeasureHandler } from './gui/NullMeasureHandler';
 import type { ImPane } from '@0b5vr/imtweakpane';
@@ -21,7 +20,7 @@ export const promiseGui = new Promise<ImPane>( ( resolve ) => {
 
       const gpuTimer = GPUTimer.isSupported() ? new GPUTimer() : null;
       const createGPUMeasureHandler = (): any => (
-        gpuTimer != null ? new GPUMeasureHandler( gpuTimer ) : new NullMeasureHandler()
+        gpuTimer ?? new NullMeasureHandler()
       );
 
       import( '@0b5vr/tweakpane-plugin-profiler' ).then( ( plugin ) => {
