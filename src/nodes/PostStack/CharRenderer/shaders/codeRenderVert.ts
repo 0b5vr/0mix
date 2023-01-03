@@ -1,6 +1,9 @@
-import { add, assign, build, defIn, defOutNamed, defUniformNamed, div, glPosition, main, mul, step, sub, sw, vec2, vec4 } from '../../../../shaders/shaderBuilder';
+import { add, assign, build, defIn, defOutNamed, defUniformNamed, div, glPosition, GLSLExpression, main, mul, step, sw, vec2, vec4 } from '../../../../shaders/shaderBuilder';
 
-export const codeRenderVert = build( () => {
+export const codeRenderVert = (
+  anchor: GLSLExpression<'vec2'>,
+  offset: GLSLExpression<'vec2'>,
+) => build( () => {
   const position = defIn( 'vec2', 0 );
   const meta = defIn( 'vec4', 1 );
 
@@ -14,17 +17,18 @@ export const codeRenderVert = build( () => {
     assign( vCoord, position );
     assign( vMeta, meta );
 
-    const pos = sub(
+    const pos = add(
       div(
         add(
           mul( vec2( 6.0, 7.0 ), position ),
           mul( vec2( 12.0, -14.0 ), sw( meta, 'xy' ) ),
-          vec2( 60.0, mul( scroll, 14.0 ) ),
+          offset,
+          vec2( 0.0, mul( scroll, 14.0 ) ),
         ),
         resolution,
         0.5,
       ),
-      vec2( 1.0, 0.0 ),
+      anchor,
     );
 
     // shrink if char index is 0
