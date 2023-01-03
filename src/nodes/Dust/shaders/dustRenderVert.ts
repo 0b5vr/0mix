@@ -5,6 +5,7 @@ export const dustRenderVert = build( () => {
   const computeUV = defIn( 'vec2' );
 
   const vPosition = defOutNamed( 'vec4', 'vPosition' );
+  const vProjPosition = defOutNamed( 'vec4', 'vProjPosition' );
 
   const resolution = defUniformNamed( 'vec2', 'resolution' );
   const projectionMatrix = defUniformNamed( 'mat4', 'projectionMatrix' );
@@ -20,12 +21,9 @@ export const dustRenderVert = build( () => {
 
     // -- send the vertex position -----------------------------------------------------------------
     assign( vPosition, mul( modelMatrix, vec4( sw( tex0, 'xyz' ), 1.0 ) ) );
+    assign( vProjPosition, mul( projectionMatrix, viewMatrix, vPosition ) );
 
-    const outPos = def( 'vec4', mul(
-      projectionMatrix,
-      viewMatrix,
-      vPosition,
-    ) );
+    const outPos = def( 'vec4', vProjPosition );
 
     const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( outPos, 'x' ), aspect );

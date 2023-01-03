@@ -48,7 +48,7 @@ export class SpongeScene extends SceneNode {
 
     const sponge = new Sponge();
 
-    const dust = new Dust( [ 0.1, 0.1, 0.1, 1.0 ] );
+    const dust = new Dust( [ 1.0, 1.0, 1.0, 1.0 ] );
     dust.transform.scale = [ 3.0, 3.0, 3.0 ];
 
     const lambdaSpeen = new Lambda( {

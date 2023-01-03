@@ -44,7 +44,7 @@ export class OBSVRLogoScene extends SceneNode {
     light3.color = [ 600.0, 500.0, 400.0 ];
 
     // -- dust -------------------------------------------------------------------------------------
-    const dust = new Dust( [ 0.02, 0.02, 0.02, 1.0 ] );
+    const dust = new Dust( [ 0.1, 0.1, 0.1, 1.0 ] );
     dust.transform.scale = [ 4.0, 4.0, 4.0 ];
     dust.transform.position = [ 0.0, 0.0, 4.0 ];
 

@@ -4,8 +4,7 @@ import { Geometry } from '../../heck/Geometry';
 import { Material } from '../../heck/Material';
 import { RawVector4 } from '@0b5vr/experimental';
 import { auto } from '../../globals/automaton';
-import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
-import { dummyRenderTarget1, dummyRenderTarget2 } from '../../globals/dummyRenderTarget';
+import { dummyRenderTarget1, dummyRenderTarget2, dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { dustComputeFrag } from './shaders/dustComputeFrag';
 import { dustRenderFrag } from './shaders/dustRenderFrag';
 import { dustRenderVert } from './shaders/dustRenderVert';
@@ -68,17 +67,23 @@ export class Dust extends GPUParticles {
     geometry.mode = GL_POINTS;
 
     // -- material render --------------------------------------------------------------------------
-    const forward = new Material(
+    const deferred = new Material(
       dustRenderVert,
-      dustRenderFrag,
+      dustRenderFrag( 'deferred' ),
+      {
+        initOptions: { geometry, target: dummyRenderTarget4 },
+      },
+    );
+
+    deferred.addUniform( 'color', '4f', ...color );
+
+    const depth = new Material(
+      dustRenderVert,
+      dustRenderFrag( 'depth' ),
       {
         initOptions: { geometry, target: dummyRenderTarget1 },
       },
     );
-
-    forward.addUniform( 'color', '4f', ...color );
-
-    const lambdaLightUniforms = createLightUniformsLambda( [ forward ] );
 
     if ( import.meta.hot ) {
       import.meta.hot.accept(
@@ -87,7 +92,8 @@ export class Dust extends GPUParticles {
           './shaders/dustRenderFrag',
         ],
         ( [ v, f ] ) => {
-          forward.replaceShader( v?.dustRenderVert, f?.dustRenderFrag );
+          deferred.replaceShader( v?.dustRenderVert, f?.dustRenderFrag( 'deferred' ) );
+          depth.replaceShader( v?.dustRenderVert, f?.dustRenderFrag( 'depth' ) );
         },
       );
     }
@@ -96,7 +102,7 @@ export class Dust extends GPUParticles {
     super( {
       materialCompute,
       geometryRender: geometry,
-      materialsRender: { forward },
+      materialsRender: { deferred, depth },
       computeWidth: particlesSqrt,
       computeHeight: particlesSqrt,
       computeNumBuffers: 2,
@@ -112,7 +118,5 @@ export class Dust extends GPUParticles {
       this.swapCompute.i.name = 'Dust/swap/0';
       this.swapCompute.o.name = 'Dust/swap/1';
     }
-
-    this.children.unshift( lambdaLightUniforms );
   }
 }

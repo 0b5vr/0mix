@@ -1,64 +1,35 @@
-import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformArrayNamed, defUniformNamed, discard, div, glPointCoord, ifThen, insert, length, lt, main, max, mul, mulAssign, num, retFn, sq, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
-import { calcL } from '../../../shaders/modules/calcL';
-import { defDoSomethingUsingSamplerArray } from '../../../shaders/modules/defDoSomethingUsingSamplerArray';
-import { doShadowMapping } from '../../../shaders/modules/doShadowMapping';
-import { forEachLights } from '../../../shaders/modules/forEachLights';
+import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
+import { assign, build, defInNamed, defOut, defUniformNamed, discard, div, glPointCoord, ifThen, insert, length, lt, main, retFn, sub, sw, vec4 } from '../../../shaders/shaderBuilder';
+import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 
-export const dustRenderFrag = build( () => {
+export const dustRenderFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
 
   const vPosition = defInNamed( 'vec4', 'vPosition' );
+  const vProjPosition = defInNamed( 'vec4', 'vProjPosition' );
 
   const fragColor = defOut( 'vec4' );
+  const fragPosition = defOut( 'vec4', 1 );
+  const fragNormal = defOut( 'vec4', 2 );
+  const fragMisc = defOut( 'vec4', 3 );
 
   const color = defUniformNamed( 'vec4', 'color' );
-  const samplerShadow = defUniformArrayNamed( 'sampler2D', 'samplerShadow', 8 );
-
-  const doSomethingUsingSamplerShadow = defDoSomethingUsingSamplerArray( samplerShadow, 8 );
-  const fetchShadowMap = defFn( 'vec4', [ 'int', 'vec2' ], ( iLight, uv ) => {
-    retFn( doSomethingUsingSamplerShadow(
-      iLight,
-      ( sampler ) => texture( sampler, uv )
-    ) );
-  } );
 
   main( () => {
     ifThen( lt( 0.5, length( sub( glPointCoord, 0.5 ) ) ), () => discard() );
 
-    const position = sw( vPosition, 'xyz' );
+    if ( tag === 'depth' ) {
+      assign( fragColor, calcShadowDepth( vProjPosition ) );
+      retFn();
 
-    const accum = def( 'vec3', vec3( 0.0 ) );
+    }
 
-    forEachLights( ( { iLight, lightPos, lightColor, lightNearFar, lightPV, lightParams } ) => {
-      const [ _L, lenL ] = calcL( lightPos, position );
-      assign( lenL, max( 1.0, lenL ) );
+    const depth = div( sw( vProjPosition, 'z' ), sw( vProjPosition, 'w' ) );
 
-      const irradiance = def( 'vec3', mul(
-        lightColor,
-        div( 1.0, sq( lenL ) ),
-      ) );
-
-      // fetch shadowmap + spot lighting
-      const lightProj = def( 'vec4', mul( lightPV, vec4( position, 1.0 ) ) );
-      const lightP = def( 'vec3', div( sw( lightProj, 'xyz' ), sw( lightProj, 'w' ) ) );
-
-      mulAssign(
-        irradiance,
-        doShadowMapping(
-          fetchShadowMap( iLight, add( 0.5, mul( 0.5, sw( lightP, 'xy' ) ) ) ),
-          lenL,
-          num( 1.0 ),
-          lightP,
-          lightNearFar,
-          lightParams,
-        ),
-      );
-
-      // ok
-      addAssign( accum, irradiance );
-    } );
-
-    assign( fragColor, mul( color, vec4( vec3( accum ), 1.0 ) ) );
+    assign( fragColor, color );
+    assign( fragPosition, vec4( sw( vPosition, 'xyz' ), depth ) );
+    assign( fragNormal, vec4( 0.0, 0.0, 1.0, MTL_PBR_ROUGHNESS_METALLIC ) );
+    assign( fragMisc, vec4( 1.0, 0.0, 0.0, 0.0 ) );
 
   } );
 } );
