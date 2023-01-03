@@ -27,8 +27,8 @@ export class StatsText extends CharRenderer {
 
         const content = [
           'status: ' + music.cueStatus,
-          'time: ' + time.toFixed( 3 ),
           'beat: ' + beatIndicator,
+          'time: ' + time.toFixed( 3 ),
         ];
         const changeRange: ShaderEventRange = [ 0, 0, music.cueStatus === 'none' ? 0 : 1, 0 ];
 

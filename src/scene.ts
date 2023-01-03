@@ -32,6 +32,7 @@ import { glTextureFilter } from './gl/glTextureFilter';
 import { music } from './globals/music';
 import { promiseGui } from './globals/gui';
 import { randomTexture } from './globals/randomTexture';
+import { OBSVRLogoScene } from './nodes/OBSVRLogoScene/OBSVRLogoScene';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
@@ -116,6 +117,7 @@ const scenesA = [
   new ParticlesStudioScene(),
   new SphereArrayScene(),
   new FluidScene(),
+  new OBSVRLogoScene(),
 ];
 
 const scenesB = [

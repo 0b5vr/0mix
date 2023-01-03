@@ -10,6 +10,5 @@ export const depthFrag = build( () => {
 
   main( () => {
     assign( fragColor, calcShadowDepth( vProjPosition ) );
-    return;
   } );
 } );
