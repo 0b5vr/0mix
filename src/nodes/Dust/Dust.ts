@@ -2,6 +2,7 @@ import { GL_POINTS, GL_TEXTURE_2D } from '../../gl/constants';
 import { GPUParticles } from '../utils/GPUParticles';
 import { Geometry } from '../../heck/Geometry';
 import { Material } from '../../heck/Material';
+import { RawVector4 } from '@0b5vr/experimental';
 import { auto } from '../../globals/automaton';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { dummyRenderTarget1, dummyRenderTarget2 } from '../../globals/dummyRenderTarget';
@@ -25,7 +26,7 @@ const materialOptions = { particlesSqrt, particleSpawnLength };
 export const DustTag = Symbol();
 
 export class Dust extends GPUParticles {
-  public constructor() {
+  public constructor( color: RawVector4 ) {
     // -- material compute -------------------------------------------------------------------------
     const materialCompute = new Material(
       quadVert,
@@ -75,6 +76,8 @@ export class Dust extends GPUParticles {
       },
     );
 
+    forward.addUniform( 'color', '4f', ...color );
+
     const lambdaLightUniforms = createLightUniformsLambda( [ forward ] );
 
     if ( import.meta.hot ) {
@@ -100,14 +103,14 @@ export class Dust extends GPUParticles {
       tags: [ DustTag ],
     } );
 
-    auto( 'SpongeScene/Dust/update', () => {
+    auto( 'Dust/update', () => {
       const { time, deltaTime } = music;
       this.updateParticles( { time, deltaTime } );
     } );
 
     if ( import.meta.env.DEV ) {
-      this.swapCompute.i.name = 'SpongeScene/Dust/swap/0';
-      this.swapCompute.o.name = 'SpongeScene/Dust/swap/1';
+      this.swapCompute.i.name = 'Dust/swap/0';
+      this.swapCompute.o.name = 'Dust/swap/1';
     }
 
     this.children.unshift( lambdaLightUniforms );

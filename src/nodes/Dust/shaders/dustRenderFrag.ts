@@ -1,4 +1,4 @@
-import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformArrayNamed, discard, div, glPointCoord, ifThen, insert, length, lt, main, max, mul, mulAssign, num, retFn, sq, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformArrayNamed, defUniformNamed, discard, div, glPointCoord, ifThen, insert, length, lt, main, max, mul, mulAssign, num, retFn, sq, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { calcL } from '../../../shaders/modules/calcL';
 import { defDoSomethingUsingSamplerArray } from '../../../shaders/modules/defDoSomethingUsingSamplerArray';
 import { doShadowMapping } from '../../../shaders/modules/doShadowMapping';
@@ -11,6 +11,7 @@ export const dustRenderFrag = build( () => {
 
   const fragColor = defOut( 'vec4' );
 
+  const color = defUniformNamed( 'vec4', 'color' );
   const samplerShadow = defUniformArrayNamed( 'sampler2D', 'samplerShadow', 8 );
 
   const doSomethingUsingSamplerShadow = defDoSomethingUsingSamplerArray( samplerShadow, 8 );
@@ -57,10 +58,7 @@ export const dustRenderFrag = build( () => {
       addAssign( accum, irradiance );
     } );
 
-    assign( fragColor, vec4( vec3( mul(
-      0.1,
-      accum,
-    ) ), 1.0 ) );
+    assign( fragColor, mul( color, vec4( vec3( accum ), 1.0 ) ) );
 
   } );
 } );

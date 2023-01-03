@@ -1,15 +1,16 @@
-import { quatFromAxisAngle, RawVector3 } from '@0b5vr/experimental';
-import { genCube } from '../../geometries/genCube';
-import { cameraStackATarget } from '../../globals/cameraStackTargets';
-import { swapShadowMap1, swapShadowMap2, swapShadowMap3 } from '../../globals/swapShadowMap';
-import { Lambda } from '../../heck/components/Lambda';
-import { SceneNode } from '../../heck/components/SceneNode';
-import { objectVert } from '../../shaders/common/objectVert';
 import { CameraStack } from '../CameraStack/CameraStack';
-import { mainCameraStackResources } from '../CameraStack/mainCameraStackResources';
+import { Dust } from '../Dust/Dust';
+import { Lambda } from '../../heck/components/Lambda';
 import { PointLightNode } from '../Lights/PointLightNode';
+import { RawVector3, quatFromAxisAngle } from '@0b5vr/experimental';
 import { RaymarcherNode } from '../utils/RaymarcherNode';
+import { SceneNode } from '../../heck/components/SceneNode';
+import { cameraStackATarget } from '../../globals/cameraStackTargets';
+import { genCube } from '../../geometries/genCube';
+import { mainCameraStackResources } from '../CameraStack/mainCameraStackResources';
+import { objectVert } from '../../shaders/common/objectVert';
 import { obsvrLogoFrag } from './shaders/obsvrLogoFrag';
+import { swapShadowMap1, swapShadowMap2, swapShadowMap3 } from '../../globals/swapShadowMap';
 
 export class OBSVRLogoScene extends SceneNode {
   public constructor() {
@@ -41,6 +42,11 @@ export class OBSVRLogoScene extends SceneNode {
     } );
     light3.transform.lookAt( [ -5.0, 0.0, -1.0 ] );
     light3.color = [ 600.0, 500.0, 400.0 ];
+
+    // -- dust -------------------------------------------------------------------------------------
+    const dust = new Dust( [ 0.02, 0.02, 0.02, 1.0 ] );
+    dust.transform.scale = [ 4.0, 4.0, 4.0 ];
+    dust.transform.position = [ 0.0, 0.0, 4.0 ];
 
     // -- geometry ---------------------------------------------------------------------------------
     const geometry = genCube( { dimension: [ 1.1, 1.1, 0.3 ] } );
@@ -79,7 +85,7 @@ export class OBSVRLogoScene extends SceneNode {
       resources: mainCameraStackResources,
       target: cameraStackATarget,
       useAO: true,
-      dofParams: [ 3.5, 24.0 ],
+      dofParams: [ 3.8, 8.0 ],
     } );
     camera.transform.lookAt(
       [ 0.0, 0.0, 4.0 ],
@@ -93,6 +99,7 @@ export class OBSVRLogoScene extends SceneNode {
       light2,
       light3,
       lambdaSpeen,
+      dust,
       raymarcher,
       camera,
     ];
