@@ -1,11 +1,10 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../../CameraStack/deferredConstants';
-import { addAssign, def, floor, mad, mul, mulAssign, retFn, unrollLoop, vec3 } from '../../../../shaders/shaderBuilder';
+import { addAssign, def, floor, mad, mul, mulAssign, unrollLoop, vec3 } from '../../../../shaders/shaderBuilder';
 import { assign, build, defInNamed, defOut, div, insert, main, normalize, sw, vec4 } from '../../../../shaders/shaderBuilder';
-import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
 import { glslLofir } from '../../../../shaders/modules/glslLofir';
 import { pcg3df } from '../../../../shaders/modules/pcg3df';
 
-export const pillarGridBodyFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
+export const pillarGridBodyFrag = build( () => {
   insert( 'precision highp float;' );
 
   const vPosition = defInNamed( 'vec4', 'vPosition' );
@@ -19,12 +18,6 @@ export const pillarGridBodyFrag = ( tag: 'deferred' | 'depth' ): string => build
   const fragMisc = defOut( 'vec4', 3 );
 
   main( () => {
-    if ( tag === 'depth' ) {
-      assign( fragColor, calcShadowDepth( vProjPosition ) );
-      retFn();
-
-    }
-
     const depth = div( sw( vProjPosition, 'z' ), sw( vProjPosition, 'w' ) );
 
     const roughness = def( 'float', 0.0 );

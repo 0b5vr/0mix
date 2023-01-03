@@ -12,6 +12,7 @@ import { pillarGridBodyFrag } from './shaders/pillarGridBodyFrag';
 import { pillarGridBodyVert } from './shaders/pillarGridBodyVert';
 import { pillarGridFrameFrag } from './shaders/pillarGridFrameFrag';
 import { pillarGridFrameVert } from './shaders/pillarGridFrameVert';
+import { depthFrag } from '../../../shaders/common/depthFrag';
 
 export class PillarGrid extends SceneNode {
   public constructor() {
@@ -66,7 +67,7 @@ export class PillarGrid extends SceneNode {
     // -- material body ----------------------------------------------------------------------------
     const deferred = new Material(
       pillarGridBodyVert,
-      pillarGridBodyFrag( 'deferred' ),
+      pillarGridBodyFrag,
       {
         initOptions: { geometry, target: dummyRenderTarget4 },
       },
@@ -74,7 +75,7 @@ export class PillarGrid extends SceneNode {
 
     const depth = new Material(
       pillarGridBodyVert,
-      pillarGridBodyFrag( 'depth' ),
+      depthFrag,
       {
         initOptions: { geometry, target: dummyRenderTarget1 },
       },
@@ -87,8 +88,8 @@ export class PillarGrid extends SceneNode {
           './shaders/pillarGridBodyFrag',
         ],
         ( [ v, f ] ) => {
-          deferred.replaceShader( v?.pillarGridBodyVert, f?.pillarGridBodyFrag( 'deferred' ) );
-          depth.replaceShader( v?.pillarGridBodyVert, f?.pillarGridBodyFrag( 'depth' ) );
+          deferred.replaceShader( v?.pillarGridBodyVert, f?.pillarGridBodyFrag );
+          depth.replaceShader( v?.pillarGridBodyVert, depthFrag );
         },
       );
     }
