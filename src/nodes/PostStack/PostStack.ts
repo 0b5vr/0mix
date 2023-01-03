@@ -1,6 +1,6 @@
 import { Bloom } from './Bloom/Bloom';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
-import { Code } from './Code/Code';
+import { Code } from './Code';
 import { ComponentOptions } from '../../heck/components/Component';
 import { DCT } from './DCT/DCT';
 import { EventType, on } from '../../globals/globalEvent';
@@ -10,6 +10,7 @@ import { Post } from './Post/Post';
 import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { Swap } from '@0b5vr/experimental';
+import { StatsText } from './StatsText';
 
 export interface PostStackOptions extends ComponentOptions {
   input: BufferTextureRenderTarget;
@@ -73,7 +74,8 @@ export class PostStack extends SceneNode {
       target,
     } );
 
-    const code = new Code( { target } );
+    const code = new Code( target );
+    const statsText = new StatsText( target );
 
     // -- components -------------------------------------------------------------------------------
     this.children = [
@@ -83,6 +85,7 @@ export class PostStack extends SceneNode {
       fxaa,
       dct,
       code,
+      statsText,
     ];
   }
 }
