@@ -35,7 +35,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
 
   const { init, random } = glslDefRandom();
 
-  const qt = ( ro: GLSLExpression<'vec3'>, rd: GLSLExpression<'vec3'> ): {
+  const octreeTraversal = ( ro: GLSLExpression<'vec3'>, rd: GLSLExpression<'vec3'> ): {
     cell: GLSLToken<'vec3'>,
     dice: GLSLToken<'vec3'>,
     len: GLSLToken<'float'>,
@@ -128,25 +128,25 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     };
 
     forLoop( 80, () => {
-      const qtr = qt( ro, rd );
+      const result = octreeTraversal( ro, rd );
 
       const isect = def( 'vec4', vec4( FAR ) );
       const N = sw( isect, 'xyz' );
       const isectlen = sw( isect, 'w' );
 
-      const rough = sw( qtr.dice, 'z' );
+      const rough = sw( result.dice, 'z' );
 
-      ifThen( not( qtr.hole ), () => {
+      ifThen( not( result.hole ), () => {
         ifThen( inMedium, () => {
-          const size = sub( qtr.size, 0.04 );
+          const size = sub( result.size, 0.04 );
           assign( isect, mix(
             isect,
-            isectBox( sub( ro, qtr.cell ), rd, vec3( size ) ),
+            isectBox( sub( ro, result.cell ), rd, vec3( size ) ),
             step( 0.0, size ),
           ) );
         }, () => {
-          const size = sub( qtr.size, 0.01 );
-          assign( isect, isectBox( sub( ro, qtr.cell ), rd, vec3( size ) ) );
+          const size = sub( result.size, 0.01 );
+          assign( isect, isectBox( sub( ro, result.cell ), rd, vec3( size ) ) );
         } );
       } );
 
@@ -184,8 +184,8 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
 
       }, () => {
         ifThen( inMedium, () => {
-          const size = sub( qtr.size, 0.01 );
-          assign( isect, isectInBox( sub( ro, qtr.cell ), rd, vec3( size ) ) );
+          const size = sub( result.size, 0.01 );
+          assign( isect, isectInBox( sub( ro, result.cell ), rd, vec3( size ) ) );
 
           // update ray origin
           addAssign( ro, mul( rd, isectlen ) );
@@ -199,7 +199,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
 
         }, () => {
           // update ray origin
-          addAssign( ro, mul( rd, qtr.len ) );
+          addAssign( ro, mul( rd, result.len ) );
 
         } );
       } );
