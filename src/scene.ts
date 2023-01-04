@@ -15,6 +15,7 @@ import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
 import { MetaballScene } from './nodes/MetaballScene/MetaballScene';
 import { Mixer } from './nodes/Mixer/Mixer';
 import { NoisePlaneScene } from './nodes/NoisePlaneScene/NoisePlaneScene';
+import { OBSVRLogoScene } from './nodes/OBSVRLogoScene/OBSVRLogoScene';
 import { OctreeTunnelScene } from './nodes/OctreeTunnelScene/OctreeTunnelScene';
 import { ParticlesStudioScene } from './nodes/ParticlesStudioScene/ParticlesStudioScene';
 import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
@@ -23,6 +24,7 @@ import { PostStack } from './nodes/PostStack/PostStack';
 import { SphereArrayScene } from './nodes/SphereArrayScene/SphereArrayScene';
 import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
 import { TrailsScene } from './nodes/TrailsScene/TrailsScene';
+import { TruchetScene } from './nodes/TruchetScene/TruchetScene';
 import { WebGLMemory } from './nodes/WebGLMemory/WebGLMemory';
 import { WormTunnelScene } from './nodes/WormTunnelScene/WormTunnelScene';
 import { auto, automaton } from './globals/automaton';
@@ -32,7 +34,6 @@ import { glTextureFilter } from './gl/glTextureFilter';
 import { music } from './globals/music';
 import { promiseGui } from './globals/gui';
 import { randomTexture } from './globals/randomTexture';
-import { OBSVRLogoScene } from './nodes/OBSVRLogoScene/OBSVRLogoScene';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
@@ -118,6 +119,7 @@ const scenesA = [
   new SphereArrayScene(),
   new FluidScene(),
   new OBSVRLogoScene(),
+  new TruchetScene(),
 ];
 
 const scenesB = [
