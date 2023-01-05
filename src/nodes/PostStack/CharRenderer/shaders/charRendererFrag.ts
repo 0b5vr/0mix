@@ -2,7 +2,7 @@ import { add, assign, build, def, defInNamed, defOutNamed, defUniformNamed, div,
 import { glslLinearstep } from '../../../../shaders/modules/glslLinearstep';
 import { isValidUv } from '../../../../shaders/modules/isValidUv';
 
-export const codeRenderFrag = build( () => {
+export const charRendererFrag = build( () => {
   insert( 'precision highp float;' );
 
   const vCoord = defInNamed( 'vec2', 'vCoord' );

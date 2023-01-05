@@ -1,9 +1,9 @@
-import { add, assign, build, defIn, defOutNamed, defUniformNamed, div, glPosition, GLSLExpression, main, mul, step, sw, vec2, vec4 } from '../../../../shaders/shaderBuilder';
+import { GLSLExpression, add, assign, build, defIn, defOutNamed, defUniformNamed, div, glPosition, main, mul, step, sw, vec2, vec4 } from '../../../../shaders/shaderBuilder';
 
-export const codeRenderVert = (
+export const charRendererVert = (
   anchor: GLSLExpression<'vec2'>,
   offset: GLSLExpression<'vec2'>,
-) => build( () => {
+): string => build( () => {
   const position = defIn( 'vec2', 0 );
   const meta = defIn( 'vec4', 1 );
 

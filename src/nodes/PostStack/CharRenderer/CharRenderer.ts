@@ -1,23 +1,23 @@
-import { GL_DYNAMIC_DRAW, GL_TRIANGLE_STRIP, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_TEXTURE_2D, GL_ARRAY_BUFFER } from '../../../gl/constants';
+import { GLSLExpression } from '../../../shaders/shaderBuilder';
+import { GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../../gl/constants';
+import { Geometry } from '../../../heck/Geometry';
+import { Lambda } from '../../../heck/components/Lambda';
+import { Material } from '../../../heck/Material';
+import { Quad } from '../../../heck/components/Quad';
+import { RenderTarget } from '../../../heck/RenderTarget';
+import { SceneNode } from '../../../heck/components/SceneNode';
+import { ShaderEventRange } from '../../../music/ShaderEventRange';
+import { charRendererFrag } from './shaders/charRendererFrag';
+import { charRendererVert } from './shaders/charRendererVert';
+import { codeCharTexture } from './codeCharTexture';
+import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
+import { gl } from '../../../globals/canvas';
 import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
-import { gl } from '../../../globals/canvas';
-import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
-import { promiseGui } from '../../../globals/gui';
 import { music } from '../../../globals/music';
+import { promiseGui } from '../../../globals/gui';
 import { quadBuffer } from '../../../globals/quadGeometry';
-import { Lambda } from '../../../heck/components/Lambda';
-import { Quad } from '../../../heck/components/Quad';
-import { SceneNode } from '../../../heck/components/SceneNode';
-import { Geometry } from '../../../heck/Geometry';
-import { Material } from '../../../heck/Material';
-import { RenderTarget } from '../../../heck/RenderTarget';
-import { ShaderEventRange } from '../../../music/ShaderEventRange';
 import { withinShaderEventRange } from '../../../music/withinShaderEventRange';
-import { GLSLExpression } from '../../../shaders/shaderBuilder';
-import { codeCharTexture } from './codeCharTexture';
-import { codeRenderFrag } from './shaders/codeRenderFrag';
-import { codeRenderVert } from './shaders/codeRenderVert';
 
 interface CharRendererOptions {
   target: RenderTarget;
@@ -64,8 +64,8 @@ export class CharRenderer extends SceneNode {
 
     // -- material render --------------------------------------------------------------------------
     const forward = new Material(
-      codeRenderVert( anchor, offset ),
-      codeRenderFrag,
+      charRendererVert( anchor, offset ),
+      charRendererFrag,
       {
         initOptions: { geometry, target: dummyRenderTarget1 },
         blend: [ GL_ONE, GL_ONE_MINUS_SRC_ALPHA ],
@@ -77,13 +77,13 @@ export class CharRenderer extends SceneNode {
     if ( import.meta.hot ) {
       import.meta.hot.accept(
         [
-          './shaders/codeRenderVert',
-          './shaders/codeRenderFrag',
+          './shaders/charRendererVert',
+          './shaders/charRendererFrag',
         ],
         ( [ v, f ] ) => {
           forward.replaceShader(
-            v?.codeRenderVert( anchor, offset ),
-            f?.codeRenderFrag,
+            v?.charRendererVert( anchor, offset ),
+            f?.charRendererFrag,
           );
         },
       );
@@ -115,7 +115,8 @@ export class CharRenderer extends SceneNode {
 
     const lambdaScroll = new Lambda( {
       onUpdate: ( { deltaTime } ) => {
-        scrollCurrent += ( 1.0 - Math.exp( -10.0 * deltaTime ) ) * ( this.scrollTarget - scrollCurrent );
+        const delta = this.scrollTarget - scrollCurrent;
+        scrollCurrent += ( 1.0 - Math.exp( -10.0 * deltaTime ) ) * delta;
         forward.addUniform( 'scroll', '1f', scrollCurrent );
       }
     } );
@@ -127,7 +128,11 @@ export class CharRenderer extends SceneNode {
     ];
   }
 
-  setContent( content: string[], changeRange?: ShaderEventRange, selectRange?: ShaderEventRange ) {
+  public setContent(
+    content: string[],
+    changeRange?: ShaderEventRange,
+    selectRange?: ShaderEventRange,
+  ): void {
     const { arrayChars, bufferChars, textAlign, textBaseline } = this;
     let head = 0;
 
