@@ -86,6 +86,12 @@ export class Fluid extends SceneNode {
       swapDensity.o.texture,
     );
 
+    if ( import.meta.hot ) {
+      import.meta.hot.accept( './shaders/fluidPokeDensityFrag', ( { fluidPokeDensityFrag } ) => {
+        materialPokeDensity.replaceShader( undefined, fluidPokeDensityFrag );
+      } );
+    }
+
     const quadPokeDensity = new Quad( {
       target: swapDensity.i,
       material: materialPokeDensity,

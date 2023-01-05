@@ -1,5 +1,6 @@
+import { GLSLExpression, abs, add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, eq, forBreak, forLoop, glFragCoord, gt, ifThen, insert, length, lt, mad, main, mix, mul, mulAssign, retFn, smoothstep, sq, step, sub, sw, texture, vec4 } from '../../../shaders/shaderBuilder';
 import { GRID_RESO } from '../constants';
-import { abs, add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, eq, forBreak, forLoop, glFragCoord, gt, ifThen, insert, length, lt, mad, main, mix, mul, mulAssign, retFn, smoothstep, sq, step, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { boxMuller } from '../../../shaders/modules/boxMuller';
 import { calcL } from '../../../shaders/modules/calcL';
 import { defFluidSampleLinear3D } from './defFluidSampleLinear3D';
 import { forEachLights } from '../../../shaders/modules/forEachLights';
@@ -23,7 +24,11 @@ export const fluidRenderFrag: string = build( () => {
   const samplerDensity = defUniformNamed( 'sampler2D', 'samplerDensity' );
   const samplerDeferredPos = defUniformNamed( 'sampler2D', 'samplerDeferredPos' );
 
-  const { init, random } = glslDefRandom();
+  const { init, random4 } = glslDefRandom();
+
+  const randomNormal = (): GLSLExpression<'float'> => (
+    sw( boxMuller( sw( random4(), 'xy' ) ), 'x' )
+  );
 
   const sampleLinear3D = defFluidSampleLinear3D();
 
@@ -32,9 +37,10 @@ export const fluidRenderFrag: string = build( () => {
     ifThen( eq( edgedecay, 0.0 ), () => retFn( 0.0 ) );
 
     const pp = add( p, mul( 0.004, uniformSphere() ) );
+    const density = sw( sampleLinear3D( samplerDensity, pp ), 'x' );
     retFn( mul(
       edgedecay,
-      glslSaturate( mul( 0.04, ( sw( sampleLinear3D( samplerDensity, pp ), 'x' ) ) ) ),
+      glslSaturate( density ),
     ) );
   } );
 
@@ -46,7 +52,7 @@ export const fluidRenderFrag: string = build( () => {
 
     const rl0 = def( 'float', sub(
       length( sub( sw( vPositionWithoutModel, 'xyz' ), ro ) ),
-      mul( 0.05, random() ),
+      mul( 0.01, randomNormal() ),
     ) );
     const rl = def( 'float', rl0 );
     const rp = def( 'vec3', add( ro, mul( rd, rl ) ) );
@@ -79,7 +85,6 @@ export const fluidRenderFrag: string = build( () => {
 
           addAssign( accumRGB, mul(
             glslSaturate( mad( 1.0, -1.5, shadow ) ),
-            vec3( 0.15, 0.21, 0.17 ),
             div( 1.0, sq( lenL ) ),
             lightColor,
             density,
@@ -90,7 +95,7 @@ export const fluidRenderFrag: string = build( () => {
         mulAssign( accumA, sub( 1.0, density ) );
       } );
 
-      addAssign( rl, mix( 0.02, 0.04, random() ) );
+      addAssign( rl, mad( 0.02, 0.00, randomNormal() ) );
       assign( rp, add( ro, mul( rd, rl ) ) );
 
       ifThen( lt( rlMax, rl ), () => forBreak() );

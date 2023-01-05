@@ -1,7 +1,8 @@
-import { addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, insert, main, mul, step, sw } from '../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, insert, main, mul, step, sub, subAssign, sw, vec3 } from '../../../shaders/shaderBuilder';
 import { defFluidSampleNearest3D } from './defFluidSampleNearest3D';
 import { fluidUvToPos } from './fluidUvToPos';
-import { sdtorus } from '../../../shaders/modules/sdtorus';
+import { glslLofir } from '../../../shaders/modules/glslLofir';
+import { sdcapsule } from '../../../shaders/modules/sdcapsule';
 
 export const fluidPokeDensityFrag: string = build( () => {
   insert( 'precision highp float;' );
@@ -20,9 +21,13 @@ export const fluidPokeDensityFrag: string = build( () => {
 
     const density = def( 'vec4', sampleNearest3D( samplerDensity, pos ) );
 
-    const l = def( 'float', sdtorus( pos, 0.4, 0.02 ) );
+    subAssign( sw( pos, 'y' ), glslLofir( sw( pos, 'y' ), 0.08 ) );
+
+    const d = def( 'float', sdcapsule( add( pos, vec3( 0.4, 0.0, 0.0 ) ), vec3( 0.8, 0.0, 0.0 ) ) );
+
+    const l = def( 'float', sub( d, 0.005 ) );
     const poke = def( 'float', step( l, 0.0 ) );
-    addAssign( sw( density, 'x' ), mul( 100.0, deltaTime, poke ) );
+    addAssign( sw( density, 'x' ), mul( 1.0, deltaTime, poke ) );
 
     assign( fragColor, density );
   } );
