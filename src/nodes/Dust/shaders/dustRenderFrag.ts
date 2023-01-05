@@ -13,6 +13,7 @@ export const dustRenderFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
   const fragNormal = defOut( 'vec4', 2 );
   const fragMisc = defOut( 'vec4', 3 );
 
+  const emissive = defUniformNamed( 'float', 'emissive' );
   const color = defUniformNamed( 'vec4', 'color' );
 
   main( () => {
@@ -29,7 +30,7 @@ export const dustRenderFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
     assign( fragColor, color );
     assign( fragPosition, vec4( sw( vPosition, 'xyz' ), depth ) );
     assign( fragNormal, vec4( 0.0, 0.0, 1.0, MTL_PBR_ROUGHNESS_METALLIC ) );
-    assign( fragMisc, vec4( 1.0, 0.0, 0.0, 0.0 ) );
+    assign( fragMisc, vec4( 1.0, 0.0, emissive, 0.0 ) );
 
   } );
 } );

@@ -45,7 +45,7 @@ export class TruchetScene extends SceneNode {
     light3.color = [ 600.0, 500.0, 400.0 ];
 
     // -- dust -------------------------------------------------------------------------------------
-    const dust = new Dust( [ 0.5, 0.5, 0.5, 1.0 ] );
+    const dust = new Dust( [ 0.5, 0.5, 0.5, 1.0 ], 1.0 );
     dust.transform.scale = [ 5.0, 5.0, 5.0 ];
     dust.transform.position = [ 0.0, 0.0, 0.0 ];
 

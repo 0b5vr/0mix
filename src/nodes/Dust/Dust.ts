@@ -25,7 +25,7 @@ const materialOptions = { particlesSqrt, particleSpawnLength };
 export const DustTag = Symbol();
 
 export class Dust extends GPUParticles {
-  public constructor( color: RawVector4 ) {
+  public constructor( color: RawVector4, emissive?: number ) {
     // -- material compute -------------------------------------------------------------------------
     const materialCompute = new Material(
       quadVert,
@@ -75,6 +75,7 @@ export class Dust extends GPUParticles {
       },
     );
 
+    deferred.addUniform( 'emissive', '1f', emissive ?? 0.0 );
     deferred.addUniform( 'color', '4f', ...color );
 
     const depth = new Material(

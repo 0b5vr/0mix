@@ -170,7 +170,7 @@ export const deferredShadeFrag = ( { withAO }: {
       } ],
       [ eq( mtlId, MTL_PBR_ROUGHNESS_METALLIC ), () => {
         assign( outColor, shadePBR( sw( tex3, 'x' ), sw( tex3, 'y' ) ) );
-        addAssign( outColor, mul( sw( tex3, 'z' ), dotNV, color ) );
+        addAssign( outColor, mul( sw( tex3, 'z' ), color ) );
       } ],
       [ eq( mtlId, MTL_PBR_EMISSIVE3_ROUGHNESS ), () => {
         assign( outColor, shadePBR( abs( sw( tex3, 'w' ) ), step( sw( tex3, 'w' ), 0.0 ) ) );
