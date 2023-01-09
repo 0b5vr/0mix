@@ -14,6 +14,7 @@ import { LineTriTunnelScene } from './nodes/LineTriTunnelScene/LineTriTunnelScen
 import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
 import { MetaballScene } from './nodes/MetaballScene/MetaballScene';
 import { Mixer } from './nodes/Mixer/Mixer';
+import { MoonScene } from './nodes/MoonScene/MoonScene';
 import { NoisePlaneScene } from './nodes/NoisePlaneScene/NoisePlaneScene';
 import { OBSVRLogoScene } from './nodes/OBSVRLogoScene/OBSVRLogoScene';
 import { OctreeTunnelScene } from './nodes/OctreeTunnelScene/OctreeTunnelScene';
@@ -120,6 +121,7 @@ const scenesA = [
   new FluidScene(),
   new OBSVRLogoScene(),
   new TruchetScene(),
+  new MoonScene(),
 ];
 
 const scenesB = [
