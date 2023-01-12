@@ -93,6 +93,8 @@ export class Material {
 
   public blend: [ GLBlendFactor, GLBlendFactor ];
 
+  public offsetFactor: [ number, number ];
+
   /**
    * A handler which is called when the material is ready.
    */
@@ -101,8 +103,9 @@ export class Material {
   public constructor(
     vert: string,
     frag: string,
-    { blend, linkOptions, initOptions }: {
+    { blend, offsetFactor, linkOptions, initOptions }: {
       blend?: [ GLBlendFactor, GLBlendFactor ],
+      offsetFactor?: [ number, number ],
       linkOptions?: LazyProgramOptions,
       initOptions?: MaterialInitOptions,
     } = {},
@@ -111,6 +114,7 @@ export class Material {
     this.__frag = frag;
     this.__linkOptions = linkOptions ?? {};
     this.blend = blend ?? [ GL_ONE, GL_ZERO ];
+    this.offsetFactor = offsetFactor ?? [ 0, 0 ];
 
     if ( import.meta.env.DEV ) {
       if ( initOptions ) {
@@ -225,6 +229,7 @@ export class Material {
 
   public setBlendMode(): void {
     gl.blendFunc( ...this.blend );
+    gl.polygonOffset( ...this.offsetFactor );
   }
 
   public async replaceShader(

@@ -7,12 +7,14 @@ export function glVertexArrayBindVertexbuffer(
   location: number,
   size: number,
   divisor = 0,
+  stride = 0,
+  offset = 0,
 ): void {
   gl.bindVertexArray( vertexArray );
 
   gl.bindBuffer( GL_ARRAY_BUFFER, buffer );
   gl.enableVertexAttribArray( location );
-  gl.vertexAttribPointer( location, size, GL_FLOAT, false, 0, 0 );
+  gl.vertexAttribPointer( location, size, GL_FLOAT, false, stride, offset );
   gl.vertexAttribDivisor( location, divisor );
 
   gl.bindVertexArray( null );

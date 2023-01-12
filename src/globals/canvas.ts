@@ -1,12 +1,13 @@
 import 'webgl-memory';
 
-import { GL_BLEND, GL_LEQUAL } from '../gl/constants';
+import { GL_BLEND, GL_LEQUAL, GL_POLYGON_OFFSET_FILL } from '../gl/constants';
 
 export const canvas = document.createElement( 'canvas' );
 
 export const gl = canvas.getContext( 'webgl2', { antialias: false } )!;
 gl.depthFunc( GL_LEQUAL );
 gl.enable( GL_BLEND );
+gl.enable( GL_POLYGON_OFFSET_FILL );
 
 gl.getExtension( 'EXT_color_buffer_float' );
 gl.getExtension( 'EXT_float_blend' );

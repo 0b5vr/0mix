@@ -8,9 +8,11 @@ export function glCreateVertexbuffer(
 ): WebGLBuffer {
   const buffer = gl.createBuffer()!;
 
-  gl.bindBuffer( GL_ARRAY_BUFFER, buffer );
-  gl.bufferData( GL_ARRAY_BUFFER, source, usage );
-  gl.bindBuffer( GL_ARRAY_BUFFER, null );
+  if ( source ) {
+    gl.bindBuffer( GL_ARRAY_BUFFER, buffer );
+    gl.bufferData( GL_ARRAY_BUFFER, source, usage );
+    gl.bindBuffer( GL_ARRAY_BUFFER, null );
+  }
 
   return buffer;
 }

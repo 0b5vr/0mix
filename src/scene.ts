@@ -22,6 +22,7 @@ import { ParticlesStudioScene } from './nodes/ParticlesStudioScene/ParticlesStud
 import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
 import { PlexusScene } from './nodes/PlexusScene/PlexusScene';
 import { PostStack } from './nodes/PostStack/PostStack';
+import { SevenSegScene } from './nodes/SevenSegScene/SevenSegScene';
 import { SphereArrayScene } from './nodes/SphereArrayScene/SphereArrayScene';
 import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
 import { TrailsScene } from './nodes/TrailsScene/TrailsScene';
@@ -122,6 +123,7 @@ const scenesA = [
   new OBSVRLogoScene(),
   new TruchetScene(),
   new MoonScene(),
+  new SevenSegScene(),
 ];
 
 const scenesB = [
