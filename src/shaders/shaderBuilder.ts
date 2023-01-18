@@ -349,6 +349,9 @@ export const sub: {
 export const mul: {
   ( ...args: Exf[] ): Ex<'float'>;
   // <T extends GLSLGenType>( ...args: ( Exf | Ex<T> )[] ): Ex<T>; // does not work well with spread
+  ( ...args: ( Ex<'mat4'> )[] ): Ex<'mat4'>;
+  ( ...args: ( Ex<'mat3'> )[] ): Ex<'mat3'>;
+  ( ...args: ( Ex<'mat2'> )[] ): Ex<'mat2'>;
   ( ...args: ( Exf | Ex<'vec2'> | Ex<'mat2'> )[] ): Ex<'vec2'>;
   ( ...args: ( Exf | Ex<'vec3'> | Ex<'mat3'> )[] ): Ex<'vec3'>;
   ( ...args: ( Exf | Ex<'vec4'> | Ex<'mat4'> )[] ): Ex<'vec4'>;
@@ -527,6 +530,9 @@ export const bxor: {
 ) as any;
 
 export const arrayIndex: {
+  ( array: Ex<'mat2'>, i: Ex<'int'> ): Ex<'vec2'>;
+  ( array: Ex<'mat3'>, i: Ex<'int'> ): Ex<'vec3'>;
+  ( array: Ex<'mat4'>, i: Ex<'int'> ): Ex<'vec4'>;
   <T extends string>( array: Ex<`${ T }[]`>, i: Ex<'int'> ): Ex<T>;
 } = ( array: string, i: string ) => (
   `(${ array }[${ i }])`

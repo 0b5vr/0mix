@@ -1,4 +1,5 @@
 import { arrayIndex, assign, band, build, def, defConstArray, defIn, defOutNamed, defUniformNamed, div, divAssign, float, glPosition, int, mad, main, mul, normalize, rshift, sw, vec4 } from '../../../shaders/shaderBuilder';
+import { normalTransform } from '../../../shaders/modules/normalTransform';
 
 export const sevenSegVert = build( () => {
   const position = defIn( 'vec3', 0 );
@@ -20,7 +21,6 @@ export const sevenSegVert = build( () => {
   const projectionMatrix = defUniformNamed( 'mat4', 'projectionMatrix' );
   const viewMatrix = defUniformNamed( 'mat4', 'viewMatrix' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
-  const normalMatrix = defUniformNamed( 'mat3', 'normalMatrix' );
 
   const segMasks = defConstArray( 'float', [
     1 + 2 + 4 + 8 + 16 + 32, // 0
@@ -45,7 +45,9 @@ export const sevenSegVert = build( () => {
     assign( vPositionWithoutModel, vec4( position, 1.0 ) );
     assign( vNormalWithoutModel, normalize( normal ) );
 
-    assign( vPosition, mul( modelMatrix, matrix, vPositionWithoutModel ) );
+    const m = def( 'mat4', mul( modelMatrix, matrix ) );
+
+    assign( vPosition, mul( m, vPositionWithoutModel ) );
     assign( vViewPosition, mul( viewMatrix, vPosition ) );
     assign( vProjPosition, mul( projectionMatrix, vViewPosition ) );
     const outPos = def( 'vec4', vProjPosition );
@@ -54,10 +56,7 @@ export const sevenSegVert = build( () => {
     divAssign( sw( outPos, 'x' ), aspect );
     assign( glPosition, outPos );
 
-    assign(
-      vNormal!,
-      normalize( mul( normalMatrix!, normal ) ),
-    );
+    assign( vNormal, normalTransform( m, normal ) );
 
     // -- emission ---------------------------------------------------------------------------------
     const segMask = int(
