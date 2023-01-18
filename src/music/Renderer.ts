@@ -197,40 +197,42 @@ export class Renderer {
   /**
    * Render and return a buffer.
    */
-  public render( first: number, count: number ): [ Float32Array, Float32Array ] {
+  public render( first: number, count: number ): void {
     const { __program: program } = this;
-    if ( program == null ) {
-      return this.__dstArrays;
+    if ( program ) {
+      // attrib
+      const attribLocation = gl.getAttribLocation( program, 'off' );
+
+      gl.bindBuffer( GL_ARRAY_BUFFER, this.__offsetBuffer );
+      gl.enableVertexAttribArray( attribLocation );
+      gl.vertexAttribPointer( attribLocation, 1, GL_FLOAT, false, 0, 0 );
+
+      // render
+      gl.useProgram( program );
+      gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, this.__tf );
+      gl.enable( GL_RASTERIZER_DISCARD );
+
+      gl.beginTransformFeedback( GL_POINTS );
+      gl.drawArrays( GL_POINTS, first, count );
+      gl.endTransformFeedback();
+
+      gl.disable( GL_RASTERIZER_DISCARD );
+      gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, null );
+      gl.useProgram( null );
     }
+  }
 
-    // attrib
-    const attribLocation = gl.getAttribLocation( program, 'off' );
-
-    gl.bindBuffer( GL_ARRAY_BUFFER, this.__offsetBuffer );
-    gl.enableVertexAttribArray( attribLocation );
-    gl.vertexAttribPointer( attribLocation, 1, GL_FLOAT, false, 0, 0 );
-
-    // render
-    gl.useProgram( program );
-    gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, this.__tf );
-    gl.enable( GL_RASTERIZER_DISCARD );
-
-    gl.beginTransformFeedback( GL_POINTS );
-    gl.drawArrays( GL_POINTS, first, count );
-    gl.endTransformFeedback();
-
-    gl.disable( GL_RASTERIZER_DISCARD );
-    gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, null );
-    gl.useProgram( null );
-
-    // feedback
+  /**
+   * Read the previously rendered buffer.
+   */
+  public readBuffer(): [ Float32Array, Float32Array ] {
     gl.bindBuffer( GL_ARRAY_BUFFER, this.__tfBuffer0 );
     gl.getBufferSubData(
       GL_ARRAY_BUFFER,
       0,
       this.__dstArrays[ 0 ],
-      first,
-      count,
+      0,
+      FRAMES_PER_RENDER,
     );
     gl.bindBuffer( GL_ARRAY_BUFFER, null );
 
@@ -239,8 +241,8 @@ export class Renderer {
       GL_ARRAY_BUFFER,
       0,
       this.__dstArrays[ 1 ],
-      first,
-      count,
+      0,
+      FRAMES_PER_RENDER,
     );
     gl.bindBuffer( GL_ARRAY_BUFFER, null );
 

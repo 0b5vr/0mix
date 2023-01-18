@@ -161,7 +161,7 @@ export class Music {
     // -- early abort? -----------------------------------------------------------------------------
     if ( !this.isPlaying ) { return; }
 
-    // -- choose a right write block ---------------------------------------------------------------
+    // -- should we render this time? --------------------------------------------------------------
     const blockAhead = this.__bufferWriteBlocks - readBlocks;
 
     // we don't have to render this time
@@ -169,6 +169,11 @@ export class Music {
       return;
     }
 
+    // -- read the previously rendered buffer ------------------------------------------------------
+    this.__readBuffer();
+    this.__bufferWriteBlocks += BLOCKS_PER_RENDER;
+
+    // -- choose a right write block ---------------------------------------------------------------
     // we're very behind
     if ( blockAhead < 0 ) {
       this.__bufferWriteBlocks = (
@@ -198,7 +203,7 @@ export class Music {
 
     // -- render -----------------------------------------------------------------------------------
     if ( this.__program ) {
-      this.__prepareBuffer( 0, beginNext );
+      this.__render( 0, beginNext );
     }
 
     // -- render the next program from the mid of the code -----------------------------------------
@@ -210,22 +215,16 @@ export class Music {
       this.__program = this.__programCue;
       this.__programCue = undefined;
 
-      this.__prepareBuffer( beginNext, FRAMES_PER_RENDER - beginNext );
+      this.__render( beginNext, FRAMES_PER_RENDER - beginNext );
     }
-
-    // -- update write blocks ----------------------------------------------------------------------
-    this.__bufferWriteBlocks += BLOCKS_PER_RENDER;
 
     // emit an event
     // this.__emit( 'update' );
   }
 
-  private __prepareBuffer(
-    first: number,
-    count: number
-  ): void {
+  private __render( first: number, count: number ): void {
     const bufferReaderNode = this.__bufferReaderNode;
-    if ( bufferReaderNode == null ) { return; }
+    if ( !bufferReaderNode ) { return; }
 
     const glslTime = BLOCK_SIZE * this.__bufferWriteBlocks / sampleRate - this.timeOffset;
 
@@ -258,24 +257,20 @@ export class Music {
       glslTime
     );
 
+    this.__renderer.render( first, count );
+  }
+
+  private __readBuffer(): void {
+    const bufferReaderNode = this.__bufferReaderNode;
+    if ( !bufferReaderNode ) { return; }
+
     // bufferWriteBlocks can increment while we're rendering
     const bufferWriteBlocks = this.__bufferWriteBlocks;
 
-    const [ outL, outR ] = this.__renderer.render( first, count );
+    const [ outL, outR ] = this.__renderer.readBuffer();
 
-    bufferReaderNode.write(
-      0,
-      bufferWriteBlocks,
-      first,
-      outL.subarray( first, first + count ),
-    );
-
-    bufferReaderNode.write(
-      1,
-      bufferWriteBlocks,
-      first,
-      outR.subarray( first, first + count ),
-    );
+    bufferReaderNode.write( 0, bufferWriteBlocks, 0, outL.subarray( 0, FRAMES_PER_RENDER ) );
+    bufferReaderNode.write( 1, bufferWriteBlocks, 0, outR.subarray( 0, FRAMES_PER_RENDER ) );
   }
 
   private __processErrorMessage( error: any ): string | null {
