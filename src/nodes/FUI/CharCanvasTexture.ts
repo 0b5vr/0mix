@@ -1,4 +1,5 @@
 import { CanvasTexture } from '../utils/CanvasTexture';
+import { arraySerial } from '@0b5vr/experimental';
 
 /**
  * 6 xx xxx xx
@@ -87,7 +88,7 @@ const defaultWidthArray: ( number | undefined )[] = [];
   defaultCharArray[ 33 + i ] = str;
 } );
 
-[ ...Array( 26 ) ].map( ( _, i ) => {
+arraySerial( 26 ).map( ( i ) => {
   defaultCharArray[ 97 + i ] = defaultCharArray[ 65 + i ];
 } );
 

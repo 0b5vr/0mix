@@ -6,7 +6,7 @@ import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
 import { Quad } from '../../heck/components/Quad';
 import { SceneNode } from '../../heck/components/SceneNode';
-import { Swap } from '@0b5vr/experimental';
+import { Swap, arraySerial } from '@0b5vr/experimental';
 import { auto } from '../../globals/automaton';
 import { colorFrag } from '../../shaders/common/colorFrag';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
@@ -154,7 +154,7 @@ export class Fluid extends SceneNode {
 
     swapPressure.swap();
 
-    const quadPressures = [ ...Array( 24 ) ].map( ( _, i ) => {
+    const quadPressures = arraySerial( 24 ).map( ( i ) => {
       const material = new Material(
         quadVert,
         fluidPressureFrag( i === 0 ),

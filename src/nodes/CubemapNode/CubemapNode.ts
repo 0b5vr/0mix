@@ -4,7 +4,7 @@ import { ComponentOptions } from '../../heck/components/Component';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
-import { RawQuaternion, Swap } from '@0b5vr/experimental';
+import { RawQuaternion, Swap, arraySerial } from '@0b5vr/experimental';
 import { SceneNode } from '../../heck/components/SceneNode';
 // import { StuffTag } from './Stuff';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
@@ -36,7 +36,7 @@ export interface CubemapNodeOptions extends ComponentOptions {
   exclusionTags?: symbol[];
 }
 
-const targets = [ ...Array( 6 ) ].map( () => (
+const targets = arraySerial( 6 ).map( () => (
   new BufferTextureRenderTarget( 256, 256, 1, GLTextureFormatStuffR11G11B10F )
 ) );
 

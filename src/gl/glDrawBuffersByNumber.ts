@@ -1,8 +1,9 @@
 import { GL_COLOR_ATTACHMENT0 } from './constants';
+import { arraySerial } from '@0b5vr/experimental';
 import { gl } from '../globals/canvas';
 
 export function glDrawBuffersByNumber( numBuffers: number ): void {
-  gl.drawBuffers( [ ...Array( numBuffers ) ].map( ( _, i ) => (
-    GL_COLOR_ATTACHMENT0 + i
-  ) ) );
+  gl.drawBuffers(
+    arraySerial( numBuffers ).map( ( i ) => GL_COLOR_ATTACHMENT0 + i )
+  );
 }

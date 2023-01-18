@@ -1,5 +1,6 @@
 import { GLTextureFormatStuff, GLTextureFormatStuffRGBA32F } from './glSetTexture';
 import { GL_CLAMP_TO_EDGE, GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, GL_FRAMEBUFFER, GL_LINEAR, GL_RENDERBUFFER, GL_TEXTURE_2D } from './constants';
+import { arraySerial } from '@0b5vr/experimental';
 import { gl } from '../globals/canvas';
 import { glCreateTexture } from './glCreateTexture';
 import { glTextureFilter } from './glTextureFilter';
@@ -35,7 +36,7 @@ export function glLazyMultiTargetFramebuffer(
     gl.bindFramebuffer( GL_FRAMEBUFFER, null );
 
     // == texture ==================================================================================
-    textures = [ ...Array( numBuffers ?? 1 ) ].map( ( _, i ) => {
+    textures = arraySerial( numBuffers ?? 1 ).map( ( i ) => {
       const texture = glCreateTexture(
         width,
         height,

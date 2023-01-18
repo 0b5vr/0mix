@@ -6,13 +6,13 @@ import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
 import { SEVEN_SEG_PRIMCOUNT, SevenSegTransforms } from './SevenSegTransforms';
 import { SceneNode } from '../../heck/components/SceneNode';
+import { arraySerial, vecNormalize } from '@0b5vr/experimental';
 import { dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 import { sevenSegFrag } from './shaders/sevenSegFrag';
 import { sevenSegVert } from './shaders/sevenSegVert';
 import { sevenSegWireFrag } from './shaders/sevenSegWireFrag';
-import { vecNormalize } from '@0b5vr/experimental';
 
 // == geometry utils ===============================================================================
 function appendHex(
@@ -118,7 +118,7 @@ const position = glCreateVertexbuffer( new Float32Array( arrayPosition ) );
 const normal = glCreateVertexbuffer( new Float32Array( arrayNormal ) );
 const segIds = glCreateVertexbuffer( new Float32Array( arraySegIds ) );
 const instanceIds = glCreateVertexbuffer( new Float32Array(
-  [ ...Array( SEVEN_SEG_PRIMCOUNT ) ].map( ( _, i ) => i )
+  arraySerial( SEVEN_SEG_PRIMCOUNT )
 ) );
 
 const geometry = new Geometry();

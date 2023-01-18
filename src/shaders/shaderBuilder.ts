@@ -1,3 +1,5 @@
+import { arraySerial } from '@0b5vr/experimental';
+
 export type GLSLExpression<T extends string> = string & {
   __type: T,
   __glslExpression: true,
@@ -908,7 +910,7 @@ export function ifChain( ...condProcArgs: [ Ex<'bool'>, () => void ][] ): void {
 }
 
 export function unrollLoop( count: number, func: ( count: number ) => void ): void {
-  [ ...Array( count ) ].map( ( _, i ) => {
+  arraySerial( count ).map( ( i ) => {
     __stack.unshift( '' );
     func( i );
     const procedure = __stack.shift();

@@ -3,7 +3,7 @@ import { GL_TEXTURE_2D } from '../../../gl/constants';
 import { Material } from '../../../heck/Material';
 import { Quad } from '../../../heck/components/Quad';
 import { SceneNode } from '../../../heck/components/SceneNode';
-import { Swap } from '@0b5vr/experimental';
+import { Swap, arraySerial } from '@0b5vr/experimental';
 import { denoiserFrag } from './shaders/denoiserFrag';
 import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../../globals/quadGeometry';
@@ -28,7 +28,7 @@ export class Denoiser extends SceneNode {
     } = options;
 
     // -- quads ------------------------------------------------------------------------------------
-    const quads = [ ...Array( iter ) ].map( ( _, i ) => {
+    const quads = arraySerial( iter ).map( ( i ) => {
       // :: material :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       const material = new Material(
         quadVert,

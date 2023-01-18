@@ -3,6 +3,7 @@ import { Lambda } from '../../heck/components/Lambda';
 import { MUSIC_BPM } from '../../config';
 import { RenderTarget } from '../../heck/RenderTarget';
 import { ShaderEventRange } from '../../music/ShaderEventRange';
+import { arraySerial } from '@0b5vr/experimental';
 import { music } from '../../globals/music';
 import { vec2 } from '../../shaders/shaderBuilder';
 
@@ -21,7 +22,7 @@ export class StatsText extends CharRenderer {
     this.children.unshift( new Lambda( {
       onUpdate: ( { time } ) => {
         const beat = time / 60.0 * MUSIC_BPM;
-        const beatIndicator = [ ...Array( 4 ) ].map( ( _, i ) => (
+        const beatIndicator = arraySerial( 4 ).map( ( i ) => (
           Math.floor( beat % 4.0 ) === i ? '*' : '.'
         ) ).join( '' );
 

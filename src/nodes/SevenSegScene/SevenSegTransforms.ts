@@ -1,5 +1,5 @@
 import { GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW } from '../../gl/constants';
-import { RawQuaternion, RawVector3, Xorshift, mat4Compose, mod, quatFromAxisAngle, quatMultiply, vecScale } from '@0b5vr/experimental';
+import { RawQuaternion, RawVector3, Xorshift, arraySerial, mat4Compose, mod, quatFromAxisAngle, quatMultiply, vecScale } from '@0b5vr/experimental';
 import { gl } from '../../globals/canvas';
 import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
 import { quatRandom } from './quatRandom';
@@ -22,7 +22,7 @@ export class SevenSegTransforms {
   public constructor() {
     const rng = new Xorshift();
 
-    this.transforms = [ ...Array( SEVEN_SEG_PRIMCOUNT ) ].map( () => [
+    this.transforms = arraySerial( SEVEN_SEG_PRIMCOUNT ).map( () => [
       [ 5.0 - 10.0 * rng.gen(), 5.0 - 10.0 * rng.gen(), 5.0 - 10.0 * rng.gen() ],
       quatRandom( rng ),
       vecScale( [ 1.0, 1.0, 1.0 ], 0.1 + rng.gen() * rng.gen() * rng.gen() ),
