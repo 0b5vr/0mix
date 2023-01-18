@@ -132,10 +132,10 @@
     estree-walker "^2.0.1"
     picomatch "^2.2.2"
 
-"@tweakpane/core@^1.0.9":
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/@tweakpane/core/-/core-1.0.9.tgz#4135618a75165b45e0f44a4af71b5cb337fedabd"
-  integrity sha512-vvS0IGhJ9Wq37vgldgF9Ohh5BA0RKapffhzyTN84170nt/0SCreXB9zIMLlbL4ZxvCKAKJ0080wJHS5aVhf20Q==
+"@tweakpane/core@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@tweakpane/core/-/core-1.1.2.tgz#725fab6f1d1a57904e503778e98c2a20047ff1cd"
+  integrity sha512-4Y3EOHkl3sjf86Y2vWpsE+8/taXpqoFqtg6szZ0NjXix24Z5qKgwlgji37ClGGs+yOo+7+r3TZeOHeFOxP7lXA==
 
 "@types/glob@^7.1.3", "@types/glob@^7.2.0":
   version "7.2.0"
@@ -1681,10 +1681,10 @@ tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
-tweakpane@^3.0.8:
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/tweakpane/-/tweakpane-3.0.8.tgz#e9138020ff4dc13a86cf1b2276ff5a2b5921df5c"
-  integrity sha512-vJuB0346B6gMpxnFDJyy2wcEshkvcTpQ74TCqJTeFaDvzq9FL29h5KszT1+YUTLlP+26OQI8PFGN8WbtOQStnQ==
+tweakpane@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/tweakpane/-/tweakpane-3.1.2.tgz#09ee02468def7a1b3d08ee38fb2cf296264fc4f0"
+  integrity sha512-bgPu0IKCqShX0tDpviD+hBHNhlSOExw9WvSpqK+fAT8Sh5eOpBhl18gMitvTXLmeZRMYr2HwgC+UR4URqL39bw==
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"

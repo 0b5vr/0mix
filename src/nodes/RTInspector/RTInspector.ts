@@ -2,6 +2,7 @@ import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget'
 import { Component } from '../../heck/components/Component';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 import { Lambda } from '../../heck/components/Lambda';
+import { ListConstraint } from '@tweakpane/core';
 import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
 import { RTInspectorMultiple } from './RTInspectorMultiple';
@@ -84,18 +85,41 @@ export class RTInspector extends SceneNode {
   }
 
   private __updateTarget(): void {
-    const ha = gui; // FIXME: weird error that prevents me using optional chaining...
+    const single: string = gui?.value(
+      'RTInspector/single',
+      '',
+      { options: [
+        { text: '(none)', value: '' },
+      ] },
+    ) ?? '';
+    const singleIndex: number = gui?.value( 'RTInspector/index', 0, { step: 1 } ) ?? 0;
 
-    const single: string = ha?.value( 'RTInspector/single', '' ) ?? '';
-    const singleIndex: number = ha?.value( 'RTInspector/index', 0, { step: 1 } ) ?? 0;
+    // update single options list
+    // this is touching the unstable API of Tweakpane
+    // See: https://github.com/cocopon/tweakpane/discussions/446#discussioncomment-4697346
+    {
+      const value = gui?.input( 'RTInspector/single' )?.controller_.binding.value as any;
+      const constraint = value.constraint.constraints[ 0 ] as ListConstraint<string>;
+      const rtNames = Array.from( RawBufferRenderTarget.nameMap.keys() );
+
+      if ( constraint.values.get( 'options' ).length !== rtNames.length + 1 ) {
+        constraint.values.set( 'options', [
+          { text: '(none)', value: '' },
+          ...rtNames.map( ( name ) => ( {
+            text: name,
+            value: name,
+          } ) ),
+        ] );
+      }
+    }
 
     this.materialSingle.addUniform(
       'lod',
       '1f',
-      ha?.value( 'RTInspector/lod', 0, { step: 1 } ) ?? 0.0,
+      gui?.value( 'RTInspector/lod', 0, { step: 1 } ) ?? 0.0,
     );
 
-    if ( ha?.value( 'RTInspector/multiple', false ) ) {
+    if ( gui?.value( 'RTInspector/multiple', false ) ) {
       this.nodeMultiple.active = true;
       this.nodeSingle.active = false;
     } else if ( single !== '' ) {
