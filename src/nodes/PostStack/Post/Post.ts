@@ -4,6 +4,7 @@ import { Material } from '../../../heck/Material';
 import { Quad } from '../../../heck/components/Quad';
 import { RenderTarget } from '../../../heck/RenderTarget';
 import { SceneNode } from '../../../heck/components/SceneNode';
+import { auto } from '../../../globals/automaton';
 import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
 import { postFrag } from './shaders/postFrag';
 import { quadGeometry } from '../../../globals/quadGeometry';
@@ -45,6 +46,9 @@ export class Post extends SceneNode {
       quad.name = 'quad';
     }
 
-    this.children.push( quad );
+    this.children = [ quad ];
+
+    // -- auto -------------------------------------------------------------------------------------
+    auto( 'Post/cos', ( { value } ) => material.addUniform( 'cosAmp', '1f', value ) );
   }
 }

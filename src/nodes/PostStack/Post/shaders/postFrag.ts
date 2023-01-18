@@ -1,7 +1,6 @@
-import { GLSLExpression, abs, add, addAssign, assign, build, def, defFn, defInNamed, defOutNamed, defUniformNamed, div, float, gt, ifThen, insert, length, main, max, min, mix, mul, mulAssign, normalize, retFn, sqrt, sub, sw, tan, texture, unrollLoop, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { GLSLExpression, abs, add, addAssign, assign, build, cos, def, defFn, defInNamed, defOutNamed, defUniformNamed, div, float, insert, length, mad, main, max, min, mix, mul, mulAssign, normalize, retFn, sqrt, sub, sw, tan, texture, unrollLoop, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { PI } from '../../../../utils/constants';
 import { glslDefRandom } from '../../../../shaders/modules/glslDefRandom';
-import { glslLofi } from '../../../../shaders/modules/glslLofi';
 import { glslSaturate } from '../../../../shaders/modules/glslSaturate';
 import { liftGammaGain } from '../../../../shaders/modules/liftGammaGain';
 import { sRGBOETF } from '../../../../shaders/modules/sRGBOETF';
@@ -23,8 +22,7 @@ export const postFrag = build( () => {
   const vUv = defInNamed( 'vec2', 'vUv' );
 
   const time = defUniformNamed( 'float', 'time' );
-  const mosaicAmp = defUniformNamed( 'float', 'mosaicAmp' );
-  const mixInvert = defUniformNamed( 'float', 'mixInvert' );
+  const cosAmp = defUniformNamed( 'float', 'cosAmp' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
 
@@ -47,15 +45,6 @@ export const postFrag = build( () => {
 
     init( vec4( vUv, time, 1.0 ) );
 
-    const mosaic = mul( mosaicAmp, sw( resolution, 'y' ) );
-    ifThen( gt( mosaic, 1.0 ), () => {
-      assign( uv, add(
-        glslLofi( sub( uv, 0.5 ), div( mosaic, resolution ) ) as GLSLExpression<'vec2'>,
-        mul( mosaic, div( 0.5, resolution ) ),
-        0.5
-      ) );
-    } );
-
     const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     const p = def( 'vec2', sub( mul( uv, 2.0 ), 1.0 ) );
     mulAssign( sw( p, 'x' ), aspect );
@@ -74,14 +63,17 @@ export const postFrag = build( () => {
       addAssign( tex, mul( a, barrel( barrelAmp, uv ) ) );
     } );
 
-    assign( tex, mix( vec3( 0.0 ), tex, vig ) );
-
     const col = def( 'vec3', tex );
+    assign( col, mix( vec3( 0.0 ), col, vig ) );
     assign( col, tonemapACESHill( max( col, 0.0 ) ) );
     addAssign( col, mul( 0.002, vec3( sub( random(), 0.5 ) ) ) );
     assign( col, glslSaturate( col ) );
     assign( col, sRGBOETF( col ) );
-    assign( col, mix( col, sub( 1.0, col ), mixInvert ) );
+    assign( col, mix(
+      col,
+      mad( 0.5, -0.5, cos( mul( PI, cosAmp, sw( col, 'xxx' ) ) ) ),
+      glslSaturate( cosAmp ),
+    ) );
     assign( col, liftGammaGain( col, LIFT, GAMMA, GAIN ) );
 
     assign( fragColor, vec4( col, 1.0 ) );
