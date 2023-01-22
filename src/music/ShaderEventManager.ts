@@ -67,10 +67,38 @@ export class ShaderEventManager {
           this.select[ 2 ] - this.select[ 0 ] + 1,
         );
 
+        let indentSize = 100;
+        lines.map( ( line ) => {
+          const trimmedLength = line.trimStart().length;
+          if ( trimmedLength /* !== 0 */ ) {
+            indentSize = Math.min( indentSize, line.length - trimmedLength );
+          }
+        } );
+
+        const indentSpaces = ' '.repeat( indentSize );
+
         this.lines.splice(
           this.select[ 0 ],
           0,
-          ...lines.map( ( line ) => ' '.repeat( event[ 2 ] ) + '// ' + line.substring( event[ 2 ] ) ),
+          ...lines.map( ( line ) => line.replace( indentSpaces, indentSpaces + '// ' ) ),
+        );
+
+        const selectLine = this.select[ 2 ];
+        const selectCol = this.lines[ this.select[ 2 ] ].length;
+        const alterRange: ShaderEventRange = [ this.select[ 0 ], 0, selectLine, selectCol ];
+        this.select = [ selectLine, selectCol, selectLine, selectCol ];
+
+        emit( EventType.ShaderEventAlter, alterRange );
+      } else if ( event[ 1 ] === ShaderEventType.Uncomment ) {
+        const lines = this.lines.splice(
+          this.select[ 0 ],
+          this.select[ 2 ] - this.select[ 0 ] + 1,
+        );
+
+        this.lines.splice(
+          this.select[ 0 ],
+          0,
+          ...lines.map( ( line ) => line.replace( '// ', '' ) ),
         );
 
         const selectLine = this.select[ 2 ];

@@ -4,11 +4,7 @@ import { MUSIC_BPM } from '../config';
 import { Renderer } from './Renderer';
 import { audio, sampleRate } from '../globals/audio';
 import { createDebounce } from '../utils/createDebounce';
-import { perlinFBMTextureTarget } from '../textures/perlinFBMTextureTarget';
 import { promiseGui } from '../globals/gui';
-import { sample808HiHat } from './samples/sample808HiHat';
-import { sampleClapNoise } from './samples/sampleClapNoise';
-import { sampleWhiteNoise } from './samples/sampleWhiteNoise';
 import { shaderEventManager } from './ShaderEventManager';
 import { shaderchunkPreLines } from './shaderchunks';
 
@@ -47,8 +43,6 @@ export class Music {
 
   private __bufferReaderNode?: BufferReaderNode;
   private __bufferWriteBlocks: number;
-
-  private __samples: string[];
 
   public get time(): number {
     const t = BLOCK_SIZE / sampleRate * this.__bufferReadBlocks;
@@ -103,14 +97,6 @@ export class Music {
     } );
 
     this.__bufferWriteBlocks = 0;
-
-    // -- samples ----------------------------------------------------------------------------------
-    this.__samples = [ 'noise', 'clapNoise', 'hihat' ];
-
-    this.__renderer.uploadTexture( 'noise', sampleWhiteNoise );
-    this.__renderer.uploadTexture( 'clapNoise', sampleClapNoise );
-    this.__renderer.uploadTexture( 'hihat', sample808HiHat );
-    this.__renderer.addTextureDirect( 'fbm', perlinFBMTextureTarget.texture );
   }
 
   /**
@@ -227,17 +213,6 @@ export class Music {
     if ( !bufferReaderNode ) { return; }
 
     const glslTime = BLOCK_SIZE * this.__bufferWriteBlocks / sampleRate - this.timeOffset;
-
-    // render
-    let textureUnit = 0;
-    this.__samples.map( ( sampleName ) => {
-      this.__renderer.uniformTexture( 'sample_' + sampleName, sampleName, textureUnit );
-      textureUnit ++;
-    } );
-
-    // TODO: this is terrible
-    this.__renderer.uniformTexture( 'fbm', 'fbm', textureUnit );
-    textureUnit ++;
 
     this.__renderer.uniform1f( 'bpm', MUSIC_BPM );
     this.__renderer.uniform1f( 'sampleRate', sampleRate );

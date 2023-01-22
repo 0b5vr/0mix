@@ -1,17 +1,17 @@
 import { ShaderEventRange } from './ShaderEventRange';
 
 export function withinShaderEventRange(
-  range: ShaderEventRange,
+  [ startLine, startCol, endLine, endCol ]: ShaderEventRange,
   line: number,
   col: number,
 ): boolean {
-  if ( range[ 0 ] === range[ 2 ] ) {
-    return ( range[ 1 ] <= col && col < range[ 3 ] );
+  if ( startLine === endLine ) {
+    return startLine === line && ( startCol <= col && col < endCol );
   }
 
   return (
-    ( range[ 0 ] === line && range[ 1 ] <= col ) ||
-    ( range[ 0 ] < line && line < range[ 2 ] ) ||
-    ( range[ 2 ] === line && col < range[ 3 ] )
+    ( startLine === line && startCol <= col ) ||
+    ( startLine < line && line < endLine ) ||
+    ( endLine === line && col < endCol )
   );
 }

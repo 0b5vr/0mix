@@ -1,8 +1,9 @@
+import { CharRenderer } from './CharRenderer/CharRenderer';
 import { EventType, on } from '../../globals/globalEvent';
 import { RenderTarget } from '../../heck/RenderTarget';
+import { gui } from '../../globals/gui';
 import { shaderEventManager } from '../../music/ShaderEventManager';
 import { vec2 } from '../../shaders/shaderBuilder';
-import { CharRenderer } from './CharRenderer/CharRenderer';
 
 export class Code extends CharRenderer {
   public constructor( target: RenderTarget ) {
@@ -15,7 +16,24 @@ export class Code extends CharRenderer {
 
     // -- set code ---------------------------------------------------------------------------------
     on( EventType.ShaderEventAlter, ( change ) => {
-      this.setContent( shaderEventManager.lines, change, shaderEventManager.select );
+      let { lines, select } = shaderEventManager;
+
+      if ( import.meta.env.DEV ) {
+        if ( gui?.value( 'Code/line', false ) ) {
+          lines = shaderEventManager.lines.map(
+            ( line, iLine ) => `${ iLine }`.padStart( 3, '0' ) + ' ' + line
+          );
+
+          select = [
+            select[ 0 ],
+            select[ 1 ] + 4,
+            select[ 2 ],
+            select[ 3 ] + 4,
+          ];
+        }
+      }
+
+      this.setContent( lines, change, select );
       this.scrollTarget = shaderEventManager.select[ 2 ];
     } );
   }

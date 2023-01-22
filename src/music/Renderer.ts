@@ -1,6 +1,5 @@
 import { FRAMES_PER_RENDER } from './Music';
-import { GL_ARRAY_BUFFER, GL_DYNAMIC_COPY, GL_FLOAT, GL_NEAREST, GL_POINTS, GL_R32F, GL_RASTERIZER_DISCARD, GL_RED, GL_STATIC_DRAW, GL_TEXTURE0, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TRANSFORM_FEEDBACK, GL_TRANSFORM_FEEDBACK_BUFFER } from '../gl/constants';
-import { SAMPLE_TEXTURE_SIZE } from './constants';
+import { GL_ARRAY_BUFFER, GL_DYNAMIC_COPY, GL_FLOAT, GL_POINTS, GL_RASTERIZER_DISCARD, GL_STATIC_DRAW, GL_TRANSFORM_FEEDBACK, GL_TRANSFORM_FEEDBACK_BUFFER } from '../gl/constants';
 import { gl } from '../globals/canvas';
 import { glLazyProgram } from '../gl/glLazyProgram';
 import { shaderchunkPost, shaderchunkPre } from './shaderchunks';
@@ -15,8 +14,6 @@ export class Renderer {
 
   private __program: WebGLProgram | null;
   private __programCue: WebGLProgram | null;
-
-  private __textures: Map<string, WebGLTexture>;
 
   private __dstArrays: [ Float32Array, Float32Array ];
 
@@ -35,8 +32,6 @@ export class Renderer {
 
     this.__program = null;
     this.__programCue = null;
-
-    this.__textures = new Map();
   }
 
   /**
@@ -51,10 +46,6 @@ export class Renderer {
 
     gl.deleteProgram( this.__program );
     gl.deleteProgram( this.__programCue );
-
-    this.__textures.forEach( ( texture ) => {
-      gl.deleteTexture( texture );
-    } );
   }
 
   /**
@@ -98,55 +89,6 @@ export class Renderer {
   }
 
   /**
-   * Create a texture and upload data.
-   */
-  public uploadTexture(
-    textureName: string,
-    source: Float32Array,
-  ): void {
-    const texture = gl.createTexture()!;
-
-    gl.bindTexture( GL_TEXTURE_2D, texture );
-
-    gl.texImage2D(
-      GL_TEXTURE_2D,
-      0,
-      GL_R32F,
-      SAMPLE_TEXTURE_SIZE,
-      SAMPLE_TEXTURE_SIZE,
-      0,
-      GL_RED,
-      GL_FLOAT,
-      source,
-    );
-
-    gl.texParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    gl.texParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-
-    gl.bindTexture( GL_TEXTURE_2D, null );
-
-    this.__textures.set( textureName, texture );
-  }
-
-  /**
-   * @todo this API should be improved
-   */
-  public addTextureDirect( textureName: string, texture: WebGLTexture ): void {
-    this.__textures.set( textureName, texture );
-  }
-
-  /**
-   * Delete a texture entry.
-   */
-  public deleteTexture( textureName: string ): void {
-    const texture = this.__textures.get( textureName );
-    if ( texture == null ) { return; }
-
-    gl.deleteTexture( texture );
-    this.__textures.delete( textureName );
-  }
-
-  /**
    * Set an uniform1f to the current program.
    */
   public uniform1f( name: string, value: number ): void {
@@ -171,26 +113,6 @@ export class Renderer {
 
     gl.useProgram( program );
     gl.uniform4f( location, ...value );
-    gl.useProgram( null );
-  }
-
-  /**
-   * Set a texture uniform to the current program.
-   */
-  public uniformTexture( name: string, textureName: string, unit: number ): void {
-    const { __program: program } = this;
-    if ( program == null ) { return; }
-
-    const texture = this.__textures.get( textureName );
-    if ( texture == null ) { return; }
-
-    const location = gl.getUniformLocation( program, name );
-
-    gl.activeTexture( GL_TEXTURE0 + unit );
-    gl.bindTexture( GL_TEXTURE_2D, texture );
-
-    gl.useProgram( program );
-    gl.uniform1i( location, unit );
     gl.useProgram( null );
   }
 
