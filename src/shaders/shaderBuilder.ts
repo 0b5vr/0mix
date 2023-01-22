@@ -781,6 +781,42 @@ export const step: {
   <T extends GLSLGenType>( edge: Ex<T>, x: Ex<T> ): Ex<T>;
 } = __callFn( 'step' ) as any;
 
+export const mixStepChain: {
+  ( x: Exf, smallest: Exf, ...edgeValueArgs: [ Exf, Exf ][] ): Ex<'float'>;
+  <T extends string>( x: Exf, smallest: T, ...edgeValueArgs: [ Exf, T ][] ): T;
+} = ( x: Exf, smallest: string | number, ...edgeValueArgs: [ Exf, string | number ][] ) => {
+  const len = edgeValueArgs.length;
+
+  if ( len === 1 ) {
+    return mix(
+      smallest as any,
+      edgeValueArgs[ 0 ][ 1 ] as any,
+      step( edgeValueArgs[ 0 ][ 0 ], x ),
+    );
+  } else if ( len === 2 ) {
+    return mix(
+      mixStepChain( x, smallest as any, edgeValueArgs[ 0 ] ),
+      edgeValueArgs[ 1 ][ 1 ] as any,
+      step( edgeValueArgs[ 1 ][ 0 ], x ),
+    );
+  }
+
+  const splitIndex = ~~( edgeValueArgs.length / 2 );
+  return mix(
+    mixStepChain(
+      x,
+      smallest as any,
+      ...( edgeValueArgs.slice( 0, splitIndex ) as any ),
+    ),
+    mixStepChain(
+      x,
+      edgeValueArgs[ splitIndex ][ 1 ] as any,
+      ...( edgeValueArgs.slice( splitIndex + 1 ) as any ),
+    ),
+    step( edgeValueArgs[ splitIndex ][ 0 ], x ),
+  );
+};
+
 export const smoothstep: {
   ( edge0: Exf, edge1: Exf, x: Exf ): Ex<'float'>;
   <T extends GLSLGenType>( edge0: Exf, edge1: Exf, x: Ex<T> ): Ex<T>;

@@ -4,13 +4,14 @@ import { Code } from './Code';
 import { ComponentOptions } from '../../heck/components/Component';
 import { DCT } from './DCT/DCT';
 import { EventType, on } from '../../globals/globalEvent';
+import { FUIShit } from './FUIShit/FUIShit';
 import { FXAA } from './FXAA/FXAA';
 import { Kaleidoscope } from './Kaleidoscope/Kaleidoscope';
 import { Post } from './Post/Post';
 import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
-import { Swap } from '@0b5vr/experimental';
 import { StatsText } from './StatsText';
+import { Swap } from '@0b5vr/experimental';
 
 export interface PostStackOptions extends ComponentOptions {
   input: BufferTextureRenderTarget;
@@ -54,6 +55,10 @@ export class PostStack extends SceneNode {
       target: swap.i,
     } );
 
+    const fuiShit = new FUIShit( {
+      target: swap.i,
+    } );
+
     swap.swap();
     const post = new Post( {
       input: swap.o,
@@ -81,6 +86,7 @@ export class PostStack extends SceneNode {
     this.children = [
       bloom,
       kaleidoscope,
+      fuiShit,
       post,
       fxaa,
       dct,
