@@ -7,8 +7,7 @@ precision highp float;
 uniform float bpm;
 uniform vec4 timeLength;
 uniform float sampleRate;
-uniform float _deltaSample;
-uniform vec4 _timeHead;
+uniform vec4 timeHead;
 
 in float off;
 
@@ -19,7 +18,7 @@ out float outR;
 export const shaderchunkPreLines = shaderchunkPre.split( '\n' ).length;
 
 export const shaderchunkPost = `void main() {
-  vec2 out2 = mainAudio( mod( _timeHead + off * _deltaSample, timeLength ) );
+  vec2 out2 = mainAudio( mod( timeHead + off / sampleRate, timeLength ) );
   outL = out2.x;
   outR = out2.y;
 }`;

@@ -1,12 +1,14 @@
 import { BufferReaderNode } from './BufferReaderNode';
 import { EventType, on } from '../globals/globalEvent';
+import { GL_ARRAY_BUFFER, GL_DYNAMIC_COPY, GL_FLOAT, GL_POINTS, GL_RASTERIZER_DISCARD, GL_STATIC_DRAW, GL_TRANSFORM_FEEDBACK, GL_TRANSFORM_FEEDBACK_BUFFER } from '../gl/constants';
 import { MUSIC_BPM } from '../config';
-import { Renderer } from './Renderer';
 import { audio, sampleRate } from '../globals/audio';
 import { createDebounce } from '../utils/createDebounce';
+import { gl } from '../globals/canvas';
+import { glLazyProgram } from '../gl/glLazyProgram';
 import { promiseGui } from '../globals/gui';
 import { shaderEventManager } from './ShaderEventManager';
-import { shaderchunkPreLines } from './shaderchunks';
+import { shaderchunkPost, shaderchunkPre, shaderchunkPreLines } from './shaderchunks';
 
 const BEAT = 60.0 / MUSIC_BPM;
 const BAR = 240.0 / MUSIC_BPM;
@@ -19,8 +21,54 @@ export const LATENCY_BLOCKS = 64;
 
 const debounceShaderApply = createDebounce();
 
-interface MusicProgram {
-  code: string;
+// == dst arrays ===================================================================================
+const dstArrayL = new Float32Array( FRAMES_PER_RENDER );
+const dstArrayR = new Float32Array( FRAMES_PER_RENDER );
+
+// == offset buffer ================================================================================
+const offsetBuffer = gl.createBuffer();
+
+gl.bindBuffer( GL_ARRAY_BUFFER, offsetBuffer );
+gl.bufferData(
+  GL_ARRAY_BUFFER,
+  dstArrayL.map( ( _, i ) => i ),
+  GL_STATIC_DRAW,
+);
+gl.bindBuffer( GL_ARRAY_BUFFER, null );
+
+// == transform feedback buffer ====================================================================
+const tfBufferL = gl.createBuffer()!;
+
+gl.bindBuffer( GL_ARRAY_BUFFER, tfBufferL );
+gl.bufferData(
+  GL_ARRAY_BUFFER,
+  FRAMES_PER_RENDER * 4 /* Float32Array.BYTES_PER_ELEMENT */,
+  GL_DYNAMIC_COPY,
+);
+gl.bindBuffer( GL_ARRAY_BUFFER, null );
+
+const tfBufferR = gl.createBuffer()!;
+
+gl.bindBuffer( GL_ARRAY_BUFFER, tfBufferR );
+gl.bufferData(
+  GL_ARRAY_BUFFER,
+  FRAMES_PER_RENDER * 4 /* Float32Array.BYTES_PER_ELEMENT */,
+  GL_DYNAMIC_COPY,
+);
+gl.bindBuffer( GL_ARRAY_BUFFER, null );
+
+// == transform feedback ===========================================================================
+const tf = gl.createTransformFeedback()!;
+
+// == process error ================================================================================
+function processErrorMessage( error: any ): string | null {
+  const str: string | undefined = error?.message ?? error;
+  if ( !str ) { return null; }
+
+  return str.replace( /ERROR: (\d+):(\d+)/g, ( _match, ...args ) => {
+    const line = parseInt( args[ 1 ] ) - shaderchunkPreLines + 1;
+    return `ERROR: ${ args[ 0 ] }:${ line }`;
+  } );
 }
 
 export class Music {
@@ -34,15 +82,20 @@ export class Music {
 
   private __musicDest: GainNode;
 
-  private __renderer: Renderer;
-  private __program?: MusicProgram;
-  private __programCue?: MusicProgram;
+  private __program?: WebGLProgram;
+  private __programCue?: WebGLProgram;
   private __programSwapTime: number;
 
   private __prevTime: number;
 
   private __bufferReaderNode?: BufferReaderNode;
   private __bufferWriteBlocks: number;
+
+  /**
+   * True if it renders in the previous update call
+   * and it should write the result to the bufferReaderNode
+   */
+  private __shouldWriteBuffer: boolean;
 
   public get time(): number {
     const t = BLOCK_SIZE / sampleRate * this.__bufferReadBlocks;
@@ -62,7 +115,6 @@ export class Music {
     this.isPlaying = false;
     this.timeOffset = 0.0;
     this.deltaTime = 0.0;
-    // this.__lastUpdatedTime = 0.0;
     this.__prevTime = 0.0;
 
     // -- shaderEventManager -----------------------------------------------------------------------
@@ -85,9 +137,7 @@ export class Music {
       } );
     }
 
-    // -- renderer ---------------------------------------------------------------------------------
-    this.__renderer = new Renderer();
-
+    // -- program ----------------------------------------------------------------------------------
     this.__programSwapTime = 0.0;
 
     // -- reader -----------------------------------------------------------------------------------
@@ -97,6 +147,7 @@ export class Music {
     } );
 
     this.__bufferWriteBlocks = 0;
+    this.__shouldWriteBuffer = false;
   }
 
   /**
@@ -105,27 +156,26 @@ export class Music {
   public async compile( code: string ): Promise<void> {
     this.cueStatus = 'compiling';
 
-    await this.__renderer.compile( code ).catch( ( e ) => {
-      const error = this.__processErrorMessage( e );
+    const promiseProgramCue = glLazyProgram(
+      shaderchunkPre + code + shaderchunkPost,
+      '#version 300 es\nvoid main(){discard;}',
+      {
+        tfVaryings: [ 'outL', 'outR' ],
+      },
+    );
 
-      this.__programCue = undefined;
+    if ( import.meta.env.DEV ) {
+      promiseProgramCue.catch( ( e ) => {
+        const error = processErrorMessage( e );
+        this.__programCue = undefined;
+        this.cueStatus = 'none';
+        throw new Error( error ?? undefined );
+      } );
+    }
 
-      this.cueStatus = 'none';
-
-      // this.__emit( 'error', { error } );
-
-      throw new Error( error ?? undefined );
-    } );
-
-    this.__programCue = {
-      code,
-    };
-
+    this.__programCue = await promiseProgramCue;
     this.cueStatus = 'applying';
-
     this.__programSwapTime = ~~( this.time / BAR ) * BAR + BAR;
-
-    // this.__emit( 'error', { error: null } );
   }
 
   public async update(): Promise<void> {
@@ -147,6 +197,14 @@ export class Music {
     // -- early abort? -----------------------------------------------------------------------------
     if ( !this.isPlaying ) { return; }
 
+    // -- read the previously rendered buffer ------------------------------------------------------
+    if ( this.__shouldWriteBuffer ) {
+      this.__readBuffer();
+      this.__bufferWriteBlocks += BLOCKS_PER_RENDER;
+
+      this.__shouldWriteBuffer = false;
+    }
+
     // -- should we render this time? --------------------------------------------------------------
     const blockAhead = this.__bufferWriteBlocks - readBlocks;
 
@@ -154,10 +212,6 @@ export class Music {
     if ( blockAhead > LATENCY_BLOCKS ) {
       return;
     }
-
-    // -- read the previously rendered buffer ------------------------------------------------------
-    this.__readBuffer();
-    this.__bufferWriteBlocks += BLOCKS_PER_RENDER;
 
     // -- choose a right write block ---------------------------------------------------------------
     // we're very behind
@@ -178,83 +232,111 @@ export class Music {
     // -- swap the program from first --------------------------------------------------------------
     if ( beginNext < 0 ) {
       this.cueStatus = 'none';
-
-      this.__renderer.applyCue();
-
-      this.__program = this.__programCue;
-      this.__programCue = undefined;
-
+      this.__applyCue();
       beginNext = FRAMES_PER_RENDER;
     }
 
     // -- render -----------------------------------------------------------------------------------
-    if ( this.__program ) {
-      this.__render( 0, beginNext );
-    }
+    this.__render( 0, beginNext );
 
-    // -- render the next program from the mid of the code -----------------------------------------
-    if ( beginNext < FRAMES_PER_RENDER && this.__programCue != null ) {
+    // render the next program from the mid of the code
+    if ( beginNext < FRAMES_PER_RENDER && this.__programCue ) {
       this.cueStatus = 'none';
-
-      this.__renderer.applyCue();
-
-      this.__program = this.__programCue;
-      this.__programCue = undefined;
-
+      this.__applyCue();
       this.__render( beginNext, FRAMES_PER_RENDER - beginNext );
     }
 
-    // emit an event
-    // this.__emit( 'update' );
+    this.__shouldWriteBuffer = true;
+  }
+
+  private __applyCue(): void {
+    this.__program && gl.deleteProgram( this.__program );
+    this.__program = this.__programCue;
   }
 
   private __render( first: number, count: number ): void {
-    const bufferReaderNode = this.__bufferReaderNode;
-    if ( !bufferReaderNode ) { return; }
+    if ( this.__program ) {
+      const glslTime = BLOCK_SIZE * this.__bufferWriteBlocks / sampleRate - this.timeOffset;
 
-    const glslTime = BLOCK_SIZE * this.__bufferWriteBlocks / sampleRate - this.timeOffset;
+      gl.useProgram( this.__program );
 
-    this.__renderer.uniform1f( 'bpm', MUSIC_BPM );
-    this.__renderer.uniform1f( 'sampleRate', sampleRate );
-    this.__renderer.uniform1f( '_deltaSample', 1.0 / sampleRate );
-    this.__renderer.uniform4f(
-      'timeLength',
-      BEAT,
-      BAR,
-      SIXTEEN_BAR,
-      1E16
-    );
-    this.__renderer.uniform4f(
-      '_timeHead',
-      glslTime % BEAT,
-      glslTime % BAR,
-      glslTime % SIXTEEN_BAR,
-      glslTime
-    );
+      // -- uniforms -------------------------------------------------------------------------------
+      gl.uniform1f(
+        gl.getUniformLocation( this.__program, 'bpm' ),
+        MUSIC_BPM,
+      );
+      gl.uniform1f(
+        gl.getUniformLocation( this.__program, 'sampleRate' ),
+        sampleRate,
+      );
+      gl.uniform4f(
+        gl.getUniformLocation( this.__program, 'timeLength' ),
+        BEAT,
+        BAR,
+        SIXTEEN_BAR,
+        1E16
+      );
+      gl.uniform4f(
+        gl.getUniformLocation( this.__program, 'timeHead' ),
+        glslTime % BEAT,
+        glslTime % BAR,
+        glslTime % SIXTEEN_BAR,
+        glslTime
+      );
 
-    this.__renderer.render( first, count );
+      // -- attributes -----------------------------------------------------------------------------
+      const attribLocation = gl.getAttribLocation( this.__program, 'off' );
+
+      gl.bindBuffer( GL_ARRAY_BUFFER, offsetBuffer );
+      gl.enableVertexAttribArray( attribLocation );
+      gl.vertexAttribPointer( attribLocation, 1, GL_FLOAT, false, 0, 0 );
+
+      // -- render ---------------------------------------------------------------------------------
+      gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, tf );
+      gl.bindBufferRange( GL_TRANSFORM_FEEDBACK_BUFFER, 0, tfBufferL, 4 * first, 4 * count );
+      gl.bindBufferRange( GL_TRANSFORM_FEEDBACK_BUFFER, 1, tfBufferR, 4 * first, 4 * count );
+      gl.enable( GL_RASTERIZER_DISCARD );
+
+      gl.beginTransformFeedback( GL_POINTS );
+      gl.drawArrays( GL_POINTS, first, count );
+      gl.endTransformFeedback();
+
+      gl.disable( GL_RASTERIZER_DISCARD );
+      gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, null );
+    }
   }
 
   private __readBuffer(): void {
-    const bufferReaderNode = this.__bufferReaderNode;
-    if ( !bufferReaderNode ) { return; }
+    if ( this.__bufferReaderNode ) {
+      gl.bindBuffer( GL_ARRAY_BUFFER, tfBufferL );
+      gl.getBufferSubData(
+        GL_ARRAY_BUFFER,
+        0,
+        dstArrayL,
+        0,
+        FRAMES_PER_RENDER,
+      );
+      this.__bufferReaderNode.write(
+        0,
+        this.__bufferWriteBlocks,
+        0,
+        dstArrayL.subarray( 0, FRAMES_PER_RENDER ),
+      );
 
-    // bufferWriteBlocks can increment while we're rendering
-    const bufferWriteBlocks = this.__bufferWriteBlocks;
-
-    const [ outL, outR ] = this.__renderer.readBuffer();
-
-    bufferReaderNode.write( 0, bufferWriteBlocks, 0, outL.subarray( 0, FRAMES_PER_RENDER ) );
-    bufferReaderNode.write( 1, bufferWriteBlocks, 0, outR.subarray( 0, FRAMES_PER_RENDER ) );
-  }
-
-  private __processErrorMessage( error: any ): string | null {
-    const str: string | undefined = error?.message ?? error;
-    if ( !str ) { return null; }
-
-    return str.replace( /ERROR: (\d+):(\d+)/g, ( _match, ...args ) => {
-      const line = parseInt( args[ 1 ] ) - shaderchunkPreLines + 1;
-      return `ERROR: ${ args[ 0 ] }:${ line }`;
-    } );
+      gl.bindBuffer( GL_ARRAY_BUFFER, tfBufferR );
+      gl.getBufferSubData(
+        GL_ARRAY_BUFFER,
+        0,
+        dstArrayR,
+        0,
+        FRAMES_PER_RENDER,
+      );
+      this.__bufferReaderNode.write(
+        1,
+        this.__bufferWriteBlocks,
+        0,
+        dstArrayR.subarray( 0, FRAMES_PER_RENDER ),
+      );
+    }
   }
 }
