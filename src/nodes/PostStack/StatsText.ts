@@ -13,7 +13,7 @@ export class StatsText extends CharRenderer {
       target,
       chars: 256,
       anchor: vec2( 1.0, -1.0 ),
-      offset: vec2( -60.0, 60.0 ),
+      offset: vec2( -4.0, -4.0 ),
       textAlign: 1.0,
       textBaseline: 1.0,
     } );
@@ -32,9 +32,9 @@ export class StatsText extends CharRenderer {
           'time: ' + time.toFixed( 3 ),
           '0b5vr glsl techno live set',
         ];
-        const changeRange: ShaderEventRange = [ 0, 0, music.cueStatus === 'none' ? 0 : 1, 0 ];
+        const select: ShaderEventRange = [ 0, 0, music.cueStatus === 'none' ? 0 : 1, 0 ];
 
-        this.setContent( content, changeRange );
+        this.setContent( content, select );
       }
     } ) );
   }

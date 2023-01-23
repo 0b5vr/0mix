@@ -18,7 +18,7 @@ out float outR;
 export const shaderchunkPreLines = shaderchunkPre.split( '\n' ).length;
 
 export const shaderchunkPost = `void main() {
-  vec2 out2 = mainAudio( mod( timeHead + off / sampleRate, timeLength ) );
+  vec2 out2 = mainaudio( mod( timeHead + off / sampleRate, timeLength ) );
   outL = out2.x;
   outR = out2.y;
 }`;

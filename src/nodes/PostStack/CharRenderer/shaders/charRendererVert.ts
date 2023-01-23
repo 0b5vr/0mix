@@ -1,4 +1,4 @@
-import { GLSLExpression, add, assign, build, defIn, defOutNamed, defUniformNamed, div, glPosition, main, mul, step, sw, vec2, vec4 } from '../../../../shaders/shaderBuilder';
+import { GLSLExpression, add, assign, build, defIn, defOutNamed, defUniformNamed, div, floor, glPosition, mad, main, mix, mul, step, sw, vec2, vec4 } from '../../../../shaders/shaderBuilder';
 
 export const charRendererVert = (
   anchor: GLSLExpression<'vec2'>,
@@ -14,17 +14,27 @@ export const charRendererVert = (
   const resolution = defUniformNamed( 'vec2', 'resolution' );
 
   main( () => {
-    assign( vCoord, position );
+    assign( vCoord, div( mix(
+      vec2( 0.0, -1.0 ),
+      vec2( 6.0, 6.0 ),
+      mad( 0.5, 0.5, position ),
+    ), 5.0 ) );
     assign( vMeta, meta );
 
     const pos = add(
       div(
-        add(
-          mul( vec2( 6.0, 7.0 ), position ),
-          mul( vec2( 12.0, -14.0 ), sw( meta, 'xy' ) ),
-          offset,
-          vec2( 0.0, mul( scroll, 14.0 ) ),
-        ),
+        floor( add(
+          mul(
+            vec2( 6.0, -7.0 ),
+            add(
+              sw( meta, 'xy' ),
+              mul( vec2( 0.5, 0.5 ), position ),
+              mul( -1.0, vec2( 0.0, scroll ) ),
+              offset,
+            ),
+            floor( div( sw( resolution, 'y' ), 360.0 ) ),
+          ),
+        ) ),
         resolution,
         0.5,
       ),

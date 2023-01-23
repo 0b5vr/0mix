@@ -1,6 +1,7 @@
 import { CharRenderer } from './CharRenderer/CharRenderer';
 import { EventType, on } from '../../globals/globalEvent';
 import { RenderTarget } from '../../heck/RenderTarget';
+import { ShaderEventRange } from '../../music/ShaderEventRange';
 import { gui } from '../../globals/gui';
 import { shaderEventManager } from '../../music/ShaderEventManager';
 import { vec2 } from '../../shaders/shaderBuilder';
@@ -11,30 +12,36 @@ export class Code extends CharRenderer {
       target,
       chars: 65536,
       anchor: vec2( -1.0, 0.0 ),
-      offset: vec2( 60.0, 0.0 ),
+      offset: vec2( 4.0, 0.0 ),
+      useSyntaxHighlight: true,
     } );
 
     // -- set code ---------------------------------------------------------------------------------
-    on( EventType.ShaderEventAlter, ( change ) => {
-      let { lines, select } = shaderEventManager;
+    on( EventType.ShaderEventAlter, () => {
+      let lines = shaderEventManager.lines.concat();
+      const select = shaderEventManager.select.concat() as ShaderEventRange;
+
+      if ( select[ 0 ] === select[ 2 ] && select[ 1 ] === select[ 3 ] ) {
+        if ( lines[ select[ 0 ] ]?.length === select[ 1 ] ) {
+          lines[ select[ 0 ] ] += ' ';
+        }
+
+        select[ 3 ] ++;
+      }
 
       if ( import.meta.env.DEV ) {
         if ( gui?.value( 'Code/line', false ) ) {
-          lines = shaderEventManager.lines.map(
+          lines = lines.map(
             ( line, iLine ) => `${ iLine }`.padStart( 3, '0' ) + ' ' + line
           );
 
-          select = [
-            select[ 0 ],
-            select[ 1 ] + 4,
-            select[ 2 ],
-            select[ 3 ] + 4,
-          ];
+          select[ 1 ] += 4;
+          select[ 3 ] += 4;
         }
       }
 
-      this.setContent( lines, change, select );
-      this.scrollTarget = shaderEventManager.select[ 2 ];
+      this.setContent( lines, select );
+      this.scrollTarget = select[ 2 ];
     } );
   }
 }

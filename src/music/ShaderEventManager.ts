@@ -51,16 +51,26 @@ export class ShaderEventManager {
           ...insert,
         );
 
-        const selectLine = this.select[ 0 ] + insert.length;
+        const selectLine = this.select[ 0 ] + insert.length - 1;
         const selectCol = insert[ insert.length - 1 ].length - b.length;
-        const alterRange: ShaderEventRange = [ this.select[ 0 ], a.length, selectLine, selectCol ];
         this.select = [ selectLine, selectCol, selectLine, selectCol ];
 
-        emit( EventType.ShaderEventAlter, alterRange );
-      } else if ( event[ 1 ] === ShaderEventType.Select ) {
-        this.select = event[ 2 ];
+        emit( EventType.ShaderEventAlter );
+      } else if ( event[ 1 ] === ShaderEventType.Delete ) {
+        this.lines[ this.select[ 0 ] ] = (
+          this.lines[ this.select[ 0 ] ].substring( 0, this.select[ 1 ] - 1 )
+          + this.lines[ this.select[ 0 ] ].substring( this.select[ 1 ] )
+        );
 
-        emit( EventType.ShaderEventAlter, [ 0, 0, 0, 0 ] );
+        this.select[ 1 ] --;
+        this.select[ 3 ] --;
+
+        emit( EventType.ShaderEventAlter );
+
+      } else if ( event[ 1 ] === ShaderEventType.Select ) {
+        this.select = event[ 2 ].concat() as ShaderEventRange;
+
+        emit( EventType.ShaderEventAlter );
       } else if ( event[ 1 ] === ShaderEventType.Comment ) {
         const lines = this.lines.splice(
           this.select[ 0 ],
@@ -85,10 +95,9 @@ export class ShaderEventManager {
 
         const selectLine = this.select[ 2 ];
         const selectCol = this.lines[ this.select[ 2 ] ].length;
-        const alterRange: ShaderEventRange = [ this.select[ 0 ], 0, selectLine, selectCol ];
         this.select = [ selectLine, selectCol, selectLine, selectCol ];
 
-        emit( EventType.ShaderEventAlter, alterRange );
+        emit( EventType.ShaderEventAlter );
       } else if ( event[ 1 ] === ShaderEventType.Uncomment ) {
         const lines = this.lines.splice(
           this.select[ 0 ],
@@ -103,10 +112,9 @@ export class ShaderEventManager {
 
         const selectLine = this.select[ 2 ];
         const selectCol = this.lines[ this.select[ 2 ] ].length;
-        const alterRange: ShaderEventRange = [ this.select[ 0 ], 0, selectLine, selectCol ];
         this.select = [ selectLine, selectCol, selectLine, selectCol ];
 
-        emit( EventType.ShaderEventAlter, alterRange );
+        emit( EventType.ShaderEventAlter );
       } else if ( event[ 1 ] === ShaderEventType.Apply ) {
         emit( EventType.ShaderEventApply, this.code );
       }

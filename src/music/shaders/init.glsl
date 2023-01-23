@@ -91,10 +91,10 @@ vec2 boxmuller(vec2 xi){
   return r*orbit(t);
 }
 
-vec2 mainAudio( vec4 time ) {
-  vec2 dest = vec2(0);
+vec2 mainaudio(vec4 time){
+  vec2 dest=vec2(0);
 
-  // -- kick ---------------------------------------------------------------------------------------
+  // kick
   float kickt;
   float sidechain;
 
@@ -113,7 +113,7 @@ vec2 mainAudio( vec4 time ) {
     }
   }
 
-  // -- sub kick -----------------------------------------------------------------------------------
+  // sub kick
   {
     float t=mod(time.x-.25*b2t,.25*b2t);
 
@@ -123,33 +123,33 @@ vec2 mainAudio( vec4 time ) {
     dest+=.5*sidechain*zc*env*wave;
   }
 
-  // -- low freq noise -----------------------------------------------------------------------------
+  // low freq noise
   // {
   //   float t=time.x;
 
   //   vec2 wave=cyclic(
-  //     vec3(orbit(50.*t),400.*t),
+  //     vec3(orbit(50.*t),500.*t),
   //     vec3(1,2,3),
   //     3.
   //   ).xy;
-  //   dest+=.2*sidechain*wave;
+  //   dest+=.14*sidechain*wave;
   // }
 
-  // -- hihat --------------------------------------------------------------------------------------
+  // hihat
   {
     float t=mod(time.x-.5*b2t,1.*b2t);
     float decay=20.;
     dest+=.2*tanh(8.*shotgun(5400.*t,1.4,.0))*exp(-decay*t);
   }
 
-  // -- ride ---------------------------------------------------------------------------------------
+  // ride
   {
     float t=mod(time.y,.5*b2t);
 
     dest+=.1*sidechain*tanh(10.*shotgun(3200.*t,3.4,.1))*exp(-10.*t);
   }
 
-  // -- perc ---------------------------------------------------------------------------------------
+  // perc
   // {
   //   float tp=mod(time.y,2.*b2t);
   //   float t=mod(mod(tp,.75*b2t),.5*b2t);
@@ -170,7 +170,7 @@ vec2 mainAudio( vec4 time ) {
   //   dest+=.4*sidechain*env*tanh(2.*wave);
   // }
 
-  // -- clav ---------------------------------------------------------------------------------------
+  // clav
   {
     float t=mod(mod(time.y,2.25*b2t),.5*b2t);
 
@@ -178,7 +178,7 @@ vec2 mainAudio( vec4 time ) {
     dest+=.2*exp(-t*200.)*vec2(wave)*r2d(1.4);
   }
 
-  // -- rim ----------------------------------------------------------------------------------------
+  // rim
   {
     float t=mod(mod(time.y-.25*b2t,1.25*b2t),.5*b2t);
 
@@ -191,13 +191,13 @@ vec2 mainAudio( vec4 time ) {
     dest+=.3*env*vec2(wave)*r2d(-1.4);
   }
 
-  // -- crash --------------------------------------------------------------------------------------
+  // crash
   // {
   //   float t=time.z;
   //   dest+=.2*mix(.2,1.,sidechain)*tanh(8.*shotgun(4000.*t,3.,.0))*mix(exp(-t),exp(-10.*t),.5);
   // }
 
-  // -- signal -------------------------------------------------------------------------------------
+  // dual vco
   {
     vec2 sum=vec2(0);
 
@@ -210,7 +210,7 @@ vec2 mainAudio( vec4 time ) {
       for(int j=0;j<3;j++){
         float t=mod(time.z-times[j]*b2t-.5*b2t*fi,2.*b2t);
         vec2 wave=vec2(sin(tau*freqs[j]*t));
-        wave+=vec2(sin(1.0*tau*freqs[j]*t+0.0*wave)); // osc 2
+        wave+=vec2(sin(1.0*tau*freqs[j]*t+.0*wave)); // osc 2
         sum+=exp(-30.*max(t-.05,0.))*exp(-2.*fi)*wave*r2d(fi+10.*time.w);
       }
     }

@@ -1,5 +1,4 @@
-import { add, assign, build, def, defInNamed, defOutNamed, defUniformNamed, div, exp, floor, insert, main, mix, mul, mulAssign, sub, sw, tern, texture, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
-import { glslLinearstep } from '../../../../shaders/modules/glslLinearstep';
+import { abs, add, assign, build, def, defInNamed, defOutNamed, defUniformNamed, div, floor, insert, main, mix, mixStepChain, mul, mulAssign, step, sub, sw, tern, texture, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { isValidUv } from '../../../../shaders/modules/isValidUv';
 
 export const charRendererFrag = build( () => {
@@ -10,29 +9,36 @@ export const charRendererFrag = build( () => {
 
   const fragColor = defOutNamed( 'vec4', 'fragColor' );
 
-  const time = defUniformNamed( 'float', 'time' );
   const samplerChar = defUniformNamed( 'sampler2D', 'samplerChar' );
 
   main( () => {
-    const uvm = add( 0.5, mul( vec2( 3.0 / 5.0, -3.5 / 5.0 ), vCoord ) );
     const uv = mul(
       add(
-        uvm,
+        vCoord,
         floor( div( sw( vMeta, 'z' ), vec2( 1.0, 16.0 ) ) ),
       ),
       1.0 / 16.0,
     );
 
     const tex = def( 'float', sw( texture( samplerChar, uv ), 'x' ) );
-    mulAssign( tex, tern( isValidUv( uvm ), 1.0, 0.0 ) );
+    mulAssign( tex, tern( isValidUv( vCoord ), 1.0, 0.0 ) );
 
-    const ani = exp( mul( 10.0, sub( sw( vMeta, 'w' ), time ) ) );
+    const color = mixStepChain(
+      abs( sw( vMeta, 'w' ) ),
+      vec3( 1.0 ),
+      [ 2.0, vec3( 0.4, 0.5, 0.6 ) ],
+      [ 3.0, vec3( 1.0, 0.5, 0.6 ) ],
+      [ 4.0, vec3( 0.7, 0.7, 1.0 ) ],
+      [ 5.0, vec3( 0.5, 0.9, 1.0 ) ],
+      [ 6.0, vec3( 1.0 ) ],
+    );
+
     assign( tex, mix(
-      sub( 1.0, tex ),
       tex,
-      glslLinearstep( sub( ani, 0.125 ), ani, mul( 0.5, add( 1.0, sw( vCoord, 'y' ) ) ) ),
+      sub( 1.0, tex ),
+      step( sw( vMeta, 'w' ), 0.5 ),
     ) );
 
-    assign( fragColor, vec4( vec3( tex ), mix( 0.8, 1.0, tex ) ) );
+    assign( fragColor, vec4( vec3( mul( color, tex ) ), mix( 0.9, 1.0, tex ) ) );
   } );
 } );

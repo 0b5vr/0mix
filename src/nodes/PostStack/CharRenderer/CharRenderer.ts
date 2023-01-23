@@ -14,10 +14,19 @@ import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
 import { gl } from '../../../globals/canvas';
 import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
-import { music } from '../../../globals/music';
 import { promiseGui } from '../../../globals/gui';
 import { quadBuffer } from '../../../globals/quadGeometry';
 import { withinShaderEventRange } from '../../../music/withinShaderEventRange';
+
+enum CharRendererToken {
+  Selected,
+  Text,
+  Comment,
+  Statement,
+  Number,
+  Type,
+  Name,
+}
 
 interface CharRendererOptions {
   target: RenderTarget;
@@ -26,6 +35,7 @@ interface CharRendererOptions {
   offset: GLSLExpression<'vec2'>;
   textAlign?: number;
   textBaseline?: number;
+  useSyntaxHighlight?: boolean;
 }
 
 export class CharRenderer extends SceneNode {
@@ -34,6 +44,7 @@ export class CharRenderer extends SceneNode {
   public bufferChars: WebGLBuffer;
   public textAlign: number;
   public textBaseline: number;
+  public useSyntaxHighlight: boolean;
 
   public constructor( {
     target,
@@ -42,11 +53,13 @@ export class CharRenderer extends SceneNode {
     offset,
     textAlign,
     textBaseline,
+    useSyntaxHighlight,
   }: CharRendererOptions ) {
     super();
 
     this.textAlign = textAlign ?? 0.0;
     this.textBaseline = textBaseline ?? 0.0;
+    this.useSyntaxHighlight = useSyntaxHighlight!;
 
     // -- geometry render --------------------------------------------------------------------------
     const geometry = new Geometry();
@@ -130,7 +143,6 @@ export class CharRenderer extends SceneNode {
 
   public setContent(
     content: string[],
-    changeRange?: ShaderEventRange,
     selectRange?: ShaderEventRange,
   ): void {
     const { arrayChars, bufferChars, textAlign, textBaseline } = this;
@@ -139,21 +151,49 @@ export class CharRenderer extends SceneNode {
     const baselineOffset = ( 1 - content.length ) * textBaseline;
     content.map( ( line, iLine ) => {
       const alignOffset = ( 1 - line.length ) * textAlign;
-      line.split( '' ).map( ( char, iCol ) => {
-        let time = -1E9;
 
-        if ( changeRange && withinShaderEventRange( changeRange, iLine, iCol ) ) {
-          time = music.time;
+      let token: CharRendererToken = CharRendererToken.Text;
+      let tokenLife = 0;
+
+      line.split( '' ).map( ( char, iCol ) => {
+        if ( this.useSyntaxHighlight ) {
+          if ( line.substring( iCol, iCol + 2 ) === '//' ) {
+            token = CharRendererToken.Comment;
+          }
+
+          if ( iCol === 0 && char === '#' ) {
+            token = CharRendererToken.Statement;
+          }
+
+          ( [
+            [ CharRendererToken.Statement, /^(\+|-|=|\*|\/|return|const|if|else|for)/ ],
+            [ CharRendererToken.Number, /^(0x[0-9a-f]+(u)?|\d*\.\d+(e\d+)?|\d+\.\d*|\d+(e\d+)?(u)?)/ ],
+            [ CharRendererToken.Type, /^(floatBitsToUint|float|(u|i)?vec(2|3|4)|int|mat(2|3|4)|exp2?|sqrt|pow|max|a?sin|a?cos|a?tanh?|mod|floor|cross|dot|normalize|smoothstep)/ ],
+            [ CharRendererToken.Name, /^[a-zA-Z_][a-zA-Z0-9_]*/ ],
+          ] as [ CharRendererToken, RegExp ][] ).map( ( [ t, re ] ) => {
+            if ( token === CharRendererToken.Text ) {
+              const m = line.substring( iCol ).match( re );
+              if ( m ) {
+                token = t;
+                tokenLife = m[ 0 ].length;
+              }
+            }
+          } );
         }
 
+        let charToken = token;
         if ( selectRange && withinShaderEventRange( selectRange, iLine, iCol ) ) {
-          time = 1E9;
+          charToken = CharRendererToken.Selected;
         }
 
         arrayChars[ head ++ ] = iCol + alignOffset; // x
         arrayChars[ head ++ ] = iLine + baselineOffset; // y
         arrayChars[ head ++ ] = char.charCodeAt( 0 ); // char
-        arrayChars[ head ++ ] = time; // spawn time
+        arrayChars[ head ++ ] = charToken; // token kind
+
+        if ( -- tokenLife === 0 ) {
+          token = CharRendererToken.Text;
+        }
       } );
     } );
     arrayChars.fill( 0, head );

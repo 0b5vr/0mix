@@ -1,5 +1,4 @@
 import { Component, ComponentUpdateEvent } from '../heck/components/Component';
-import { ShaderEventRange } from '../music/ShaderEventRange';
 
 export enum EventType {
   Resize,
@@ -21,7 +20,7 @@ export type Event = {
   };
   [ EventType.IBLLUT ]: WebGLTexture;
   [ EventType.ShaderEventApply ]: string;
-  [ EventType.ShaderEventAlter ]: ShaderEventRange;
+  [ EventType.ShaderEventAlter ]: void;
 };
 
 export type EventListener<T extends EventType>
