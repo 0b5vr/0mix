@@ -5,6 +5,7 @@ import { Quad } from '../../../heck/components/Quad';
 import { RenderTarget } from '../../../heck/RenderTarget';
 import { SceneNode } from '../../../heck/components/SceneNode';
 import { arraySerial } from '@0b5vr/experimental';
+import { auto } from '../../../globals/automaton';
 import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
 import { fuiShitFrag } from './shaders/fuiShitFrag';
 import { fuiShitVert } from './shaders/fuiShitVert';
@@ -12,7 +13,7 @@ import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
 import { quadBuffer } from '../../../globals/quadGeometry';
 
-const FUISHIT_COMPONENTS = 11;
+const FUISHIT_COMPONENTS = 32;
 
 interface FUIShitOptions {
   target: RenderTarget;
@@ -35,6 +36,8 @@ export class FUIShit extends SceneNode {
     geometry.count = 4;
     geometry.primcount = FUISHIT_COMPONENTS;
     geometry.mode = GL_TRIANGLE_STRIP;
+
+    auto( 'FUIShit/count', ( { value } ) => geometry.primcount = value );
 
     // -- material render --------------------------------------------------------------------------
     const forward = new Material(
