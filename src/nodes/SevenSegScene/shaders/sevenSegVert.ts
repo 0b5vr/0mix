@@ -1,5 +1,8 @@
-import { arrayIndex, assign, band, build, def, defConstArray, defIn, defOutNamed, defUniformNamed, div, divAssign, float, glPosition, int, mad, main, mul, normalize, rshift, sw, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, add, arrayIndex, assign, band, build, def, defConstArray, defIn, defOutNamed, defUniformNamed, div, divAssign, float, floor, fract, glPosition, int, main, mul, normalize, rshift, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { glslLinearstep } from '../../../shaders/modules/glslLinearstep';
+import { glslLofi } from '../../../shaders/modules/glslLofi';
 import { normalTransform } from '../../../shaders/modules/normalTransform';
+import { pcg3df } from '../../../shaders/modules/pcg3df';
 
 export const sevenSegVert = build( () => {
   const position = defIn( 'vec3', 0 );
@@ -59,9 +62,12 @@ export const sevenSegVert = build( () => {
     assign( vNormal, normalTransform( m, normal ) );
 
     // -- emission ---------------------------------------------------------------------------------
-    const segMask = int(
-      arrayIndex( segMasks, band( int( mad( instanceIds, 10.0, time ) ), int( 15 ) ) )
-    );
+    const y = `${ m }[3][1]` as GLSLExpression<'float'>;
+    const phase = def( 'float', add( mul( 140.0 / 120.0, time ), mul( 0.1, y ) ) );
+    assign( phase, add( floor( phase ), glslLinearstep( 0.0, 0.3, fract( phase ) ) ) );
+    const seed = vec3( glslLofi( phase, 0.1 ), instanceIds, 0.0 );
+    const dice = int( mul( pcg3df( seed ), 16.0 ) );
+    const segMask = int( arrayIndex( segMasks, dice ) );
     const segFlag = band( rshift( segMask, int( segIds ) ), int( 1.0 ) );
     assign( vEmit, float( segFlag ) );
   } );
