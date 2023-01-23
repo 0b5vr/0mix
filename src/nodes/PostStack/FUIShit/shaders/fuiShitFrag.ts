@@ -59,7 +59,10 @@ export const fuiShitFrag = build( () => {
       ) ],
 
       // a bar
-      [ 4.0, step( 0.1, abs( sub( sw( vCoord, 'y' ), 0.7 ) ) ) ],
+      [ 4.0, mul(
+        step( 0.05, abs( sub( sw( vCoord, 'y' ), 0.8 ) ) ),
+        step( sub( diceZ, 0.6 ), sw( vCoord, 'y' ) ),
+      ) ],
 
       // a spinner
       [ 5.0, mul(

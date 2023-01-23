@@ -25,7 +25,7 @@ export const fuiShitVert = build( () => {
     assign( vMode, mul( 12.0, sw( pcg3df( vDice ), 'x' ) ) );
     const size = mixStepChain(
       vMode,
-      vec2( 0.01, 0.02 ),
+      mix( vec2( 0.005, 0.02 ), vec2( 0.02, 0.005 ), diceZ ),
       [ 1.0, vec2( 0.02 ) ],
       [ 2.0, vec2( 0.05 ) ],
       [ 3.0, vec2( mul( 0.5, diceZ, diceZ ) ) ],
