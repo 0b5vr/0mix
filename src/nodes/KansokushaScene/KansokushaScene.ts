@@ -40,7 +40,7 @@ export class KansokushaScene extends SceneNode {
               + ( ( row % 2.0 - 0.5 ) * ( 0.5 * time % 2 - 3.0 + 2.0 * col ) - 0.5 ) * height;
             const y = height / 3 * row;
 
-            const image = row + 3 * col === Math.floor( time % 1.0 * 20.0 )
+            const image = row + 3 * col === Math.floor( ( time ) % 1.0 * 15.0 )
               ? imageFill
               : imageStroke;
             context.drawImage( image, x, y, height, height / 3 );
