@@ -36,4 +36,9 @@ export class CanvasTexture {
   public updateTexture(): void {
     glSetTextureFromBitmap( this.texture, this.canvas );
   }
+
+  public resize( width: number, height: number ): void {
+    this.canvas.width = width;
+    this.canvas.height = height;
+  }
 }
