@@ -35,7 +35,7 @@ export class KansokushaScene extends SceneNode {
         const { width, height } = texture;
 
         arraySerial( 3 ).map( ( row ) => {
-          arraySerial( 4 ).map( ( col ) => {
+          arraySerial( 3 ).map( ( col ) => {
             const x = 0.5 * width
               + ( ( row % 2.0 - 0.5 ) * ( 0.5 * time % 2 - 3.0 + 2.0 * col ) - 0.5 ) * height;
             const y = height / 3 * row;
