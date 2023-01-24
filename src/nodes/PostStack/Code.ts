@@ -41,7 +41,7 @@ export class Code extends CharRenderer {
       }
 
       this.setContent( lines, select );
-      this.scrollTarget = select[ 2 ];
+      this.scrollTarget = shaderEventManager.focusRow;
     } );
   }
 }
