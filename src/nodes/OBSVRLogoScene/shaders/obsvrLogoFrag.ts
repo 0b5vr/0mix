@@ -1,5 +1,6 @@
+import { FAR } from '../../../config';
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
-import { abs, add, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, forLoop, glFragDepth, ifThen, insert, lt, mad, main, max, min, mod, mul, mulAssign, neg, normalize, retFn, step, sub, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { abs, add, assign, build, clamp, def, defFn, defInNamed, defOut, defUniformNamed, div, forLoop, glFragDepth, insert, mad, main, max, min, mix, mod, mul, mulAssign, neg, normalize, retFn, step, sub, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 import { foldSortXYZ } from '../../../shaders/modules/foldSortXYZ';
@@ -48,6 +49,7 @@ export const obsvrLogoFrag = ( tag: 'deferred' | 'depth' ): string => build( () 
     assign( d0, min( d0, sdbox( sub( p, vec3( 0.0, -0.8, 0.0 ) ), vec3( 0.6, 0.2, 0.2 ) ) ) );
     assign( d0, min( d0, sdbox( sub( p, vec3( 0.8, 0.0, 0.0 ) ), vec3( 0.2, 0.6, 0.2 ) ) ) );
     assign( d0, min( d0, sdbox( sub( p, vec3( -0.8, 0.0, 0.0 ) ), vec3( 0.2, 0.6, 0.2 ) ) ) );
+    assign( d0, clamp( d0, -FAR, FAR ) ); // NaN blocker. why is it needed?
 
     const pt = def( 'vec3' );
     const d = def( 'float', d0 );
@@ -69,11 +71,12 @@ export const obsvrLogoFrag = ( tag: 'deferred' | 'depth' ): string => build( () 
 
     // make it glow
     assign( d2, add( d0, 0.01 ) );
-    ifThen( lt( d2, d ), () => {
-      retFn( vec4( d2, 1, 0, 0 ) );
-    } );
 
-    retFn( vec4( d, 0, 0, 0 ) );
+    retFn( mix(
+      vec4( d, 0, 0, 0 ),
+      vec4( d2, 1, 0, 0 ),
+      step( d2, d ),
+    ) );
   } );
 
   const mapForN = defFn( 'vec4', [ 'vec3' ], ( p ) => {
@@ -87,12 +90,12 @@ export const obsvrLogoFrag = ( tag: 'deferred' | 'depth' ): string => build( () 
     const [ ro, rd ] = setupRoRd( p );
 
     const { isect, rp } = raymarch( {
-      iter: 100,
+      iter: 50,
       ro,
       rd,
       map,
-      marchMultiplier: 0.7,
-      discardThreshold: 1E-1,
+      marchMultiplier: 0.9,
+      discardThreshold: 4E-2,
     } );
 
     const modelPos = def( 'vec4', mul( modelMatrix, vec4( rp, 1.0 ) ) );
