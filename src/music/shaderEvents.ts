@@ -221,12 +221,10 @@ vec2 mainaudio(vec4 time){
     float t=mod(mod(time.y-.25*b2t,1.25*b2t),.5*b2t);
 
     float env=exp(-300.*t);
-
-    float wave=tanh(4.*(
+    dest+=.3*env*tanh(4.*(
       +tri(t*400.-.5*env)
       +tri(t*1500.-.5*env)
-    ));
-    dest+=.3*env*vec2(wave)*r2d(-1.4);
+    ))*vec2(1,-1);
   }
 
   { // dual vco
@@ -669,24 +667,27 @@ vec2 mainaudio(vec4 time){
   [ 4.5, ShaderEventType.Apply ],
 
   // chord fadein
-  [ 3.0, ShaderEventType.Move, [ 1000, 0 ] ],
+  [ 2.0, ShaderEventType.Move, [ 1000, 0 ] ],
   [ 0.3, ShaderEventType.Move, [ -1, 0 ] ],
   [ 0.3, ShaderEventType.Move, [ -1, 0 ] ],
   [ 0.3, ShaderEventType.Move, [ -1, 0 ] ],
   [ 0.6, ShaderEventType.Move, [ -1, 0 ] ],
-  [ 1.2, ShaderEventType.Uncomment ],
-  [ 0.8, ShaderEventType.Move, [ 0, 4 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.5, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.7, ShaderEventType.Uncomment ],
+  [ 0.8, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 1.0, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.1, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.1, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.1, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.1, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.1, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.1, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.1, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.1, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.1, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.8, ShaderEventType.Move, [ 0, 1 ] ],
   [ 0.5, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '1' ],
-  [ 3.5, ShaderEventType.Apply ],
+  [ 0.5, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '2' ],
   [ 0.5, ShaderEventType.Apply ],
@@ -713,20 +714,20 @@ vec2 mainaudio(vec4 time){
   [ 0.5, ShaderEventType.Apply ],
   [ 4.0, ShaderEventType.Comment ],
   [ 2.0, ShaderEventType.JumpPart, -1 ],
-  [ 0.3, ShaderEventType.JumpPart, -1 ],
-  [ 0.3, ShaderEventType.JumpPart, -1 ],
-  [ 0.3, ShaderEventType.JumpPart, -1 ],
-  [ 0.3, ShaderEventType.JumpPart, -1 ],
-  [ 0.3, ShaderEventType.JumpPart, -1 ],
-  [ 0.3, ShaderEventType.JumpPart, -1 ],
-  [ 0.3, ShaderEventType.JumpPart, -1 ],
-  [ 0.4, ShaderEventType.JumpPart, -1 ],
-  [ 0.4, ShaderEventType.JumpPart, -1 ],
+  [ 0.5, ShaderEventType.JumpPart, -1 ],
+  [ 0.5, ShaderEventType.JumpPart, -1 ],
+  [ 0.5, ShaderEventType.JumpPart, -1 ],
+  [ 0.5, ShaderEventType.JumpPart, -1 ],
+  [ 0.5, ShaderEventType.JumpPart, -1 ],
+  [ 0.5, ShaderEventType.JumpPart, -1 ],
+  [ 0.5, ShaderEventType.JumpPart, -1 ],
   [ 0.8, ShaderEventType.JumpPart, -1 ],
   [ 0.8, ShaderEventType.JumpPart, -1 ],
+  [ 0.8, ShaderEventType.JumpPart, -1 ],
+  [ 1.8, ShaderEventType.JumpPart, -1 ],
   [ 2.2, ShaderEventType.JumpPart, 1 ],
-  [ 3.0, ShaderEventType.Comment ],
-  [ 5.5, ShaderEventType.Apply ],
+  [ 1.0, ShaderEventType.Comment ],
+  [ 8.0, ShaderEventType.Apply ],
 
   // insert kick + bass 3rd
   [ 16.0, ShaderEventType.JumpPart, -1 ],
@@ -823,7 +824,6 @@ vec2 mainaudio(vec4 time){
     float t=mod(mod(mod(time.y-1.*b2t,2.*b2t),.75*b2t),.5*b2t); // .xx. x.xx
 
     float env=exp(-300.*t);
-
     dest+=.3*env*tanh(4.*(
       +tri(t*400.-.5*env)
       +tri(t*1500.-.5*env)
@@ -1245,12 +1245,10 @@ vec2 mainaudio(vec4 time){
   //   float st=floor(time.z/.25/b2t);
 
   //   float env=exp(-300.*t);
-
-  //   float wave=tanh(4.*(
+  //   dest+=.3*step(.5,fract(st*.71+.4))*env*tanh(4.*(
   //     +tri(t*400.-.5*env)
   //     +tri(t*1500.-.5*env)
-  //   ));
-  //   dest+=.3*step(.5,fract(st*.71+.4))*env*vec2(wave)*r2d(-1.4);
+  //   ))*vec2(1,-1);
   // }
 
   // { // perc
@@ -1371,23 +1369,16 @@ vec2 mainaudio(vec4 time){
   [ 0.7, ShaderEventType.Insert, 'z' ],
   [ 0.5, ShaderEventType.Insert, ')' ],
   [ 1.0, ShaderEventType.Apply ],
-  [ 3.0, ShaderEventType.Move, [ -1, 0 ] ],
-  [ 3.0, ShaderEventType.Insert, '\n  ' ],
-  [ 3.0, ShaderEventType.Insert, 'd' ],
-  [ 1.0, ShaderEventType.Insert, 'e' ],
-  [ 0.2, ShaderEventType.Insert, 's' ],
-  [ 0.3, ShaderEventType.Insert, 't' ],
-  [ 0.6, ShaderEventType.Insert, '*' ],
-  [ 0.6, ShaderEventType.Insert, '=' ],
+  [ 6.6, ShaderEventType.Insert, '*' ],
   [ 0.5, ShaderEventType.Insert, '0' ],
   [ 0.2, ShaderEventType.Insert, '.' ],
-  [ 0.5, ShaderEventType.Insert, ';' ],
-  [ 20.0, ShaderEventType.Apply ],
+  [ 26.0, ShaderEventType.Apply ],
+
+  // greets
   [ 3.0, ShaderEventType.MoveStart, [ -1000, 0 ] ],
   [ 0.0, ShaderEventType.MoveStart, [ 0, -1000 ] ],
   [ 0.0, ShaderEventType.MoveEnd, [ 1000, 0 ] ],
   [ 0.0, ShaderEventType.MoveEnd, [ 0, 1000 ] ], // pretend to be select all
-
   [ 1.0, ShaderEventType.Insert, '' ],
   [ 4.0, ShaderEventType.Insert, `// 0b5vr glsl techno live set by 0b5vr
 // 64kb webgl intro
