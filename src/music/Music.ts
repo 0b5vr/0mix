@@ -1,11 +1,13 @@
 import { BufferReaderNode } from './BufferReaderNode';
 import { EventType, on } from '../globals/globalEvent';
-import { GL_ARRAY_BUFFER, GL_DYNAMIC_COPY, GL_FLOAT, GL_POINTS, GL_RASTERIZER_DISCARD, GL_STATIC_DRAW, GL_TRANSFORM_FEEDBACK, GL_TRANSFORM_FEEDBACK_BUFFER } from '../gl/constants';
+import { GL_ARRAY_BUFFER, GL_FLOAT, GL_POINTS, GL_RASTERIZER_DISCARD, GL_STATIC_DRAW, GL_STREAM_READ, GL_TRANSFORM_FEEDBACK, GL_TRANSFORM_FEEDBACK_BUFFER } from '../gl/constants';
 import { MUSIC_BPM } from '../config';
+import { Pool, arraySerial } from '@0b5vr/experimental';
 import { audio, sampleRate } from '../globals/audio';
 import { createDebounce } from '../utils/createDebounce';
 import { gl } from '../globals/canvas';
 import { glLazyProgram } from '../gl/glLazyProgram';
+import { glWaitGPUCommandsCompleteAsync } from '../gl/glWaitGPUCommandsCompleteAsync';
 import { promiseGui } from '../globals/gui';
 import { shaderEventManager } from './ShaderEventManager';
 import { shaderchunkPost, shaderchunkPre, shaderchunkPreLines } from './shaderchunks';
@@ -36,29 +38,38 @@ gl.bufferData(
 );
 gl.bindBuffer( GL_ARRAY_BUFFER, null );
 
-// == transform feedback buffer ====================================================================
-const tfBufferL = gl.createBuffer()!;
+// == transform feedback pool ======================================================================
+interface TFPoolEntry {
+  bufferL: WebGLBuffer;
+  bufferR: WebGLBuffer;
+  tf: WebGLTransformFeedback;
+}
 
-gl.bindBuffer( GL_ARRAY_BUFFER, tfBufferL );
-gl.bufferData(
-  GL_ARRAY_BUFFER,
-  FRAMES_PER_RENDER * 4 /* Float32Array.BYTES_PER_ELEMENT */,
-  GL_DYNAMIC_COPY,
-);
-gl.bindBuffer( GL_ARRAY_BUFFER, null );
+const tfPool = new Pool<TFPoolEntry>( arraySerial( 128 ).map( () => {
+  const bufferL = gl.createBuffer()!;
 
-const tfBufferR = gl.createBuffer()!;
+  gl.bindBuffer( GL_ARRAY_BUFFER, bufferL );
+  gl.bufferData(
+    GL_ARRAY_BUFFER,
+    FRAMES_PER_RENDER * 4 /* Float32Array.BYTES_PER_ELEMENT */,
+    GL_STREAM_READ,
+  );
+  gl.bindBuffer( GL_ARRAY_BUFFER, null );
 
-gl.bindBuffer( GL_ARRAY_BUFFER, tfBufferR );
-gl.bufferData(
-  GL_ARRAY_BUFFER,
-  FRAMES_PER_RENDER * 4 /* Float32Array.BYTES_PER_ELEMENT */,
-  GL_DYNAMIC_COPY,
-);
-gl.bindBuffer( GL_ARRAY_BUFFER, null );
+  const bufferR = gl.createBuffer()!;
 
-// == transform feedback ===========================================================================
-const tf = gl.createTransformFeedback()!;
+  gl.bindBuffer( GL_ARRAY_BUFFER, bufferR );
+  gl.bufferData(
+    GL_ARRAY_BUFFER,
+    FRAMES_PER_RENDER * 4 /* Float32Array.BYTES_PER_ELEMENT */,
+    GL_STREAM_READ,
+  );
+  gl.bindBuffer( GL_ARRAY_BUFFER, null );
+
+  const tf = gl.createTransformFeedback()!;
+
+  return { bufferL, bufferR, tf };
+} ) );
 
 // == process error ================================================================================
 function processErrorMessage( error: any ): string | null {
@@ -88,12 +99,6 @@ export class Music {
 
   private __bufferReaderNode?: BufferReaderNode;
   private __bufferWriteBlocks: number;
-
-  /**
-   * True if it renders in the previous update call
-   * and it should write the result to the bufferReaderNode
-   */
-  private __shouldWriteBuffer: boolean;
 
   public get time(): number {
     const t = BLOCK_SIZE / sampleRate * this.__bufferReadBlocks;
@@ -145,7 +150,6 @@ export class Music {
     } );
 
     this.__bufferWriteBlocks = 0;
-    this.__shouldWriteBuffer = false;
   }
 
   /**
@@ -195,14 +199,6 @@ export class Music {
     // -- early abort? -----------------------------------------------------------------------------
     if ( !this.isPlaying ) { return; }
 
-    // -- read the previously rendered buffer ------------------------------------------------------
-    if ( this.__shouldWriteBuffer ) {
-      this.__readBuffer();
-      this.__bufferWriteBlocks += BLOCKS_PER_RENDER;
-
-      this.__shouldWriteBuffer = false;
-    }
-
     // -- should we render this time? --------------------------------------------------------------
     const blockAhead = this.__bufferWriteBlocks - readBlocks;
 
@@ -235,16 +231,20 @@ export class Music {
     }
 
     // -- render -----------------------------------------------------------------------------------
-    this.__render( 0, beginNext );
+    const tfEntry = tfPool.next();
+
+    this.__render( tfEntry, 0, beginNext );
 
     // render the next program from the mid of the code
     if ( beginNext < FRAMES_PER_RENDER && this.__programCue ) {
       this.cueStatus = 'none';
       this.__applyCue();
-      this.__render( beginNext, FRAMES_PER_RENDER - beginNext );
+      this.__render( tfEntry, beginNext, FRAMES_PER_RENDER - beginNext );
     }
 
-    this.__shouldWriteBuffer = true;
+    // -- read the rendered buffer -----------------------------------------------------------------
+    this.__readBuffer( tfEntry );
+    this.__bufferWriteBlocks += BLOCKS_PER_RENDER;
   }
 
   private __applyCue(): void {
@@ -252,7 +252,7 @@ export class Music {
     this.__program = this.__programCue;
   }
 
-  private __render( first: number, count: number ): void {
+  private __render( tfEntry: TFPoolEntry, first: number, count: number ): void {
     if ( this.__program ) {
       const glslTime = BLOCK_SIZE * this.__bufferWriteBlocks / sampleRate - this.timeOffset;
 
@@ -290,9 +290,9 @@ export class Music {
       gl.vertexAttribPointer( attribLocation, 1, GL_FLOAT, false, 0, 0 );
 
       // -- render ---------------------------------------------------------------------------------
-      gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, tf );
-      gl.bindBufferRange( GL_TRANSFORM_FEEDBACK_BUFFER, 0, tfBufferL, 4 * first, 4 * count );
-      gl.bindBufferRange( GL_TRANSFORM_FEEDBACK_BUFFER, 1, tfBufferR, 4 * first, 4 * count );
+      gl.bindTransformFeedback( GL_TRANSFORM_FEEDBACK, tfEntry.tf );
+      gl.bindBufferRange( GL_TRANSFORM_FEEDBACK_BUFFER, 0, tfEntry.bufferL, 4 * first, 4 * count );
+      gl.bindBufferRange( GL_TRANSFORM_FEEDBACK_BUFFER, 1, tfEntry.bufferR, 4 * first, 4 * count );
       gl.enable( GL_RASTERIZER_DISCARD );
 
       gl.beginTransformFeedback( GL_POINTS );
@@ -304,9 +304,13 @@ export class Music {
     }
   }
 
-  private __readBuffer(): void {
+  private async __readBuffer( tfEntry: TFPoolEntry ): Promise<void> {
     if ( this.__bufferReaderNode ) {
-      gl.bindBuffer( GL_ARRAY_BUFFER, tfBufferL );
+      const bufferWriteBlocks = this.__bufferWriteBlocks;
+
+      await glWaitGPUCommandsCompleteAsync();
+
+      gl.bindBuffer( GL_ARRAY_BUFFER, tfEntry.bufferL );
       gl.getBufferSubData(
         GL_ARRAY_BUFFER,
         0,
@@ -316,12 +320,12 @@ export class Music {
       );
       this.__bufferReaderNode.write(
         0,
-        this.__bufferWriteBlocks,
+        bufferWriteBlocks,
         0,
         dstArrayL.subarray( 0, FRAMES_PER_RENDER ),
       );
 
-      gl.bindBuffer( GL_ARRAY_BUFFER, tfBufferR );
+      gl.bindBuffer( GL_ARRAY_BUFFER, tfEntry.bufferR );
       gl.getBufferSubData(
         GL_ARRAY_BUFFER,
         0,
@@ -331,7 +335,7 @@ export class Music {
       );
       this.__bufferReaderNode.write(
         1,
-        this.__bufferWriteBlocks,
+        bufferWriteBlocks,
         0,
         dstArrayR.subarray( 0, FRAMES_PER_RENDER ),
       );
