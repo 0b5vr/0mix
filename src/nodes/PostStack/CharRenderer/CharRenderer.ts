@@ -1,3 +1,4 @@
+import { CDS } from '@0b5vr/experimental';
 import { GLSLExpression } from '../../../shaders/shaderBuilder';
 import { GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../../gl/constants';
 import { Geometry } from '../../../heck/Geometry';
@@ -123,14 +124,14 @@ export class CharRenderer extends SceneNode {
     }
 
     // -- lambda -----------------------------------------------------------------------------------
-    let scrollCurrent = 0.0;
+    const cdsScroll = new CDS();
     this.scrollTarget = 0.0;
 
     const lambdaScroll = new Lambda( {
       onUpdate: ( { deltaTime } ) => {
-        const delta = this.scrollTarget - scrollCurrent;
-        scrollCurrent += ( 1.0 - Math.exp( -10.0 * deltaTime ) ) * delta;
-        forward.addUniform( 'scroll', '1f', scrollCurrent );
+        cdsScroll.target = this.scrollTarget;
+        cdsScroll.update( deltaTime );
+        forward.addUniform( 'scroll', '1f', cdsScroll.value );
       }
     } );
 
