@@ -53,16 +53,12 @@ export type ShaderEvent = [
 ];
 
 export const shaderEvents: ShaderEvent[] = [
-  [ 0.0, ShaderEventType.Insert, `#define saturate(i) clamp(i, 0.,1.)
-#define clip(i) clamp(i, -1.,1.)
+  [ 0.0, ShaderEventType.Insert, `#define saturate(i) clamp(i,0.,1.)
+#define clip(i) clamp(i,-1.,1.)
 #define linearstep(a,b,x) saturate(((x)-(a))/((b)-(a)))
 #define lofi(i,m) (floor((i)/(m))*(m))
-#define lofir(i,m) (floor((i)/(m)+0.5)*(m))
-#define saw(p) (2.*fract(p)-1.)
-#define pwm(x,d) (step(fract(x),(d))*2.0-1.0)
 #define tri(p) (1.-4.*abs(fract(p)-0.5))
 #define p2f(i) (exp2(((i)-69.)/12.)*440.)
-#define inrange(x,a,b) ((a)<=(x)&&(x)<(b))
 
 const float pi=acos(-1.);
 const float tau=2.*pi;
@@ -151,7 +147,7 @@ vec2 mainaudio(vec4 time){
 
   { // kick
     float t=time.x;
-    sidechain=smoothstep(0.,.8*b2t,t);
+    sidechain=smoothstep(0.,1E-3,b2t-t)*smoothstep(0.,.8*b2t,t);
 
     {
       float env=linearstep(0.3,0.1,t);
@@ -234,7 +230,6 @@ vec2 mainaudio(vec4 time){
   }
 
   { // dual vco
-    // hello mfx!
     vec2 sum=vec2(0);
 
     for(int i=0;i<8;i++){
@@ -543,8 +538,10 @@ vec2 mainaudio(vec4 time){
   //   vec3 dice=pcg3df(vec3(st));
   //   float l=(.25-dice.y*.2)*b2t;
   //   float freq=20.*sin(tau*dice.z*2.);
+  //   float fm=fract(10.*exp(-freq*t));
+  //   float wave=fract(20.*exp(-2.*fm))-.5;
   //   float zc=linearstep(0.,1E-3,t)*linearstep(0.,1E-3,l-t);
-  //   dest+=sidechain*.1*zc*saw(20.*exp(-2.*fract(10.*exp(-freq*t))));
+  //   dest+=sidechain*.2*zc*wave;
   // }
 
   { // crash
@@ -568,9 +565,9 @@ vec2 mainaudio(vec4 time){
   [ 2.8, ShaderEventType.JumpPart, -1 ],
   [ 4.0, ShaderEventType.Insert, `{ // kick
     float t=time.x;
-    sidechain=smoothstep(0.,.8*b2t,t);
+    sidechain=smoothstep(0.,1E-3,b2t-t)*smoothstep(0.,.8*b2t,t);
 
-    if(inrange(time.z,0.,61.*b2t)){
+    if(time.z<61.*b2t){
       float env=linearstep(0.3,0.1,t);
 
       // { // hi pass like
@@ -735,8 +732,10 @@ vec2 mainaudio(vec4 time){
   [ 16.0, ShaderEventType.JumpPart, -1 ],
   [ 0.5, ShaderEventType.JumpPart, -1 ],
   [ 6.0, ShaderEventType.Insert, `{ // kick
-    float t=mod(mod(time.y,2.*b2t),.75*b2t);
-    sidechain=smoothstep(0.,.8*b2t,t);
+    float tp=mod(time.y,2.*b2t);
+    float t=mod(tp,.75*b2t);
+    float l=mix(.75*b2t,.5*b2t,step(1.5*b2t,tp));
+    sidechain=smoothstep(0.,1E-3,l-t)*smoothstep(0.,.8*b2t,t);
 
     float env=linearstep(.0,.001,t)*linearstep(0.3,0.1,t);
 
@@ -903,7 +902,6 @@ vec2 mainaudio(vec4 time){
   [ 2.0, ShaderEventType.JumpPart, -1 ],
   [ 1.0, ShaderEventType.JumpPart, -1 ],
   [ 4.5, ShaderEventType.Insert, `{ // additive shepard
-    // hello loonies!
     vec2 sum=vec2(0.);
 
     for(int i=0;i<2500;i++){
@@ -996,7 +994,6 @@ vec2 mainaudio(vec4 time){
   }
 
   { // clap
-    // hello epoch!
     float t=mod(time.y-3.*b2t,4.*b2t);
 
     float env=exp(-40.*t)+.02*exp(-5.*t);
@@ -1048,15 +1045,13 @@ vec2 mainaudio(vec4 time){
         -step(fract(.7+.5*phase),vec2(.03))
         // +fract(p5*phase)-.5
         // +step(fract(1.5*phase),vec2(.5))-.5
-      )*r2d(time.z);
+      )*r2d(time.w);
     }
 
     dest+=.0*mix(.2,1.,sidechain)*sum;
   }
 
   { // pad
-    // hello prismbeings!
-
     vec2 sum=vec2(0);
 
     const float pitchTable[8]=float[](0.,3.,7.,10.,12.,14.,19.,26.);
@@ -1151,11 +1146,13 @@ vec2 mainaudio(vec4 time){
 
     vec3 p=vec3(10.*orbit(500.*t),1000.*t);
     vec2 wave=cyclic(p,1.4).xy;
-    wave+=sin(1500.*t-exp(-t*80.)*30.);
+    float phase=250.*t-5.*exp(-80.*t);
+    wave+=sin(tau*phase+.1*sin(.33*tau*phase));
 
-    float amp=smoothstep(0.,60.*b2t,time.z);
+    float amp=linearstep(0.,60.*b2t,time.z);
+    amp*=amp;
     float env=exp(-12.*t);
-    dest+=amp*.4*tanh(env*wave);
+    dest+=amp*.6*mix(.5,1.,sidechain)*tanh(env*wave);
   }` ],
   [ 2.5, ShaderEventType.Apply ],
 
@@ -1192,13 +1189,13 @@ vec2 mainaudio(vec4 time){
   [ 1.0, ShaderEventType.Delete ],
   [ 1.5, ShaderEventType.Insert, '-' ],
   [ 0.2, ShaderEventType.Insert, '2' ],
-  [ 4.0, ShaderEventType.Move, [ 1, 0 ] ],
-  [ 4.0, ShaderEventType.Move, [ 1, 0 ] ],
+  [ 3.0, ShaderEventType.Move, [ 1, 0 ] ],
+  [ 0.5, ShaderEventType.Move, [ 1, 0 ] ],
   [ 2.0, ShaderEventType.Insert, `{ // kick
     float t=time.x;
-    sidechain=smoothstep(0.,.8*b2t,t);
+    sidechain=smoothstep(0.,1E-3,b2t-t)*smoothstep(0.,.8*b2t,t);
 
-    if(inrange(time.z,0.,61.*b2t)){
+    if(time.z<61.*b2t){
       float env=linearstep(0.3,0.1,t);
 
       float phase=50.*t-11.*(exp(-25.*t)+exp(-100.*t)+exp(-700.*t));
@@ -1264,7 +1261,7 @@ vec2 mainaudio(vec4 time){
   [ 1.0, ShaderEventType.JumpPart, 1 ],
   [ 1.0, ShaderEventType.JumpPart, 1 ],
   [ 3.0, ShaderEventType.Insert, '' ],
-  [ 1.0, ShaderEventType.Apply ],
+  [ 5.5, ShaderEventType.Apply ],
 
   // unmute hihat + rim
   [ 5.0, ShaderEventType.JumpPart, -1 ],
@@ -1392,15 +1389,17 @@ vec2 mainaudio(vec4 time){
   [ 0.0, ShaderEventType.MoveEnd, [ 0, 1000 ] ], // pretend to be select all
 
   [ 1.0, ShaderEventType.Insert, '' ],
-  [ 4.0, ShaderEventType.Insert, `// 0b5vr glsl techno live set
-// (64kb webgl intro)
+  [ 4.0, ShaderEventType.Insert, `// 0b5vr glsl techno live set by 0b5vr
+// 64kb webgl intro
 
 // shoutouts to:
 //   0x4015, alcatraz, altair, cncd, cocoon,
 //   conspiracy, ctrl+alt+test, epoch, fairlight,
 //   farbrausch, limp ninja, logicoma, loonies,
 //   mercury, mfx, mrdoob, ninjadev, orange,
-//   prismbeings, rgba, satori, slay bells, still` ],
+//   prismbeings, rgba, satori, slay bells, still
+
+// press esc to exit...` ],
 
   [ 10000.0, ShaderEventType.Move, [ -1, 0 ] ],
 ];
