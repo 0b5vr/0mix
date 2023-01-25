@@ -1,5 +1,5 @@
 import { FAR } from '../../../config';
-import { GLSLExpression, GLSLFloatExpression, GLSLToken, abs, add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, discard, div, divAssign, dot, eq, floor, forBreak, forLoop, glFragDepth, gt, ifThen, insert, length, lt, mad, main, max, min, mix, mul, mulAssign, neg, normalize, num, reflect, refract, retFn, sin, smoothstep, sq, step, sub, subAssign, sw, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, GLSLToken, abs, add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, discard, div, divAssign, dot, eq, floor, forBreak, forLoop, glFragDepth, glslFalse, glslTrue, gt, ifThen, insert, length, lt, mad, main, max, min, mix, mul, mulAssign, neg, normalize, not, num, or, reflect, refract, retFn, sin, smoothstep, sq, step, sub, subAssign, sw, tern, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
 import { TAU } from '../../../utils/constants';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
@@ -40,7 +40,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     dice: GLSLToken<'vec3'>,
     len: GLSLToken<'float'>,
     size: GLSLToken<'float'>,
-    hole: GLSLToken<'float'>,
+    hole: GLSLToken<'bool'>,
   } => {
     const haha = def( 'float', sw( pcg3df(
       floor( mul( vec3( 2.0, 2.0, 0.0 ), mad( ro, rd, 1E-2 ) ) ),
@@ -56,7 +56,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     const size = def( 'float', 1.0 );
     const cell = def( 'vec3' );
     const dice = def( 'vec3' );
-    const hole = def( 'float', 0.0 );
+    const hole = def( 'bool', glslFalse );
 
     forLoop( 4, () => {
       divAssign( size, 2.0 );
@@ -65,14 +65,14 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
         div( size, 2.0 ),
       ) );
       assign( dice, pcg3df( floor( mul( diceSize, cell ) ) ) );
-      assign( hole, max(
-        step( density, sw( dice, 'y' ) ),
-        mul(
-          step( abs( sw( cell, 'x' ) ), 0.5 ),
-          step( abs( sw( cell, 'y' ) ), 0.5 ),
+      assign( hole, or(
+        lt( density, sw( dice, 'y' ) ),
+        and(
+          lt( abs( sw( cell, 'x' ) ), 0.5 ),
+          lt( abs( sw( cell, 'y' ) ), 0.5 ),
         ),
       ) );
-      ifThen( eq( 1.0, hole ), () => forBreak() );
+      ifThen( hole, () => forBreak() );
       ifThen( gt( sw( dice, 'x' ), mul( size, 1.5 ) ), () => forBreak() );
     } );
 
@@ -98,21 +98,23 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     const ro0 = def( 'vec3' );
     const rd0 = def( 'vec3', rd );
 
-    const isFirstRay = def( 'float', 1.0 );
+    const isFirstRay = def( 'bool', glslTrue );
 
     const N0 = def( 'vec3' );
     const rough0 = def( 'float' );
-    const inMedium = def( 'float', 0.0 );
-    const inMedium0 = def( 'float' );
+    const inMedium = def( 'bool', glslFalse );
+    const inMedium0 = def( 'bool' );
     const col = def( 'vec3', vec3( 0.0 ) );
     const colRem = def( 'vec3', vec3( 1.0 ) );
     const samples = def( 'float', 1.0 );
 
-    const doTrace = (
-      N: GLSLExpression<'vec3'>,
-      rough: GLSLFloatExpression,
-      isEmissiveBlock: GLSLFloatExpression,
-    ): void => {
+    const doPlastic = ( N: GLSLExpression<'vec3'> ): void => {
+      assign( rd, refract( rd, N, 1.0 / IOR ) );
+      assign( inMedium, glslTrue );
+    };
+
+    const doMetal = ( N: GLSLExpression<'vec3'>, rough: GLSLExpression<'float'> ): void => {
+      // reflective
       const h = def( 'vec3', sampleGGX(
         vec2( random(), random() ),
         N,
@@ -120,16 +122,9 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
       ) );
       const dotVH = def( 'float', max( 0.001, dot( neg( rd ), h ) ) );
 
-      assign( rd, mix(
-        reflect( rd, h ),
-        refract( rd, N, 1.0 / IOR ),
-        isEmissiveBlock,
-      ) );
-      mulAssign( colRem, mix(
-        fresnelSchlick( dotVH, num( 0.3 ), num( 1.0 ) ),
-        1.0,
-        isEmissiveBlock,
-      ) );
+      assign( rd, reflect( rd, h ) );
+
+      mulAssign( colRem, fresnelSchlick( dotVH, num( 0.3 ), num( 1.0 ) ) );
     };
 
     forLoop( 80, () => {
@@ -141,16 +136,19 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
 
       const rough = sw( result.dice, 'z' );
 
-      const size = mix(
-        sub( result.size, mix( 0.01, 0.04, inMedium ) ),
-        -1.0,
-        result.hole
-      );
-      assign( isect, mix(
-        isect,
-        isectBox( sub( ro, result.cell ), rd, vec3( size ) ),
-        step( 0.0, size ),
-      ) );
+      ifThen( not( result.hole ), () => {
+        ifThen( inMedium, () => {
+          const size = sub( result.size, 0.04 );
+          assign( isect, mix(
+            isect,
+            isectBox( sub( ro, result.cell ), rd, vec3( size ) ),
+            step( 0.0, size ),
+          ) );
+        }, () => {
+          const size = sub( result.size, 0.01 );
+          assign( isect, isectBox( sub( ro, result.cell ), rd, vec3( size ) ) );
+        } );
+      } );
 
       ifThen( lt( isectlen, FAR ), () => {
         // cringe
@@ -161,27 +159,31 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
         addAssign( ro, mul( rd, isectlen ) );
 
         // record the first ray
-        assign( ro0, mix( ro0, ro, isFirstRay ) );
-        assign( N0, mix( N0, N, isFirstRay ) );
-        assign( rough0, mix( rough0, rough, isFirstRay ) );
-        assign( inMedium0, mix( inMedium0, inMedium, isFirstRay ) );
+        ifThen( isFirstRay, () => {
+          assign( ro0, ro );
+          assign( N0, N );
+          assign( rough0, rough );
+          assign( inMedium0, inMedium );
+        } );
 
-        // if it's in medium, do the emission
-        addAssign( col, mix( vec3( 0.0 ), mul( rough, colRem ), inMedium ) );
-        mulAssign( colRem, mix( 1.0, 0.0, inMedium ) );
+        ifThen( inMedium, () => {
+          // emissive
+          addAssign( col, mul( rough, colRem ) );
+          mulAssign( colRem, 0.0 );
 
-        ifThen( and( eq( 1.0, inMedium ), eq( 1.0, isFirstRay ) ), () => forBreak() );
+          ifThen( isFirstRay, () => forBreak() );
+        } );
 
-        // cringe shading
-        const isEmissiveBlock = step( 0.8, rough );
-        doTrace( N, rough, isEmissiveBlock );
+        ifThen( gt( rough, 0.8 ), () => {
+          doPlastic( N );
 
-        assign( inMedium, num( isEmissiveBlock ) );
-        assign( isFirstRay, mul( isFirstRay, isEmissiveBlock ) );
+        }, () => {
+          doMetal( N, rough );
+          assign( isFirstRay, glslFalse );
+        } );
 
       }, () => {
-        ifThen( eq( 1.0, inMedium ), () => {
-          // from inside to outside
+        ifThen( inMedium, () => {
           const size = sub( result.size, 0.01 );
           assign( isect, isectInBox( sub( ro, result.cell ), rd, vec3( size ) ) );
 
@@ -190,9 +192,9 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
 
           // refractive
           const refr = def( 'vec3', refract( rd, N, IOR ) );
-          const isRefl = step( dot( abs( refr ), vec3( 1.0 ) ), 0.0 );
+          const isRefl = eq( refr, vec3( 0.0 ) );
 
-          assign( rd, mix( refr, reflect( rd, N ), isRefl ) );
+          assign( rd, tern( isRefl, reflect( rd, N ), refr ) );
           assign( inMedium, isRefl );
 
         }, () => {
@@ -208,13 +210,17 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
 
         assign( ro, ro0 );
         assign( rd, rd0 );
-        assign( inMedium, 0.0 );
+        assign( inMedium, glslFalse );
 
         // cringe
         mulAssign( colRem, smoothstep( 0.01, 0.02, abs( sw( ro, 'x' ) ) ) );
         mulAssign( colRem, smoothstep( 0.01, 0.02, abs( sw( ro, 'y' ) ) ) );
 
-        doTrace( N0, rough0, inMedium0 );
+        ifThen( inMedium0, () => {
+          doPlastic( N );
+        }, () => {
+          doMetal( N0, rough0 );
+        } );
 
       } );
     } );
