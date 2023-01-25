@@ -53,7 +53,7 @@ export type ShaderEvent = [
 ];
 
 export const shaderEvents: ShaderEvent[] = [
-  [ 8.0, ShaderEventType.Insert, `#define saturate(i) clamp(i, 0.,1.)
+  [ 0.0, ShaderEventType.Insert, `#define saturate(i) clamp(i, 0.,1.)
 #define clip(i) clamp(i, -1.,1.)
 #define linearstep(a,b,x) saturate(((x)-(a))/((b)-(a)))
 #define lofi(i,m) (floor((i)/(m))*(m))
@@ -102,7 +102,7 @@ mat3 orthbas(vec3 z){
 
 vec3 cyclic(vec3 p,float pump){
   vec4 sum=vec4(0);
-  mat3 rot=orthbas(vec3(-7,3,-6));
+  mat3 rot=orthbas(vec3(2,-3,1));
 
   for(int i=0;i<5;i++){
     p*=rot;
@@ -147,7 +147,7 @@ vec2 boxmuller(vec2 xi){
 vec2 mainaudio(vec4 time){
   vec2 dest=vec2(0);
 
-  float sidechain;
+  float sidechain=1.;
 
   { // kick
     float t=time.x;
@@ -179,17 +179,14 @@ vec2 mainaudio(vec4 time){
   { // low freq noise
     float t=time.x;
 
-    vec2 wave=cyclic(
-      vec3(orbit(47.*t),500.*t),
-      4.
-    ).xy;
+    vec2 wave=cyclic(vec3(200.*t),3.).xy;
     dest+=.14*sidechain*wave;
   }
 
   { // hihat
     float t=mod(time.x-.5*b2t,1.*b2t);
-    float decay=20.;
-    dest+=.2*tanh(8.*shotgun(5400.*t,1.4,.0))*exp(-decay*t);
+    float env=exp(-20.*t);
+    dest+=.18*env*tanh(8.*shotgun(5400.*t,1.4,.0));
   }
 
   // { // ride
@@ -198,24 +195,24 @@ vec2 mainaudio(vec4 time){
   //   dest+=.1*sidechain*tanh(10.*shotgun(3200.*t,3.4,.1))*exp(-10.*t);
   // }
 
-  // { // perc
-  //   float tp=mod(time.y,2.*b2t);
-  //   float t=mod(mod(tp,.75*b2t),.5*b2t);
-  //   float st=(tp-t)*4.*t2b;
+  { // perc
+    float tp=mod(time.y,2.*b2t);
+    float t=mod(mod(tp,.75*b2t),.5*b2t);
+    float st=(tp-t)*4.*t2b;
 
-  //   float tone=fract(.3+st*.422);
-  //   vec2 wave=cyclic(
-  //     vec3(vec3(orbit(exp2(4.+5.*tone)),exp2(8.+3.*tone)*t)),
-  //     1.2
-  //   ).xy;
+    float tone=fract(.3+st*.422);
+    vec2 wave=cyclic(
+      vec3(vec3(orbit(exp2(4.+5.*tone)),exp2(8.+3.*tone)*t)),
+      1.2
+    ).xy;
 
-  //   float env=mix(
-  //     exp(-30.*t),
-  //     exp(-5.*t),
-  //     0.2
-  //   );
-  //   dest+=.4*sidechain*env*tanh(2.*wave);
-  // }
+    float env=mix(
+      exp(-30.*t),
+      exp(-5.*t),
+      0.2
+    );
+    dest+=.4*sidechain*env*tanh(2.*wave);
+  }
 
   { // clav
     float t=mod(mod(time.y,2.25*b2t),.5*b2t);
@@ -259,21 +256,40 @@ vec2 mainaudio(vec4 time){
 
   return tanh(1.5*dest);
 }` ],
+  [ 0.0, ShaderEventType.Move, [ -1000, 0 ] ],
+  [ 0.0, ShaderEventType.Move, [ 0, -1000 ] ],
   [ 1.0, ShaderEventType.Apply ],
-  [ 300.0, ShaderEventType.Apply ],
-  // [ 64.0, ShaderEventType.Select, [ 118, 0, 118, 1 ] ],
-  // [ 2.0, ShaderEventType.Select, [ 124, 6, 124, 6 ] ],
-  // [ 2.0, ShaderEventType.Select, [ 124, 5, 133, 6 ] ],
-  // [ 0.5, ShaderEventType.Uncomment ],
-  // [ 0.5, ShaderEventType.Apply ],
-  // [ 14.0, ShaderEventType.Select, [ 143, 3, 143, 3 ] ],
-  // [ 2.0, ShaderEventType.Select, [ 143, 2, 147, 3 ] ],
-  // [ 2.0, ShaderEventType.Comment ],
-  // [ 0.5, ShaderEventType.Apply ],
+
+  // ride unmute
+  [ 16.0, ShaderEventType.JumpPart, 1 ],
+  [ 0.5, ShaderEventType.JumpPart, 1 ],
+  [ 0.5, ShaderEventType.JumpPart, 1 ],
+  [ 0.5, ShaderEventType.JumpPart, 1 ],
+  [ 0.5, ShaderEventType.JumpPart, 1 ],
+  [ 0.5, ShaderEventType.JumpPart, 1 ],
+  [ 0.5, ShaderEventType.JumpPart, 1 ],
+  [ 0.5, ShaderEventType.JumpPart, 1 ],
+  [ 1.0, ShaderEventType.JumpPart, 1 ],
+  [ 0.5, ShaderEventType.JumpPart, 1 ],
+  [ 2.5, ShaderEventType.JumpPart, 1 ],
+  [ 0.8, ShaderEventType.JumpPart, 1 ],
+  [ 0.5, ShaderEventType.JumpPart, 1 ],
+  [ 0.5, ShaderEventType.JumpPart, 1 ],
+  [ 0.5, ShaderEventType.JumpPart, 1 ],
+  [ 1.0, ShaderEventType.JumpPart, 1 ],
+  [ 2.0, ShaderEventType.JumpPart, 1 ],
+  [ 1.0, ShaderEventType.JumpPart, 1 ],
+  [ 1.5, ShaderEventType.JumpPart, 1 ],
+  [ 3.5, ShaderEventType.Uncomment ],
 
   // dual vco detune
-  [ 0.5, ShaderEventType.JumpPart, -1 ],
-  [ 2.0, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 3.5, ShaderEventType.JumpPart, 1 ],
+  [ 1.5, ShaderEventType.JumpPart, 1 ],
+  [ 1.0, ShaderEventType.JumpPart, 1 ],
+  [ 1.0, ShaderEventType.JumpPart, 1 ],
+  [ 1.5, ShaderEventType.JumpPart, 1 ],
+  [ 1.5, ShaderEventType.JumpPart, 1 ],
+  [ 3.0, ShaderEventType.Move, [ 0, 1 ] ],
   [ 0.5, ShaderEventType.Move, [ -1, 0 ] ],
   [ 0.5, ShaderEventType.Move, [ -1, 0 ] ],
   [ 1.0, ShaderEventType.Move, [ 0, 1 ] ],
@@ -296,7 +312,7 @@ vec2 mainaudio(vec4 time){
   [ 0.5, ShaderEventType.Move, [ 0, 1 ] ],
   [ 0.5, ShaderEventType.Move, [ 0, 1 ] ],
   [ 2.0, ShaderEventType.Insert, '1' ],
-  [ 0.5, ShaderEventType.Apply ],
+  [ 8.5, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '2' ],
   [ 0.5, ShaderEventType.Apply ],
@@ -313,18 +329,12 @@ vec2 mainaudio(vec4 time){
   [ 0.5, ShaderEventType.Insert, '6' ],
   [ 0.5, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
-  [ 0.5, ShaderEventType.Insert, '7' ],
-  [ 0.5, ShaderEventType.Apply ],
-  [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '8' ],
-  [ 0.5, ShaderEventType.Apply ],
-  [ 3.0, ShaderEventType.Delete ],
-  [ 0.5, ShaderEventType.Insert, '9' ],
   [ 0.5, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
   [ 0.2, ShaderEventType.Delete ],
-  [ 0.2, ShaderEventType.Insert, '1' ],
-  [ 0.5, ShaderEventType.Apply ],
+  [ 0.5, ShaderEventType.Insert, '1' ],
+  [ 0.2, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '2' ],
   [ 0.5, ShaderEventType.Apply ],
@@ -349,7 +359,7 @@ vec2 mainaudio(vec4 time){
   [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '9' ],
   [ 0.5, ShaderEventType.Apply ],
-  [ 1.0, ShaderEventType.Delete ],
+  [ 2.0, ShaderEventType.Delete ],
   [ 0.25, ShaderEventType.Delete ],
   [ 0.25, ShaderEventType.Delete ],
   [ 0.25, ShaderEventType.Insert, '2' ],
@@ -388,19 +398,10 @@ vec2 mainaudio(vec4 time){
   [ 0.5, ShaderEventType.Insert, '4' ],
   [ 0.5, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
-  [ 0.5, ShaderEventType.Insert, '5' ],
-  [ 0.5, ShaderEventType.Apply ],
-  [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '6' ],
   [ 0.5, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
-  [ 0.5, ShaderEventType.Insert, '7' ],
-  [ 0.5, ShaderEventType.Apply ],
-  [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '8' ],
-  [ 0.5, ShaderEventType.Apply ],
-  [ 3.0, ShaderEventType.Delete ],
-  [ 0.5, ShaderEventType.Insert, '9' ],
   [ 0.5, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
   [ 0.2, ShaderEventType.Delete ],
@@ -436,19 +437,16 @@ vec2 mainaudio(vec4 time){
   [ 0.5, ShaderEventType.JumpPart, -1 ],
   [ 0.5, ShaderEventType.JumpPart, -1 ],
   [ 0.5, ShaderEventType.JumpPart, -1 ],
-  [ 0.5, ShaderEventType.JumpPart, -1 ],
-  [ 0.5, ShaderEventType.JumpPart, -1 ],
+  [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 1.5, ShaderEventType.JumpPart, -1 ],
   [ 2.5, ShaderEventType.Comment ],
   [ 2.0, ShaderEventType.JumpPart, -1 ],
-  [ 2.0, ShaderEventType.Uncomment ],
-  [ 2.0, ShaderEventType.Apply ],
+  [ 4.0, ShaderEventType.Uncomment ],
+  [ 4.0, ShaderEventType.Apply ],
 
   // insert 2nd bass
-  [ 4.0, ShaderEventType.JumpPart, -1 ],
-  [ 2.0, ShaderEventType.JumpPart, -1 ],
-  [ 2.5, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 1.0, ShaderEventType.Insert, '\n  ' ],
-  [ 1.0, ShaderEventType.Insert, '\n  ' ],
+  [ 5.0, ShaderEventType.JumpPart, 1 ],
+  [ 2.0, ShaderEventType.Uncomment ],
   [ 4.0, ShaderEventType.Insert, `{ // bass
     float t=mod(time.x,.25*b2t);
     float ptn[7]=float[](
@@ -472,7 +470,7 @@ vec2 mainaudio(vec4 time){
       vec2 fm2=.2*exp(-10.*t)*vec2(sin(7.77*phase))*r2d(tau*dice.x);
       vec2 fm=8.*exp(-3.*t)*vec2(sin(.5*p5*phase+fm2))*r2d(tau*dice.y);
       vec2 car=exp(-8.*t)*vec2(sin(phase+fm))*r2d(tau*dice.z);
-      sum+=.15*car;
+      sum+=.13*car;
     }
 
     float zc=linearstep(0.,1E-3,t)*linearstep(0.,1E-3,.25*b2t-t);
@@ -488,26 +486,14 @@ vec2 mainaudio(vec4 time){
   [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
   [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
   [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 3.0, ShaderEventType.Delete ],
-  [ 0.5, ShaderEventType.Insert, '1' ],
-  [ 2.5, ShaderEventType.Apply ],
-  [ 3.0, ShaderEventType.Delete ],
+  [ 1.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '2' ],
-  [ 0.5, ShaderEventType.Apply ],
-  [ 3.0, ShaderEventType.Delete ],
-  [ 0.5, ShaderEventType.Insert, '3' ],
   [ 0.5, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '4' ],
   [ 0.5, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
-  [ 0.5, ShaderEventType.Insert, '5' ],
-  [ 0.5, ShaderEventType.Apply ],
-  [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '6' ],
-  [ 0.5, ShaderEventType.Apply ],
-  [ 3.0, ShaderEventType.Delete ],
-  [ 0.5, ShaderEventType.Insert, '7' ],
   [ 0.5, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '8' ],
@@ -518,48 +504,18 @@ vec2 mainaudio(vec4 time){
   [ 0.25, ShaderEventType.Insert, '.' ],
   [ 0.25, ShaderEventType.Apply ],
 
-  // insert 2nd drums
-  [ 6.5, ShaderEventType.JumpPart, -1 ],
-  [ 1.0, ShaderEventType.JumpPart, -1 ],
-  [ 1.0, ShaderEventType.JumpPart, -1 ],
-  [ 1.0, ShaderEventType.JumpPart, -1 ],
-  [ 1.0, ShaderEventType.JumpPart, -1 ],
-  [ 2.0, ShaderEventType.JumpPart, -1 ],
-  [ 3.0, ShaderEventType.Insert, `{ // kick
-    float t=time.x;
-    sidechain=smoothstep(0.,.8*b2t,t);
-
-    if(inrange(time.z,0.,61.*b2t)){
-      float env=linearstep(0.3,0.1,t);
-
-      // { // hi pass like
-      //   env*=exp(-100.*t);
-      // }
-
-      dest+=.6*env*tanh(2.*sin(
-        310.*t-55.*exp(-30.*t)
-        -30.*exp(-500.*t)
-      ));
-    }
-  }` ],
+  // insert 2nd stuff
   [ 4.0, ShaderEventType.JumpPart, 1 ],
-  [ 0.5, ShaderEventType.JumpPart, 1 ],
-  [ 0.5, ShaderEventType.JumpPart, 1 ],
-  [ 0.5, ShaderEventType.JumpPart, 1 ],
-  [ 3.0, ShaderEventType.ExpandSelectForward ],
-  [ 1.0, ShaderEventType.ExpandSelectForward ],
+  [ 2.4, ShaderEventType.ExpandSelectForward ],
+  [ 0.4, ShaderEventType.ExpandSelectForward ],
+  [ 0.4, ShaderEventType.ExpandSelectForward ],
+  [ 0.4, ShaderEventType.ExpandSelectForward ],
   [ 0.7, ShaderEventType.ExpandSelectForward ],
-  [ 0.7, ShaderEventType.ExpandSelectForward ],
-  [ 1.2, ShaderEventType.ExpandSelectForward ],
-  [ 1.2, ShaderEventType.ExpandSelectForward ],
-  [ 3.0, ShaderEventType.Insert, '' ],
-  [ 2.0, ShaderEventType.Delete ],
-  [ 0.5, ShaderEventType.Delete ],
-  [ 0.5, ShaderEventType.Delete ],
-  [ 12.0, ShaderEventType.Insert, `{ // hihat
+  [ 4.0, ShaderEventType.Insert, `{ // hihat
     float t=mod(time.x,.25*b2t);
     float decay=time.y<3.75*b2t?90.:10.;
-    dest+=.2*tanh(8.*shotgun(4000.*t,2.,.2))*exp(-decay*t);
+    float env=exp(-decay*t);
+    dest+=.25*env*tanh(8.*shotgun(4000.*t,2.,.2));
   }
 
   // { // clap
@@ -597,24 +553,51 @@ vec2 mainaudio(vec4 time){
     vec2 wave=shotgun(4000.*t,3.,.0);
     dest+=.3*mix(.2,1.,sidechain)*tanh(8.*wave)*env;
   }` ],
-  [ 2.0, ShaderEventType.Apply ],
+
+  // insert 2nd kick
+  [ 4.0, ShaderEventType.JumpPart, -1 ],
+  [ 0.4, ShaderEventType.JumpPart, -1 ],
+  [ 0.4, ShaderEventType.JumpPart, -1 ],
+  [ 0.4, ShaderEventType.JumpPart, -1 ],
+  [ 0.4, ShaderEventType.JumpPart, -1 ],
+  [ 0.4, ShaderEventType.JumpPart, -1 ],
+  [ 0.4, ShaderEventType.JumpPart, -1 ],
+  [ 0.4, ShaderEventType.JumpPart, -1 ],
+  [ 0.4, ShaderEventType.JumpPart, -1 ],
+  [ 2.4, ShaderEventType.JumpPart, -1 ],
+  [ 2.8, ShaderEventType.JumpPart, -1 ],
+  [ 4.0, ShaderEventType.Insert, `{ // kick
+    float t=time.x;
+    sidechain=smoothstep(0.,.8*b2t,t);
+
+    if(inrange(time.z,0.,61.*b2t)){
+      float env=linearstep(0.3,0.1,t);
+
+      // { // hi pass like
+      //   env*=exp(-100.*t);
+      // }
+
+      dest+=.6*env*tanh(2.*sin(
+        310.*t-55.*exp(-30.*t)
+        -30.*exp(-500.*t)
+      ));
+    }
+  }` ],
+  [ 2.5, ShaderEventType.Apply ],
 
   // fade out dual vco
-  [ 4.0, ShaderEventType.JumpPart, 1 ],
-  [ 2.0, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 1.0, ShaderEventType.Move, [ -1, 0 ] ],
-  [ 0.4, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.7, ShaderEventType.Move, [ 0, -1 ] ],
-  [ 0.5, ShaderEventType.Delete ],
+  [ 4.0, ShaderEventType.Move, [ 1000, 0 ] ],
+  [ 4.0, ShaderEventType.Move, [ -1, 0 ] ],
+  [ 0.8, ShaderEventType.Move, [ -1, 0 ] ],
+  [ 0.8, ShaderEventType.Move, [ -1, 0 ] ],
+  [ 1.5, ShaderEventType.Move, [ -1, 0 ] ],
+  [ 2.0, ShaderEventType.Move, [ 0, 1000 ] ],
+  [ 1.0, ShaderEventType.Move, [ 0, -1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, -1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, -1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, -1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, -1 ] ],
+  [ 1.5, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '0' ],
   [ 0.1, ShaderEventType.Insert, '8' ],
   [ 0.4, ShaderEventType.Apply ],
@@ -633,20 +616,11 @@ vec2 mainaudio(vec4 time){
   [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Apply ],
 
-  // unmute psysaw
-  [ 1.0, ShaderEventType.JumpPart, -1 ],
-  [ 0.8, ShaderEventType.JumpPart, -1 ],
-  [ 0.5, ShaderEventType.JumpPart, -1 ],
-  [ 0.5, ShaderEventType.JumpPart, -1 ],
-  [ 0.5, ShaderEventType.JumpPart, -1 ],
-  [ 2.0, ShaderEventType.Uncomment ],
-  [ 2.5, ShaderEventType.Apply ],
-
   // prepare chord
-  [ 7.0, ShaderEventType.JumpPart, 1 ],
-  [ 1.0, ShaderEventType.JumpPart, 1 ],
-  [ 2.0, ShaderEventType.Insert, '' ],
-  [ 1.0, ShaderEventType.Insert, `{ // chord
+  [ 3.0, ShaderEventType.JumpPart, -1 ],
+  [ 2.0, ShaderEventType.JumpPart, -1 ],
+  [ 1.5, ShaderEventType.JumpPart, -1 ],
+  [ 5.0, ShaderEventType.Insert, `{ // chord
     float chord[8]=float[](
       0.,5.,7.,12.,14.,19.,22.,29.
     );
@@ -663,27 +637,33 @@ vec2 mainaudio(vec4 time){
       sum+=vec2(wave)*r2d(tau*dice.z);
     }
 
-    // dest+=.0*mix(.1,1.,sidechain)*sum/32.;
+    dest+=.0*mix(.1,1.,sidechain)*sum/32.;
   }` ],
 
   // unmute clap
-  [ 4.0, ShaderEventType.JumpPart, -1 ],
-  [ 1.0, ShaderEventType.JumpPart, -1 ],
-  [ 1.0, ShaderEventType.JumpPart, -1 ],
-  [ 1.0, ShaderEventType.JumpPart, -1 ],
-  [ 1.0, ShaderEventType.JumpPart, -1 ],
-  [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 3.0, ShaderEventType.JumpPart, -1 ],
+  [ 0.8, ShaderEventType.JumpPart, -1 ],
+  [ 0.8, ShaderEventType.JumpPart, -1 ],
+  [ 0.8, ShaderEventType.JumpPart, -1 ],
+  [ 0.8, ShaderEventType.JumpPart, -1 ],
+  [ 2.0, ShaderEventType.JumpPart, -1 ],
   [ 2.0, ShaderEventType.Uncomment ],
-  [ 5.5, ShaderEventType.Apply ],
+  [ 2.5, ShaderEventType.Apply ],
 
   // unmute ride
   [ 1.0, ShaderEventType.JumpPart, 1 ],
   [ 2.0, ShaderEventType.Uncomment ],
   [ 0.5, ShaderEventType.Apply ],
 
+  // unmute clap
+  [ 4.0, ShaderEventType.JumpPart, 1 ],
+  [ 2.0, ShaderEventType.Uncomment ],
+  [ 25.5, ShaderEventType.Apply ],
+
   // kick cut
-  [ 52.0, ShaderEventType.JumpPart, -1 ],
+  [ 18.0, ShaderEventType.JumpPart, -1 ],
   [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 0.7, ShaderEventType.JumpPart, -1 ],
   [ 0.7, ShaderEventType.JumpPart, -1 ],
   [ 0.7, ShaderEventType.JumpPart, -1 ],
   [ 0.7, ShaderEventType.JumpPart, -1 ],
@@ -709,7 +689,7 @@ vec2 mainaudio(vec4 time){
   [ 0.5, ShaderEventType.Move, [ 0, 1 ] ],
   [ 0.5, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '1' ],
-  [ 2.5, ShaderEventType.Apply ],
+  [ 3.5, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '2' ],
   [ 0.5, ShaderEventType.Apply ],
@@ -771,7 +751,7 @@ vec2 mainaudio(vec4 time){
   { // bass
     float t=mod(time.y,2.*b2t);
 
-    vec2 sum=vec2(sin(tau*45.*t));
+    vec2 sum=vec2(.5*sin(tau*45.*t));
 
     for(int i=0;i<8;i++){
       vec3 dice=pcg3df(vec3(i));
@@ -779,13 +759,13 @@ vec2 mainaudio(vec4 time){
       float phase=freq*t+dice.z;
       float screech=2.*smoothstep(57.*b2t,61.*b2t,time.z);
       vec3 p=vec3(10.*t*orbit(phase),screech*sin(tau*31.*phase));
-      sum+=.25*cyclic(p,3.).xy*r2d(tau*float(i)/8.+time.z);
+      sum+=.25*cyclic(p,4.).xy*r2d(tau*float(i)/8.+time.z);
     }
 
     dest+=.6*sidechain*tanh(sum);
   }` ],
 
-  // high pass bass
+  // mutate bass
   [ 4.0, ShaderEventType.JumpPart, 1 ],
   [ 1.0, ShaderEventType.JumpPart, 1 ],
   [ 1.5, ShaderEventType.Comment ],
@@ -832,7 +812,7 @@ vec2 mainaudio(vec4 time){
   [ 0.7, ShaderEventType.Move, [ 0, -1 ] ],
   [ 1.5, ShaderEventType.Insert, '4' ],
   [ 0.2, ShaderEventType.Insert, '.' ],
-  [ 0.2, ShaderEventType.Insert, '*' ],
+  [ 0.4, ShaderEventType.Insert, '*' ],
 
   // insert percussions 3rd
   [ 5.0, ShaderEventType.JumpPart, 1 ],
@@ -911,7 +891,7 @@ vec2 mainaudio(vec4 time){
     float t=mod(time.x,.25*b2t);
     float st=floor(time.y/.25/b2t);
 
-    float env=exp(-50.*t);
+    float env=exp(-40.*t);
     env*=linearstep(.0,.001,t);
 
     vec2 wave=cyclic(vec3(6000.*t),1.2).xy;
@@ -922,7 +902,6 @@ vec2 mainaudio(vec4 time){
   [ 2.0, ShaderEventType.Move, [ 1000, 0 ] ],
   [ 2.0, ShaderEventType.JumpPart, -1 ],
   [ 1.0, ShaderEventType.JumpPart, -1 ],
-  [ 1.5, ShaderEventType.Insert, '' ],
   [ 4.5, ShaderEventType.Insert, `{ // additive shepard
     // hello loonies!
     vec2 sum=vec2(0.);
@@ -938,13 +917,13 @@ vec2 mainaudio(vec4 time){
       vec2 phase=(t+.5*t*t/(64.*b2t))*freq+fract(diceB.xy*999.);
       phase+=.1*fract(32.*phase); // add high freq
 
-      sum+=sin(tau*phase)*sin(pi*t/(64.*b2t))/1000.;
+      sum+=sin(tau*phase)*sin(pi*t/(64.*b2t))/1250.;
     }
 
     dest+=.0*mix(.2,1.,sidechain)*sum;
   }` ],
   [ 3.0, ShaderEventType.Move, [ -1, 0 ] ],
-  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 1.2, ShaderEventType.Move, [ 0, 1 ] ],
   [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
   [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
   [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
@@ -954,10 +933,10 @@ vec2 mainaudio(vec4 time){
   [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
   [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
   [ 0.3, ShaderEventType.Move, [ 0, 1 ] ],
-  [ 0.6, ShaderEventType.Move, [ 0, -1 ] ],
+  [ 1.6, ShaderEventType.Move, [ 0, -1 ] ],
   [ 0.5, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '1' ],
-  [ 3.5, ShaderEventType.Apply ],
+  [ 2.0, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '2' ],
   [ 0.5, ShaderEventType.Apply ],
@@ -989,13 +968,13 @@ vec2 mainaudio(vec4 time){
   [ 0.5, ShaderEventType.Insert, '0' ],
   [ 0.5, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
-  [ 0.5, ShaderEventType.Insert, '1' ],
-  [ 0.5, ShaderEventType.Apply ],
-  [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '2' ],
   [ 0.5, ShaderEventType.Apply ],
   [ 3.0, ShaderEventType.Delete ],
-  [ 0.5, ShaderEventType.Insert, '3' ],
+  [ 0.5, ShaderEventType.Insert, '4' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '6' ],
   [ 0.5, ShaderEventType.Apply ],
   [ 4.0, ShaderEventType.JumpPart, -1 ],
   [ 1.0, ShaderEventType.JumpPart, -1 ],
@@ -1011,7 +990,7 @@ vec2 mainaudio(vec4 time){
     float env=exp(-exp2(3.+2.*fract(.4+.628*st))*t);
     env*=linearstep(.0,.001,t);
 
-    vec2 wave=shotgun(6000.*t,2.,.2);
+    vec2 wave=shotgun(4000.*t,3.,.5);
 
     dest+=.4*sidechain*env*tanh(5.*wave);
   }
@@ -1029,6 +1008,399 @@ vec2 mainaudio(vec4 time){
     dest+=.2*tanh(20.*env*wave);
   }` ],
   [ 2.5, ShaderEventType.Apply ],
+
+  // insert arp + pad 4th, fade in arp
+  [ 8.0, ShaderEventType.JumpPart, -1 ],
+  [ 3.0, ShaderEventType.ExpandSelectBack ],
+  [ 3.0, ShaderEventType.Insert, '' ],
+  [ 2.0, ShaderEventType.JumpPart, -1 ],
+  [ 2.0, ShaderEventType.JumpPart, -1 ],
+  [ 2.0, ShaderEventType.ExpandSelectBack ],
+  [ 3.0, ShaderEventType.Insert, '' ],
+  [ 2.0, ShaderEventType.JumpPart, 1 ],
+  [ 1.0, ShaderEventType.JumpPart, 1 ],
+  [ 1.0, ShaderEventType.JumpPart, 1 ],
+  [ 1.5, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 1.0, ShaderEventType.Insert, '\n  ' ],
+  [ 0.5, ShaderEventType.Insert, '\n  ' ],
+  [ 6.5, ShaderEventType.Insert, `
+  float trans=mod(time.z,16.*b2t)<(12.*b2t)?0.:0.;
+
+  { // arp
+    vec2 sum=vec2(0);
+    const float chord[8] = float[](
+      0.,0.,3.,3.,7.,7.,10.,14.
+    );
+
+    for(int i=0;i<4;i++){
+      float fi=float(i);
+      float t=mod(time.x,.25*b2t);
+      float st=mod(floor((time.z-.75*b2t*fi)/(.25*b2t)),256.);
+
+      float arpseed=fract(.615*st);
+      float note=42.+chord[int(arpseed*24.)%8]+12.*floor(arpseed*3.)+trans;
+      float freq=p2f(note);
+      vec2 phase=t*freq+vec2(.5,0);
+
+      sum+=2.*exp(-10.*t)*exp(-fi)*(
+        +fract(phase)-.5
+        +step(fract(.2+.5*phase),vec2(.03))
+        -step(fract(.7+.5*phase),vec2(.03))
+        // +fract(p5*phase)-.5
+        // +step(fract(1.5*phase),vec2(.5))-.5
+      )*r2d(time.z);
+    }
+
+    dest+=.0*mix(.2,1.,sidechain)*sum;
+  }
+
+  { // pad
+    // hello prismbeings!
+
+    vec2 sum=vec2(0);
+
+    const float pitchTable[8]=float[](0.,3.,7.,10.,12.,14.,19.,26.);
+
+    for(int i=0;i<48;i++){
+      float fi=float(i);
+      vec3 dice=pcg3df(vec3(fi));
+
+      float t=time.z;
+
+      float note=42.+float(pitchTable[i%8])+trans+.1*boxmuller(dice.xy).x;
+      float freq=p2f(note);
+      float phase=freq*t+dice.z;
+
+      vec3 p1=vec3(2.*orbit(phase),t);
+      vec3 p2=vec3(2.*orbit(phase+.05),t);
+      vec2 wave=cyclic(p1,2.).xy-cyclic(p2,2.).xy;
+
+      sum+=mix(.2,1.,sidechain)*wave*r2d(fi)/24.;
+    }
+
+    dest+=.0*tanh(sum);
+  }` ],
+  [ 2.0, ShaderEventType.JumpPart, -1 ],
+  [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 2.0, ShaderEventType.JumpPart, -1 ],
+  [ 3.0, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 1.0, ShaderEventType.Move, [ 1, 0 ] ],
+  [ 0.5, ShaderEventType.Move, [ 1, 0 ] ],
+  [ 2.2, ShaderEventType.Move, [ 0, 4 ] ],
+  [ 0.7, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.3, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.7, ShaderEventType.Move, [ 0, -1 ] ],
+  [ 1.0, ShaderEventType.Insert, '1' ],
+  [ 10.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '2' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '3' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '4' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '5' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '6' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '7' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '8' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 2.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Delete ],
+  [ 0.8, ShaderEventType.Insert, '1' ],
+  [ 0.7, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Insert, '2' ],
+  [ 1.0, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '4' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '6' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '8' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 2.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Delete ],
+  [ 0.7, ShaderEventType.Insert, '2' ],
+  [ 0.8, ShaderEventType.Apply ],
+
+  // mute shepard, insert
+  [ 2.0, ShaderEventType.JumpPart, -1 ],
+  [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 4.0, ShaderEventType.Insert, `{ // snareroll
+    float roll=mix(.25*b2t,.125*b2t,step(56.*b2t,time.z));
+    float t=mod(time.x,roll);
+
+    vec3 p=vec3(10.*orbit(500.*t),1000.*t);
+    vec2 wave=cyclic(p,1.4).xy;
+    wave+=sin(1500.*t-exp(-t*80.)*30.);
+
+    float amp=smoothstep(0.,60.*b2t,time.z);
+    float env=exp(-12.*t);
+    dest+=amp*.4*tanh(env*wave);
+  }` ],
+  [ 2.5, ShaderEventType.Apply ],
+
+  // insert kick + bass 4th
+  [ 6.0, ShaderEventType.Move, [ 1, 0 ] ],
+  [ 0.5, ShaderEventType.Move, [ 1, 0 ] ],
+  [ 0.5, ShaderEventType.Move, [ 1, 0 ] ],
+  [ 4.0, ShaderEventType.MoveEnd, [ 1, 0 ] ],
+  [ 0.0, ShaderEventType.Insert, '' ], // pretend to be cut + paste
+  [ 3.0, ShaderEventType.JumpPart, 1 ],
+  [ 2.0, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 1.0, ShaderEventType.Move, [ -1, 0 ] ],
+  [ 0.4, ShaderEventType.Move, [ -1, 0 ] ],
+  [ 0.4, ShaderEventType.Move, [ -1, 0 ] ],
+  [ 0.4, ShaderEventType.Move, [ -1, 0 ] ],
+  [ 0.4, ShaderEventType.Move, [ -1, 0 ] ],
+  [ 1.0, ShaderEventType.Uncomment ],
+  [ 1.0, ShaderEventType.Move, [ -1, 0 ] ],
+  [ 1.0, ShaderEventType.Uncomment ],
+  [ 3.0, ShaderEventType.JumpPart, -1 ],
+  [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 0.7, ShaderEventType.JumpPart, -1 ],
+  [ 0.8, ShaderEventType.JumpPart, -1 ],
+  [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 1.5, ShaderEventType.ExpandSelectBack ],
+  [ 3.5, ShaderEventType.ExpandSelectBack ],
+  [ 1.0, ShaderEventType.ExpandSelectBack ],
+  [ 1.0, ShaderEventType.ExpandSelectBack ],
+  [ 1.0, ShaderEventType.ExpandSelectBack ],
+  [ 2.0, ShaderEventType.ExpandSelectBack ],
+  [ 2.0, ShaderEventType.Insert, 'float trans=mod(time.z,16.*b2t)<(12.*b2t)?0.:0.;' ],
+  [ 2.0, ShaderEventType.Move, [ 0, -1 ] ],
+  [ 0.5, ShaderEventType.Move, [ 0, -1 ] ],
+  [ 1.0, ShaderEventType.Delete ],
+  [ 1.5, ShaderEventType.Insert, '-' ],
+  [ 0.2, ShaderEventType.Insert, '2' ],
+  [ 4.0, ShaderEventType.Move, [ 1, 0 ] ],
+  [ 4.0, ShaderEventType.Move, [ 1, 0 ] ],
+  [ 2.0, ShaderEventType.Insert, `{ // kick
+    float t=time.x;
+    sidechain=smoothstep(0.,.8*b2t,t);
+
+    if(inrange(time.z,0.,61.*b2t)){
+      float env=linearstep(0.3,0.1,t);
+
+      float phase=50.*t-11.*(exp(-25.*t)+exp(-100.*t)+exp(-700.*t));
+      phase+=.2*exp(-20.*t)*sin(tau*phase+1.); // fm attack mod
+      float wave=sin(tau*phase);
+
+      dest+=.5*env*tanh(2.*wave);
+    }
+  }
+
+  { // bass
+    float t=mod(time.x,.25*b2t);
+
+    float env=exp(-10.*t);
+
+    float note=30.+trans;
+    float freq=p2f(note);
+    vec2 sum=env*vec2(sin(tau*freq*t));
+
+    for(int i=0;i<16;i++){
+      vec3 dice=pcg3df(vec3(i,floor(time.x/.25/b2t),0));
+
+      float noteu=note+.5*(dice.y-.5);
+      float frequ=p2f(noteu);
+      float phaseu=frequ*(t+.014*sin(tau*2.*frequ*t))+dice.z;
+
+      float k=mix(.3,.02,exp(-10.*t));
+      sum+=env*vec2(cheapfiltersaw(phaseu,k))*r2d(tau*dice.x+1.)/8.;
+    }
+
+    float zc=linearstep(0.,1E-3,t)*linearstep(0.,1E-2,.25*b2t-t);
+    dest+=.5*zc*sidechain*tanh(2.*sum);
+  }
+
+  // { // hihat
+  //   float t=mod(time.x,.25*b2t);
+  //   float st=floor(time.y/.25/b2t);
+
+  //   float vel=fract(st*.62+.67);
+  //   float env=exp(-exp2(7.-3.*vel)*t);
+  //   vec2 wave=shotgun(4000.*t,2.,.0);
+  //   dest+=.25*env*sidechain*tanh(8.*wave);
+  // }
+
+  // { // rim
+  //   float t=mod(time.y,.25*b2t);
+  //   float st=floor(time.z/.25/b2t);
+
+  //   float env=exp(-300.*t);
+
+  //   float wave=tanh(4.*(
+  //     +tri(t*400.-.5*env)
+  //     +tri(t*1500.-.5*env)
+  //   ));
+  //   dest+=.3*step(.5,fract(st*.71+.4))*env*vec2(wave)*r2d(-1.4);
+  // }
+
+  // { // perc
+  //   float t=mod(time.y-1.*b2t,2.*b2t);
+
+  //   dest+=.15*tanh(10.*shotgun(1100.*t,1.5,.4))*exp(-4.*t);
+  // }` ],
+  [ 1.0, ShaderEventType.JumpPart, 1 ],
+  [ 1.0, ShaderEventType.JumpPart, 1 ],
+  [ 3.0, ShaderEventType.Insert, '' ],
+  [ 1.0, ShaderEventType.Apply ],
+
+  // unmute hihat + rim
+  [ 5.0, ShaderEventType.JumpPart, -1 ],
+  [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 2.0, ShaderEventType.Uncomment ],
+  [ 2.0, ShaderEventType.JumpPart, 1 ],
+  [ 2.0, ShaderEventType.Uncomment ],
+  [ 2.0, ShaderEventType.JumpPart, 1 ],
+
+  // fade in pad
+  [ 1.5, ShaderEventType.JumpPart, 1 ],
+  [ 0.5, ShaderEventType.JumpPart, 1 ],
+  [ 1.5, ShaderEventType.JumpPart, 1 ],
+  [ 1.0, ShaderEventType.JumpPart, 1 ],
+  [ 1.5, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 2.5, ShaderEventType.Move, [ -1, 0 ] ],
+  [ 1.0, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.2, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.4, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 0.4, ShaderEventType.Move, [ 0, 1 ] ],
+  [ 1.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '2' ],
+  [ 6.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '4' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '6' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '8' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Delete ],
+  [ 0.5, ShaderEventType.Insert, '9' ],
+  [ 0.5, ShaderEventType.Apply ],
+  [ 2.7, ShaderEventType.Delete ],
+  [ 0.2, ShaderEventType.Delete ],
+  [ 0.2, ShaderEventType.Insert, '1' ],
+  [ 0.3, ShaderEventType.Insert, '.' ],
+  [ 0.5, ShaderEventType.Apply ],
+
+  // unmute snare
+  [ 3.0, ShaderEventType.JumpPart, -1.0 ],
+  [ 0.4, ShaderEventType.JumpPart, -1.0 ],
+  [ 0.4, ShaderEventType.JumpPart, -1.0 ],
+  [ 0.4, ShaderEventType.JumpPart, -1.0 ],
+  [ 0.4, ShaderEventType.JumpPart, -1.0 ],
+  [ 0.4, ShaderEventType.JumpPart, -1.0 ],
+  [ 2.2, ShaderEventType.Uncomment ],
+  [ 0.5, ShaderEventType.Apply ],
+
+  // mute percussions
+  [ 32.0, ShaderEventType.ExpandSelectBack ],
+  [ 1.0, ShaderEventType.ExpandSelectBack ],
+  [ 3.0, ShaderEventType.Insert, '' ],
+  [ 32.0, ShaderEventType.Apply ],
+
+  // fadeout
+  [ 3.0, ShaderEventType.JumpPart, -1 ],
+  [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 1.0, ShaderEventType.JumpPart, -1 ],
+  [ 2.0, ShaderEventType.Comment ],
+  [ 3.0, ShaderEventType.Move, [ 1000, 0 ] ],
+  [ 3.0, ShaderEventType.Move, [ -1, 0 ] ],
+  [ 1.0, ShaderEventType.Move, [ 0, 1000 ] ],
+  [ 0.5, ShaderEventType.Move, [ 0, -1 ] ],
+  [ 2.0, ShaderEventType.Insert, '*' ],
+  [ 0.3, ShaderEventType.Insert, 's' ],
+  [ 0.2, ShaderEventType.Insert, 'm' ],
+  [ 0.3, ShaderEventType.Insert, 'o' ],
+  [ 0.3, ShaderEventType.Insert, 'o' ],
+  [ 0.4, ShaderEventType.Insert, 't' ],
+  [ 0.3, ShaderEventType.Insert, 'h' ],
+  [ 0.3, ShaderEventType.Insert, 's' ],
+  [ 0.2, ShaderEventType.Insert, 't' ],
+  [ 0.2, ShaderEventType.Insert, 'e' ],
+  [ 0.5, ShaderEventType.Insert, 'p' ],
+  [ 0.6, ShaderEventType.Insert, '(' ],
+  [ 1.5, ShaderEventType.Insert, '6' ],
+  [ 0.2, ShaderEventType.Insert, '4' ],
+  [ 0.3, ShaderEventType.Insert, '.' ],
+  [ 0.5, ShaderEventType.Insert, '*' ],
+  [ 0.4, ShaderEventType.Insert, 'b' ],
+  [ 0.2, ShaderEventType.Insert, '2' ],
+  [ 0.2, ShaderEventType.Insert, 't' ],
+  [ 0.3, ShaderEventType.Insert, ',' ],
+  [ 1.5, ShaderEventType.Insert, '3' ],
+  [ 0.2, ShaderEventType.Insert, '2' ],
+  [ 0.3, ShaderEventType.Insert, '.' ],
+  [ 0.5, ShaderEventType.Insert, '*' ],
+  [ 0.4, ShaderEventType.Insert, 'b' ],
+  [ 0.2, ShaderEventType.Insert, '2' ],
+  [ 0.2, ShaderEventType.Insert, 't' ],
+  [ 0.3, ShaderEventType.Insert, ',' ],
+  [ 0.2, ShaderEventType.Insert, 't' ],
+  [ 0.2, ShaderEventType.Insert, 'i' ],
+  [ 0.2, ShaderEventType.Insert, 'm' ],
+  [ 0.3, ShaderEventType.Insert, 'e' ],
+  [ 0.4, ShaderEventType.Insert, '.' ],
+  [ 0.7, ShaderEventType.Insert, 'z' ],
+  [ 0.5, ShaderEventType.Insert, ')' ],
+  [ 1.0, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.Move, [ -1, 0 ] ],
+  [ 3.0, ShaderEventType.Insert, '\n  ' ],
+  [ 3.0, ShaderEventType.Insert, 'd' ],
+  [ 1.0, ShaderEventType.Insert, 'e' ],
+  [ 0.2, ShaderEventType.Insert, 's' ],
+  [ 0.3, ShaderEventType.Insert, 't' ],
+  [ 0.6, ShaderEventType.Insert, '*' ],
+  [ 0.6, ShaderEventType.Insert, '=' ],
+  [ 0.5, ShaderEventType.Insert, '0' ],
+  [ 0.2, ShaderEventType.Insert, '.' ],
+  [ 0.5, ShaderEventType.Insert, ';' ],
+  [ 20.0, ShaderEventType.Apply ],
+  [ 3.0, ShaderEventType.MoveStart, [ -1000, 0 ] ],
+  [ 0.0, ShaderEventType.MoveStart, [ 0, -1000 ] ],
+  [ 0.0, ShaderEventType.MoveEnd, [ 1000, 0 ] ],
+  [ 0.0, ShaderEventType.MoveEnd, [ 0, 1000 ] ], // pretend to be select all
+
+  [ 1.0, ShaderEventType.Insert, '' ],
+  [ 4.0, ShaderEventType.Insert, `// 0b5vr glsl techno live set
+// (64kb webgl intro)
+
+// shoutouts to:
+//   0x4015, alcatraz, altair, cncd, cocoon,
+//   conspiracy, ctrl+alt+test, epoch, fairlight,
+//   farbrausch, limp ninja, logicoma, loonies,
+//   mercury, mfx, mrdoob, ninjadev, orange,
+//   prismbeings, rgba, satori, slay bells, still` ],
 
   [ 10000.0, ShaderEventType.Move, [ -1, 0 ] ],
 ];
