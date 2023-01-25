@@ -118,16 +118,16 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
       const h = def( 'vec3', sampleGGX(
         vec2( random(), random() ),
         N,
-        sq( rough ),
+        sq( mix( 0.0, 0.2, rough ) ),
       ) );
       const dotVH = def( 'float', max( 0.001, dot( neg( rd ), h ) ) );
 
       assign( rd, reflect( rd, h ) );
 
-      mulAssign( colRem, fresnelSchlick( dotVH, num( 0.3 ), num( 1.0 ) ) );
+      mulAssign( colRem, fresnelSchlick( dotVH, num( 0.5 ), num( 1.0 ) ) );
     };
 
-    forLoop( 80, () => {
+    forLoop( 40, () => {
       const result = octreeTraversal( ro, rd );
 
       const isect = def( 'vec4', vec4( FAR ) );
