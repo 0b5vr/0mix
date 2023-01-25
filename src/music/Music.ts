@@ -80,8 +80,6 @@ export class Music {
 
   // private __lastUpdatedTime: number;
 
-  private __musicDest: GainNode;
-
   private __program?: WebGLProgram;
   private __programCue?: WebGLProgram;
   private __programSwapTime: number;
@@ -121,18 +119,18 @@ export class Music {
     on( EventType.ShaderEventApply, ( code ) => debounceShaderApply( () => this.compile( code ) ) );
 
     // -- audio ------------------------------------------------------------------------------------
-    this.__musicDest = audio.createGain();
-    this.__musicDest.connect( audio.destination );
+    const gainNode = audio.createGain();
+    gainNode.connect( audio.destination );
 
     if ( import.meta.env.DEV ) {
-      this.__musicDest.gain.value = 0.0;
+      gainNode.gain.value = 0.0;
       promiseGui.then( ( gui ) => {
         gui.button( 'audio/resume', { title: 'audio.resume();' } ).on( 'click', () => {
           audio.resume();
         } );
 
         gui.input( 'audio/volume', 0.0, { min: 0.0, max: 1.0 } )?.on( 'change', ( { value } ) => {
-          this.__musicDest.gain.value = value;
+          gainNode.gain.value = value;
         } );
       } );
     }
@@ -143,7 +141,7 @@ export class Music {
     // -- reader -----------------------------------------------------------------------------------
     BufferReaderNode.addModule( audio ).then( () => {
       this.__bufferReaderNode = new BufferReaderNode( audio );
-      this.__bufferReaderNode.connect( this.__musicDest );
+      this.__bufferReaderNode.connect( gainNode );
     } );
 
     this.__bufferWriteBlocks = 0;
@@ -280,7 +278,7 @@ export class Music {
         gl.getUniformLocation( this.__program, 'timeHead' ),
         glslTime % BEAT,
         glslTime % BAR,
-        glslTime % SIXTEEN_BAR,
+        ( glslTime - BAR ) % SIXTEEN_BAR,
         glslTime
       );
 
