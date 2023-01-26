@@ -1,4 +1,4 @@
-import { add, addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, floor, fract, insert, mad, main, mod, mul, mulAssign, step, sub, subAssign, sw, texture, vec2, vec4 } from '../../../shaders/shaderBuilder';
+import { addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, floor, fract, insert, mad, main, mod, mul, mulAssign, step, sub, subAssign, sw, texture, vec2, vec4 } from '../../../shaders/shaderBuilder';
 
 export const kansokushaFrag = build( () => {
   insert( 'precision highp float;' );
@@ -12,15 +12,17 @@ export const kansokushaFrag = build( () => {
 
   main( () => {
     const uv = def( 'vec2', vUv );
-    subAssign( sw( uv, 'x' ), 0.5 );
     mulAssign( uv, vec2( aspect, 3.0 ) );
+    subAssign( sw( uv, 'x' ), 0.5 );
+
+    // scroll
     const dir = sub( mod( floor( sw( uv, 'y' ) ), 2.0 ), 0.5 );
     addAssign( sw( uv, 'x' ), mul( 0.5, time, dir ) );
 
+    // flash
     const phase = def( 'float', time );
-    addAssign( phase, mul( 0.14, dir, floor( add( sw( uv, 'x' ), 0.5 ) ) ) );
+    addAssign( phase, mul( 0.14, dir, floor( sw( uv, 'x' ) ) ) );
     addAssign( phase, mul( 0.21, floor( sw( uv, 'y' ) ) ) );
-
 
     assign( uv, fract( uv ) );
 
