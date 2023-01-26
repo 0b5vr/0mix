@@ -1,5 +1,5 @@
 import { PI } from '../../../utils/constants';
-import { add, addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mul, pow, sin, sw, texture, vec4 } from '../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, divAssign, glPosition, main, mul, pow, sin, sw, texture, vec4 } from '../../../shaders/shaderBuilder';
 import { glslSaturate } from '../../../shaders/modules/glslSaturate';
 import { rotate2D } from '../../../shaders/modules/rotate2D';
 
@@ -16,7 +16,7 @@ export const particlesRenderVert = build( () => {
   const vNormal = defOutNamed( 'vec3', 'vNormal' );
   const vDice = defOutNamed( 'vec4', 'vDice' );
 
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const projectionMatrix = defUniformNamed( 'mat4', 'projectionMatrix' );
   const viewMatrix = defUniformNamed( 'mat4', 'viewMatrix' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
@@ -67,7 +67,6 @@ export const particlesRenderVert = build( () => {
     assign( vProjPosition, mul( projectionMatrix, vViewPosition ) );
     const outPos = def( 'vec4', vProjPosition );
 
-    const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( outPos, 'x' ), aspect );
     assign( glPosition, outPos );
   } );

@@ -1,5 +1,5 @@
 import { add, addAssign, mad, sign, sin, subAssign, vec3 } from '../../../../shaders/shaderBuilder';
-import { assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mul, normalize, sw, vec4 } from '../../../../shaders/shaderBuilder';
+import { assign, build, def, defIn, defOutNamed, defUniformNamed, divAssign, glPosition, main, mul, normalize, sw, vec4 } from '../../../../shaders/shaderBuilder';
 import { pcg3df } from '../../../../shaders/modules/pcg3df';
 
 export const pillarGridBodyVert = build( () => {
@@ -13,7 +13,7 @@ export const pillarGridBodyVert = build( () => {
   const vNoiseCoord = defOutNamed( 'vec3', 'vNoiseCoord' );
 
   const time = defUniformNamed( 'float', 'time' );
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const projectionMatrix = defUniformNamed( 'mat4', 'projectionMatrix' );
   const viewMatrix = defUniformNamed( 'mat4', 'viewMatrix' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
@@ -46,7 +46,6 @@ export const pillarGridBodyVert = build( () => {
     assign( vProjPosition, mul( projectionMatrix, viewMatrix, vPosition ) );
     const outPos = def( 'vec4', vProjPosition );
 
-    const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( outPos, 'x' ), aspect );
     assign( glPosition, outPos );
 

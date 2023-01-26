@@ -17,6 +17,7 @@ export const buildPlaneBackgroundFrag = (
   const fragNormal = defOut( 'vec4', 2 );
   const fragMisc = defOut( 'vec4', 3 );
 
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
   const cameraNearFar = defUniformNamed( 'vec2', 'cameraNearFar' );
 
@@ -25,7 +26,7 @@ export const buildPlaneBackgroundFrag = (
   main( () => {
     const p = def( 'vec2', div( sw( glFragCoord, 'xy' ), resolution ) );
     assign( p, mad( -1.0, 2.0, p ) );
-    mulAssign( sw( p, 'x' ), div( sw( resolution, 'x' ), sw( resolution, 'y' ) ) );
+    mulAssign( sw( p, 'x' ), aspect );
 
     const [ ro, rd ] = setupRoRd( p );
 

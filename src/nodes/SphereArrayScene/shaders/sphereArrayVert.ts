@@ -1,4 +1,4 @@
-import { addAssign, assign, build, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mul, mulAssign, sw, vec4 } from '../../../shaders/shaderBuilder';
+import { addAssign, assign, build, defIn, defOutNamed, defUniformNamed, divAssign, glPosition, main, mul, mulAssign, sw, vec4 } from '../../../shaders/shaderBuilder';
 
 export const sphereArrayVert = build( () => {
   const position = defIn( 'vec3', 0 );
@@ -8,7 +8,7 @@ export const sphereArrayVert = build( () => {
   const vProjPosition = defOutNamed( 'vec4', 'vProjPosition' );
   const vInstance = defOutNamed( 'vec2', 'vInstance' );
 
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const pvm = defUniformNamed( 'mat4', 'pvm' );
 
   main( () => {
@@ -21,7 +21,6 @@ export const sphereArrayVert = build( () => {
     assign( vProjPosition, mul( pvm, vPositionWithoutModel ) );
     assign( glPosition, vProjPosition );
 
-    const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( glPosition, 'x' ), aspect );
 
     assign( vInstance, instance );

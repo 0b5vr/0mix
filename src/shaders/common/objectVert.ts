@@ -1,4 +1,4 @@
-import { assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mul, normalize, sw, vec4 } from '../shaderBuilder';
+import { assign, build, def, defIn, defOutNamed, defUniformNamed, divAssign, glPosition, main, mul, normalize, sw, vec4 } from '../shaderBuilder';
 
 export const objectVert = build( () => {
   const position = defIn( 'vec3', 0 );
@@ -13,7 +13,7 @@ export const objectVert = build( () => {
   const vNormal = defOutNamed( 'vec3', 'vNormal' );
   const vUv = defOutNamed( 'vec2', 'vUv' );
 
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const projectionMatrix = defUniformNamed( 'mat4', 'projectionMatrix' );
   const viewMatrix = defUniformNamed( 'mat4', 'viewMatrix' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
@@ -28,7 +28,6 @@ export const objectVert = build( () => {
     assign( vProjPosition, mul( projectionMatrix, vViewPosition ) );
     const outPos = def( 'vec4', vProjPosition );
 
-    const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( outPos, 'x' ), aspect );
     assign( glPosition, outPos );
 

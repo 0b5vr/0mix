@@ -1,4 +1,4 @@
-import { GLSLExpression, add, arrayIndex, assign, band, build, def, defConstArray, defIn, defOutNamed, defUniformNamed, div, divAssign, float, floor, fract, glPosition, int, main, mul, normalize, rshift, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, add, arrayIndex, assign, band, build, def, defConstArray, defIn, defOutNamed, defUniformNamed, divAssign, float, floor, fract, glPosition, int, main, mul, normalize, rshift, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { glslLinearstep } from '../../../shaders/modules/glslLinearstep';
 import { glslLofi } from '../../../shaders/modules/glslLofi';
 import { normalTransform } from '../../../shaders/modules/normalTransform';
@@ -20,7 +20,7 @@ export const sevenSegVert = build( () => {
   const vEmit = defOutNamed( 'float', 'vEmit' );
 
   const time = defUniformNamed( 'float', 'time' );
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const projectionMatrix = defUniformNamed( 'mat4', 'projectionMatrix' );
   const viewMatrix = defUniformNamed( 'mat4', 'viewMatrix' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
@@ -55,7 +55,6 @@ export const sevenSegVert = build( () => {
     assign( vProjPosition, mul( projectionMatrix, vViewPosition ) );
     const outPos = def( 'vec4', vProjPosition );
 
-    const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( outPos, 'x' ), aspect );
     assign( glPosition, outPos );
 

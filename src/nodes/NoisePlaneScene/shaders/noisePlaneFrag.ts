@@ -1,4 +1,4 @@
-import { addAssign, assign, build, def, defInNamed, defOutNamed, defUniformNamed, div, insert, mad, main, mul, mulAssign, normalize, pow, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { addAssign, assign, build, def, defInNamed, defOutNamed, defUniformNamed, insert, mad, main, mul, mulAssign, normalize, pow, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { cyclicNoise } from '../../../shaders/modules/cyclicNoise';
 
 export const noisePlaneFrag = build( () => {
@@ -9,11 +9,11 @@ export const noisePlaneFrag = build( () => {
   const fragColor = defOutNamed( 'vec4', 'fragColor' );
 
   const time = defUniformNamed( 'float', 'time' );
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
 
   main( () => {
     const p = def( 'vec2', mad( -1.0, 2.0, vUv ) );
-    mulAssign( sw( p, 'x' ), div( sw( resolution, 'x' ), sw( resolution, 'y' ) ) );
+    mulAssign( sw( p, 'x' ), aspect );
 
     const pt = def( 'vec3', mul( 2.0, normalize( vec3( p, 0.3 ) ) ) );
     addAssign( sw( pt, 'z' ), time );

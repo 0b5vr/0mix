@@ -98,6 +98,7 @@ export class Quad extends Component {
     material.addUniform( 'deltaTime', '1f', event?.deltaTime ?? 0.0 );
     material.addUniform( 'frameCount', '1f', event?.frameCount ?? 0 );
     material.addUniform( 'resolution', '2f', target.width, target.height );
+    material.addUniform( 'aspect', '1f', target.width / target.height );
     material.addUniform( 'range', '4f', ...this.range );
 
     material.setUniforms();

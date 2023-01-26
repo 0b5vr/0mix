@@ -76,6 +76,7 @@ export class Mesh extends Component {
     material.addUniform( 'time', '1f', event.time );
     material.addUniform( 'frameCount', '1f', event.frameCount );
     material.addUniform( 'resolution', '2f', event.target.width, event.target.height );
+    material.addUniform( 'aspect', '1f', event.target.width / event.target.height );
     material.addUniform( 'cameraPos', '3f', ...event.cameraTransform.position );
     material.addUniform( 'cameraNearFar', '2f', event.camera.near, event.camera.far );
 

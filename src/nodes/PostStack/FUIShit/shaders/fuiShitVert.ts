@@ -1,4 +1,4 @@
-import { add, assign, build, def, defIn, defOutNamed, defUniformNamed, div, floor, glPosition, mad, main, mix, mixStepChain, mul, sub, sw, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { add, assign, build, defIn, defOutNamed, defUniformNamed, div, floor, glPosition, mad, main, mix, mixStepChain, mul, sub, sw, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { pcg3df } from '../../../../shaders/modules/pcg3df';
 
 export const fuiShitVert = build( () => {
@@ -10,6 +10,7 @@ export const fuiShitVert = build( () => {
   const vMode = defOutNamed( 'float', 'vMode' );
 
   const time = defUniformNamed( 'float', 'time' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
 
   main( () => {
@@ -38,8 +39,6 @@ export const fuiShitVert = build( () => {
       [ 10.0, vec2( 0.05, 0.01 ) ],
       [ 11.0, vec2( 0.05 ) ],
     );
-
-    const aspect = def( 'float', div( sw( resolution, 'x' ), sw( resolution, 'y' ) ) );
 
     const pos = add(
       div( mul( size, position ), vec2( aspect, 1.0 ) ),

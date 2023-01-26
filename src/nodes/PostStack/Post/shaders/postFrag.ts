@@ -23,7 +23,7 @@ export const postFrag = build( () => {
 
   const time = defUniformNamed( 'float', 'time' );
   const cosAmp = defUniformNamed( 'float', 'cosAmp' );
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
 
   const { init, random } = glslDefRandom();
@@ -45,7 +45,6 @@ export const postFrag = build( () => {
 
     init( vec4( vUv, time, 1.0 ) );
 
-    const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     const p = def( 'vec2', sub( mul( uv, 2.0 ), 1.0 ) );
     mulAssign( sw( p, 'x' ), aspect );
 

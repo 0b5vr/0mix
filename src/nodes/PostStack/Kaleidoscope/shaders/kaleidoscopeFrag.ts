@@ -9,7 +9,7 @@ export const kaleidoscopeFrag: string = build( () => {
   const fragColor = defOut( 'vec4' );
 
   const mode = defUniformNamed( 'float', 'mode' );
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
 
   const fart = defFn( 'vec2', [ 'vec2', 'vec2' ], ( p, v ) => {
@@ -24,7 +24,7 @@ export const kaleidoscopeFrag: string = build( () => {
 
   main( () => {
     const p = def( 'vec2', mad( -1.0, 2.0, vUv ) );
-    mulAssign( sw( p, 'x' ), div( sw( resolution, 'x' ), sw( resolution, 'y' ) ) );
+    mulAssign( sw( p, 'x' ), aspect );
 
     ifChain(
       [ lt( mode, 1.5 ), () => {
@@ -41,7 +41,7 @@ export const kaleidoscopeFrag: string = build( () => {
       } ],
     );
 
-    divAssign( sw( p, 'x' ), div( sw( resolution, 'x' ), sw( resolution, 'y' ) ) );
+    divAssign( sw( p, 'x' ), aspect );
 
     assign( fragColor, texture( sampler0, mad( 0.5, 0.5, p ) ) );
   } );

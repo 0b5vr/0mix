@@ -1,5 +1,5 @@
 import { REC_TRAILS_LENGTH } from '../constants';
-import { addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, mad, main, mix, mul, step, sub, sw, texture, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, divAssign, glPosition, mad, main, mix, mul, step, sub, sw, texture, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { orthBas } from '../../../../shaders/modules/orthBas';
 
 export const trailsRenderVert: string = build( () => {
@@ -16,7 +16,7 @@ export const trailsRenderVert: string = build( () => {
   const vDice = defOutNamed( 'vec4', 'vDice' );
   const vJumpFlag = defOutNamed( 'float', 'vJumpFlag' );
 
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const projectionMatrix = defUniformNamed( 'mat4', 'projectionMatrix' );
   const viewMatrix = defUniformNamed( 'mat4', 'viewMatrix' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
@@ -63,7 +63,6 @@ export const trailsRenderVert: string = build( () => {
     assign( vProjPosition, mul( projectionMatrix, vViewPosition ) );
     const outPos = def( 'vec4', vProjPosition );
 
-    const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( outPos, 'x' ), aspect );
     assign( glPosition, outPos );
   } );

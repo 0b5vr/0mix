@@ -16,6 +16,7 @@ export const lightShaftFrag = build( () => {
 
   const time = defUniformNamed( 'float', 'time' );
   const intensity = defUniformNamed( 'float', 'intensity' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
   const lightNearFar = defUniformNamed( 'vec2', 'lightNearFar' );
   const cameraPos = defUniformNamed( 'vec3', 'cameraPos' );
@@ -64,7 +65,7 @@ export const lightShaftFrag = build( () => {
 
     const uv = def( 'vec2', div( sw( glFragCoord, 'xy' ), resolution ) );
     const p = def( 'vec2', sub( mul( uv, 2.0 ), 1.0 ) );
-    mulAssign( sw( p, 'x' ), div( sw( resolution, 'x' ), sw( resolution, 'y' ) ) );
+    mulAssign( sw( p, 'x' ), aspect );
     init( vec4( uv, time, 1.0 ) );
 
     const texDeferred1 = texture( samplerDeferred1, uv );

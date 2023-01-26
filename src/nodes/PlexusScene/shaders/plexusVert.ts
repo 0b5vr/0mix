@@ -12,6 +12,7 @@ export const plexusVert = ( isLine?: boolean ): string => build( () => {
   const vLength = defOutNamed( 'float', 'vLength' );
 
   const time = defUniformNamed( 'float', 'time' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const resolution = defUniformNamed( 'vec2', 'resolution' );
   const projectionMatrix = defUniformNamed( 'mat4', 'projectionMatrix' );
   const viewMatrix = defUniformNamed( 'mat4', 'viewMatrix' );
@@ -53,7 +54,6 @@ export const plexusVert = ( isLine?: boolean ): string => build( () => {
     assign( vProjPosition, mul( projectionMatrix, viewMatrix, vPosition ) );
     const outPos = def( 'vec4', vProjPosition );
 
-    const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( outPos, 'x' ), aspect );
     assign( glPosition, outPos );
 

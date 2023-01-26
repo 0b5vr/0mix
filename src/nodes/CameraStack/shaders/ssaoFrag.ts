@@ -15,7 +15,7 @@ export const ssaoFrag = build( () => {
   const fragColor = defOut( 'float' );
 
   const time = defUniformNamed( 'float', 'time' );
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const cameraPV = defUniformNamed( 'mat4', 'cameraPV' );
   const sampler1 = defUniformNamed( 'sampler2D', 'sampler1' ); // position.xyz, depth
   const sampler2 = defUniformNamed( 'sampler2D', 'sampler2' ); // normal.xyz
@@ -26,8 +26,6 @@ export const ssaoFrag = build( () => {
     position: GLSLExpression<'vec3'>,
     normal: GLSLExpression<'vec3'>,
   ): GLSLExpression<'float'> {
-    const aspect = def( 'float', div( sw( resolution, 'x' ), sw( resolution, 'y' ) ) );
-
     const accum = def( 'float', 0.0 );
 
     forLoop( AO_ITER, () => {

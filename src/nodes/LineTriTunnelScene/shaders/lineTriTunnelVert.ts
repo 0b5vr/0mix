@@ -1,5 +1,5 @@
 import { TAU } from '../../../utils/constants';
-import { add, assign, build, cos, def, defIn, defOutNamed, defUniformNamed, div, divAssign, glPosition, main, mod, mul, sin, sw, vec2, vec4 } from '../../../shaders/shaderBuilder';
+import { add, assign, build, cos, def, defIn, defOutNamed, defUniformNamed, divAssign, glPosition, main, mod, mul, sin, sw, vec2, vec4 } from '../../../shaders/shaderBuilder';
 
 export const lineTriTunnelVert = build( () => {
   const x = defIn( 'float', 0 );
@@ -9,7 +9,7 @@ export const lineTriTunnelVert = build( () => {
   const vProjPosition = defOutNamed( 'vec4', 'vProjPosition' );
 
   const time = defUniformNamed( 'float', 'time' );
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
+  const aspect = defUniformNamed( 'float', 'aspect' );
   const projectionMatrix = defUniformNamed( 'mat4', 'projectionMatrix' );
   const viewMatrix = defUniformNamed( 'mat4', 'viewMatrix' );
   const modelMatrix = defUniformNamed( 'mat4', 'modelMatrix' );
@@ -28,7 +28,6 @@ export const lineTriTunnelVert = build( () => {
     assign( vProjPosition, mul( projectionMatrix, viewMatrix, vPosition ) );
     const outPos = def( 'vec4', vProjPosition );
 
-    const aspect = div( sw( resolution, 'x' ), sw( resolution, 'y' ) );
     divAssign( sw( outPos, 'x' ), aspect );
     assign( glPosition, outPos );
   } );
