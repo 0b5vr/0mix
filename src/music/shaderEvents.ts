@@ -198,8 +198,8 @@ vec2 mainaudio(vec4 time){
 
     float tone=fract(.3+st*.422);
     vec2 wave=cyclic(
-      vec3(vec3(orbit(exp2(4.+5.*tone)),exp2(8.+3.*tone)*t)),
-      1.2
+      32.*vec3(orbit(exp2(6.+2.*tone)),exp2(4.+3.*tone)*t),
+      1.5
     ).xy;
 
     float env=mix(
@@ -560,7 +560,9 @@ vec2 mainaudio(vec4 time){
   [ 0.4, ShaderEventType.JumpPart, -1 ],
   [ 0.4, ShaderEventType.JumpPart, -1 ],
   [ 2.4, ShaderEventType.JumpPart, -1 ],
-  [ 2.8, ShaderEventType.JumpPart, -1 ],
+  [ 1.0, ShaderEventType.Comment ],
+  [ 1.1, ShaderEventType.JumpPart, -1 ],
+  [ 2.7, ShaderEventType.Apply ],
   [ 4.0, ShaderEventType.Insert, `{ // kick
     float t=time.x;
     sidechain=smoothstep(0.,1E-3,b2t-t)*smoothstep(0.,.8*b2t,t);
@@ -578,7 +580,7 @@ vec2 mainaudio(vec4 time){
       ));
     }
   }` ],
-  [ 2.5, ShaderEventType.Apply ],
+  [ 0.5, ShaderEventType.Apply ],
 
   // fade out dual vco
   [ 4.0, ShaderEventType.Move, [ 1000, 0 ] ],
@@ -632,7 +634,7 @@ vec2 mainaudio(vec4 time){
       sum+=vec2(wave)*r2d(tau*dice.z);
     }
 
-    dest+=.0*mix(.1,1.,sidechain)*sum/32.;
+    dest+=.0*mix(.2,1.,sidechain)*sum/32.;
   }` ],
 
   // unmute clap
