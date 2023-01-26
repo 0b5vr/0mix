@@ -7,6 +7,7 @@ import { EventType, on } from '../../globals/globalEvent';
 import { FUIShit } from './FUIShit/FUIShit';
 import { FXAA } from './FXAA/FXAA';
 import { Kaleidoscope } from './Kaleidoscope/Kaleidoscope';
+import { PixelSorter } from './PixelSorter/PixelSorter';
 import { Post } from './Post/Post';
 import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
@@ -63,7 +64,6 @@ export class PostStack extends SceneNode {
     const post = new Post( {
       input: swap.o,
       target: swap.i,
-      // target,
     } );
 
     swap.swap();
@@ -75,7 +75,13 @@ export class PostStack extends SceneNode {
     swap.swap();
     const dct = new DCT( {
       input: swap.o,
-      // target: postSwap.i,
+      target: swap.i,
+    } );
+
+    swap.swap();
+    const pixelSorter = new PixelSorter( {
+      input: swap.o,
+      // target: swap.i,
       target,
     } );
 
@@ -90,6 +96,7 @@ export class PostStack extends SceneNode {
       post,
       fxaa,
       dct,
+      pixelSorter,
       code,
       statsText,
     ];
