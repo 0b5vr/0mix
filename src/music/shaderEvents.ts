@@ -1055,7 +1055,7 @@ vec2 mainaudio(vec4 time){
   { // pad
     vec2 sum=vec2(0);
 
-    const float pitchTable[8]=float[](0.,3.,7.,10.,12.,14.,19.,26.);
+    const float pitchTable[8]=float[](0.,7.,10.,12.,14.,15.,19.,26.);
 
     for(int i=0;i<48;i++){
       float fi=float(i);
