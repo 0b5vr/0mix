@@ -230,7 +230,7 @@ vec2 mainaudio(vec4 time){
   { // dual vco
     vec2 sum=vec2(0);
 
-    for(int i=0;i<8;i++){
+    for(int i=0;i<4;i++){
       float fi=float(i);
 
       const float freqs[3]=float[](560.,1200.,240.);
