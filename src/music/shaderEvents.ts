@@ -1071,10 +1071,10 @@ vec2 mainaudio(vec4 time){
       vec3 p2=vec3(2.*orbit(phase+.05),t);
       vec2 wave=cyclic(p1,2.).xy-cyclic(p2,2.).xy;
 
-      sum+=mix(.2,1.,sidechain)*wave*r2d(fi)/24.;
+      sum+=wave*r2d(fi)/24.;
     }
 
-    dest+=.0*tanh(sum);
+    dest+=.0*mix(.2,1.,sidechain)*tanh(sum);
   }` ],
   [ 2.0, ShaderEventType.JumpPart, -1 ],
   [ 1.0, ShaderEventType.JumpPart, -1 ],
