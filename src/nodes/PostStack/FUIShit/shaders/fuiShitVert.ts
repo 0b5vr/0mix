@@ -42,7 +42,7 @@ export const fuiShitVert = build( () => {
 
     const pos = add(
       div( mul( size, position ), vec2( aspect, 1.0 ) ),
-      sub( div( floor( mul( resolution, 0.4, sw( vDice, 'xy' ) ) ), 0.25, resolution ), 0.8 ),
+      sub( div( floor( mul( resolution, 0.5, sw( vDice, 'xy' ) ) ), 0.25, resolution ), 1.0 ),
     );
 
     assign( glPosition, vec4( pos, 0.0, 1.0 ) );
