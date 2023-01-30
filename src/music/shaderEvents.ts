@@ -1130,14 +1130,15 @@ vec2 mainaudio(vec4 time){
   [ 0.7, ShaderEventType.Insert, '2' ],
   [ 0.8, ShaderEventType.Apply ],
 
-  // remove clap
+  // remove fm perc and clap
   [ 2.0, ShaderEventType.JumpPart, -1 ],
   [ 0.7, ShaderEventType.JumpPart, -1 ],
   [ 0.7, ShaderEventType.JumpPart, -1 ],
   [ 0.7, ShaderEventType.JumpPart, -1 ],
   [ 0.7, ShaderEventType.JumpPart, -1 ],
   [ 1.2, ShaderEventType.JumpPart, -1 ],
-  [ 2.5, ShaderEventType.Insert, '' ],
+  [ 1.5, ShaderEventType.ExpandSelectBack ],
+  [ 1.0, ShaderEventType.Insert, '' ],
 
   // mute shepard, insert snare roll and sweep
   [ 3.0, ShaderEventType.JumpPart, 1 ],
@@ -1203,15 +1204,14 @@ vec2 mainaudio(vec4 time){
 
   // insert kick + bass 4th
   [ 2.5, ShaderEventType.JumpPart, -1 ],
+  [ 0.7, ShaderEventType.JumpPart, -1 ],
+  [ 0.7, ShaderEventType.JumpPart, -1 ],
   [ 1.0, ShaderEventType.JumpPart, -1 ],
-  [ 1.0, ShaderEventType.ExpandSelectBack ],
-  [ 0.5, ShaderEventType.ExpandSelectBack ],
-  [ 0.5, ShaderEventType.ExpandSelectBack ],
-  [ 0.5, ShaderEventType.ExpandSelectBack ],
+  [ 2.1, ShaderEventType.ExpandSelectBack ],
   [ 1.0, ShaderEventType.ExpandSelectBack ],
   [ 1.0, ShaderEventType.ExpandSelectBack ],
   [ 3.0, ShaderEventType.Insert, 'float trans=mod(time.z,16.*b2t)<(12.*b2t)?0.:0.;' ],
-  [ 3.0, ShaderEventType.Move, [ 0, -1 ] ],
+  [ 2.0, ShaderEventType.Move, [ 0, -1 ] ],
   [ 0.5, ShaderEventType.Move, [ 0, -1 ] ],
   [ 1.0, ShaderEventType.Delete ],
   [ 1.5, ShaderEventType.Insert, '-' ],
