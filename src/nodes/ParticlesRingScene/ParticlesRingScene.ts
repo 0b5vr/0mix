@@ -1,18 +1,16 @@
 import { CameraStack } from '../CameraStack/CameraStack';
-import { GL_FRONT, GL_TEXTURE_2D } from '../../gl/constants';
+import { GL_TEXTURE_2D } from '../../gl/constants';
 import { GPUParticles } from '../utils/GPUParticles';
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/deferredConstants';
 import { Material } from '../../heck/Material';
 import { PARTICLES_COUNT, PARTICLES_COUNT_SQRT } from './constants';
 import { PointLightNode } from '../Lights/PointLightNode';
-import { RaymarcherNode } from '../utils/RaymarcherNode';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { auto } from '../../globals/automaton';
 import { cameraStackATarget } from '../../globals/cameraStackTargets';
 import { deferredColorFrag } from '../../shaders/common/deferredColorFrag';
 import { depthFrag } from '../../shaders/common/depthFrag';
 import { dummyRenderTarget1, dummyRenderTarget2, dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
-import { genCube } from '../../geometries/genCube';
 import { genOctahedron } from '../../geometries/genOctahedron';
 import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
@@ -23,10 +21,9 @@ import { particlesRenderVert } from './shaders/particlesRenderVert';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { randomTexture, randomTextureStatic } from '../../globals/randomTexture';
-import { studioBackgroundFrag } from './shaders/studioBackgroundFrag';
 import { swapShadowMap1, swapShadowMap2, swapShadowMap3 } from '../../globals/swapShadowMap';
 
-export class ParticlesStudioScene extends SceneNode {
+export class ParticlesRingScene extends SceneNode {
   public constructor() {
     super();
 
@@ -61,34 +58,6 @@ export class ParticlesStudioScene extends SceneNode {
       light1.name = 'light1';
       light2.name = 'light2';
       light3.name = 'light3';
-    }
-
-    // -- background -------------------------------------------------------------------------------
-    let background: RaymarcherNode;
-
-    {
-      // :: geometry :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-      // this is very incorrect bounding box but who cares
-      const geometry = genCube( { dimension: [ 100.0, 1.0, 4.0 ] } );
-
-      // :: node :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-      background = new RaymarcherNode( studioBackgroundFrag, {
-        geometry,
-      } );
-
-      background.mesh.cull = GL_FRONT;
-
-      if ( import.meta.hot ) {
-        import.meta.hot.accept(
-          './shaders/studioBackgroundFrag',
-          ( { studioBackgroundFrag } ) => {
-            const { deferred, depth } = background.materials;
-
-            deferred.replaceShader( undefined, studioBackgroundFrag( 'deferred' ) );
-            depth.replaceShader( undefined, studioBackgroundFrag( 'depth' ) );
-          },
-        );
-      }
     }
 
     // -- particles --------------------------------------------------------------------------------
@@ -152,9 +121,9 @@ export class ParticlesStudioScene extends SceneNode {
         { initOptions: { geometry, target: dummyRenderTarget1 } },
       );
 
-      deferred.addUniform( 'color', '4f', 1.0, 1.0, 1.0, 1.0 );
+      deferred.addUniform( 'color', '4f', 0.1, 0.1, 0.1, 1.0 );
       deferred.addUniform( 'mtlKind', '1f', MTL_PBR_ROUGHNESS_METALLIC );
-      deferred.addUniform( 'mtlParams', '4f', 0.5, 0.0, 0.0, 0.0 );
+      deferred.addUniform( 'mtlParams', '4f', 0.1, 1.0, 0.0, 0.0 );
 
       deferred.addUniformTextures(
         'samplerRandomStatic',
@@ -202,10 +171,10 @@ export class ParticlesStudioScene extends SceneNode {
       resources: mainCameraStackResources,
       target: cameraStackATarget,
       useAO: true,
-      dofParams: [ 4.0, 12.0 ],
+      dofParams: [ 6.0, 12.0 ],
     } );
     camera.transform.lookAt(
-      [ 0.0, 0.0, 5.0 ],
+      [ 0.0, 0.0, 6.0 ],
     );
 
     // -- auto -------------------------------------------------------------------------------------
@@ -219,7 +188,6 @@ export class ParticlesStudioScene extends SceneNode {
       light1,
       light2,
       light3,
-      background,
       particles,
       camera,
     ];

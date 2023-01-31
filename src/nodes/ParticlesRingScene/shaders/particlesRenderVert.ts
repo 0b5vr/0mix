@@ -1,6 +1,4 @@
-import { PI } from '../../../utils/constants';
-import { add, addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, divAssign, glPosition, main, mul, pow, sin, sw, texture, vec4 } from '../../../shaders/shaderBuilder';
-import { glslSaturate } from '../../../shaders/modules/glslSaturate';
+import { add, addAssign, assign, build, def, defIn, defOutNamed, defUniformNamed, divAssign, glPosition, main, mul, pow, smoothstep, sw, texture, vec4 } from '../../../shaders/shaderBuilder';
 import { rotate2D } from '../../../shaders/modules/rotate2D';
 
 export const particlesRenderVert = build( () => {
@@ -37,16 +35,17 @@ export const particlesRenderVert = build( () => {
     // assign( vPositionWithoutModel, vec4( 0.0, 0.0, 0.0, 1.0 ) );
 
     const size = mul(
-      sin( mul( PI, glslSaturate( vLife ) ) ),
+      smoothstep( 1.0, 0.9, vLife ),
+      smoothstep( 0.0, 1.0, vLife ),
       pow( sw( vDice, 'x' ), 4.0 ),
       0.1,
     );
 
     const rotYZ = def( 'mat2', (
-      rotate2D( mul( 10.0, add( sw( vPositionWithoutModel, 'x' ), sw( vDice, 'z' ) ) ) )
+      rotate2D( mul( 4.0, add( sw( vPositionWithoutModel, 'x' ), sw( vDice, 'z' ) ) ) )
     ) );
     const rotZX = def( 'mat2', (
-      rotate2D( mul( 10.0, add( sw( vPositionWithoutModel, 'y' ), sw( vDice, 'w' ) ) ) )
+      rotate2D( mul( 4.0, add( sw( vPositionWithoutModel, 'y' ), sw( vDice, 'w' ) ) ) )
     ) );
 
     const shape = def( 'vec3', mul( position, size ) );

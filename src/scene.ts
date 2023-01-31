@@ -19,7 +19,7 @@ import { MoonScene } from './nodes/MoonScene/MoonScene';
 import { NoisePlaneScene } from './nodes/NoisePlaneScene/NoisePlaneScene';
 import { OBSVRLogoScene } from './nodes/OBSVRLogoScene/OBSVRLogoScene';
 import { OctreeTunnelScene } from './nodes/OctreeTunnelScene/OctreeTunnelScene';
-import { ParticlesStudioScene } from './nodes/ParticlesStudioScene/ParticlesStudioScene';
+import { ParticlesRingScene } from './nodes/ParticlesRingScene/ParticlesRingScene';
 import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
 import { PlexusScene } from './nodes/PlexusScene/PlexusScene';
 import { PostStack } from './nodes/PostStack/PostStack';
@@ -118,7 +118,7 @@ const scenesA = [
   new MetaballScene(),
   new TrailsScene(),
   new OctreeTunnelScene(),
-  new ParticlesStudioScene(),
+  new ParticlesRingScene(),
   new SphereArrayScene(),
   new FluidScene(),
   new OBSVRLogoScene(),
