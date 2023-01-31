@@ -1,5 +1,5 @@
 import { CharRenderer } from './CharRenderer/CharRenderer';
-import { GLSLMusicEditorRange } from '../../music/ShaderEventRange';
+import { GLSLMusicEditorRange } from '../../music/GLSLMusicEditorRange';
 import { Lambda } from '../../heck/components/Lambda';
 import { MUSIC_BPM } from '../../config';
 import { RenderTarget } from '../../heck/RenderTarget';

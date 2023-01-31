@@ -10,7 +10,7 @@ import { glLazyProgram } from '../gl/glLazyProgram';
 import { glWaitGPUCommandsCompleteAsync } from '../gl/glWaitGPUCommandsCompleteAsync';
 import { promiseGui } from '../globals/gui';
 import { shaderchunkPost, shaderchunkPre, shaderchunkPreLines } from './shaderchunks';
-import { updateGLSLMusicEditor } from './ShaderEventManager';
+import { updateGLSLMusicEditor } from './glslMusicEditor';
 
 const BEAT = 60.0 / MUSIC_BPM;
 const BAR = 240.0 / MUSIC_BPM;

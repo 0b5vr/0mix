@@ -4,7 +4,7 @@ import { MUSIC_BPM } from '../config';
 import { Music } from '../music/Music';
 import { fxDefinitions } from './automaton-fxs/fxDefinitions';
 import { getDivAutomaton } from './dom';
-import { resetGLSLMusicEditor } from '../music/ShaderEventManager';
+import { resetGLSLMusicEditor } from '../music/glslMusicEditor';
 import automatonData from '../automaton.json';
 
 // it's pointless to live reload automatonData

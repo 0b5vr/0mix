@@ -1,4 +1,4 @@
-import { GLSLMusicEditorRange } from './ShaderEventRange';
+import { GLSLMusicEditorRange } from './GLSLMusicEditorRange';
 
 export function withinGLSLMusicEditorRange(
   [ startLine, startCol, endLine, endCol ]: GLSLMusicEditorRange,

@@ -1,6 +1,6 @@
 import { CDS } from '@0b5vr/experimental';
 import { GLSLExpression } from '../../../shaders/shaderBuilder';
-import { GLSLMusicEditorRange } from '../../../music/ShaderEventRange';
+import { GLSLMusicEditorRange } from '../../../music/GLSLMusicEditorRange';
 import { GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../../gl/constants';
 import { Geometry } from '../../../heck/Geometry';
 import { Lambda } from '../../../heck/components/Lambda';
@@ -17,7 +17,7 @@ import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
 import { promiseGui } from '../../../globals/gui';
 import { quadBuffer } from '../../../globals/quadGeometry';
-import { withinGLSLMusicEditorRange } from '../../../music/withinShaderEventRange';
+import { withinGLSLMusicEditorRange } from '../../../music/withinGLSLMusicEditorRange';
 
 enum CharRendererToken {
   Selected,

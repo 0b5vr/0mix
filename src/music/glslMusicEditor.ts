@@ -1,6 +1,6 @@
 import { EventType, emit } from '../globals/globalEvent';
-import { GLSLMusicEditorEventType, glslMusicEditorEvents } from './shaderEvents';
-import { GLSLMusicEditorRange } from './ShaderEventRange';
+import { GLSLMusicEditorEventType, glslMusicEditorEvents } from './glslMusicEditorEvents';
+import { GLSLMusicEditorRange } from './GLSLMusicEditorRange';
 import { MUSIC_BPM } from '../config';
 import { clamp } from '@0b5vr/experimental';
 import { findMatchingCloseBracket } from './utils/findMatchingCloseBracket';

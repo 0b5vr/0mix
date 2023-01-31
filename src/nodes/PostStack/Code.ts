@@ -1,8 +1,8 @@
 import { CharRenderer } from './CharRenderer/CharRenderer';
 import { EventType, on } from '../../globals/globalEvent';
-import { GLSLMusicEditorRange } from '../../music/ShaderEventRange';
+import { GLSLMusicEditorRange } from '../../music/GLSLMusicEditorRange';
 import { RenderTarget } from '../../heck/RenderTarget';
-import { glslMusicEditorFocusRow, glslMusicEditorLines, glslMusicEditorSelect } from '../../music/ShaderEventManager';
+import { glslMusicEditorFocusRow, glslMusicEditorLines, glslMusicEditorSelect } from '../../music/glslMusicEditor';
 import { gui } from '../../globals/gui';
 import { vec2 } from '../../shaders/shaderBuilder';
 
