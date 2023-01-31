@@ -878,7 +878,7 @@ vec2 mainaudio(vec4 time){
   [ 0.5, ShaderEventType.Insert, '0' ],
   [ 0.5, ShaderEventType.Apply ],
 
-  // hihat + additive shepard
+  // insert hihat
   [ 2.0, ShaderEventType.Move, [ 1, 0 ] ],
   [ 1.0, ShaderEventType.Insert, '\n  ' ],
   [ 1.0, ShaderEventType.Insert, '\n  ' ],
@@ -894,6 +894,7 @@ vec2 mainaudio(vec4 time){
     dest+=.4*sidechain*env*tanh(5.*wave);
   }` ],
 
+  // insert additive shepard
   [ 2.0, ShaderEventType.Move, [ 1000, 0 ] ],
   [ 2.0, ShaderEventType.JumpPart, -1 ],
   [ 1.0, ShaderEventType.JumpPart, -1 ],
@@ -970,6 +971,8 @@ vec2 mainaudio(vec4 time){
   [ 3.0, ShaderEventType.Delete ],
   [ 0.5, ShaderEventType.Insert, '6' ],
   [ 0.5, ShaderEventType.Apply ],
+
+  // insert hihat 2 + clap
   [ 4.0, ShaderEventType.JumpPart, -1 ],
   [ 1.0, ShaderEventType.JumpPart, -1 ],
   [ 0.7, ShaderEventType.JumpPart, -1 ],
@@ -1000,10 +1003,10 @@ vec2 mainaudio(vec4 time){
 
     dest+=.2*tanh(20.*env*wave);
   }` ],
-  [ 2.5, ShaderEventType.Apply ],
+  [ 0.5, ShaderEventType.Apply ],
 
   // remove hihat 2
-  [ 8.0, ShaderEventType.JumpPart, -1 ],
+  [ 10.0, ShaderEventType.JumpPart, -1 ],
   [ 3.0, ShaderEventType.JumpPart, -1 ],
   [ 3.0, ShaderEventType.Insert, '' ],
 
