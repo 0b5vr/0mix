@@ -4,7 +4,7 @@ import { MUSIC_BPM } from '../config';
 import { Music } from '../music/Music';
 import { fxDefinitions } from './automaton-fxs/fxDefinitions';
 import { getDivAutomaton } from './dom';
-import { shaderEventManager } from '../music/ShaderEventManager';
+import { resetGLSLMusicEditor } from '../music/ShaderEventManager';
 import automatonData from '../automaton.json';
 
 // it's pointless to live reload automatonData
@@ -47,7 +47,7 @@ export function automatonSetupMusic( music: Music ): void {
     automatonWithGUI.on( 'pause', () => { music.isPlaying = false; } );
     automatonWithGUI.on( 'seek', ( { time } ) => {
       music.time = Math.max( 0.0, time );
-      shaderEventManager.reset();
+      resetGLSLMusicEditor();
       automatonWithGUI.reset();
     } );
 

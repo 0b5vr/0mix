@@ -9,8 +9,8 @@ import { gl } from '../globals/canvas';
 import { glLazyProgram } from '../gl/glLazyProgram';
 import { glWaitGPUCommandsCompleteAsync } from '../gl/glWaitGPUCommandsCompleteAsync';
 import { promiseGui } from '../globals/gui';
-import { shaderEventManager } from './ShaderEventManager';
 import { shaderchunkPost, shaderchunkPre, shaderchunkPreLines } from './shaderchunks';
+import { updateGLSLMusicEditor } from './ShaderEventManager';
 
 const BEAT = 60.0 / MUSIC_BPM;
 const BAR = 240.0 / MUSIC_BPM;
@@ -186,7 +186,7 @@ export class Music {
 
     this.__bufferReaderNode?.setActive( this.isPlaying );
 
-    shaderEventManager.update( now - this.timeOffset );
+    updateGLSLMusicEditor( now - this.timeOffset );
 
     if ( this.isPlaying ) {
       this.deltaTime = now - this.__prevTime;
