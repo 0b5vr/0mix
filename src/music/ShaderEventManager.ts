@@ -1,15 +1,15 @@
 import { EventType, emit } from '../globals/globalEvent';
+import { GLSLMusicEditorEventType, glslMusicEditorEvents } from './shaderEvents';
+import { GLSLMusicEditorRange } from './ShaderEventRange';
 import { MUSIC_BPM } from '../config';
-import { ShaderEventRange } from './ShaderEventRange';
-import { ShaderEventType, shaderEvents } from './shaderEvents';
 import { clamp } from '@0b5vr/experimental';
 import { findMatchingCloseBracket } from './utils/findMatchingCloseBracket';
 import { findNearestChar } from './utils/findNearestChar';
 
-let shaderEventsProxy = shaderEvents;
+let shaderEventsProxy = glslMusicEditorEvents;
 
 export const glslMusicEditorLines: string[] = [ '' ];
-export const glslMusicEditorSelect: ShaderEventRange = [ 0, 0, 0, 0 ];
+export const glslMusicEditorSelect: GLSLMusicEditorRange = [ 0, 0, 0, 0 ];
 export const glslMusicEditorFocusRow: [ number ] = [ 0 ];
 
 const lines = glslMusicEditorLines;
@@ -39,7 +39,7 @@ export function updateGLSLMusicEditor( time: number ): void {
   const beat = time * MUSIC_BPM / 60.0;
   if ( beat < eventBeat ) { return; }
 
-  if ( event[ 1 ] === ShaderEventType.Insert ) {
+  if ( event[ 1 ] === GLSLMusicEditorEventType.Insert ) {
     const a = lines[ select[ 0 ] ].substring( 0, select[ 1 ] );
     const b = lines[ select[ 2 ] ].substring( select[ 3 ] );
     const insert = ( a + event[ 2 ] + b ).split( '\n' );
@@ -55,7 +55,7 @@ export function updateGLSLMusicEditor( time: number ): void {
     select[ 1 ] = select[ 3 ] = insert[ insert.length - 1 ].length - b.length;
 
     emit( EventType.ShaderEventAlter );
-  } else if ( event[ 1 ] === ShaderEventType.Delete ) {
+  } else if ( event[ 1 ] === GLSLMusicEditorEventType.Delete ) {
     lines[ select[ 0 ] ] = (
       lines[ select[ 0 ] ].substring( 0, select[ 1 ] - 1 )
       + lines[ select[ 0 ] ].substring( select[ 1 ] )
@@ -65,7 +65,7 @@ export function updateGLSLMusicEditor( time: number ): void {
     select[ 3 ] --;
 
     emit( EventType.ShaderEventAlter );
-  } else if ( event[ 1 ] === ShaderEventType.Comment ) {
+  } else if ( event[ 1 ] === GLSLMusicEditorEventType.Comment ) {
     const modifyingLines = lines.splice(
       select[ 0 ],
       select[ 2 ] - select[ 0 ] + 1,
@@ -91,7 +91,7 @@ export function updateGLSLMusicEditor( time: number ): void {
     select[ 3 ] += 3;
 
     emit( EventType.ShaderEventAlter );
-  } else if ( event[ 1 ] === ShaderEventType.Uncomment ) {
+  } else if ( event[ 1 ] === GLSLMusicEditorEventType.Uncomment ) {
     const modifyingLines = lines.splice(
       select[ 0 ],
       select[ 2 ] - select[ 0 ] + 1,
@@ -107,9 +107,9 @@ export function updateGLSLMusicEditor( time: number ): void {
     select[ 3 ] = Math.max( select[ 3 ] - 3, 0 );
 
     emit( EventType.ShaderEventAlter );
-  } else if ( event[ 1 ] === ShaderEventType.Apply ) {
+  } else if ( event[ 1 ] === GLSLMusicEditorEventType.Apply ) {
     emit( EventType.ShaderEventApply, lines.join( '\n' ) );
-  } else if ( event[ 1 ] === ShaderEventType.Move ) {
+  } else if ( event[ 1 ] === GLSLMusicEditorEventType.Move ) {
     const [ deltaRow, deltaCol ] = event[ 2 ];
     const isForward = 0 < deltaRow || 0 < deltaCol;
 
@@ -127,7 +127,7 @@ export function updateGLSLMusicEditor( time: number ): void {
     select[ 1 ] = select[ 3 ] = col;
 
     emit( EventType.ShaderEventAlter );
-  } else if ( event[ 1 ] === ShaderEventType.MoveStart ) {
+  } else if ( event[ 1 ] === GLSLMusicEditorEventType.MoveStart ) {
     const [ deltaRow, deltaCol ] = event[ 2 ];
 
     let row = select[ 0 ];
@@ -144,7 +144,7 @@ export function updateGLSLMusicEditor( time: number ): void {
     select[ 1 ] = col;
 
     emit( EventType.ShaderEventAlter );
-  } else if ( event[ 1 ] === ShaderEventType.MoveEnd ) {
+  } else if ( event[ 1 ] === GLSLMusicEditorEventType.MoveEnd ) {
     const [ deltaRow, deltaCol ] = event[ 2 ];
 
     let row = select[ 2 ];
@@ -161,7 +161,7 @@ export function updateGLSLMusicEditor( time: number ): void {
     select[ 3 ] = col;
 
     emit( EventType.ShaderEventAlter );
-  } else if ( event[ 1 ] === ShaderEventType.JumpPart ) {
+  } else if ( event[ 1 ] === GLSLMusicEditorEventType.JumpPart ) {
     const dir = event[ 2 ];
 
     const bracketOpen = findNearestChar(
@@ -190,7 +190,7 @@ export function updateGLSLMusicEditor( time: number ): void {
     select[ 3 ] = bracketClose[ 1 ] + 1;
 
     emit( EventType.ShaderEventAlter );
-  } else if ( event[ 1 ] === ShaderEventType.ExpandSelectBack ) {
+  } else if ( event[ 1 ] === GLSLMusicEditorEventType.ExpandSelectBack ) {
     const bracket = findNearestChar(
       lines,
       [ select[ 0 ], select[ 1 ] ],
@@ -206,7 +206,7 @@ export function updateGLSLMusicEditor( time: number ): void {
     select[ 1 ] = bracket[ 1 ];
 
     emit( EventType.ShaderEventAlter );
-  } else if ( event[ 1 ] === ShaderEventType.ExpandSelectForward ) {
+  } else if ( event[ 1 ] === GLSLMusicEditorEventType.ExpandSelectForward ) {
     const bracket = findNearestChar(
       lines,
       [ select[ 2 ], select[ 3 ] ],

@@ -1,5 +1,6 @@
 import { CDS } from '@0b5vr/experimental';
 import { GLSLExpression } from '../../../shaders/shaderBuilder';
+import { GLSLMusicEditorRange } from '../../../music/ShaderEventRange';
 import { GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_TEXTURE_2D, GL_TRIANGLE_STRIP } from '../../../gl/constants';
 import { Geometry } from '../../../heck/Geometry';
 import { Lambda } from '../../../heck/components/Lambda';
@@ -7,7 +8,6 @@ import { Material } from '../../../heck/Material';
 import { Quad } from '../../../heck/components/Quad';
 import { RenderTarget } from '../../../heck/RenderTarget';
 import { SceneNode } from '../../../heck/components/SceneNode';
-import { ShaderEventRange } from '../../../music/ShaderEventRange';
 import { charRendererFrag } from './shaders/charRendererFrag';
 import { charRendererVert } from './shaders/charRendererVert';
 import { codeCharTexture } from './codeCharTexture';
@@ -17,7 +17,7 @@ import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
 import { promiseGui } from '../../../globals/gui';
 import { quadBuffer } from '../../../globals/quadGeometry';
-import { withinShaderEventRange } from '../../../music/withinShaderEventRange';
+import { withinGLSLMusicEditorRange } from '../../../music/withinShaderEventRange';
 
 enum CharRendererToken {
   Selected,
@@ -144,7 +144,7 @@ export class CharRenderer extends SceneNode {
 
   public setContent(
     content: string[],
-    selectRange?: ShaderEventRange,
+    selectRange?: GLSLMusicEditorRange,
   ): void {
     const { arrayChars, bufferChars, textAlign, textBaseline } = this;
     let head = 0;
@@ -183,7 +183,7 @@ export class CharRenderer extends SceneNode {
         }
 
         let charToken = token;
-        if ( selectRange && withinShaderEventRange( selectRange, iLine, iCol ) ) {
+        if ( selectRange && withinGLSLMusicEditorRange( selectRange, iLine, iCol ) ) {
           charToken = CharRendererToken.Selected;
         }
 

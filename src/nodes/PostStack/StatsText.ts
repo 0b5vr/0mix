@@ -1,8 +1,8 @@
 import { CharRenderer } from './CharRenderer/CharRenderer';
+import { GLSLMusicEditorRange } from '../../music/ShaderEventRange';
 import { Lambda } from '../../heck/components/Lambda';
 import { MUSIC_BPM } from '../../config';
 import { RenderTarget } from '../../heck/RenderTarget';
-import { ShaderEventRange } from '../../music/ShaderEventRange';
 import { arraySerial } from '@0b5vr/experimental';
 import { music } from '../../globals/music';
 import { vec2 } from '../../shaders/shaderBuilder';
@@ -32,7 +32,7 @@ export class StatsText extends CharRenderer {
           'time: ' + time.toFixed( 3 ),
           '0b5vr glsl techno live set',
         ];
-        const select: ShaderEventRange = [ 0, 0, music.cueStatus === 'none' ? 0 : 1, 0 ];
+        const select: GLSLMusicEditorRange = [ 0, 0, music.cueStatus === 'none' ? 0 : 1, 0 ];
 
         this.setContent( content, select );
       }

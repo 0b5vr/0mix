@@ -1,7 +1,7 @@
-import { ShaderEventRange } from './ShaderEventRange';
+import { GLSLMusicEditorRange } from './ShaderEventRange';
 
-export function withinShaderEventRange(
-  [ startLine, startCol, endLine, endCol ]: ShaderEventRange,
+export function withinGLSLMusicEditorRange(
+  [ startLine, startCol, endLine, endCol ]: GLSLMusicEditorRange,
   line: number,
   col: number,
 ): boolean {
