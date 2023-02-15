@@ -188,6 +188,11 @@ export class Music {
 
     updateGLSLMusicEditor( now - this.timeOffset );
 
+    if ( import.meta.env.DEV ) {
+      // process 15 more events if it's dev mode
+      arraySerial( 15 ).map( () => updateGLSLMusicEditor( now - this.timeOffset ) );
+    }
+
     if ( this.isPlaying ) {
       this.deltaTime = now - this.__prevTime;
     } else {
