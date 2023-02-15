@@ -6,7 +6,7 @@ import { clamp } from '@0b5vr/experimental';
 import { findMatchingCloseBracket } from './utils/findMatchingCloseBracket';
 import { findNearestChar } from './utils/findNearestChar';
 
-let shaderEventsProxy = glslMusicEditorEvents;
+let glslMusicEditorEventsProxy = glslMusicEditorEvents;
 
 export const glslMusicEditorLines: string[] = [ '' ];
 export const glslMusicEditorSelect: GLSLMusicEditorRange = [ 0, 0, 0, 0 ];
@@ -32,7 +32,7 @@ export function resetGLSLMusicEditor(): void {
 }
 
 export function updateGLSLMusicEditor( time: number ): void {
-  const event = shaderEventsProxy[ eventIndexHead ];
+  const event = glslMusicEditorEventsProxy[ eventIndexHead ];
   if ( !event ) { return; }
 
   const eventBeat = eventBeatAccum + event[ 0 ];
@@ -229,8 +229,8 @@ export function updateGLSLMusicEditor( time: number ): void {
 }
 
 if ( import.meta.hot ) {
-  import.meta.hot.accept( './shaderEvents', ( { shaderEvents } ) => {
-    shaderEventsProxy = shaderEvents;
+  import.meta.hot.accept( './glslMusicEditorEvents', ( { glslMusicEditorEvents } ) => {
+    glslMusicEditorEventsProxy = glslMusicEditorEvents;
     resetGLSLMusicEditor();
   } );
 }
