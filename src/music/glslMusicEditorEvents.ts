@@ -1413,10 +1413,11 @@ vec2 mainaudio(vec4 time){
 
 // shoutouts to:
 //   0x4015, alcatraz, altair, cncd, cocoon,
-//   conspiracy, ctrl+alt+test, doxas, epoch,
-//   fairlight, farbrausch, limp ninja, logicoma,
-//   loonies, mercury, mfx, mrdoob, ninjadev, orange,
-//   prismbeings, rgba, satori, slay bells, still, yx
+//   conspiracy, ctrl+alt+test, doxas, epoch, fairlight,
+//   farbrausch, limp ninja, LJ & Virgill, logicoma, loonies,
+//   luchak, mercury, mfx, mrdoob, ninjadev,
+//   orange, prismbeings, rgba, satori, slay bells,
+//   still, yx
 
 // press esc to exit...` ],
 
