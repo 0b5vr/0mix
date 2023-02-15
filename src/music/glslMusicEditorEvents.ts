@@ -1151,12 +1151,14 @@ vec2 mainaudio(vec4 time){
     float t=mod(time.x,roll);
 
     vec3 p=vec3(10.*orbit(500.*t),1000.*t);
-    vec2 wave=exp(-15.*t)*cyclic(p,1.7).xy;
-    float phase=250.*t-5.*exp(-100.*t);
-    wave+=exp(-30.*t)*sin(tau*phase+.1*sin(.33*tau*phase));
+    vec2 wave=exp(-15.*t)*cyclic(p,2.).xy;
+    float phase=200.*t-3.*exp(-140.*t);
+    float sine=sin(tau*phase+.1*sin(.33*tau*phase));
+    sine*=(1.2+.4*sine);
+    wave+=exp(-30.*t)*sine;
 
     float amp=linearstep(0.,60.*b2t,time.z);
-    dest+=.6*amp*amp*mix(.5,1.,sidechain)*tanh(wave);
+    dest+=.3*amp*amp*mix(.5,1.,sidechain)*tanh(3.*wave);
   }
 
   // sweep
