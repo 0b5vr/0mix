@@ -30,6 +30,9 @@ export interface DoFOptions {
 export class DoF extends SceneNode {
   public resources: DoFResources;
 
+  private _materialTileMaxH: Material;
+  private _materialPresort: Material;
+
   public constructor( options: DoFOptions ) {
     super();
 
@@ -52,7 +55,7 @@ export class DoF extends SceneNode {
     ] = this.resources = resources;
 
     // -- materials --------------------------------------------------------------------------------
-    const materialTileMaxH = new Material(
+    const materialTileMaxH = this._materialTileMaxH = new Material(
       quadVert,
       dofTileMaxFrag( false ),
       {
@@ -94,7 +97,7 @@ export class DoF extends SceneNode {
       targetTileMaxV.texture,
     );
 
-    const materialPresort = new Material(
+    const materialPresort = this._materialPresort = new Material(
       quadVert,
       dofPresortFrag,
       {
@@ -213,5 +216,13 @@ export class DoF extends SceneNode {
       quadBlur,
       quadPost,
     ];
+  }
+
+  public setParams( ...params: [
+    depth: number,
+    size: number,
+  ] ): void {
+    this._materialTileMaxH.addUniform( 'dofDepthSize', '2f', ...params );
+    this._materialPresort.addUniform( 'dofDepthSize', '2f', ...params );
   }
 }

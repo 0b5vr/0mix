@@ -1,7 +1,9 @@
+import { CDS } from '@0b5vr/experimental';
 import { CameraStack } from '../CameraStack/CameraStack';
 import { CubemapNode } from '../CubemapNode/CubemapNode';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 import { GPUParticles } from '../utils/GPUParticles';
+import { Lambda } from '../../heck/components/Lambda';
 import { MTL_PBR_EMISSIVE3_ROUGHNESS, MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/deferredConstants';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
@@ -218,11 +220,25 @@ export class ParticlesRingScene extends SceneNode {
       resources: mainCameraStackResources,
       target: cameraStackATarget,
       useAO: true,
-      dofParams: [ 5.0, 12.0 ],
+      dofParams: [ 5.0, 16.0 ],
     } );
-    camera.transform.lookAt(
-      [ 0.0, 0.0, 5.0 ],
-    );
+    camera.transform.lookAt( [ 0.0, 0.0, 5.0 ] );// = 5.0;
+
+    // camera move
+    const cds = new CDS();
+    cds.factor = 50.0;
+
+    auto( 'ParticlesRingScene/CameraZ', ( { value } ) => {
+      camera.transform.position = [ 0.0, 0.0, value ];
+    } );
+
+    const cameraCDSLambda = new Lambda( {
+      onUpdate( { deltaTime } ) {
+        cds.target = camera.transform.position[ 2 ] - 0.5;
+        cds.update( deltaTime );
+        camera.dof!.setParams( cds.value, 16.0 );
+      },
+    } );
 
     // -- auto -------------------------------------------------------------------------------------
     auto( 'ParticlesRingScene/Particles/update', () => {
@@ -238,6 +254,7 @@ export class ParticlesRingScene extends SceneNode {
       meshTorus,
       particles,
       cubemapNode,
+      cameraCDSLambda,
       camera,
     ];
   }
