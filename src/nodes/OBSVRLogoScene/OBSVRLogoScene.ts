@@ -33,7 +33,7 @@ export class OBSVRLogoScene extends SceneNode {
       shadowMapFov: 40.0,
     } );
     light2.transform.lookAt( [ 0.0, -2.0, -5.0 ] );
-    light2.color = [ 600.0, 700.0, 800.0 ];
+    light2.color = [ 600.0, 600.0, 600.0 ];
 
     const light3 = new PointLightNode( {
       scene,
@@ -41,7 +41,7 @@ export class OBSVRLogoScene extends SceneNode {
       shadowMapFov: 40.0,
     } );
     light3.transform.lookAt( [ -5.0, 0.0, -1.0 ] );
-    light3.color = [ 600.0, 500.0, 400.0 ];
+    light3.color = [ 400.0, 400.0, 400.0 ];
 
     // -- dust -------------------------------------------------------------------------------------
     const dust = new Dust( [ 0.1, 0.1, 0.1, 1.0 ] );

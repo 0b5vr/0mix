@@ -35,7 +35,7 @@ export class MetaballScene extends SceneNode {
       shadowMapFov: 40.0,
     } );
     light3.transform.lookAt( [ -3.0, 0.0, 3.0 ] );
-    light3.color = [ 4.0, 5.0, 6.0 ];
+    light3.color = [ 6.0, 6.0, 6.0 ];
 
     if ( import.meta.env.DEV ) {
       light1.name = 'light1';

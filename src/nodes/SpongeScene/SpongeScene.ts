@@ -21,7 +21,7 @@ export class SpongeScene extends SceneNode {
       shadowMapFov: 60.0,
     } );
     lightL.transform.lookAt( [ -6.0, 0.0, 0.0 ] );
-    lightL.color = [ 10.0, 30.0, 40.0 ];
+    lightL.color = [ 30.0, 30.0, 30.0 ];
 
     const lightR = new PointLightNode( {
       scene,
@@ -29,7 +29,7 @@ export class SpongeScene extends SceneNode {
       shadowMapFov: 60.0,
     } );
     lightR.transform.lookAt( [ 5.0, 0.0, -2.0 ] );
-    lightR.color = [ 50.0, 50.0, 50.0 ];
+    lightR.color = [ 100.0, 100.0, 100.0 ];
 
     const lightF = new PointLightNode( {
       scene,
@@ -37,7 +37,7 @@ export class SpongeScene extends SceneNode {
       shadowMapFov: 60.0,
     } );
     lightF.transform.lookAt( [ 1.0, 1.0, 7.0 ] );
-    lightF.color = [ 10.0, 10.0, 10.0 ];
+    lightF.color = [ 40.0, 40.0, 40.0 ];
 
     if ( import.meta.env.DEV ) {
       lightL.name = 'lightL';
