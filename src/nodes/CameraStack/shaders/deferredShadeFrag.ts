@@ -1,5 +1,5 @@
 import { DIELECTRIC_SPECULAR, ONE_SUB_DIELECTRIC_SPECULAR, TAU } from '../../../utils/constants';
-import { GLSLExpression, GLSLFloatExpression, abs, add, addAssign, assign, build, clamp, cos, def, defFn, defInNamed, defOut, defUniformArrayNamed, defUniformNamed, discard, div, divAssign, dot, eq, glFragDepth, gt, ifChain, ifThen, insert, length, main, max, mix, mul, mulAssign, neg, normalize, num, pow, retFn, smoothstep, sq, step, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, GLSLFloatExpression, abs, add, addAssign, assign, build, clamp, cos, def, defFn, defInNamed, defOut, defUniformArrayNamed, defUniformNamed, discard, div, dot, eq, glFragDepth, gt, ifChain, ifThen, insert, length, main, max, mix, mul, mulAssign, neg, normalize, num, pow, retFn, smoothstep, sq, step, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { MTL_IRIDESCENT, MTL_NONE, MTL_PBR_EMISSIVE3_ROUGHNESS, MTL_PBR_ROUGHNESS_METALLIC, MTL_PBR_SHEEN, MTL_UNLIT } from '../deferredConstants';
 import { brdfSheen } from '../../../shaders/modules/brdfSheen';
 import { calcAlbedoF0 } from '../../../shaders/modules/calcAlbedoF0';
@@ -139,11 +139,10 @@ export const deferredShadeFrag = ( { withAO }: {
       } );
 
       const iblAmp = def( 'float', smoothstep(
-        9.0,
-        8.0,
+        2.0,
+        1.0,
         length( position ),
       ) ); // TODO
-      divAssign( iblAmp, 25.0 ); // TODO
       ifThen( gt( iblAmp, 0.0 ), () => {
         // diffuse ibl
         const albedo = mix( mul( color, ONE_SUB_DIELECTRIC_SPECULAR ), vec3( 0.0 ), metallic );

@@ -43,15 +43,11 @@ export class MetaballScene extends SceneNode {
       light3.name = 'light3';
     }
 
-    const cubemapExclusionTag = Symbol();
-
     const metaball = new Metaball();
     metaball.transform.scale = [ 3.0, 3.0, 3.0 ];
-    metaball.tags.push( cubemapExclusionTag );
 
     const particles = new MetaballParticles();
     particles.transform.scale = [ 3.0, 3.0, 3.0 ];
-    particles.tags.push( cubemapExclusionTag );
 
     const camera = new CameraStack( {
       scene,

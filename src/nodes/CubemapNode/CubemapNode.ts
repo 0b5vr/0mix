@@ -1,23 +1,22 @@
 import { Blit } from '../../heck/components/Blit';
+import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { CameraStack } from '../CameraStack/CameraStack';
 import { ComponentOptions } from '../../heck/components/Component';
+import { GLTextureFormatStuffR11G11B10F } from '../../gl/glSetTexture';
+import { GL_TEXTURE_2D } from '../../gl/constants';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
 import { RawQuaternion, Swap, arraySerial } from '@0b5vr/experimental';
 import { SceneNode } from '../../heck/components/SceneNode';
-// import { StuffTag } from './Stuff';
-import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
-import { GLTextureFormatStuffR11G11B10F } from '../../gl/glSetTexture';
-import { GL_TEXTURE_2D } from '../../gl/constants';
 import { auto } from '../../globals/automaton';
+import { createCameraStackResources, resizeCameraStackResources } from '../CameraStack/CameraStackResources';
 import { cubemapBlurFrag } from './shaders/cubemapBlurFrag';
 import { cubemapMergeFrag } from './shaders/cubemapMergeFrag';
 import { cubemapSampleFrag } from './shaders/cubemapSampleFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
-import { resizeCameraStackResources } from '../CameraStack/CameraStackResources';
 
 const INV_SQRT2 = 1.0 / Math.sqrt( 2.0 );
 
@@ -40,6 +39,12 @@ const targets = arraySerial( 6 ).map( () => (
   new BufferTextureRenderTarget( 256, 256, 1, GLTextureFormatStuffR11G11B10F )
 ) );
 
+const cameraStackResources = targets.map( () => {
+  const resources = createCameraStackResources();
+  resizeCameraStackResources( resources, 256, 256 );
+  return resources;
+} );
+
 if ( import.meta.env.DEV ) {
   targets.map( ( target, i ) => target.name = `cubemapTarget${ i }` );
 }
@@ -59,16 +64,12 @@ export class CubemapNode extends SceneNode {
     const cameras = targets.map( ( target, i ) => {
       const cameraStack = new CameraStack( {
         scene,
+        resources: cameraStackResources[ i ],
         exclusionTags: options?.exclusionTags,
         target,
         near: options.near ?? 1.0,
         fov: 90.0,
       } );
-      resizeCameraStackResources( cameraStack.resources, 256, 256 );
-
-      if ( import.meta.env.DEV ) {
-        cameraStack.name = `cubemapCameraStack${ i }`;
-      }
 
       cameraStack.transform.rotation = CUBEMAP_ROTATIONS[ i ];
 
@@ -77,10 +78,6 @@ export class CubemapNode extends SceneNode {
 
     // -- compiler ---------------------------------------------------------------------------------
     const targetCompiled = this.targetDry = new BufferTextureRenderTarget( 768, 512 );
-
-    if ( import.meta.env.DEV ) {
-      targetCompiled.name = 'cubemapCompiled';
-    }
 
     const blitsCompile = targets.map( ( src, i ) => {
       const x = 256 * ~~( i / 2 );
@@ -102,11 +99,6 @@ export class CubemapNode extends SceneNode {
       new BufferTextureRenderTarget( 768, 512 ),
       new BufferTextureRenderTarget( 768, 512 ),
     );
-
-    if ( import.meta.env.DEV ) {
-      swapTargetSample.i.name = 'cubemapSample/swap0';
-      swapTargetSample.o.name = 'cubemapSample/swap1';
-    }
 
     const materialSample = new Material(
       quadVert,
@@ -139,10 +131,6 @@ export class CubemapNode extends SceneNode {
 
     // -- merge accumulated ------------------------------------------------------------------------
     const targetMerge = new BufferTextureRenderTarget( 768, 512 );
-
-    if ( import.meta.env.DEV ) {
-      targetMerge.name = 'cubemapMerge';
-    }
 
     const materialMerge = new Material(
       quadVert,
@@ -248,5 +236,18 @@ export class CubemapNode extends SceneNode {
       quadBlurH,
       quadBlurV,
     ];
+
+    // -- buffer names -----------------------------------------------------------------------------
+    if ( import.meta.env.DEV ) {
+      const id = Math.floor( 1E9 * Math.random() );
+
+      cameras.map( ( camera, i ) => {
+        camera.name = `CubemapNode${ id }/CameraStack${ i }`;
+        targetCompiled.name = `CubemapNode${ id }/cubemapCompiled`;
+        swapTargetSample.i.name = `CubemapNode${ id }/cubemapSample/swap0`;
+        swapTargetSample.o.name = `CubemapNode${ id }/cubemapSample/swap1`;
+        targetMerge.name = `CubemapNode${ id }/cubemapMerge`;
+      } );
+    }
   }
 }

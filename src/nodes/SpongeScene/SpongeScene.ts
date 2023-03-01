@@ -1,5 +1,4 @@
 import { CameraStack } from '../CameraStack/CameraStack';
-import { CubemapNode } from '../CubemapNode/CubemapNode';
 import { Dust } from '../Dust/Dust';
 import { Lambda } from '../../heck/components/Lambda';
 import { PointLightNode } from '../Lights/PointLightNode';
@@ -58,17 +57,12 @@ export class SpongeScene extends SceneNode {
       },
     } );
 
-    const cubemapNode = new CubemapNode( {
-      scene,
-    } );
-
     const camera = new CameraStack( {
       scene,
       resources: mainCameraStackResources,
       target: cameraStackATarget,
       dofParams: [ 1.0, 24.0 ],
       useAO: true,
-      cubemapNode,
     } );
     camera.transform.lookAt(
       [ 0.0, 0.2, 2.0 ],
@@ -83,7 +77,6 @@ export class SpongeScene extends SceneNode {
       lightF,
       sponge,
       dust,
-      cubemapNode,
       camera,
     ];
   }

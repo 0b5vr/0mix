@@ -1,6 +1,6 @@
 import { PARTICLES_COUNT, PARTICLES_COUNT_SQRT, PARTICLES_SPAWN_LENGTH } from '../constants';
 import { TAU } from '../../../utils/constants';
-import { add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, div, dot, exp, floor, ifThen, insert, lt, lte, main, max, mix, mul, mulAssign, sub, subAssign, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, div, dot, exp, floor, ifThen, insert, length, lt, lte, main, max, mix, mul, mulAssign, normalize, sub, subAssign, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { cis } from '../../../shaders/modules/cis';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslLofi } from '../../../shaders/modules/glslLofi';
@@ -72,6 +72,14 @@ export const particlesComputeFrag: string = build( () => {
         perlin3d( add( mul( 0.2, time ), pos, 10.0 ) ),
         perlin3d( add( mul( 0.2, time ), pos, 20.0 ) ),
       ),
+    ) );
+
+    // don't come to the center
+    addAssign( vel, mul(
+      dt,
+      2.0,
+      normalize( pos ),
+      max( 0.0, sub( 1.5, length( pos ) ) ),
     ) );
 
     // rotation
