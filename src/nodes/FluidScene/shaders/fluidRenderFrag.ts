@@ -7,8 +7,8 @@ import { forEachLights } from '../../../shaders/modules/forEachLights';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslSaturate } from '../../../shaders/modules/glslSaturate';
 import { maxOfVec3 } from '../../../shaders/modules/maxOfVec3';
+import { randomSphere } from '../../../shaders/modules/randomSphere';
 import { setupRoRd } from '../../../shaders/modules/setupRoRd';
-import { uniformSphere } from '../../../shaders/modules/uniformSphere';
 
 export const fluidRenderFrag: string = build( () => {
   insert( 'precision highp float;' );
@@ -36,7 +36,7 @@ export const fluidRenderFrag: string = build( () => {
     const edgedecay = smoothstep( 0.5, 0.45, add( 0.5 / GRID_RESO, maxOfVec3( abs( p ) ) ) );
     ifThen( eq( edgedecay, 0.0 ), () => retFn( 0.0 ) );
 
-    const pp = add( p, mul( 0.004, uniformSphere() ) );
+    const pp = add( p, mul( 0.004, randomSphere() ) );
     const density = sw( sampleLinear3D( samplerDensity, pp ), 'x' );
     retFn( mul(
       edgedecay,

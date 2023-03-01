@@ -2,7 +2,7 @@ import { AO_ITER } from '../../../config';
 import { GLSLExpression, add, addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, div, divAssign, dot, eq, forLoop, ifThen, insert, length, lt, main, mul, normalize, sq, sub, sw, texture, vec4 } from '../../../shaders/shaderBuilder';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslSaturate } from '../../../shaders/modules/glslSaturate';
-import { uniformHemisphere } from '../../../shaders/modules/uniformHemisphere';
+import { randomHemisphere } from '../../../shaders/modules/randomHemisphere';
 
 const AO_BIAS = 0.0;
 const AO_RADIUS = 0.5;
@@ -31,7 +31,7 @@ export const ssaoFrag = build( () => {
     forLoop( AO_ITER, () => {
       const pt = add(
         position,
-        mul( AO_RADIUS, random(), uniformHemisphere( normal ) ),
+        mul( AO_RADIUS, random(), randomHemisphere( normal ) ),
       );
 
       const screenPos = def( 'vec4', mul( cameraPV, vec4( pt, 1.0 ) ) );

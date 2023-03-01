@@ -3,7 +3,7 @@ import { add, addAssign, and, assign, build, def, defInNamed, defOut, defUniform
 import { glslDefRandom } from '../../../../shaders/modules/glslDefRandom';
 import { glslLofi } from '../../../../shaders/modules/glslLofi';
 import { perlin3d } from '../../../../shaders/modules/perlin3d';
-import { uniformSphere } from '../../../../shaders/modules/uniformSphere';
+import { randomSphere } from '../../../../shaders/modules/randomSphere';
 
 export const trailsComputeFrag: string = build( () => {
   insert( 'precision highp float;' );
@@ -69,7 +69,7 @@ export const trailsComputeFrag: string = build( () => {
           assign( dt, sub( time, spawnTime ) );
 
           assign( pos, add(
-            mul( 0.1, uniformSphere() ),
+            mul( 0.1, randomSphere() ),
             mul( 0.9, sin( mad( vec3( 1.0, 2.0, 3.0 ), vec3( 3.4, 2.5, 3.6 ), time ) ) ),
           ) );
           assign( vel, vec3( 0.0 ) );
