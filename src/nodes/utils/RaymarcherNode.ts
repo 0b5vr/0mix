@@ -9,6 +9,7 @@ import { objectVert } from '../../shaders/common/objectVert';
 
 export interface RaymarcherNodeOptions extends SceneNodeOptions {
   geometry: Geometry;
+  vert?: string;
   dimension?: RawVector3;
 }
 
@@ -29,7 +30,7 @@ export class RaymarcherNode extends SceneNode {
     const geometry = options.geometry;
 
     const deferred = new Material(
-      objectVert,
+      options.vert ?? objectVert,
       builder( 'deferred' ),
       {
         initOptions: { geometry, target: dummyRenderTarget4 },
@@ -37,7 +38,7 @@ export class RaymarcherNode extends SceneNode {
     );
 
     const depth = new Material(
-      objectVert,
+      options.vert ?? objectVert,
       builder( 'depth' ),
       {
         initOptions: { geometry, target: dummyRenderTarget1 },

@@ -9,6 +9,7 @@ import { GLTextureFormatStuffRGBA8 } from './gl/glSetTexture';
 import { GL_NEAREST } from './gl/constants';
 import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
 import { KansokushaScene } from './nodes/KansokushaScene/KansokushaScene';
+import { KeyboardScene } from './nodes/KeyboardScene/KeyboardScene';
 import { Lambda } from './heck/components/Lambda';
 import { LineRingsScene } from './nodes/LineRingsScene/LineRingsScene';
 import { LineTriTunnelScene } from './nodes/LineTriTunnelScene/LineTriTunnelScene';
@@ -125,6 +126,7 @@ const scenesA = [
   new TruchetScene(),
   new MoonScene(),
   new SevenSegScene(),
+  new KeyboardScene(),
 ];
 
 const scenesB = [
