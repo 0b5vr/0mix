@@ -4,6 +4,7 @@ import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
 import { Material } from '../../../heck/Material';
 import { Mesh } from '../../../heck/components/Mesh';
 import { SceneNode } from '../../../heck/components/SceneNode';
+import { depthFrag } from '../../../shaders/common/depthFrag';
 import { dummyRenderTarget1, dummyRenderTarget4 } from '../../../globals/dummyRenderTarget';
 import { genCube } from '../../../geometries/genCube';
 import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
@@ -12,7 +13,6 @@ import { pillarGridBodyFrag } from './shaders/pillarGridBodyFrag';
 import { pillarGridBodyVert } from './shaders/pillarGridBodyVert';
 import { pillarGridFrameFrag } from './shaders/pillarGridFrameFrag';
 import { pillarGridFrameVert } from './shaders/pillarGridFrameVert';
-import { depthFrag } from '../../../shaders/common/depthFrag';
 
 export class PillarGrid extends SceneNode {
   public constructor() {
