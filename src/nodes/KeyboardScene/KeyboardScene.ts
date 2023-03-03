@@ -61,7 +61,7 @@ export class KeyboardScene extends SceneNode {
     const bufferInstance = glCreateVertexbuffer( new Float32Array( arrayInstance ) );
     glVertexArrayBindVertexbuffer( geometryKeycaps.vao, bufferInstance, 2, 4, 1 );
 
-    geometryKeycaps.primcount = arrayInstance.length / 4; // 87;
+    geometryKeycaps.primcount = 87;
 
     const keycap = new RaymarcherNode(
       keycapFrag,
