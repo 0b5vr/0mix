@@ -74,7 +74,7 @@ export class TruchetScene extends SceneNode {
       target: cameraStackATarget,
       useAO: true,
       dofParams: [ 1.5, 16.0 ],
-      fog: [ 0.0, 5.0, 10.0 ],
+      fog: [ 0.0, 2.0, 5.0 ],
     } );
 
     // -- speen ------------------------------------------------------------------------------------
