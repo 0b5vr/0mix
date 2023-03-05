@@ -24,6 +24,7 @@ import { ParticlesRingScene } from './nodes/ParticlesRingScene/ParticlesRingScen
 import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
 import { PlexusScene } from './nodes/PlexusScene/PlexusScene';
 import { PostStack } from './nodes/PostStack/PostStack';
+import { RieScene } from './nodes/RieScene/RieScene';
 import { SevenSegScene } from './nodes/SevenSegScene/SevenSegScene';
 import { SphereArrayScene } from './nodes/SphereArrayScene/SphereArrayScene';
 import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
@@ -127,6 +128,7 @@ const scenesA = [
   new MoonScene(),
   new SevenSegScene(),
   new KeyboardScene(),
+  new RieScene(),
 ];
 
 const scenesB = [
