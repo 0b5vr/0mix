@@ -1,12 +1,9 @@
 import { Blit } from './heck/components/Blit';
 import { BufferTextureRenderTarget } from './heck/BufferTextureRenderTarget';
-import { CanvasRenderTarget } from './heck/CanvasRenderTarget';
 import { Capture } from './nodes/Capture/Capture';
 import { Dog } from './heck/Dog';
 import { EventType, on } from './globals/globalEvent';
 import { FluidScene } from './nodes/FluidScene/FluidScene';
-import { GLTextureFormatStuffRGBA8 } from './gl/glSetTexture';
-import { GL_NEAREST } from './gl/constants';
 import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
 import { KansokushaScene } from './nodes/KansokushaScene/KansokushaScene';
 import { KeyboardScene } from './nodes/KeyboardScene/KeyboardScene';
@@ -14,6 +11,7 @@ import { Lambda } from './heck/components/Lambda';
 import { LineRingsScene } from './nodes/LineRingsScene/LineRingsScene';
 import { LineTriTunnelScene } from './nodes/LineTriTunnelScene/LineTriTunnelScene';
 import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
+import { LoadingScreen } from './nodes/LoadingScreen/LoadingScreen';
 import { MetaballScene } from './nodes/MetaballScene/MetaballScene';
 import { Mixer } from './nodes/Mixer/Mixer';
 import { MoonScene } from './nodes/MoonScene/MoonScene';
@@ -35,14 +33,18 @@ import { WormTunnelScene } from './nodes/WormTunnelScene/WormTunnelScene';
 import { auto, automaton } from './globals/automaton';
 import { cameraStackATarget, cameraStackBTarget } from './globals/cameraStackTargets';
 import { canvas } from './globals/canvas';
-import { glTextureFilter } from './gl/glTextureFilter';
+import { canvasRenderTarget } from './globals/canvasRenderTarget';
+import { mixerTarget } from './globals/mixerTarget';
 import { music } from './globals/music';
+import { postTarget } from './globals/postTarget';
 import { promiseGui } from './globals/gui';
 import { randomTexture } from './globals/randomTexture';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
-dog.active = false;
+
+// loading screen
+const loadingScene = new LoadingScreen();
 
 // Mr. Update Everything
 if ( import.meta.env.DEV ) {
@@ -155,11 +157,6 @@ auto( 'B', ( { value } ) => {
   scenesB.map( ( scene, i ) => scene.active = value === i + 1 );
 } );
 
-// == camera =======================================================================================
-const mixerTarget = new BufferTextureRenderTarget( 4, 4 );
-
-const canvasRenderTarget = new CanvasRenderTarget();
-
 // == post =========================================================================================
 const mixer = new Mixer( {
   inputA: cameraStackATarget,
@@ -167,20 +164,15 @@ const mixer = new Mixer( {
   target: mixerTarget,
 } );
 
-const postTarget = import.meta.env.DEV
-  ? new BufferTextureRenderTarget( 4, 4, 1, GLTextureFormatStuffRGBA8 )
-  : canvasRenderTarget;
-
-if ( import.meta.env.DEV ) {
-  glTextureFilter( ( postTarget as BufferTextureRenderTarget ).texture, GL_NEAREST );
-}
-
 const postStack = new PostStack( {
   input: mixerTarget,
   target: postTarget,
 } );
 
 dog.root.children.push( mixer, postStack );
+
+// == loading scene, again =========================================================================
+dog.root.children.push( loadingScene );
 
 // == dev specific =================================================================================
 if ( import.meta.env.DEV ) {

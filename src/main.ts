@@ -53,10 +53,9 @@ if ( import.meta.env.DEV ) {
 
 // == prod kickstarter =============================================================================
 if ( !import.meta.env.DEV ) {
-  document.body.innerHTML = '<select><option>640x360</option><option>960x540</option><option>1280x720</option><option selected>1920x1080</option><option>2560x1440</option><option>3840x2160</option></select><br><button>fullscreen (click this first)</button><br><button>start</button><br><a>1920x1080 is intended';
+  document.body.innerHTML = '<select><option>640x360</option><option>960x540</option><option>1280x720</option><option selected>1920x1080</option><option>2560x1440</option><option>3840x2160</option></select><br><button>fullscreen (click this first)</button><br><button>start</button><br>1920x1080 is intended';
 
   const selects = document.querySelectorAll( 'select' );
-  const anchors = document.querySelectorAll( 'a' );
   const buttons = document.querySelectorAll( 'button' );
 
   buttons[ 0 ].addEventListener( 'click', () => {
@@ -65,19 +64,6 @@ if ( !import.meta.env.DEV ) {
 
   buttons[ 1 ].addEventListener( 'click', async () => {
     audio.resume();
-
-    // -- prepare stuff ----------------------------------------------------------------------------
-    await Promise.all( [
-      Material.d3dSucks(),
-    ].map( ( task, i ) => {
-      const a = anchors[ i ];
-      const taskname = [ 'shaders' ][ i ];
-      a.textContent = `${ taskname }: 0%`;
-      task.onProgress = ( progress ) => (
-        a.textContent = `${ taskname }: ${ ~~( progress * 100.0 ) }%`
-      );
-      return task.promise;
-    } ) );
 
     // -- set resolution ---------------------------------------------------------------------------
     const reso = selects[ 0 ].value.split( 'x' )
@@ -89,6 +75,9 @@ if ( !import.meta.env.DEV ) {
     document.body.innerHTML = '<style>body{margin:0;display:flex;background:#000}canvas{max-width:100%;max-height:100%;margin:auto;cursor:none}</style>';
     document.body.appendChild( canvas );
 
+    // -- prepare stuff ----------------------------------------------------------------------------
+    await Material.d3dSucks();
+
     // -- esc handler ------------------------------------------------------------------------------
     window.addEventListener( 'keydown', ( event ) => {
       if ( event.code === 'Escape' ) {
@@ -99,8 +88,6 @@ if ( !import.meta.env.DEV ) {
     } );
 
     // -- let's go ---------------------------------------------------------------------------------
-    dog.active = true;
-
     music.time = 0.0;
     music.isPlaying = true;
   } );

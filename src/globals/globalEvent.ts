@@ -2,6 +2,7 @@ import { Component, ComponentUpdateEvent } from '../heck/components/Component';
 
 export enum EventType {
   Resize,
+  D3DSucks,
   ComponentUpdate,
   IBLLUT,
   ShaderEventApply,
@@ -13,6 +14,7 @@ export type Event = {
     width: number,
     height: number,
   ];
+  [ EventType.D3DSucks ]: number;
   [ EventType.ComponentUpdate ]: {
     component: Component;
     event: ComponentUpdateEvent;

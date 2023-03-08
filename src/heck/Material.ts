@@ -1,9 +1,9 @@
+import { EventType, emit } from '../globals/globalEvent';
 import { GLBlendFactor } from '../gl/GLBlendFactor';
 import { GL_ONE, GL_TEXTURE0, GL_ZERO } from '../gl/constants';
 import { Geometry } from './Geometry';
 import { LazyProgramOptions, glLazyProgram } from '../gl/glLazyProgram';
 import { RenderTarget } from './RenderTarget';
-import { TaskProgress } from '../utils/TaskProgress';
 import { gl } from '../globals/canvas';
 import { sleep } from '../utils/sleep';
 
@@ -25,24 +25,21 @@ export interface MaterialInitOptions {
 
 export class Material {
   /**
-   * A list of """shader compilation""" functions.
-   * Blame ANGLE instead tbh
-   *
-   * See: https://scrapbox.io/0b5vr/WebGL:_%E3%82%B7%E3%82%A7%E3%83%BC%E3%83%80%E3%81%AE%E3%82%B3%E3%83%B3%E3%83%91%E3%82%A4%E3%83%AB%E3%81%8C%E6%8F%8F%E7%94%BB%E9%96%8B%E5%A7%8B%E6%99%82%E3%81%AB%E7%99%BA%E7%94%9F%E3%81%97%E3%81%A6stall%E3%81%99%E3%82%8B
+   * A list of materials that require precompilation.
    */
-  public static d3dSucksList: ( () => Promise<void> )[] = [];
+  public static d3dSucksList: Material[] = [];
 
-  public static d3dSucks(): TaskProgress {
-    return new TaskProgress( async ( setProgress ) => {
-      for ( const [ i, fuck ] of Material.d3dSucksList.entries() ) {
-        await fuck();
-        setProgress( ( i + 1 ) / Material.d3dSucksList.length );
-        await sleep( 1 );
-      }
-    } );
+  public static async d3dSucks(): Promise<void> {
+    for ( const [ i, material ] of Material.d3dSucksList.entries() ) {
+      await material.compile();
+      emit( EventType.D3DSucks, ( i + 1 ) / Material.d3dSucksList.length );
+      await sleep( 1 );
+    }
   }
 
   protected __linkOptions: LazyProgramOptions;
+
+  private __initOptions: MaterialInitOptions;
 
   protected __uniforms: {
     [ name: string ]: {
@@ -104,58 +101,23 @@ export class Material {
     vert: string,
     frag: string,
     { blend, offsetFactor, linkOptions, initOptions }: {
+      initOptions: MaterialInitOptions,
       blend?: [ GLBlendFactor, GLBlendFactor ],
       offsetFactor?: [ number, number ],
       linkOptions?: LazyProgramOptions,
-      initOptions?: MaterialInitOptions,
-    } = {},
+    },
   ) {
     this.__vert = vert;
     this.__frag = frag;
+    this.__initOptions = initOptions;
     this.__linkOptions = linkOptions ?? {};
     this.blend = blend ?? [ GL_ONE, GL_ZERO ];
     this.offsetFactor = offsetFactor ?? [ 0, 0 ];
 
     if ( import.meta.env.DEV ) {
-      if ( initOptions ) {
-        glLazyProgram(
-          this.vert,
-          this.frag,
-          this.__linkOptions,
-        ).catch( ( e ) => {
-          if ( import.meta.env.DEV ) {
-            console.error( this );
-          }
-
-          throw e;
-        } ).then( ( value ) => {
-          this.__program = value;
-          this.onReady?.();
-        } );
-      } else {
-        throw new Error( 'Material created without initOptions' );
-      }
+      this.compile();
     } else {
-      Material.d3dSucksList.push( async () => {
-        initOptions!.target.bind();
-
-        this.__program = await glLazyProgram(
-          this.vert,
-          this.frag,
-          this.__linkOptions,
-        ).catch( ( e ) => {
-          if ( import.meta.env.DEV ) {
-            console.error( this );
-          }
-
-          throw e;
-        } );
-
-        gl.useProgram( this.__program );
-        initOptions!.geometry.drawElementsOrArrays();
-
-        this.onReady?.();
-      } );
+      Material.d3dSucksList.push( this );
     }
   }
 
@@ -225,6 +187,30 @@ export class Material {
         currentUnit += textures.length;
       }
     } );
+  }
+
+  public async compile(): Promise<void> {
+    this.__program = await glLazyProgram(
+      this.vert,
+      this.frag,
+      this.__linkOptions,
+    ).catch( ( e ) => {
+      if ( import.meta.env.DEV ) {
+        console.error( this );
+      }
+
+      throw e;
+    } );
+
+    if ( import.meta.env.PROD ) {
+      // draw once to actually compile the shader
+      // See: https://scrapbox.io/0b5vr/WebGL:_%E3%82%B7%E3%82%A7%E3%83%BC%E3%83%80%E3%81%AE%E3%82%B3%E3%83%B3%E3%83%91%E3%82%A4%E3%83%AB%E3%81%8C%E6%8F%8F%E7%94%BB%E9%96%8B%E5%A7%8B%E6%99%82%E3%81%AB%E7%99%BA%E7%94%9F%E3%81%97%E3%81%A6stall%E3%81%99%E3%82%8B
+      gl.useProgram( this.__program );
+      this.__initOptions!.target.bind();
+      this.__initOptions!.geometry.drawElementsOrArrays();
+    }
+
+    this.onReady?.();
   }
 
   public setBlendMode(): void {
