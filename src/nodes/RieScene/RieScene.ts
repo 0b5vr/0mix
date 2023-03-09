@@ -1,19 +1,16 @@
 import { CameraStack } from '../CameraStack/CameraStack';
-import { Material } from '../../heck/Material';
-import { Mesh } from '../../heck/components/Mesh';
 import { PointLightNode } from '../Lights/PointLightNode';
+import { RaymarcherNode } from '../utils/RaymarcherNode';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { arraySerial } from '@0b5vr/experimental';
 import { cameraStackATarget } from '../../globals/cameraStackTargets';
-import { depthFrag } from '../../shaders/common/depthFrag';
-import { dummyRenderTarget1, dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { genCube } from '../../geometries/genCube';
 import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 import { mainCameraStackResources } from '../CameraStack/mainCameraStackResources';
 import { riePillarFrag } from './shaders/riePillarFrag';
 import { riePillarVert } from './shaders/riePillarVert';
-import { swapShadowMap1 } from '../../globals/swapShadowMap';
+import { swapShadowMap1, swapShadowMap2 } from '../../globals/swapShadowMap';
 
 export class RieScene extends SceneNode {
   public constructor() {
@@ -25,10 +22,18 @@ export class RieScene extends SceneNode {
     const light1 = new PointLightNode( {
       scene,
       swapShadowMap: swapShadowMap1,
-      shadowMapFov: 30.0,
+      shadowMapFov: 40.0,
     } );
-    light1.transform.lookAt( [ 0.0, 0.0, 5.0 ] );
-    light1.color = [ 100.0, 100.0, 100.0 ];
+    light1.transform.lookAt( [ 0.2, 0.2, 8.0 ] );
+    light1.color = [ 50.0, 50.0, 50.0 ];
+
+    const light2 = new PointLightNode( {
+      scene,
+      swapShadowMap: swapShadowMap2,
+      shadowMapFov: 50.0,
+    } );
+    light2.transform.lookAt( [ 0.0, 0.0, 5.0 ] );
+    light2.color = [ 5.0, 5.0, 5.0 ];
 
     // -- pillars ----------------------------------------------------------------------------------
     const geometry = genCube( { dimension: [ 50.0, 0.1, 0.1 ] } );
@@ -38,36 +43,23 @@ export class RieScene extends SceneNode {
 
     geometry.primcount = 200;
 
-    const deferred = new Material(
-      riePillarVert,
+    const pillars = new RaymarcherNode(
       riePillarFrag,
       {
-        initOptions: { geometry, target: dummyRenderTarget4 },
-      },
-    );
-
-    const depth = new Material(
-      riePillarVert,
-      depthFrag,
-      {
-        initOptions: { geometry, target: dummyRenderTarget1 },
-      },
+        geometry,
+        vert: riePillarVert,
+      }
     );
 
     if ( import.meta.hot ) {
       import.meta.hot.accept(
         [ './shaders/riePillarVert', './shaders/riePillarFrag' ],
         ( [ v, f ] ) => {
-          deferred.replaceShader( v?.riePillarVert, f?.riePillarFrag );
-          depth.replaceShader( v?.riePillarVert, undefined );
+          pillars.materials.deferred.replaceShader( v?.riePillarVert, f?.riePillarFrag( 'deferred' ) );
+          pillars.materials.depth.replaceShader( v?.riePillarVert, f?.riePillarFrag( 'depth' ) );
         },
       );
     }
-
-    const pillars = new Mesh( {
-      geometry,
-      materials: { deferred, depth },
-    } );
 
     // -- camera -----------------------------------------------------------------------------------
     const camera = new CameraStack( {
@@ -75,7 +67,7 @@ export class RieScene extends SceneNode {
       resources: mainCameraStackResources,
       target: cameraStackATarget,
       useAO: true,
-      dofParams: [ 5.0, 24.0 ],
+      dofParams: [ 3.0, 16.0 ],
       fog: [ 0.0, 20.0, 40.0 ],
     } );
     camera.transform.lookAt(
@@ -85,6 +77,7 @@ export class RieScene extends SceneNode {
     // -- children ---------------------------------------------------------------------------------
     this.children = [
       light1,
+      light2,
       pillars,
       camera,
     ];
