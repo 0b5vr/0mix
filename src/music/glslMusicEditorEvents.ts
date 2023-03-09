@@ -912,7 +912,7 @@ vec2 mainaudio(vec4 time){
       vec2 phase=(t+.5*t*t/(64.*b2t))*freq+fract(diceB.xy*999.);
       phase+=.1*fract(32.*phase); // add high freq
 
-      sum+=sin(tau*phase)*sin(pi*t/(64.*b2t))/1250.;
+      sum+=sin(tau*phase)*sin(pi*t/(64.*b2t))/1000.;
     }
 
     dest+=.0*mix(.2,1.,sidechain)*sum;
