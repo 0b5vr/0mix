@@ -1408,8 +1408,9 @@ vec2 mainaudio(vec4 time){
   [ 0.0, GLSLMusicEditorEventType.MoveEnd, [ 1000, 0 ] ],
   [ 0.0, GLSLMusicEditorEventType.MoveEnd, [ 0, 1000 ] ], // pretend to be select all
   [ 1.0, GLSLMusicEditorEventType.Insert, '' ],
-  [ 4.0, GLSLMusicEditorEventType.Insert, `// 0b5vr glsl techno live set by 0b5vr
-// 64kb webgl intro
+  [ 4.0, GLSLMusicEditorEventType.Insert, `// 0b5vr glsl techno live set
+// a 64kb webgl intro by 0b5vr
+// appeared in the revision 2023 pc 64k intro compo
 
 // shoutouts to:
 //   0x4015, alcatraz, altair, cncd, cocoon,
@@ -1418,6 +1419,13 @@ vec2 mainaudio(vec4 time){
 //   luchak, mercury, mfx, mrdoob, ninjadev,
 //   orange, prismbeings, rgba, satori, slay bells,
 //   still, yx
+
+// oh, we will also do our demoparty three weeks later!
+//   sessions in c4 lan 2023 spring
+//   fri, 28 april - sun, 30 april
+//   twin messe shizuoka, japan + online streaming
+//
+//   https://sessions.frontl1ne.net
 
 // press esc to exit...` ],
 
