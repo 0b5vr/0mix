@@ -2,17 +2,17 @@
 # yarn lockfile v1
 
 
-"@0b5vr/automaton-with-gui@^4.3.0-alpha.2":
-  version "4.3.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@0b5vr/automaton-with-gui/-/automaton-with-gui-4.3.0-alpha.2.tgz#2d60f571e10fe00a332c3206974a66effa9491e0"
-  integrity sha512-CDP0BemReBcpVQQtXtuWUBoJsyy8f0GMFuECAzb1vFUtAzLuejxMYaYQFGcyg+3+xuxD0PQKS/pTw6xdTdHUQA==
+"@0b5vr/automaton-with-gui@^4.3.0-alpha.3":
+  version "4.3.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/@0b5vr/automaton-with-gui/-/automaton-with-gui-4.3.0-alpha.3.tgz#63445ed8ba70f61c99b99bac487bf587ddd57034"
+  integrity sha512-4DELM5FXhPc1GctJzYDuwjTU/aVv1/eSm2mIirKeGeXLEQxkEqqJYIPNMuVxxAQ00n/cHhjVjgqTaqNP7EzzeA==
   dependencies:
-    "@0b5vr/automaton" "4.3.0-alpha.2"
+    "@0b5vr/automaton" "4.3.0-alpha.3"
 
-"@0b5vr/automaton@4.3.0-alpha.2", "@0b5vr/automaton@^4.3.0-alpha.2":
-  version "4.3.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@0b5vr/automaton/-/automaton-4.3.0-alpha.2.tgz#69ac044f9c10c9cbd5bed601621125a284a92766"
-  integrity sha512-640uv17eoZGbbRVeRHuLuIG/GYh/m6qzFWzLy2D5e0xbP8zA1Sv0SuUSQTzIGAy6CbJ04LuySYJEsYXZyDk+lg==
+"@0b5vr/automaton@4.3.0-alpha.3", "@0b5vr/automaton@^4.3.0-alpha.3":
+  version "4.3.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/@0b5vr/automaton/-/automaton-4.3.0-alpha.3.tgz#72fcb1c77ef36f4f2dd29286fdef9cea7e7773f8"
+  integrity sha512-mRQn2BcExCeB4zbvaWs2WGxs6ikwmwc0knksEzdT7E7XlNC4aXv+0rYiSx7l2n7bcOf0eFI5tAEvT/QtMDnCmA==
 
 "@0b5vr/experimental@^0.9.3":
   version "0.9.3"
