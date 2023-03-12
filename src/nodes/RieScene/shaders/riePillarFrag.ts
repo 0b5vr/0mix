@@ -1,8 +1,9 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
-import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, exp2, floor, glFragDepth, glslFalse, glslTrue, insert, length, mad, main, min, mul, mulAssign, neg, normalize, retFn, smoothstep, subAssign, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, exp2, floor, glFragDepth, glslFalse, glslTrue, insert, length, main, mul, mulAssign, neg, normalize, retFn, smoothstep, subAssign, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 import { cyclicNoise } from '../../../shaders/modules/cyclicNoise';
+import { glslSaturate } from '../../../shaders/modules/glslSaturate';
 import { pcg3df } from '../../../shaders/modules/pcg3df';
 import { perlin3d } from '../../../shaders/modules/perlin3d';
 import { raymarch } from '../../../shaders/modules/raymarch';
@@ -39,32 +40,36 @@ export const riePillarFrag = ( tag: 'deferred' | 'depth' ): string => build( () 
   const map = defFn( 'vec4', [ 'vec3' ], ( p ) => {
     assign( p, transformP( p ) );
 
-    const d = def( 'float', min(
-      sdbox( p, vec3( 10.0, 0.1, 0.08 ) ),
-      sdbox( p, vec3( 10.0, 0.08, 0.1 ) ),
-    ) );
+    const d = def( 'float', sdbox( p, vec3( 10.0, 0.1, 0.1 ) ) );
 
     addAssign( sw( p, 'x' ), mul( 10.0, instanceX ) );
+
     const noise = mul(
-      add( 0.1, smoothstep( 0.1, 0.15, length( sw( p, 'yz' ) ) ) ),
+      smoothstep( 0.05, 0.15, length( sw( p, 'yz' ) ) ),
       sw( cyclicNoise(
-        mul( exp2( mad( 2.0, 1.0, sw( pcg3df( vec3( instanceX ) ), 'x' ) ) ), p ),
-        { warp: 0.5, pump: 2.0, rot: vec3( 1.0, 3.0, -5.0 ) },
+        mul( exp2( mul( 2.0, sw( pcg3df( vec3( instanceX ) ), 'x' ) ) ), p ),
+        { warp: 0.3, pump: 2.0, rot: vec3( 1.0, 3.0, -5.0 ) },
       ), 'x' ),
     );
 
-    addAssign( d, mul( 0.1, smoothstep( 0.2, 1.0, noise ) ) );
+    addAssign( d, mul( 0.2, smoothstep( 0.4, 1.0, noise ) ) );
 
-    retFn( vec4( d ) );
+    retFn( vec4( d, 0.0, 0.0, 1.0 ) );
   } );
 
-  const mapForN = defFn( 'vec4', [ 'vec3' ], ( p ) => {
+  const fnForm = defFn( 'float', [ 'vec3' ], ( p ) => {
     const pNoise = def( 'vec3', add( transformP( p ), instanceX ) );
 
     retFn( add(
+      mul( 0.001, smoothstep( 0.2, 0.5, perlin3d( mul( 50.0, pNoise ) ) ) ),
+      mul( 0.001, smoothstep( 0.1, 0.5, perlin3d( mul( 200.0, pNoise ) ) ) ),
+    ) );
+  } );
+
+  const mapForN = defFn( 'vec4', [ 'vec3' ], ( p ) => {
+    retFn( add(
       map( p ),
-      mul( 0.005, smoothstep( 0.1, 1.0, perlin3d( mul( 50.0, pNoise ) ) ) ),
-      mul( 0.004, smoothstep( 0.1, 1.0, perlin3d( mul( 200.0, pNoise ) ) ) ),
+      fnForm( p ),
     ) );
   } );
 
@@ -78,8 +83,8 @@ export const riePillarFrag = ( tag: 'deferred' | 'depth' ): string => build( () 
       ro,
       rd,
       map,
-      marchMultiplier: 0.8,
-      discardThreshold: 1E-2,
+      marchMultiplier: 0.5,
+      discardThreshold: 1E-1,
     } );
 
     const modelPos = def( 'vec4', mul( modelMatrix, vec4( rp, 1.0 ) ) );
@@ -97,10 +102,19 @@ export const riePillarFrag = ( tag: 'deferred' | 'depth' ): string => build( () 
     assign( isAfterMarch, glslTrue );
     const N = def( 'vec3', calcNormal( { rp, map: mapForN, delta: 1E-3 } ) );
 
-    assign( fragColor, vec4( 0.5, 0.5, 0.5, 1.0 ) );
+    const pNoise = def( 'vec3', add( transformP( rp ), mul( 10.0, instanceX ) ) );
+    const dirt = def( 'float', glslSaturate( add(
+      0.6,
+      mul( 0.1, perlin3d( mul( vec3( 5.0, 100.0, 100.0 ), pNoise ) ) ),
+      mul( 0.2, perlin3d( mul( 200.0, pNoise ) ) ),
+      mul( -70.0, fnForm( rp ) ),
+    ) ) );
+    mulAssign( dirt, dirt );
+
+    assign( fragColor, vec4( vec3( dirt ), 1.0 ) );
     assign( fragPosition, vec4( sw( modelPos, 'xyz' ), depth ) );
     assign( fragNormal, vec4( normalize( mul( normalMatrix, N ) ), MTL_PBR_ROUGHNESS_METALLIC ) );
-    assign( fragMisc, vec4( 0.8, 0.0, 0.0, 0.0 ) );
+    assign( fragMisc, vec4( 0.5, 0.0, 0.0, 0.0 ) );
 
   } );
 } );

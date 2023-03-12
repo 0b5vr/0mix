@@ -26,8 +26,8 @@ export const riePillarVert = build( () => {
 
     assign( vInstance, vec3(
       instance,
-      sub( mod( mad( time, 0.2, instance ), 40.0 ), 30.0 ), // position z
-      mul( TAU * 103.0 / 200.0, instance ), // rotation xy
+      sub( mod( mad( time, 0.2, instance ), 20.0 ), 8.0 ), // position z
+      mul( TAU * 51.0 / 100.0, instance ), // rotation xy
     ) );
     addAssign( sw( vPositionWithoutModel, 'y' ), 0.5 );
     addAssign( sw( vPositionWithoutModel, 'z' ), sw( vInstance, 'y' ) );

@@ -30,18 +30,18 @@ export class RieScene extends SceneNode {
     const light2 = new PointLightNode( {
       scene,
       swapShadowMap: swapShadowMap2,
-      shadowMapFov: 50.0,
+      shadowMapFov: 40.0,
     } );
-    light2.transform.lookAt( [ 0.0, 0.0, 5.0 ] );
+    light2.transform.lookAt( [ 0.0, 0.0, 5.5 ] );
     light2.color = [ 5.0, 5.0, 5.0 ];
 
     // -- pillars ----------------------------------------------------------------------------------
-    const geometry = genCube( { dimension: [ 50.0, 0.1, 0.1 ] } );
+    const geometry = genCube( { dimension: [ 10.0, 0.1, 0.1 ] } );
 
-    const bufferInstance = glCreateVertexbuffer( new Float32Array( arraySerial( 200 ) ) );
+    const bufferInstance = glCreateVertexbuffer( new Float32Array( arraySerial( 100 ) ) );
     glVertexArrayBindVertexbuffer( geometry.vao, bufferInstance, 2, 1, 1 );
 
-    geometry.primcount = 200;
+    geometry.primcount = 100;
 
     const pillars = new RaymarcherNode(
       riePillarFrag,
@@ -67,8 +67,8 @@ export class RieScene extends SceneNode {
       resources: mainCameraStackResources,
       target: cameraStackATarget,
       useAO: true,
-      dofParams: [ 3.0, 16.0 ],
-      fog: [ 0.0, 20.0, 40.0 ],
+      dofParams: [ 3.0, 8.0 ],
+      fog: [ 0.0, 10.0, 15.0 ],
     } );
     camera.transform.lookAt(
       [ 0.0, 0.0, 5.0 ],
