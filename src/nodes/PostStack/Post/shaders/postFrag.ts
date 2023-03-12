@@ -1,6 +1,7 @@
 import { GLSLExpression, abs, add, addAssign, assign, build, cos, def, defFn, defInNamed, defOutNamed, defUniformNamed, div, float, insert, length, mad, main, max, min, mix, mul, mulAssign, normalize, retFn, sqrt, sub, sw, tan, texture, unrollLoop, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
 import { PI } from '../../../../utils/constants';
 import { glslDefRandom } from '../../../../shaders/modules/glslDefRandom';
+import { glslLinearstep } from '../../../../shaders/modules/glslLinearstep';
 import { glslSaturate } from '../../../../shaders/modules/glslSaturate';
 import { liftGammaGain } from '../../../../shaders/modules/liftGammaGain';
 import { sRGBOETF } from '../../../../shaders/modules/sRGBOETF';
@@ -10,10 +11,6 @@ const BARREL_ITER = 10;
 const BARREL_OFFSET = 0.03;
 const BARREL_AMP = 0.03;
 
-const LIFT = vec4( -0.03, 0.01, 0.05, 0.0 );
-const GAMMA = vec4( -0.02, 0.02, -0.01, 0.0 );
-const GAIN = vec4( 1.04, 0.98, 1.02, 1.0 );
-
 export const postFrag = build( () => {
   insert( 'precision highp float;' );
 
@@ -22,6 +19,7 @@ export const postFrag = build( () => {
   const vUv = defInNamed( 'vec2', 'vUv' );
 
   const time = defUniformNamed( 'float', 'time' );
+  const colorGrade = defUniformNamed( 'float', 'colorGrade' );
   const cosAmp = defUniformNamed( 'float', 'cosAmp' );
   const aspect = defUniformNamed( 'float', 'aspect' );
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
@@ -73,7 +71,47 @@ export const postFrag = build( () => {
       mad( 0.5, -0.5, cos( mul( PI, cosAmp, sw( col, 'xxx' ) ) ) ),
       glslSaturate( cosAmp ),
     ) );
-    assign( col, liftGammaGain( col, LIFT, GAMMA, GAIN ) );
+
+    const lift = mix(
+      mix(
+        vec4( 0.0, 0.0, 0.0, 0.04 ),
+        vec4( 0.0, 0.0, 0.0, 0.02 ),
+        glslLinearstep( 0.0, 1.0, colorGrade ),
+      ),
+      mix(
+        vec4( 0.0, 0.0, 0.0, 0.01 ),
+        vec4( 0.0, 0.0, 0.0, 0.02 ),
+        glslLinearstep( 2.0, 3.0, colorGrade ),
+      ),
+      glslLinearstep( 1.0, 2.0, colorGrade ),
+    );
+    const gamma = mix(
+      mix(
+        vec4( 0.0, 0.0, 0.0, -0.1 ),
+        vec4( 0.0, 0.0, 0.0, -0.2 ),
+        glslLinearstep( 0.0, 1.0, colorGrade ),
+      ),
+      mix(
+        vec4( 0.0, 0.0, 0.0, 0.0 ),
+        vec4( 0.0, 0.0, 0.0, -0.2 ),
+        glslLinearstep( 2.0, 3.0, colorGrade ),
+      ),
+      glslLinearstep( 1.0, 2.0, colorGrade ),
+    );
+    const gain = mix(
+      mix(
+        vec4( 1.0, 1.01, 1.05, 1.2 ),
+        vec4( 1.0, 1.0, 1.1, 1.1 ),
+        glslLinearstep( 0.0, 1.0, colorGrade ),
+      ),
+      mix(
+        vec4( 1.0, 0.0, 0.0, 0.5 ),
+        vec4( 1.0, 1.01, 1.05, 1.2 ),
+        glslLinearstep( 2.0, 3.0, colorGrade ),
+      ),
+      glslLinearstep( 1.0, 2.0, colorGrade ),
+    );
+    assign( col, liftGammaGain( col, lift, gamma, gain ) );
 
     assign( fragColor, vec4( col, 1.0 ) );
   } );

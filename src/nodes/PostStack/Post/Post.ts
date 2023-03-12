@@ -50,5 +50,6 @@ export class Post extends SceneNode {
 
     // -- auto -------------------------------------------------------------------------------------
     auto( 'Post/cos', ( { value } ) => material.addUniform( 'cosAmp', '1f', value ) );
+    auto( 'Post/colorGrade', ( { value } ) => material.addUniform( 'colorGrade', '1f', value ) );
   }
 }
