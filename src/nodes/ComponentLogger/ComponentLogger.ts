@@ -1,14 +1,16 @@
 import { Component } from '../../heck/components/Component';
 import { Lambda } from '../../heck/components/Lambda';
 import { SceneNode } from '../../heck/components/SceneNode';
+import { ancestorsToPath } from '../../heck/utils/ancestorsToPath';
 import { componentUpdateObservers } from '../../globals/globalObservers';
 import { getDivComponentLogger } from '../../globals/dom';
 import { gui } from '../../globals/gui';
+import { traverse } from '@0b5vr/experimental';
 
 export class ComponentLogger extends SceneNode {
   private __isActive: boolean;
   private __dom: HTMLDivElement;
-  private __updateArray: { component: Component, path?: string }[];
+  private __updateArray: Component[][];
 
   public constructor() {
     super();
@@ -22,9 +24,9 @@ export class ComponentLogger extends SceneNode {
 
     this.name = 'ComponentLogger';
 
-    componentUpdateObservers.push( ( { ancestors, path } ) => {
+    componentUpdateObservers.push( ( { ancestors } ) => {
       if ( this.__isActive ) {
-        this.__updateArray.push( { component: ancestors[ 0 ], path } );
+        this.__updateArray.push( ancestors );
       }
     } );
 
@@ -36,9 +38,10 @@ export class ComponentLogger extends SceneNode {
         if ( this.__isActive ) {
           this.__dom.innerHTML = '';
 
-          this.__updateArray.map( ( { component, path } ) => {
+          this.__updateArray.map( ( ancestors ) => {
             const div = document.createElement( 'div' );
-            div.textContent = path ?? '';
+            div.textContent = ancestorsToPath( ancestors );
+            const component = ancestors[ ancestors.length - 1 ];
             div.addEventListener( 'pointerdown', () => console.info( component ) );
             this.__dom.appendChild( div );
           } );
@@ -52,5 +55,16 @@ export class ComponentLogger extends SceneNode {
     this.children = [
       lambdaLogger,
     ];
+
+    // -- set ignoreBreakpoiints -------------------------------------------------------------------
+    traverse<Component>( this, ( node ) => {
+      node.ignoreBreakpoints = true;
+
+      if ( node instanceof SceneNode ) {
+        return node.children;
+      } else {
+        return [];
+      }
+    } );
   }
 }

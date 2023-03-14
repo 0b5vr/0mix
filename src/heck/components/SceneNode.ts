@@ -23,38 +23,24 @@ export class SceneNode extends Component {
 
   protected __updateImpl( event: ComponentUpdateEvent ): void {
     this.globalTransformCache = event.globalTransform.multiply( this.transform );
-    const ancestors = [ this, ...event.ancestors ];
-
-    let path: string;
-    if ( import.meta.env.DEV ) {
-      path = `${ event.path }/${ this.name }`;
-    }
 
     this.children.map( ( child ) => {
       child.update( {
         ...event,
         globalTransform: this.globalTransformCache,
-        ancestors,
-        path,
+        ancestors: [ ...event.ancestors, this ],
       } );
     } );
   }
 
   protected __drawImpl( event: ComponentDrawEvent ): void {
     this.globalTransformCache = event.globalTransform.multiply( this.transform );
-    const ancestors = [ this, ...event.ancestors ];
-
-    let path: string | undefined;
-    if ( import.meta.env.DEV ) {
-      path = `${ event.path }/${ this.name }`;
-    }
 
     this.children.map( ( child ) => {
       child.draw( {
         ...event,
         globalTransform: this.globalTransformCache,
-        ancestors,
-        path,
+        ancestors: [ ...event.ancestors, this ],
       } );
     } );
   }

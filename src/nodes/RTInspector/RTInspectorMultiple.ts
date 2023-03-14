@@ -99,7 +99,10 @@ export class RTInspectorMultiple extends SceneNode {
         // add / update blits
         for ( const [ i, { src, attachment, dstRect, name } ] of entries.entries() ) {
           if ( i >= nodeBlits.children.length ) {
-            nodeBlits.children[ i ] = new Blit( { dst: target } );
+            nodeBlits.children[ i ] = new Blit( {
+              dst: target,
+              ignoreBreakpoints: true,
+            } );
           }
 
           const blit = nodeBlits.children[ i ] as Blit;

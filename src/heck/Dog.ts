@@ -31,7 +31,6 @@ export class Dog {
         globalTransform: new Transform(),
         componentsByTag: new MapOfSet(),
         ancestors: [],
-        path: '',
       } );
     }
 

@@ -51,8 +51,8 @@ export abstract class Camera extends Component {
     componentsByTag,
     frameCount,
     globalTransform,
+    ancestors,
     time,
-    path,
   }: ComponentUpdateEvent ): void {
     const { target, scene, materialTag } = this;
 
@@ -62,11 +62,6 @@ export abstract class Camera extends Component {
 
     if ( !scene ) {
       throw import.meta.env.DEV && new Error( 'You must assign scenes to the Camera' );
-    }
-
-    let cameraPath: string | undefined;
-    if ( import.meta.env.DEV ) {
-      cameraPath = `${ path }/${ this.name }`;
     }
 
     const viewMatrix = mat4Inverse( globalTransform.matrix );
@@ -87,7 +82,7 @@ export abstract class Camera extends Component {
       viewMatrix,
       projectionMatrix: this.projectionMatrix,
       camera: this,
-      cameraPath,
+      cameraAncestors: ancestors,
       ancestors: [],
       materialTag,
     } );

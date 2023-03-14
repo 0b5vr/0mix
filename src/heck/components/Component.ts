@@ -4,6 +4,7 @@ import { MaterialTag } from '../Material';
 import { RawMatrix4, notifyObservers } from '@0b5vr/experimental';
 import { RenderTarget } from '../RenderTarget';
 import { Transform } from '../Transform';
+import { ancestorsToPath } from '../utils/ancestorsToPath';
 import { arraySetIntersects } from '../../utils/arraySetIntersects';
 import { componentUpdateObservers } from '../../globals/globalObservers';
 import { gui, guiMeasureDraw, guiMeasureUpdate } from '../../globals/gui';
@@ -15,7 +16,6 @@ export interface ComponentUpdateEvent {
   globalTransform: Transform;
   ancestors: Component[];
   componentsByTag: MapOfSet<symbol, Component>;
-  path?: string;
 }
 
 export interface ComponentDrawEvent {
@@ -30,8 +30,7 @@ export interface ComponentDrawEvent {
   projectionMatrix: RawMatrix4;
   ancestors: Component[];
   componentsByTag: MapOfSet<symbol, Component>;
-  cameraPath?: string;
-  path?: string;
+  cameraAncestors: Component[];
 }
 
 export interface ComponentOptions {
@@ -82,11 +81,9 @@ export class Component {
     if ( import.meta.env.DEV ) {
       if ( Component.updateHaveReachedBreakpoint && !this.ignoreBreakpoints ) { return; }
 
-      const path = `${ event.path }/${ this.name ?? '(no name)' }`;
       notifyObservers( componentUpdateObservers, {
         ...event,
-        ancestors: [ this, ...event.ancestors ],
-        path,
+        ancestors: [ ...event.ancestors, this ],
       } );
 
       if ( this.name != null ) {
@@ -99,8 +96,11 @@ export class Component {
 
       const ha = gui;
       const breakpoint = ha?.value( 'breakpoint/update', '' ) ?? '';
-      if ( breakpoint !== '' && new RegExp( breakpoint ).test( path ) ) {
-        Component.updateHaveReachedBreakpoint = true;
+      if ( breakpoint !== '' ) {
+        const path = ancestorsToPath( event.ancestors );
+        if ( new RegExp( breakpoint ).test( path ) ) {
+          Component.updateHaveReachedBreakpoint = true;
+        }
       }
     } else {
       this.__updateImpl( event );
@@ -120,27 +120,30 @@ export class Component {
     if ( import.meta.env.DEV ) {
       if ( Component.drawHaveReachedBreakpoint && !this.ignoreBreakpoints ) { return; }
       const ha = gui;
-      const cameraPath = event.cameraPath;
-      const focusName = ha?.value( 'profilers/draw/camera' ) as string | undefined;
-      const focus = focusName != null
-        && focusName !== ''
-        && cameraPath != null
-        && cameraPath.includes( focusName );
+      const focusName = ha?.value( 'profilers/draw/camera', '' ) ?? '';
+      if ( focusName !== '' ) {
+        const cameraPath = ancestorsToPath( [ ...event.cameraAncestors, event.camera ] );
+        const focus = focusName != null
+          && focusName !== ''
+          && cameraPath != null
+          && cameraPath.includes( focusName );
 
-      if ( this.name != null && focus ) {
-        guiMeasureDraw( this.name, () => {
+        if ( this.name != null && focus ) {
+          guiMeasureDraw( this.name, () => {
+            this.__drawImpl( event );
+          } );
+        } else {
           this.__drawImpl( event );
-        } );
+        }
       } else {
         this.__drawImpl( event );
       }
 
-      if ( this.name != null ) {
-        const path = `${ event.path }/${ this.name }`;
+      const breakpoint = ha?.value( 'breakpoint/draw', '' ) ?? '';
+      if ( breakpoint !== '' ) {
+        const path = ancestorsToPath( [ ...event.ancestors, this ] );
 
-        const ha = gui;
-        const breakpoint = ha?.value( 'breakpoint/draw', '' ) ?? '';
-        if ( breakpoint !== '' && new RegExp( breakpoint ).test( path ) ) {
+        if ( new RegExp( breakpoint ).test( path ) ) {
           Component.drawHaveReachedBreakpoint = true;
         }
       }
