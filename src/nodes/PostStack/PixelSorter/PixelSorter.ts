@@ -1,7 +1,6 @@
 import { ALIGN_SIZE, pixelSorterFrag } from './shaders/pixelSorterFrag';
 import { Blit } from '../../../heck/components/Blit';
 import { BufferTextureRenderTarget } from '../../../heck/BufferTextureRenderTarget';
-import { EventType, on } from '../../../globals/globalEvent';
 import { GL_NEAREST, GL_TEXTURE_2D } from '../../../gl/constants';
 import { Material } from '../../../heck/Material';
 import { Quad } from '../../../heck/components/Quad';
@@ -14,6 +13,7 @@ import { glTextureFilter } from '../../../gl/glTextureFilter';
 import { pixelSorterIndexFrag } from './shaders/pixelSorterIndexFrag';
 import { quadGeometry } from '../../../globals/quadGeometry';
 import { quadVert } from '../../../shaders/common/quadVert';
+import { resizeObservers } from '../../../globals/globalObservers';
 
 const TARGET_WIDTH = 2048;
 
@@ -55,7 +55,7 @@ export class PixelSorter extends SceneNode {
 
     const bufferIndex = new BufferTextureRenderTarget( width, height );
 
-    on( EventType.Resize, ( [ width, height ] ) => {
+    resizeObservers.push( ( [ width, height ] ) => {
       swap.i.resize( width, height );
       swap.o.resize( width, height );
       bufferIndex.resize( width, height );

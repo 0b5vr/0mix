@@ -1,5 +1,5 @@
-import { EventType, on } from '../../globals/globalEvent';
 import { createCameraStackResources, resizeCameraStackResources } from './CameraStackResources';
+import { resizeObservers } from '../../globals/globalObservers';
 
 export const mainCameraStackResources = createCameraStackResources( true, true, true );
 
@@ -12,6 +12,6 @@ if ( import.meta.env.DEV ) {
   mainCameraStackResources[ 4 ]!.o.name = 'denoiserSwap1';
 }
 
-on( EventType.Resize, ( [ width, height ] ) => (
+resizeObservers.push( ( [ width, height ] ) => (
   resizeCameraStackResources( mainCameraStackResources, width, height )
 ) );

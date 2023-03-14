@@ -1,9 +1,9 @@
 import { CharRenderer } from './CharRenderer/CharRenderer';
-import { EventType, on } from '../../globals/globalEvent';
 import { GLSLMusicEditorRange } from '../../music/GLSLMusicEditorRange';
 import { RenderTarget } from '../../heck/RenderTarget';
 import { glslMusicEditorFocusRow, glslMusicEditorLines, glslMusicEditorSelect } from '../../music/glslMusicEditor';
 import { gui } from '../../globals/gui';
+import { shaderEventAlterObservers } from '../../globals/globalObservers';
 import { vec2 } from '../../shaders/shaderBuilder';
 
 export class Code extends CharRenderer {
@@ -17,7 +17,7 @@ export class Code extends CharRenderer {
     } );
 
     // -- set code ---------------------------------------------------------------------------------
-    on( EventType.ShaderEventAlter, () => {
+    shaderEventAlterObservers.push( () => {
       let lines = glslMusicEditorLines.concat();
       const select = glslMusicEditorSelect.concat() as GLSLMusicEditorRange;
 

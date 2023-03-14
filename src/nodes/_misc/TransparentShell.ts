@@ -1,6 +1,5 @@
 import { Component } from '../../heck/components/Component';
 import { CubemapNode } from '../CubemapNode/CubemapNode';
-import { EventType, on } from '../../globals/globalEvent';
 import { GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
@@ -9,6 +8,7 @@ import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { forwardPBRColorFrag } from '../../shaders/common/forwardPBRColorFrag';
 import { genCube } from '../../geometries/genCube';
+import { ibllutObservers } from '../../globals/globalObservers';
 import { objectVert } from '../../shaders/common/objectVert';
 import { zeroTexture } from '../../globals/zeroTexture';
 
@@ -81,7 +81,7 @@ export class TransparentShell extends SceneNode {
     const lightUniformsLambda = createLightUniformsLambda( [ forwardShell ] );
 
     // -- event listeners --------------------------------------------------------------------------
-    on( EventType.IBLLUT, ( ibllutTexture ) => {
+    ibllutObservers.push( ( ibllutTexture ) => {
       forwardShell.addUniformTextures(
         'samplerIBLLUT',
         GL_TEXTURE_2D,

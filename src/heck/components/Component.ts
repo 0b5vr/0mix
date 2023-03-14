@@ -1,12 +1,11 @@
 import { Camera } from './Camera';
-import { EventType, emit } from '../../globals/globalEvent';
 import { MapOfSet } from '../../utils/MapOfSet';
 import { MaterialTag } from '../Material';
-import { RawMatrix4 } from '@0b5vr/experimental';
+import { RawMatrix4, notifyObservers } from '@0b5vr/experimental';
 import { RenderTarget } from '../RenderTarget';
-import { SceneNode } from './SceneNode';
 import { Transform } from '../Transform';
 import { arraySetIntersects } from '../../utils/arraySetIntersects';
+import { componentUpdateObservers } from '../../globals/globalObservers';
 import { gui, guiMeasureDraw, guiMeasureUpdate } from '../../globals/gui';
 
 export interface ComponentUpdateEvent {
@@ -14,7 +13,7 @@ export interface ComponentUpdateEvent {
   time: number;
   deltaTime: number;
   globalTransform: Transform;
-  ancestors: SceneNode[];
+  ancestors: Component[];
   componentsByTag: MapOfSet<symbol, Component>;
   path?: string;
 }
@@ -29,7 +28,7 @@ export interface ComponentDrawEvent {
   globalTransform: Transform;
   viewMatrix: RawMatrix4;
   projectionMatrix: RawMatrix4;
-  ancestors: SceneNode[];
+  ancestors: Component[];
   componentsByTag: MapOfSet<symbol, Component>;
   cameraPath?: string;
   path?: string;
@@ -84,7 +83,11 @@ export class Component {
       if ( Component.updateHaveReachedBreakpoint && !this.ignoreBreakpoints ) { return; }
 
       const path = `${ event.path }/${ this.name ?? '(no name)' }`;
-      emit( EventType.ComponentUpdate, { component: this, event, path } );
+      notifyObservers( componentUpdateObservers, {
+        ...event,
+        ancestors: [ this, ...event.ancestors ],
+        path,
+      } );
 
       if ( this.name != null ) {
         guiMeasureUpdate( this.name!, () => {

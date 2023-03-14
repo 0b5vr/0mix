@@ -49,15 +49,13 @@ export class SceneNode extends Component {
       path = `${ event.path }/${ this.name }`;
     }
 
-    const drawEvent = {
-      ...event,
-      globalTransform: this.globalTransformCache,
-      ancestors,
-      path,
-    };
-
     this.children.map( ( child ) => {
-      child.draw( drawEvent );
+      child.draw( {
+        ...event,
+        globalTransform: this.globalTransformCache,
+        ancestors,
+        path,
+      } );
     } );
   }
 }

@@ -3,7 +3,6 @@ import { ComponentOptions } from '../../heck/components/Component';
 import { CubemapNode } from '../CubemapNode/CubemapNode';
 import { Denoiser } from './Denoiser/Denoiser';
 import { DoF } from './DoF/DoF';
-import { EventType, on } from '../../globals/globalEvent';
 import { FAR, NEAR } from '../../config';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 import { Lambda } from '../../heck/components/Lambda';
@@ -17,6 +16,7 @@ import { auto } from '../../globals/automaton';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { deferredShadeFrag } from './shaders/deferredShadeFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
+import { ibllutObservers } from '../../globals/globalObservers';
 import { mat4Inverse, mat4Multiply } from '@0b5vr/experimental';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
@@ -325,7 +325,7 @@ export class CameraStack extends SceneNode {
     } );
 
     // -- event listeners --------------------------------------------------------------------------
-    on( EventType.IBLLUT, ( ibllutTexture ) => {
+    ibllutObservers.push( ( ibllutTexture ) => {
       shadingMaterial.addUniformTextures(
         'samplerIBLLUT',
         GL_TEXTURE_2D,

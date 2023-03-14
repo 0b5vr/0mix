@@ -1,6 +1,5 @@
 import { Blit } from '../../../heck/components/Blit';
 import { BufferTextureRenderTarget } from '../../../heck/BufferTextureRenderTarget';
-import { EventType, on } from '../../../globals/globalEvent';
 import { GLTextureFormatStuffRGBA16F } from '../../../gl/glSetTexture';
 import { GL_ONE, GL_TEXTURE_2D } from '../../../gl/constants';
 import { Material } from '../../../heck/Material';
@@ -14,6 +13,7 @@ import { bloomUpFrag } from './shaders/bloomUpFrag';
 import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../../globals/quadGeometry';
 import { quadVert } from '../../../shaders/common/quadVert';
+import { resizeObservers } from '../../../globals/globalObservers';
 
 export interface BloomOptions {
   input: BufferTextureRenderTarget;
@@ -29,7 +29,7 @@ export class Bloom extends SceneNode {
       new BufferTextureRenderTarget( 4, 4, 1, GLTextureFormatStuffRGBA16F ),
     );
 
-    on( EventType.Resize, ( [ width, height ] ) => {
+    resizeObservers.push( ( [ width, height ] ) => {
       swap.i.resize( width, height );
       swap.o.resize( width, height );
     } );

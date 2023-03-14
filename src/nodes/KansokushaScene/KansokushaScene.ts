@@ -1,5 +1,4 @@
 import { CanvasTexture } from '../utils/CanvasTexture';
-import { EventType, on } from '../../globals/globalEvent';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
@@ -9,6 +8,7 @@ import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { kansokushaFrag } from './shaders/kansokushaFrag';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
+import { resizeObservers } from '../../globals/globalObservers';
 import kansokushaSvg from './assets/kansokusha.svg?raw';
 
 export class KansokushaScene extends SceneNode {
@@ -24,7 +24,7 @@ export class KansokushaScene extends SceneNode {
     const texture = new CanvasTexture( 4, 4 );
     const { context } = texture;
 
-    on( EventType.Resize, ( [ _, h ] ) => {
+    resizeObservers.push( ( [ _, h ] ) => {
       texture.resize( h, h / 3 );
       texture.clear();
 

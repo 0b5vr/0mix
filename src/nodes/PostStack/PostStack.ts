@@ -3,7 +3,6 @@ import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget'
 import { Code } from './Code';
 import { ComponentOptions } from '../../heck/components/Component';
 import { DCT } from './DCT/DCT';
-import { EventType, on } from '../../globals/globalEvent';
 import { FUIShit } from './FUIShit/FUIShit';
 import { FXAA } from './FXAA/FXAA';
 import { Kaleidoscope } from './Kaleidoscope/Kaleidoscope';
@@ -13,6 +12,7 @@ import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { StatsText } from './StatsText';
 import { Swap } from '@0b5vr/experimental';
+import { resizeObservers } from '../../globals/globalObservers';
 
 export interface PostStackOptions extends ComponentOptions {
   input: BufferTextureRenderTarget;
@@ -33,7 +33,7 @@ export class PostStack extends SceneNode {
       new BufferTextureRenderTarget( 4, 4 ),
     );
 
-    on( EventType.Resize, ( [ width, height ] ) => {
+    resizeObservers.push( ( [ width, height ] ) => {
       swap.i.resize( width, height );
       swap.o.resize( width, height );
     } );

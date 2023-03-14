@@ -2,7 +2,6 @@ import { Blit } from './heck/components/Blit';
 import { BufferTextureRenderTarget } from './heck/BufferTextureRenderTarget';
 import { Capture } from './nodes/Capture/Capture';
 import { Dog } from './heck/Dog';
-import { EventType, on } from './globals/globalEvent';
 import { FluidScene } from './nodes/FluidScene/FluidScene';
 import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
 import { KansokushaScene } from './nodes/KansokushaScene/KansokushaScene';
@@ -39,6 +38,7 @@ import { music } from './globals/music';
 import { postTarget } from './globals/postTarget';
 import { promiseGui } from './globals/gui';
 import { randomTexture } from './globals/randomTexture';
+import { resizeObservers } from './globals/globalObservers';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
@@ -222,7 +222,7 @@ const update = function(): void {
 update();
 
 // == resize handler ===============================================================================
-on( EventType.Resize, ( [ width, height ] ) => {
+resizeObservers.push( ( [ width, height ] ) => {
   canvas.width = width;
   canvas.height = height;
   canvasRenderTarget.viewport = [ 0, 0, width, height ];

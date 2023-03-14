@@ -1,10 +1,11 @@
-import { EventType, emit } from '../globals/globalEvent';
 import { GLBlendFactor } from '../gl/GLBlendFactor';
 import { GL_ONE, GL_TEXTURE0, GL_ZERO } from '../gl/constants';
 import { Geometry } from './Geometry';
 import { LazyProgramOptions, glLazyProgram } from '../gl/glLazyProgram';
 import { RenderTarget } from './RenderTarget';
+import { d3dSucksObservers } from '../globals/globalObservers';
 import { gl } from '../globals/canvas';
+import { notifyObservers } from '@0b5vr/experimental';
 import { sleep } from '../utils/sleep';
 
 export declare type MaterialUniformType = '1f' | '2f' | '3f' | '4f' | '1i' | '2i' | '3i' | '4i';
@@ -32,7 +33,7 @@ export class Material {
   public static async d3dSucks(): Promise<void> {
     for ( const [ i, material ] of Material.d3dSucksList.entries() ) {
       await material.compile();
-      emit( EventType.D3DSucks, ( i + 1 ) / Material.d3dSucksList.length );
+      notifyObservers( d3dSucksObservers, ( i + 1 ) / Material.d3dSucksList.length );
       await sleep( 1 );
     }
   }

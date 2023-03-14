@@ -1,5 +1,4 @@
 import { BufferReaderNode } from './BufferReaderNode';
-import { EventType, on } from '../globals/globalEvent';
 import { GL_ARRAY_BUFFER, GL_FLOAT, GL_POINTS, GL_RASTERIZER_DISCARD, GL_STATIC_DRAW, GL_STREAM_READ, GL_TRANSFORM_FEEDBACK, GL_TRANSFORM_FEEDBACK_BUFFER } from '../gl/constants';
 import { MUSIC_BPM } from '../config';
 import { Pool, arraySerial } from '@0b5vr/experimental';
@@ -8,9 +7,10 @@ import { createDebounce } from '../utils/createDebounce';
 import { gl } from '../globals/canvas';
 import { glLazyProgram } from '../gl/glLazyProgram';
 import { glWaitGPUCommandsCompleteAsync } from '../gl/glWaitGPUCommandsCompleteAsync';
+import { glslMusicEditorLines, updateGLSLMusicEditor } from './glslMusicEditor';
 import { promiseGui } from '../globals/gui';
+import { shaderEventApplyObservers } from '../globals/globalObservers';
 import { shaderchunkPost, shaderchunkPre, shaderchunkPreLines } from './shaderchunks';
-import { updateGLSLMusicEditor } from './glslMusicEditor';
 
 const BEAT = 60.0 / MUSIC_BPM;
 const BAR = 240.0 / MUSIC_BPM;
@@ -121,7 +121,10 @@ export class Music {
     this.__prevTime = 0.0;
 
     // -- shaderEventManager -----------------------------------------------------------------------
-    on( EventType.ShaderEventApply, ( code ) => debounceShaderApply( () => this.compile( code ) ) );
+    shaderEventApplyObservers.push( () => {
+      const code = glslMusicEditorLines.join( '\n' );
+      debounceShaderApply( () => this.compile( code ) );
+    } );
 
     // -- audio ------------------------------------------------------------------------------------
     const gainNode = audio.createGain();

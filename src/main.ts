@@ -1,5 +1,4 @@
 import { AutomatonWithGUI } from '@0b5vr/automaton-with-gui';
-import { EventType, emit } from './globals/globalEvent';
 import { Material } from './heck/Material';
 import { audio } from './globals/audio';
 import { automaton } from './globals/automaton';
@@ -7,7 +6,9 @@ import { canvas } from './globals/canvas';
 import { dog } from './scene';
 import { getDivCanvasContainer } from './globals/dom';
 import { music } from './globals/music';
+import { notifyObservers } from '@0b5vr/experimental';
 import { promiseGui } from './globals/gui';
+import { resizeObservers } from './globals/globalObservers';
 
 // == dom ==========================================================================================
 if ( import.meta.env.DEV ) {
@@ -30,7 +31,7 @@ if ( import.meta.env.DEV ) {
   const kickstartDev = async (): Promise<void> => {
     console.info( dog );
 
-    emit( EventType.Resize, [ 1920, 1080 ] );
+    notifyObservers( resizeObservers, [ 1920, 1080 ] );
     dog.active = true;
     ( automaton as AutomatonWithGUI ).play();
   };
@@ -44,7 +45,7 @@ if ( import.meta.env.DEV ) {
         '1920x1080': 1080,
       },
     } )?.on( 'change', ( { value } ) => {
-      emit( EventType.Resize, [ value * 16 / 9, value ] );
+      notifyObservers( resizeObservers, [ value * 16 / 9, value ] );
     } );
   } );
 
@@ -69,7 +70,7 @@ if ( !import.meta.env.DEV ) {
     const reso = selects[ 0 ].value.split( 'x' )
       .map( ( v ) => parseInt( v ) ) as [ number, number ];
 
-    emit( EventType.Resize, reso );
+    notifyObservers( resizeObservers, reso );
 
     // -- prepare canvas ---------------------------------------------------------------------------
     document.body.innerHTML = '<style>body{margin:0;display:flex;background:#000}canvas{max-width:100%;max-height:100%;margin:auto;cursor:none}</style>';

@@ -1,10 +1,10 @@
 import { CanvasTexture } from '../utils/CanvasTexture';
-import { EventType, on } from '../../globals/globalEvent';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { arraySerial } from '@0b5vr/experimental';
+import { d3dSucksObservers, resizeObservers } from '../../globals/globalObservers';
 import { ditherFrag } from './shaders/ditherFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { noiseFrag } from './shaders/noiseFrag';
@@ -51,7 +51,7 @@ export class LoadingScreen extends SceneNode {
       flyerTexture.updateTexture();
     };
 
-    on( EventType.Resize, ( [ width, height ] ) => {
+    resizeObservers.push( ( [ width, height ] ) => {
       w = width;
       h = height;
 
@@ -136,7 +136,7 @@ export class LoadingScreen extends SceneNode {
     ];
 
     // -- updater ----------------------------------------------------------------------------------
-    on( EventType.D3DSucks, ( progress ) => {
+    d3dSucksObservers.push( ( progress ) => {
       frame = ~~( progress * 27.0 );
 
       quadNoise.active = frame > 10;

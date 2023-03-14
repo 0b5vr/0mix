@@ -1,6 +1,5 @@
 import { Blit } from '../../heck/components/Blit';
 import { CanvasTexture } from '../utils/CanvasTexture';
-import { EventType, on } from '../../globals/globalEvent';
 import { GL_COLOR_ATTACHMENT0, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material } from '../../heck/Material';
@@ -12,6 +11,7 @@ import { dryFrag } from '../../shaders/common/dryFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
+import { resizeObservers } from '../../globals/globalObservers';
 
 export interface RTInspectorMultipleOptions {
   target: RenderTarget;
@@ -27,7 +27,7 @@ export class RTInspectorMultiple extends SceneNode {
 
     const textureText = new CanvasTexture( 4, 4 );
 
-    on( EventType.Resize, ( [ width, height ] ) => {
+    resizeObservers.push( ( [ width, height ] ) => {
       textureText.canvas.width = width;
       textureText.canvas.height = height;
     } );

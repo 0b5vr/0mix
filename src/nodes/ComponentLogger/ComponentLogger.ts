@@ -1,14 +1,14 @@
 import { Component } from '../../heck/components/Component';
-import { EventType, on } from '../../globals/globalEvent';
 import { Lambda } from '../../heck/components/Lambda';
 import { SceneNode } from '../../heck/components/SceneNode';
+import { componentUpdateObservers } from '../../globals/globalObservers';
 import { getDivComponentLogger } from '../../globals/dom';
 import { gui } from '../../globals/gui';
 
 export class ComponentLogger extends SceneNode {
   private __isActive: boolean;
   private __dom: HTMLDivElement;
-  private __updateArray: { component: Component, path: string }[];
+  private __updateArray: { component: Component, path?: string }[];
 
   public constructor() {
     super();
@@ -22,9 +22,9 @@ export class ComponentLogger extends SceneNode {
 
     this.name = 'ComponentLogger';
 
-    on( EventType.ComponentUpdate, ( { component, path } ) => {
+    componentUpdateObservers.push( ( { ancestors, path } ) => {
       if ( this.__isActive ) {
-        this.__updateArray.push( { component, path } );
+        this.__updateArray.push( { component: ancestors[ 0 ], path } );
       }
     } );
 
@@ -38,7 +38,7 @@ export class ComponentLogger extends SceneNode {
 
           this.__updateArray.map( ( { component, path } ) => {
             const div = document.createElement( 'div' );
-            div.textContent = path;
+            div.textContent = path ?? '';
             div.addEventListener( 'pointerdown', () => console.info( component ) );
             this.__dom.appendChild( div );
           } );
