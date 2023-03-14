@@ -88,7 +88,7 @@ export class OBSVRLogoScene extends SceneNode {
       dofParams: [ 3.8, 8.0 ],
     } );
     camera.transform.lookAt(
-      [ 0.0, -0.5, 4.0 ],
+      [ 0.0, 0.0, 4.0 ],
       [ 0.0, 0.0, 0.0 ],
       0.0,
     );
