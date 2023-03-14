@@ -79,8 +79,8 @@ export const postFrag = build( () => {
         glslLinearstep( 0.0, 1.0, colorGrade ),
       ),
       mix(
-        vec4( 0.0, 0.0, 0.0, 0.01 ),
-        vec4( 0.0, 0.0, 0.0, 0.02 ),
+        vec4( 0.01, -0.03, 0.05, -0.02 ),
+        vec4( -0.02, -0.01, 0.05, 0.01 ),
         glslLinearstep( 2.0, 3.0, colorGrade ),
       ),
       glslLinearstep( 1.0, 2.0, colorGrade ),
@@ -92,8 +92,8 @@ export const postFrag = build( () => {
         glslLinearstep( 0.0, 1.0, colorGrade ),
       ),
       mix(
-        vec4( 0.0, 0.0, 0.0, 0.0 ),
-        vec4( 0.0, 0.0, 0.0, -0.2 ),
+        vec4( 0.0, 0.0, -0.02, 0.0 ),
+        vec4( 0.0, 0.02, 0.02, 0.02 ),
         glslLinearstep( 2.0, 3.0, colorGrade ),
       ),
       glslLinearstep( 1.0, 2.0, colorGrade ),
@@ -105,8 +105,8 @@ export const postFrag = build( () => {
         glslLinearstep( 0.0, 1.0, colorGrade ),
       ),
       mix(
-        vec4( 1.0, 0.0, 0.0, 0.5 ),
-        vec4( 1.0, 1.01, 1.05, 1.2 ),
+        vec4( 0.86, 1.14, 0.87, 1.06 ),
+        vec4( 1.08, 1.01, 0.8, 1.01 ),
         glslLinearstep( 2.0, 3.0, colorGrade ),
       ),
       glslLinearstep( 1.0, 2.0, colorGrade ),
