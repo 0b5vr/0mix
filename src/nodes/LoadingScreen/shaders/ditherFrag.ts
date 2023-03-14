@@ -8,9 +8,9 @@ export const ditherFrag = build( () => {
   const fragColor = defOut( 'vec4' );
 
   main( () => {
-    const noise = sw( pcg3df( sw( glFragCoord, 'xyy' ) ), 'x' );
+    const dither = sw( pcg3df( sw( glFragCoord, 'xyy' ) ), 'x' );
     const threshold = sq( sw( vUv, 'x' ) );
-    const c = step( 0.0, sub( threshold, noise ) );
+    const c = step( 0.0, sub( threshold, dither ) );
     assign( fragColor, vec4( vec3( c ), 1.0 ) );
   } );
 } );
