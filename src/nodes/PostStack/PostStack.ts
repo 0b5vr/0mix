@@ -50,13 +50,13 @@ export class PostStack extends SceneNode {
       target: swap.i,
     } );
 
-    swap.swap();
-    const kaleidoscope = new Kaleidoscope( {
-      input: swap.o,
+    const fuiShit = new FUIShit( {
       target: swap.i,
     } );
 
-    const fuiShit = new FUIShit( {
+    swap.swap();
+    const kaleidoscope = new Kaleidoscope( {
+      input: swap.o,
       target: swap.i,
     } );
 
@@ -91,8 +91,8 @@ export class PostStack extends SceneNode {
     // -- components -------------------------------------------------------------------------------
     this.children = [
       bloom,
-      kaleidoscope,
       fuiShit,
+      kaleidoscope,
       post,
       fxaa,
       dct,
