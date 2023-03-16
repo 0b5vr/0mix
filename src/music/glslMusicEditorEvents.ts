@@ -1397,28 +1397,24 @@ vec2 mainaudio(vec4 time){
   [ 0.7, GLSLMusicEditorEventType.Insert, 'z' ],
   [ 0.5, GLSLMusicEditorEventType.Insert, ')' ],
   [ 1.0, GLSLMusicEditorEventType.Apply ],
-  [ 6.6, GLSLMusicEditorEventType.Insert, '*' ],
-  [ 0.5, GLSLMusicEditorEventType.Insert, '0' ],
-  [ 0.2, GLSLMusicEditorEventType.Insert, '.' ],
-  [ 26.0, GLSLMusicEditorEventType.Apply ],
 
   // greets
-  [ 3.0, GLSLMusicEditorEventType.MoveStart, [ -1000, 0 ] ],
+  [ 8.0, GLSLMusicEditorEventType.MoveStart, [ -1000, 0 ] ],
   [ 0.0, GLSLMusicEditorEventType.MoveStart, [ 0, -1000 ] ],
   [ 0.0, GLSLMusicEditorEventType.MoveEnd, [ 1000, 0 ] ],
   [ 0.0, GLSLMusicEditorEventType.MoveEnd, [ 0, 1000 ] ], // pretend to be select all
   [ 1.0, GLSLMusicEditorEventType.Insert, '' ],
-  [ 4.0, GLSLMusicEditorEventType.Insert, `// 0b5vr glsl techno live set
+  [ 8.0, GLSLMusicEditorEventType.Insert, `// 0b5vr glsl techno live set
 // a 64kb webgl intro by 0b5vr
 // appeared in the revision 2023 pc 64k intro compo
 
 // shoutouts to:
 //   0x4015, alcatraz, altair, cncd, cocoon,
 //   conspiracy, ctrl+alt+test, doxas, epoch, fairlight,
-//   farbrausch, limp ninja, LJ & Virgill, logicoma, loonies,
+//   farbrausch, limp ninja, lj & virgill, logicoma, loonies,
 //   luchak, mercury, mfx, mrdoob, ninjadev,
 //   orange, prismbeings, rgba, satori, slay bells,
-//   still, yx
+//   srtuss, still, yx
 
 // oh, we will also do our demoparty three weeks later!
 //   sessions in c4 lan 2023 spring
@@ -1427,7 +1423,10 @@ vec2 mainaudio(vec4 time){
 //
 //   https://sessions.frontl1ne.net
 
-// press esc to exit...` ],
+// press esc to exit...
 
-  [ 10000.0, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
+vec2 mainaudio(vec4 time){
+  return vec2(0);
+}` ],
+  [ 16.0, GLSLMusicEditorEventType.Apply ],
 ];
