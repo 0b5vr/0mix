@@ -70,7 +70,7 @@ export const trailsComputeFrag: string = build( () => {
 
           assign( pos, add(
             mul( 0.1, randomSphere() ),
-            mul( 0.9, sin( mad( vec3( 1.0, 2.0, 3.0 ), vec3( 3.4, 2.5, 3.6 ), time ) ) ),
+            mul( 0.9, sin( mad( vec3( 3.4, 2.5, 3.6 ), time, vec3( 1.0, 2.0, 3.0 ) ) ) ),
           ) );
           assign( vel, vec3( 0.0 ) );
           assign( life, 1.0 );
@@ -88,9 +88,9 @@ export const trailsComputeFrag: string = build( () => {
           8.0,
           dt,
           vec3(
-            perlin3d( mad( mad( 0.0, 0.2, time ), 2.0, pos ) ),
-            perlin3d( mad( mad( 10.0, 0.2, time ), 2.0, pos ) ),
-            perlin3d( mad( mad( 20.0, 0.2, time ), 2.0, pos ) ),
+            perlin3d( mad( 2.0, pos, mad( 0.2, time, 0.0 ) ) ),
+            perlin3d( mad( 2.0, pos, mad( 0.2, time, 10.0 ) ) ),
+            perlin3d( mad( 2.0, pos, mad( 0.2, time, 20.0 ) ) ),
           ),
         ) );
 

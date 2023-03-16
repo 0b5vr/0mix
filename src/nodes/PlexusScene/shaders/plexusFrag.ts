@@ -24,7 +24,7 @@ export const plexusFrag = build( () => {
         lt( 0.5, length( sub( glPointCoord, 0.5 ) ) ), // point sprite shape
         gt(
           bayerPattern4(),
-          mad( -1.0, 17.0, glslLinearstep( 0.0, 0.5, sw( vProjPosition, 'z' ) ) ),
+          mad( 17.0, glslLinearstep( 0.0, 0.5, sw( vProjPosition, 'z' ) ), -1.0 ),
         ), // is too near to camera
       ),
       () => discard(),

@@ -38,7 +38,7 @@ export const truchetFrag = ( tag: 'deferred' | 'depth' ): string => build( () =>
   const thicknessFn = ( t: GLSLFloatExpression ): GLSLExpression<'float'> => add(
     0.07,
     min( 0.0, mul( 0.5, sub( rlGlobal, 1.0 ) ) ),
-    mul( 0.01, pow( mad( 0.5, 0.5, cos( t ) ), 5.0 ) ),
+    mul( 0.01, pow( mad( 0.5, cos( t ), 0.5 ), 5.0 ) ),
   );
 
   const sdtorusmetal = defFn( 'float', [ 'vec3' ], ( p ) => {
@@ -140,7 +140,7 @@ export const truchetFrag = ( tag: 'deferred' | 'depth' ): string => build( () =>
       beforeMapHook( { rl, rp } ) {
         ifThen( lte( gridl, rl ), () => {
           assign( rl, gridl );
-          assign( rp, mad( ro, rd, rl ) );
+          assign( rp, mad( rl, rd, ro ) );
           assign( grid, gridTraversal( rp, rd ) );
           addAssign( gridl, sw( grid, 'w' ) );
         } );

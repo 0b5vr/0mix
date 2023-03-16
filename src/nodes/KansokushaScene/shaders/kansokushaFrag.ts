@@ -27,7 +27,7 @@ export const kansokushaFrag = build( () => {
     assign( uv, fract( uv ) );
 
     const tex = def( 'vec4', texture( sampler0, uv ) );
-    const shape = mad( sw( tex, 'y' ), sw( tex, 'x' ), step( fract( phase ), 0.07 ) );
+    const shape = mad( sw( tex, 'x' ), step( fract( phase ), 0.07 ), sw( tex, 'y' ) );
     assign( fragColor, vec4( shape ) );
   } );
 } );

@@ -18,9 +18,9 @@ export const keycapVert = build( () => {
     assign( vProjPosition, vec4( position, 1.0 ) );
     mulAssign( sw( vProjPosition, 'x' ), sw( instance, 'z' ) );
     assign( vOffset, vec3(
-      mad( sw( instance, 'z' ), 2.0, sw( instance, 'x' ) ),
+      mad( 2.0, sw( instance, 'x' ), sw( instance, 'z' ) ),
       0.0,
-      mad( 1.0, 2.0, sw( instance, 'y' ) ),
+      mad( 2.0, sw( instance, 'y' ), 1.0 ),
     ) );
     addAssign( sw( vProjPosition, 'xyz' ), vOffset );
     assign( vPositionWithoutModel, vProjPosition );

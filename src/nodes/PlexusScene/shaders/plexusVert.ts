@@ -36,7 +36,7 @@ export const plexusVert = ( isLine?: boolean ): string => build( () => {
         div( p, PLEXUS_PARTICLES_CBRT - 1.0 ),
         vec3( 0.0, 0.0, mul( 0.1, time ) ),
       ) ) );
-      assign( p, mad( vec3( -3.0, -3.0, -6.0 ), 7.0, p ) );
+      assign( p, mad( 7.0, p, vec3( -3.0, -3.0, -6.0 ) ) );
       mulAssign( sw( p, 'xy' ), rotate2D( mul( 0.1, time ) ) );
 
       return p;

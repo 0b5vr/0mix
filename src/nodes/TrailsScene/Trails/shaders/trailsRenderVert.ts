@@ -43,7 +43,7 @@ export const trailsRenderVert: string = build( () => {
     assign( vPositionWithoutModel, vec4( sw( tex0, 'xyz' ), 1.0 ) );
     // assign( vPositionWithoutModel, vec4( 0.0, 0.0, 0.0, 1.0 ) );
 
-    const size = mad( 0.001, 0.004, sw( vDice, 'x' ) );
+    const size = mad( 0.004, sw( vDice, 'x' ), 0.001 );
 
     addAssign( vJumpFlag, step( size, 1E-4 ) ); // utilizing the jump flag
 

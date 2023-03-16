@@ -27,7 +27,7 @@ export const pillarGridBodyVert = build( () => {
     // change size per instance
     subAssign(
       sw( vPosition, 'xyz' ),
-      mul( sign( position ), mad( 0.01, 0.05, sw( dice, 'y' ) ) ),
+      mul( sign( position ), mad( 0.05, sw( dice, 'y' ), 0.01 ) ),
     );
 
     const z = mul( 0.2, sin( add(

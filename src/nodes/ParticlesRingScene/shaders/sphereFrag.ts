@@ -26,14 +26,14 @@ export const sphereFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
   const { init } = glslDefRandom();
 
   const map = defFn( 'vec4', [ 'vec3' ], ( p ) => {
-    addAssign( p, mul( 0.1, cyclicNoise( mad( time, 2.0, p ), { warp: 0.2, freq: 1.5 } ) ) );
+    addAssign( p, mul( 0.1, cyclicNoise( mad( 2.0, p, time ), { warp: 0.2, freq: 1.5 } ) ) );
     const d = sub( length( p ), 0.8 );
     retFn( vec4( d, 0.0, 0.0, 1.0 ) );
   } );
   const mapForN = defFn( 'vec4', [ 'vec3' ], ( p ) => {
     retFn( add(
       map( p ),
-      vec4( sw( mul( 0.0002, cyclicNoise( mad( 1000.0, 80.0, p ), { warp: 0.4 } ) ), 'x' ) ),
+      vec4( sw( mul( 0.0002, cyclicNoise( mad( 80.0, p, 1000.0 ), { warp: 0.4 } ) ), 'x' ) ),
     ) );
   } );
 

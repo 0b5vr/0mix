@@ -36,7 +36,7 @@ export const moonFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
     retFn( sub(
       map( p ),
       sq( mul( 0.1, sw( voronoi3d( mul( 10.0, add( p, mul( 0.1, time ) ) ) ), 'w' ) ) ),
-      vec4( mul( 0.0001, perlin3d( mad( 1000.0, 100.0, p ) ) ) ),
+      vec4( mul( 0.0001, perlin3d( mad( 100.0, p, 1000.0 ) ) ) ),
     ) );
   } );
 

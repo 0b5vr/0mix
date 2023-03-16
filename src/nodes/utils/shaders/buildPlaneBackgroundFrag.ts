@@ -25,7 +25,7 @@ export const buildPlaneBackgroundFrag = (
 
   main( () => {
     const p = def( 'vec2', div( sw( glFragCoord, 'xy' ), resolution ) );
-    assign( p, mad( -1.0, 2.0, p ) );
+    assign( p, mad( 2.0, p, -1.0 ) );
     mulAssign( sw( p, 'x' ), aspect );
 
     const [ ro, rd ] = setupRoRd( p );

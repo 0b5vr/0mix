@@ -18,7 +18,7 @@ export const lineWaveVert = build( () => {
   main( () => {
     // -- create local position --------------------------------------------------------------------
     const position = def( 'vec4', vec4(
-      mad( -2.0, 1.0 / 128.0, vec2( x, y ) ),
+      mad( 1.0 / 128.0, vec2( x, y ), -2.0 ),
       0.0,
       1.0,
     ) );

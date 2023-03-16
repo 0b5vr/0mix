@@ -43,7 +43,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     hole: GLSLToken<'bool'>,
   } => {
     const haha = def( 'float', sw( pcg3df(
-      floor( mul( vec3( 2.0, 2.0, 0.0 ), mad( ro, rd, 1E-2 ) ) ),
+      floor( mul( vec3( 2.0, 2.0, 0.0 ), mad( 1E-2, rd, ro ) ) ),
     ), 'x' ) );
     assign( haha, mul(
       2.0,

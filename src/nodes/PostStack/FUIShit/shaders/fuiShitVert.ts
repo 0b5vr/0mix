@@ -18,7 +18,7 @@ export const fuiShitVert = build( () => {
 
     assign( vDice, pcg3df( vec3(
       index,
-      floor( mad( time, 0.17, index ) ),
+      floor( mad( 0.17, index, time ) ),
       0.0,
     ) ) );
     const diceZ = sw( vDice, 'z' );

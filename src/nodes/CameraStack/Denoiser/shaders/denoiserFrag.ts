@@ -28,7 +28,7 @@ export const denoiserFrag = ( iter: number ): string => build( () => {
     const ci1 = def( 'vec4', vec4( 0.0 ) );
 
     forLoop( 9, ( i ) => {
-      const uvq = mad( vUv, delta, sub( vec2( i + '%3' as any, i + '/3' as any ), 1.0 ) );
+      const uvq = mad( delta, sub( vec2( i + '%3' as any, i + '/3' as any ), 1.0 ), vUv );
 
       const ciq = def( 'vec3', sw( texture( sampler1, uvq ), 'xyz' ) );
       const rtq = sw( ciq, 'x' );

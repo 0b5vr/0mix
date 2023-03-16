@@ -84,7 +84,7 @@ export const fluidRenderFrag: string = build( () => {
           const shadow = getDensity( add( rp, mul( L, 0.05 ) ) );
 
           addAssign( accumRGB, mul(
-            glslSaturate( mad( 1.0, -1.5, shadow ) ),
+            glslSaturate( mad( -1.5, shadow, 1.0 ) ),
             div( 1.0, sq( lenL ) ),
             lightColor,
             density,
@@ -95,7 +95,7 @@ export const fluidRenderFrag: string = build( () => {
         mulAssign( accumA, sub( 1.0, density ) );
       } );
 
-      addAssign( rl, mad( 0.02, 0.00, randomNormal() ) );
+      addAssign( rl, mul( 0.02, randomNormal() ) );
       assign( rp, add( ro, mul( rd, rl ) ) );
 
       ifThen( lt( rlMax, rl ), () => forBreak() );

@@ -80,7 +80,7 @@ export const obsvrLogoFrag = ( tag: 'deferred' | 'depth' ): string => build( () 
   } );
 
   const mapForN = defFn( 'vec4', [ 'vec3' ], ( p ) => {
-    retFn( add( map( p ), vec4( mul( 0.00015, perlin3d( mad( 1000.0, 80.0, p ) ) ) ) ) );
+    retFn( add( map( p ), vec4( mul( 0.00015, perlin3d( mad( 80.0, p, 1000.0 ) ) ) ) ) );
   } );
 
   main( () => {

@@ -23,7 +23,7 @@ export const kaleidoscopeFrag: string = build( () => {
   } );
 
   main( () => {
-    const p = def( 'vec2', mad( -1.0, 2.0, vUv ) );
+    const p = def( 'vec2', mad( 2.0, vUv, -1.0 ) );
     mulAssign( sw( p, 'x' ), aspect );
 
     ifChain(
@@ -43,6 +43,6 @@ export const kaleidoscopeFrag: string = build( () => {
 
     divAssign( sw( p, 'x' ), aspect );
 
-    assign( fragColor, texture( sampler0, mad( 0.5, 0.5, p ) ) );
+    assign( fragColor, texture( sampler0, mad( 0.5, p, 0.5 ) ) );
   } );
 } );

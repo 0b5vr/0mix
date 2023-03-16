@@ -15,17 +15,17 @@ export const defMetaballMap: {
 
     unrollLoop( 7, ( i ) => {
       assign( off, sin( vec3( mad(
-        mul( TAU, pcg3df( vec3( i ) ) ),
         add( 0.5, pcg3df( vec3( i + 20 ) ) ),
         time,
+        mul( TAU, pcg3df( vec3( i ) ) ),
       ) ) ) );
 
-      assign( radius, mad( 0.05, 0.1, pcg3df( vec3( i + 40 ) ) ) );
+      assign( radius, mad( 0.1, pcg3df( vec3( i + 40 ) ), 0.05 ) );
 
-      assign( pt, mad( p, off, 0.2 ) );
+      assign( pt, mad( 0.2, off, p ) );
       assign( d, smin( d, sub( length( pt ), sw( radius, 'x' ) ), 0.15 ) );
 
-      assign( pt, mad( p, off, -0.2 ) );
+      assign( pt, mad( -0.2, off, p ) );
       assign( d, smin( d, sub( length( pt ), sw( radius, 'y' ) ), 0.15 ) );
     } );
 

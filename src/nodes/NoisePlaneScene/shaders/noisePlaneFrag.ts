@@ -12,7 +12,7 @@ export const noisePlaneFrag = build( () => {
   const aspect = defUniformNamed( 'float', 'aspect' );
 
   main( () => {
-    const p = def( 'vec2', mad( -1.0, 2.0, vUv ) );
+    const p = def( 'vec2', mad( 2.0, vUv, -1.0 ) );
     mulAssign( sw( p, 'x' ), aspect );
 
     const pt = def( 'vec3', mul( 2.0, normalize( vec3( p, 0.3 ) ) ) );
@@ -21,7 +21,7 @@ export const noisePlaneFrag = build( () => {
 
     const haha = def(
       'float',
-      mad( 0.5, 0.5, sw( cyclicNoise( pt ), 'x' ) ),
+      mad( 0.5, sw( cyclicNoise( pt ), 'x' ), 0.5 ),
     );
 
     assign( fragColor, vec4( vec3( pow( haha, 4.0 ) ), 1.0 ) );

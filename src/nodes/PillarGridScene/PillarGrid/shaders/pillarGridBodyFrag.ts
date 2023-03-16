@@ -27,7 +27,7 @@ export const pillarGridBodyFrag = build( () => {
     unrollLoop( 8, () => {
       const dice = def( 'vec3', pcg3df( floor( p ) ) );
       addAssign( v, dice );
-      assign( p, mad( glslLofir( mul( 1.3, p ), 0.01 ), dice, 2.0 ) );
+      assign( p, mad( 2.0, dice, glslLofir( mul( 1.3, p ), 0.01 ) ) );
     } );
 
     assign( roughness, div( sw( v, 'x' ), 8.0 ) );

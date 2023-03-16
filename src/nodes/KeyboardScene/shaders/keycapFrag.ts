@@ -34,7 +34,7 @@ export const keycapFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
 
     const yt = clamp( sw( p, 'y' ), -1.0, 1.0 );
     const xt2 = clamp( div( sw( p, 'x' ), u ), -1.0, 1.0 );
-    const yt2 = mad( 0.5, 0.5, yt );
+    const yt2 = mad( 0.5, yt, 0.5 );
     const zt2 = clamp( sw( p, 'y' ), -1.0, 1.0 );
     addAssign( sw( p, 'y' ), mix(
       mul( -0.3, xt2, xt2, yt2, yt2 ),
@@ -42,7 +42,7 @@ export const keycapFrag = ( tag: 'deferred' | 'depth' ): string => build( () => 
       sw( vInstance, 'w' ),
     ) ); // curve
     addAssign( sw( p, 'z' ), mul( 0.15, clamp( sw( p, 'y' ), -0.5, 0.5 ) ) ); // skew
-    const wsub = mad( 0.25, 0.3, yt );
+    const wsub = mad( 0.3, yt, 0.25 );
     const d = sub( sdbox( p, vec3( sub( u, wsub ), 0.4, sub( 1.0, wsub ) ) ), 0.05 );
 
     retFn( vec4( d, 0.0, 0.0, 1.0 ) );

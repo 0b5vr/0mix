@@ -386,7 +386,7 @@ export const div: {
 ) as any;
 
 /**
- * `a + b * c`
+ * m * a + b
  */
 export const mad: {
   ( a: Exf, b: Exf, c: Exf ): Ex<'float'>;
@@ -394,7 +394,7 @@ export const mad: {
   ( a: Exf | Ex<'vec3'>, b: Exf | Ex<'vec3'>, c: Exf | Ex<'vec3'> ): Ex<'vec3'>;
   ( a: Exf | Ex<'vec4'>, b: Exf | Ex<'vec4'>, c: Exf | Ex<'vec4'> ): Ex<'vec4'>;
 } = ( a: string | number, b: string | number, c: string | number ) => (
-  `(${ num( a ) }+${ num( b ) }*${ num( c ) })`
+  `(${ num( a ) }*${ num( b ) }+${ num( c ) })`
 ) as any;
 
 export const lshift: {

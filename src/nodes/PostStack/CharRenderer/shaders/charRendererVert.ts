@@ -17,7 +17,7 @@ export const charRendererVert = (
     assign( vCoord, div( mix(
       vec2( 0.0, -1.0 ),
       vec2( 6.0, 6.0 ),
-      mad( 0.5, 0.5, position ),
+      mad( 0.5, position, 0.5 ),
     ), 5.0 ) );
     assign( vMeta, meta );
 

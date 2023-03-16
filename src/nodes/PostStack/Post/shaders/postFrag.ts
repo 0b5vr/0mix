@@ -68,7 +68,7 @@ export const postFrag = build( () => {
     assign( col, sRGBOETF( col ) );
     assign( col, mix(
       col,
-      mad( 0.5, -0.5, cos( mul( PI, cosAmp, sw( col, 'xxx' ) ) ) ),
+      mad( -0.5, cos( mul( PI, cosAmp, sw( col, 'xxx' ) ) ), 0.5 ),
       glslSaturate( cosAmp ),
     ) );
 

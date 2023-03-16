@@ -39,8 +39,8 @@ export const pixelSorterFrag = build( () => {
 
     const compOffset = mix( neg( comp ), comp, isCompHigher );
 
-    const coordA = mad( coordOrigin, alignDelta, alignedIndex );
-    const coordB = mad( coordA, alignDelta, compOffset );
+    const coordA = mad( alignDelta, alignedIndex, coordOrigin );
+    const coordB = mad( alignDelta, compOffset, coordA );
 
     const texA = texture( sampler0, div( coordA, resolution ) );
     const texB = texture( sampler0, div( coordB, resolution ) );

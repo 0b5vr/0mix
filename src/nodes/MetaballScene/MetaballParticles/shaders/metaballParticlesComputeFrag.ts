@@ -69,9 +69,9 @@ export const metaballParticlesComputeFrag: string = build( () => {
       0.5,
       dt,
       vec3(
-        perlin3d( mad( mad( 0.0, 0.2, time ), 10.0, pos ) ),
-        perlin3d( mad( mad( 10.0, 0.2, time ), 10.0, pos ) ),
-        perlin3d( mad( mad( 20.0, 0.2, time ), 10.0, pos ) ),
+        perlin3d( mad( 10.0, pos, mad( 0.2, time, 0.0 ) ) ),
+        perlin3d( mad( 10.0, pos, mad( 0.2, time, 10.0 ) ) ),
+        perlin3d( mad( 10.0, pos, mad( 0.2, time, 20.0 ) ) ),
       ),
     ) );
 
