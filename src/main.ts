@@ -1,5 +1,4 @@
 import { AutomatonWithGUI } from '@0b5vr/automaton-with-gui';
-import { Material } from './heck/Material';
 import { audio } from './globals/audio';
 import { automaton } from './globals/automaton';
 import { canvas } from './globals/canvas';
@@ -7,6 +6,7 @@ import { dog } from './scene';
 import { getDivCanvasContainer } from './globals/dom';
 import { music } from './globals/music';
 import { notifyObservers } from '@0b5vr/experimental';
+import { prepare } from './globals/preparationTasks';
 import { promiseGui } from './globals/gui';
 import { resizeObservers } from './globals/globalObservers';
 
@@ -77,7 +77,7 @@ if ( !import.meta.env.DEV ) {
     document.body.appendChild( canvas );
 
     // -- prepare stuff ----------------------------------------------------------------------------
-    await Material.d3dSucks();
+    await prepare();
 
     // -- esc handler ------------------------------------------------------------------------------
     window.addEventListener( 'keydown', ( event ) => {

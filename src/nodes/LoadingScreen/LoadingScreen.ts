@@ -4,11 +4,11 @@ import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { arraySerial } from '@0b5vr/experimental';
-import { d3dSucksObservers, resizeObservers } from '../../globals/globalObservers';
 import { ditherFrag } from './shaders/ditherFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { noiseFrag } from './shaders/noiseFrag';
 import { postTarget } from '../../globals/postTarget';
+import { preparationProgressObservers, resizeObservers } from '../../globals/globalObservers';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';
 import { textureFrag } from '../../shaders/common/textureFrag';
@@ -136,7 +136,7 @@ export class LoadingScreen extends SceneNode {
     ];
 
     // -- updater ----------------------------------------------------------------------------------
-    d3dSucksObservers.push( ( progress ) => {
+    preparationProgressObservers.push( ( progress ) => {
       frame = ~~( progress * 27.0 );
 
       quadNoise.active = frame > 10;

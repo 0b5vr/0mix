@@ -3,10 +3,8 @@ import { GL_ONE, GL_TEXTURE0, GL_ZERO } from '../gl/constants';
 import { Geometry } from './Geometry';
 import { LazyProgramOptions, glLazyProgram } from '../gl/glLazyProgram';
 import { RenderTarget } from './RenderTarget';
-import { d3dSucksObservers } from '../globals/globalObservers';
 import { gl } from '../globals/canvas';
-import { notifyObservers } from '@0b5vr/experimental';
-import { sleep } from '../utils/sleep';
+import { preparationTasks } from '../globals/preparationTasks';
 
 export declare type MaterialUniformType = '1f' | '2f' | '3f' | '4f' | '1i' | '2i' | '3i' | '4i';
 export declare type MaterialUniformVectorType = '1fv' | '2fv' | '3fv' | '4fv' | '1iv' | '2iv' | '3iv' | '4iv';
@@ -25,19 +23,6 @@ export interface MaterialInitOptions {
 }
 
 export class Material {
-  /**
-   * A list of materials that require precompilation.
-   */
-  public static d3dSucksList: Material[] = [];
-
-  public static async d3dSucks(): Promise<void> {
-    for ( const [ i, material ] of Material.d3dSucksList.entries() ) {
-      await material.compile();
-      notifyObservers( d3dSucksObservers, ( i + 1 ) / Material.d3dSucksList.length );
-      await sleep( 1 );
-    }
-  }
-
   protected __linkOptions: LazyProgramOptions;
 
   private __initOptions: MaterialInitOptions;
@@ -118,7 +103,7 @@ export class Material {
     if ( import.meta.env.DEV ) {
       this.compile();
     } else {
-      Material.d3dSucksList.push( this );
+      preparationTasks.push( () => this.compile() );
     }
   }
 
