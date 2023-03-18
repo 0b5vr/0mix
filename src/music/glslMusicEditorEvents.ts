@@ -59,6 +59,7 @@ export const glslMusicEditorEvents: GLSLMusicEditorEvent[] = [
 #define lofi(i,m) (floor((i)/(m))*(m))
 #define tri(p) (1.-4.*abs(fract(p)-0.5))
 #define p2f(i) (exp2(((i)-69.)/12.)*440.)
+#define repeat(i,n) for(int i=0;i<(n);i++)
 
 const float pi=acos(-1.);
 const float tau=2.*pi;
@@ -100,7 +101,7 @@ vec3 cyclic(vec3 p,float pump){
   vec4 sum=vec4(0);
   mat3 rot=orthbas(vec3(2,-3,1));
 
-  for(int i=0;i<5;i++){
+  repeat(i,5){
     p*=rot;
     p+=sin(p.zxy);
     sum+=vec4(cross(cos(p),sin(p.yzx)),1);
@@ -117,7 +118,7 @@ vec2 orbit(float t){
 
 vec2 shotgun(float t,float spread,float snap){
   vec2 sum=vec2(0);
-  for(int i=0;i<64;i++){
+  repeat(i,64){
     vec3 dice=pcg3df(vec3(i));
 
     float partial=exp2(spread*dice.x);
@@ -230,13 +231,13 @@ vec2 mainaudio(vec4 time){
   { // dual vco
     vec2 sum=vec2(0);
 
-    for(int i=0;i<4;i++){
+    repeat(i,4){
       float fi=float(i);
 
       const float freqs[3]=float[](560.,1200.,240.);
       const float times[3]=float[](.25,.75,1.5);
 
-      for(int j=0;j<3;j++){
+      repeat(j,3){
         float t=mod(time.z-times[j]*b2t-.5*b2t*fi,2.*b2t);
         vec2 wave=vec2(0);
         wave+=sin(tau*freqs[j]*t);
@@ -449,7 +450,7 @@ vec2 mainaudio(vec4 time){
       sum+=.3*sin(2.*sin(tau*t*freq));
     }
 
-    for(int i=0;i<16;i++){ // unison fm
+    repeat(i,16){ // unison fm
       vec3 dice=pcg3df(vec3(i,st,0));
       float freq=p2f(37.+ptn[st]+.2*(dice.x-.5));
       float phase=tau*t*freq+dice.y;
@@ -619,7 +620,7 @@ vec2 mainaudio(vec4 time){
 
     float t=time.z;
 
-    for(int i=0;i<64;i++){
+    repeat(i,64){
       vec3 dice=pcg3df(vec3(i));
 
       float freq=p2f(57.+chord[i%8]+.1*boxmuller(dice.xy).x);
@@ -749,7 +750,7 @@ vec2 mainaudio(vec4 time){
 
     vec2 sum=vec2(.5*sin(tau*45.*t));
 
-    for(int i=0;i<8;i++){
+    repeat(i,8){
       vec3 dice=pcg3df(vec3(i));
       float freq=45.+.1*boxmuller(dice.xy).x;
       float phase=freq*t+dice.z;
@@ -901,7 +902,7 @@ vec2 mainaudio(vec4 time){
   [ 4.5, GLSLMusicEditorEventType.Insert, `{ // additive shepard
     vec2 sum=vec2(0.);
 
-    for(int i=0;i<2500;i++){
+    repeat(i,2500){
       vec3 diceA=pcg3df(vec3(i/50));
       vec3 diceB=pcg3df(vec3(i));
 
@@ -1033,7 +1034,7 @@ vec2 mainaudio(vec4 time){
       0.,0.,3.,3.,7.,7.,10.,14.
     );
 
-    for(int i=0;i<4;i++){
+    repeat(i,4){
       float fi=float(i);
       float t=mod(time.x,.25*b2t);
       float st=mod(floor((time.z-.75*b2t*fi)/(.25*b2t)),256.);
@@ -1060,7 +1061,7 @@ vec2 mainaudio(vec4 time){
 
     const float pitchTable[8]=float[](0.,7.,10.,12.,14.,15.,19.,26.);
 
-    for(int i=0;i<48;i++){
+    repeat(i,48){
       float fi=float(i);
       vec3 dice=pcg3df(vec3(fi));
 
@@ -1166,7 +1167,7 @@ vec2 mainaudio(vec4 time){
     float prog=time.z/60./b2t;
 
     vec2 sum=vec2(0);
-    for(int i=0;i<20;i++){
+    repeat(i,20){
       float fi=float(i);
 
       float t=time.z;
@@ -1247,7 +1248,7 @@ vec2 mainaudio(vec4 time){
     float freq=p2f(note);
     vec2 sum=env*vec2(tanh(sin(tau*freq*t)));
 
-    for(int i=0;i<16;i++){
+    repeat(i,16){
       vec3 dice=pcg3df(vec3(i,floor(time.x/.25/b2t),0));
 
       float noteu=note+.5*(dice.y-.5);
