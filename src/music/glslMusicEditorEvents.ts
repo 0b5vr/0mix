@@ -67,6 +67,7 @@ const float p4=exp2(5./12.);
 const float p5=exp2(7./12.);
 const float b2t=60./140.;
 const float t2b=1./b2t;
+const uint uint_max=0xffffffffu;
 
 uvec3 pcg3d(uvec3 v){
   v=v*1145141919u+1919810u;
@@ -82,7 +83,7 @@ uvec3 pcg3d(uvec3 v){
 
 vec3 pcg3df(vec3 v){
   uvec3 r=pcg3d(floatBitsToUint(v));
-  return vec3(r)/float(0xffffffffu);
+  return vec3(r)/float(uint_max);
 }
 
 mat2 r2d(float x){
@@ -139,6 +140,23 @@ vec2 boxmuller(vec2 xi){
   float r=sqrt(-2.*log(xi.x));
   float t=xi.y;
   return r*orbit(t);
+}
+
+vec2 cheapnoise(float t){
+  uvec3 s=uvec3(t*256.);
+  float p=fract(t*256.);
+
+  vec3 dice;
+  vec2 v=vec2(0);
+
+  dice=vec3(pcg3d(s))/float(uint_max)-vec3(.5,.5,0);
+  v+=dice.xy*smoothstep(1.,0.,abs(p+dice.z));
+  dice=vec3(pcg3d(s+1u))/float(uint_max)-vec3(.5,.5,1);
+  v+=dice.xy*smoothstep(1.,0.,abs(p+dice.z));
+  dice=vec3(pcg3d(s+2u))/float(uint_max)-vec3(.5,.5,2);
+  v+=dice.xy*smoothstep(1.,0.,abs(p+dice.z));
+
+  return 2.*v;
 }
 
 vec2 mainaudio(vec4 time){
@@ -228,6 +246,14 @@ vec2 mainaudio(vec4 time){
     ))*vec2(1,-1);
   }
 
+  // { // noise
+  //   float t=mod(time.z,32.*b2t);
+  //   float tt=500.0*exp(-.2*t);
+  //   float tt2=500.0*exp(-.2*(t+.00005*(1.-exp(-.2*t))));
+  //   vec2 wave=cheapnoise(tt)-cheapnoise(tt2);
+  //   dest+=.1*sidechain*wave;
+  // }
+
   { // dual vco
     vec2 sum=vec2(0);
 
@@ -255,7 +281,7 @@ vec2 mainaudio(vec4 time){
   [ 0.0, GLSLMusicEditorEventType.Move, [ 0, -1000 ] ],
   [ 1.0, GLSLMusicEditorEventType.Apply ],
 
-  // ride unmute
+  // unmute ride
   [ 16.0, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 0.5, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 0.5, GLSLMusicEditorEventType.JumpPart, 1 ],
@@ -265,6 +291,7 @@ vec2 mainaudio(vec4 time){
   [ 0.5, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 0.5, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 1.0, GLSLMusicEditorEventType.JumpPart, 1 ],
+  [ 0.5, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 0.5, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 2.5, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 0.8, GLSLMusicEditorEventType.JumpPart, 1 ],
@@ -277,13 +304,17 @@ vec2 mainaudio(vec4 time){
   [ 1.5, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 3.5, GLSLMusicEditorEventType.Uncomment ],
 
-  // dual vco detune
+  // unmute noise
   [ 3.5, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 1.5, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 1.0, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 1.0, GLSLMusicEditorEventType.JumpPart, 1 ],
+  [ 1.5, GLSLMusicEditorEventType.Uncomment ],
+
+  // dual vco detune
   [ 1.5, GLSLMusicEditorEventType.JumpPart, 1 ],
-  [ 1.5, GLSLMusicEditorEventType.JumpPart, 1 ],
+  [ 0.5, GLSLMusicEditorEventType.JumpPart, 1 ],
+  [ 1.0, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 3.0, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 0.5, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
   [ 0.5, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
@@ -302,7 +333,7 @@ vec2 mainaudio(vec4 time){
   [ 0.5, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 0.5, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 2.0, GLSLMusicEditorEventType.Insert, '1' ],
-  [ 9.0, GLSLMusicEditorEventType.Apply ],
+  [ 7.5, GLSLMusicEditorEventType.Apply ],
   [ 3.0, GLSLMusicEditorEventType.Delete ],
   [ 0.5, GLSLMusicEditorEventType.Insert, '2' ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
@@ -420,10 +451,11 @@ vec2 mainaudio(vec4 time){
   [ 4.0, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 0.5, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 0.5, GLSLMusicEditorEventType.JumpPart, -1 ],
-  [ 0.5, GLSLMusicEditorEventType.JumpPart, -1 ],
-  [ 0.5, GLSLMusicEditorEventType.JumpPart, -1 ],
-  [ 0.5, GLSLMusicEditorEventType.JumpPart, -1 ],
-  [ 0.5, GLSLMusicEditorEventType.JumpPart, -1 ],
+  [ 0.4, GLSLMusicEditorEventType.JumpPart, -1 ],
+  [ 0.4, GLSLMusicEditorEventType.JumpPart, -1 ],
+  [ 0.4, GLSLMusicEditorEventType.JumpPart, -1 ],
+  [ 0.4, GLSLMusicEditorEventType.JumpPart, -1 ],
+  [ 0.4, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 0.5, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 1.0, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 1.5, GLSLMusicEditorEventType.JumpPart, -1 ],
@@ -494,7 +526,8 @@ vec2 mainaudio(vec4 time){
 
   // insert 2nd stuff
   [ 4.0, GLSLMusicEditorEventType.JumpPart, 1 ],
-  [ 2.4, GLSLMusicEditorEventType.ExpandSelectForward ],
+  [ 2.0, GLSLMusicEditorEventType.ExpandSelectForward ],
+  [ 0.4, GLSLMusicEditorEventType.ExpandSelectForward ],
   [ 0.4, GLSLMusicEditorEventType.ExpandSelectForward ],
   [ 0.4, GLSLMusicEditorEventType.ExpandSelectForward ],
   [ 0.4, GLSLMusicEditorEventType.ExpandSelectForward ],
