@@ -3,6 +3,7 @@ import { sub, vec3 } from '../shaders/shaderBuilder';
 export const PI = Math.acos( -1.0 );
 export const INV_PI = 1.0 / PI;
 export const HALF_PI = PI / 2.0;
+export const QUARTER_PI = PI / 4.0;
 export const TAU = 2.0 * PI;
 export const INV_TAU = 1.0 / TAU;
 export const GOLDEN_ANGLE = 2.3999632;
