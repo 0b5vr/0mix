@@ -4,6 +4,7 @@ import { Capture } from './nodes/Capture/Capture';
 import { Dog } from './heck/Dog';
 import { FluidScene } from './nodes/FluidScene/FluidScene';
 import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
+import { InkScene } from './nodes/InkScene/InkScene';
 import { KansokushaScene } from './nodes/KansokushaScene/KansokushaScene';
 import { KeyboardScene } from './nodes/KeyboardScene/KeyboardScene';
 import { Lambda } from './heck/components/Lambda';
@@ -131,6 +132,7 @@ const scenesA = [
   new SevenSegScene(),
   new KeyboardScene(),
   new RieScene(),
+  new InkScene(),
 ];
 
 const scenesB = [
