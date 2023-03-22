@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
-import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, exp2, floor, glFragDepth, glslFalse, glslTrue, insert, length, main, min, mod, mul, mulAssign, neg, normalize, retFn, smoothstep, sub, subAssign, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, exp2, floor, glFragDepth, insert, length, main, min, mod, mul, mulAssign, neg, normalize, retFn, smoothstep, sub, subAssign, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 import { cyclicNoise } from '../../../shaders/modules/cyclicNoise';
@@ -17,8 +17,6 @@ export const riePillarFrag = ( tag: 'deferred' | 'depth' ): string => build( () 
   const vProjPosition = defInNamed( 'vec4', 'vProjPosition' );
   const vInstance = defInNamed( 'vec3', 'vInstance' );
   const instanceX = floor( add( 0.5, sw( vInstance, 'x' ) ) );
-
-  const isAfterMarch = def( 'bool', glslFalse );
 
   const fragColor = defOut( 'vec4' );
   const fragPosition = defOut( 'vec4', 1 );
@@ -106,7 +104,6 @@ export const riePillarFrag = ( tag: 'deferred' | 'depth' ): string => build( () 
 
     }
 
-    assign( isAfterMarch, glslTrue );
     const N = def( 'vec3', calcNormal( { rp, map: mapForN, delta: 1E-4 } ) );
 
     const pNoise = def( 'vec3', add( transformP( rp ), mul( 10.0, instanceX ) ) );
