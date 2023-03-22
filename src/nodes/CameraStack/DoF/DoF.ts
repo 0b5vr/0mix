@@ -1,11 +1,13 @@
 import { BufferTextureRenderTarget } from '../../../heck/BufferTextureRenderTarget';
 import { DoFResources } from './DoFResources';
 import { GL_TEXTURE_2D } from '../../../gl/constants';
+import { Lambda } from '../../../heck/components/Lambda';
 import { Material } from '../../../heck/Material';
 import { PerspectiveCamera } from '../../../heck/components/PerspectiveCamera';
 import { Quad } from '../../../heck/components/Quad';
 import { RenderTarget } from '../../../heck/RenderTarget';
 import { SceneNode } from '../../../heck/components/SceneNode';
+import { auto } from '../../../globals/automaton';
 import { dofBlurFrag } from './shaders/dofBlurFrag';
 import { dofPostFrag } from './shaders/dofPostFrag';
 import { dofPresortFrag } from './shaders/dofPresortFrag';
@@ -29,9 +31,7 @@ export interface DoFOptions {
 
 export class DoF extends SceneNode {
   public resources: DoFResources;
-
-  private _materialTileMaxH: Material;
-  private _materialPresort: Material;
+  public params: [ depth: number, size: number ];
 
   public constructor( options: DoFOptions ) {
     super();
@@ -45,6 +45,8 @@ export class DoF extends SceneNode {
       resources,
     } = options;
 
+    this.params = params;
+
     // -- buffers ----------------------------------------------------------------------------------
     const [
       targetTileMaxH,
@@ -55,7 +57,7 @@ export class DoF extends SceneNode {
     ] = this.resources = resources;
 
     // -- materials --------------------------------------------------------------------------------
-    const materialTileMaxH = this._materialTileMaxH = new Material(
+    const materialTileMaxH = new Material(
       quadVert,
       dofTileMaxFrag( false ),
       {
@@ -63,7 +65,6 @@ export class DoF extends SceneNode {
       },
     );
     materialTileMaxH.addUniform( 'cameraNearFar', '2f', deferredCamera.near, deferredCamera.far );
-    materialTileMaxH.addUniform( 'dofDepthSize', '2f', ...params );
     materialTileMaxH.addUniformTextures(
       'sampler0',
       GL_TEXTURE_2D,
@@ -97,7 +98,7 @@ export class DoF extends SceneNode {
       targetTileMaxV.texture,
     );
 
-    const materialPresort = this._materialPresort = new Material(
+    const materialPresort = new Material(
       quadVert,
       dofPresortFrag,
       {
@@ -105,7 +106,6 @@ export class DoF extends SceneNode {
       },
     );
     materialPresort.addUniform( 'cameraNearFar', '2f', deferredCamera.near, deferredCamera.far );
-    materialPresort.addUniform( 'dofDepthSize', '2f', ...params );
     materialPresort.addUniformTextures(
       'sampler0',
       GL_TEXTURE_2D,
@@ -207,8 +207,20 @@ export class DoF extends SceneNode {
       quadPost.name = 'quadPost';
     }
 
+    // -- lambda -----------------------------------------------------------------------------------
+    const lambdaParams = new Lambda( {
+      onUpdate: () => {
+        const [ depth, size ] = this.params;
+        const depthMul = auto( 'DoF/DepthMul' );
+
+        materialTileMaxH.addUniform( 'dofDepthSize', '2f', depth * depthMul, size );
+        materialPresort.addUniform( 'dofDepthSize', '2f', depth * depthMul, size );
+      },
+    } );
+
     // -- children ---------------------------------------------------------------------------------
     this.children = [
+      lambdaParams,
       quadTileMaxH,
       quadTileMaxV,
       quadTileGather,
@@ -216,13 +228,5 @@ export class DoF extends SceneNode {
       quadBlur,
       quadPost,
     ];
-  }
-
-  public setParams( ...params: [
-    depth: number,
-    size: number,
-  ] ): void {
-    this._materialTileMaxH.addUniform( 'dofDepthSize', '2f', ...params );
-    this._materialPresort.addUniform( 'dofDepthSize', '2f', ...params );
   }
 }

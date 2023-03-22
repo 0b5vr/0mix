@@ -35,7 +35,14 @@ export const postFrag = build( () => {
       mul( add( uv, mul( normalize( uvt ), tan( mul( length( uvt ), a ) ) ) ), zoom ),
       mul( 0.5, sub( 1.0, zoom ) )
     ) ) as GLSLExpression<'vec2'>;
-    retFn( sw( texture( sampler0, p ), 'xyz' ) );
+
+    const col = def( 'vec3', sw( texture( sampler0, p ), 'xyz' ) );
+    assign( col, mix(
+      col,
+      mad( -0.5, cos( mul( PI, cosAmp, sw( col, 'xxx' ) ) ), 0.5 ),
+      glslSaturate( cosAmp ),
+    ) );
+    retFn( col );
   } );
 
   main( () => {
@@ -66,11 +73,6 @@ export const postFrag = build( () => {
     addAssign( col, mul( 0.002, vec3( sub( random(), 0.5 ) ) ) );
     assign( col, glslSaturate( col ) );
     assign( col, sRGBOETF( col ) );
-    assign( col, mix(
-      col,
-      mad( -0.5, cos( mul( PI, cosAmp, sw( col, 'xxx' ) ) ), 0.5 ),
-      glslSaturate( cosAmp ),
-    ) );
 
     const lift = mix(
       mix(
