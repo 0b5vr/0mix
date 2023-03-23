@@ -16,7 +16,7 @@ import { auto } from '../../globals/automaton';
 import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { deferredShadeFrag } from './shaders/deferredShadeFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
-import { ibllutTexture } from '../IBLLUTCalc/IBLLUTCalc';
+import { ibllutTexture } from '../../globals/ibllutCalc';
 import { mat4Inverse, mat4Multiply } from '@0b5vr/experimental';
 import { quadGeometry } from '../../globals/quadGeometry';
 import { quadVert } from '../../shaders/common/quadVert';

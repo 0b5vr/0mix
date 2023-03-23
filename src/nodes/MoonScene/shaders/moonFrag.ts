@@ -1,12 +1,11 @@
+import { GLSLExpression, add, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, glFragDepth, insert, length, main, mix, mul, normalize, retFn, sub, subAssign, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
-import { add, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, glFragDepth, insert, length, mad, main, mul, normalize, retFn, sq, sub, sw, vec4 } from '../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
-import { perlin3d } from '../../../shaders/modules/perlin3d';
 import { raymarch } from '../../../shaders/modules/raymarch';
 import { setupRoRd } from '../../../shaders/modules/setupRoRd';
-import { voronoi3d } from '../../../shaders/modules/voronoi3d';
+import { triplanarMapping } from '../../../shaders/modules/triplanarMapping';
 
 export const moonFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
@@ -23,11 +22,17 @@ export const moonFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   const fragMisc = defOut( 'vec4', 3 );
 
   const time = defUniformNamed( 'float', 'time' );
+  const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
 
   const { init } = glslDefRandom();
 
+  const fnTriplanar = ( p: GLSLExpression<'vec3'> ): GLSLExpression<'vec4'> => (
+    triplanarMapping( p, normalize( p ), 5.0, ( uv ) => texture( sampler0, uv ) )
+  );
+
   const map = defFn( 'vec4', [ 'vec3' ], ( p ) => {
-    const d = def( 'float', sub( length( p ), 0.5 ) );
+    const d = def( 'float', sub( length( p ), 0.9 ) );
+    subAssign( d, mul( 0.02, sw( fnTriplanar( p ), 'x' ) ) );
 
     retFn( vec4( d, 0, 0, 0 ) );
   } );
@@ -35,8 +40,7 @@ export const moonFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   const mapForN = defFn( 'vec4', [ 'vec3' ], ( p ) => {
     retFn( sub(
       map( p ),
-      sq( mul( 0.1, sw( voronoi3d( mul( 10.0, add( p, mul( 0.1, time ) ) ) ), 'w' ) ) ),
-      vec4( mul( 0.0001, perlin3d( mad( 100.0, p, 1000.0 ) ) ) ),
+      // mul( 0.03, sw( fnTriplanar( p ), 'x' ) ),
     ) );
   } );
 
@@ -47,12 +51,12 @@ export const moonFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
     const [ ro, rd ] = setupRoRd( p );
 
     const { rp } = raymarch( {
-      iter: 100,
+      iter: 20,
       ro,
       rd,
       map,
-      marchMultiplier: 0.7,
-      discardThreshold: 1E-1,
+      marchMultiplier: 0.9,
+      discardThreshold: 1E-2,
     } );
 
     const modelPos = def( 'vec4', mul( modelMatrix, vec4( rp, 1.0 ) ) );
@@ -69,7 +73,9 @@ export const moonFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
 
     const N = def( 'vec3', calcNormal( { rp, map: mapForN, delta: 1E-4 } ) );
 
-    assign( fragColor, vec4( 0.5, 0.5, 0.5, 1.0 ) );
+    const col = mix( 0.3, 0.6, sw( fnTriplanar( rp ), 'x' ) );
+
+    assign( fragColor, vec4( vec3( col ), 1.0 ) );
     assign( fragPosition, vec4( sw( modelPos, 'xyz' ), depth ) );
     assign( fragNormal, vec4( normalize( mul( normalMatrix, N ) ), MTL_PBR_ROUGHNESS_METALLIC ) );
     assign( fragMisc, vec4( 0.9, 0.0, 0.0, 0.0 ) );

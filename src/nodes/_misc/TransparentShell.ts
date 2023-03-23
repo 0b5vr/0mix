@@ -8,7 +8,7 @@ import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { forwardPBRColorFrag } from '../../shaders/common/forwardPBRColorFrag';
 import { genCube } from '../../geometries/genCube';
-import { ibllutTexture } from '../IBLLUTCalc/IBLLUTCalc';
+import { ibllutTexture } from '../../globals/ibllutCalc';
 import { objectVert } from '../../shaders/common/objectVert';
 import { zeroTexture } from '../../globals/zeroTexture';
 

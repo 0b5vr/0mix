@@ -3,7 +3,6 @@ import { BufferTextureRenderTarget } from './heck/BufferTextureRenderTarget';
 import { Capture } from './nodes/Capture/Capture';
 import { Dog } from './heck/Dog';
 import { FluidScene } from './nodes/FluidScene/FluidScene';
-import { IBLLUTCalc } from './nodes/IBLLUTCalc/IBLLUTCalc';
 import { InkScene } from './nodes/InkScene/InkScene';
 import { KansokushaScene } from './nodes/KansokushaScene/KansokushaScene';
 import { KeyboardScene } from './nodes/KeyboardScene/KeyboardScene';
@@ -34,7 +33,9 @@ import { auto, automaton } from './globals/automaton';
 import { cameraStackATarget, cameraStackBTarget } from './globals/cameraStackTargets';
 import { canvas } from './globals/canvas';
 import { canvasRenderTarget } from './globals/canvasRenderTarget';
+import { ibllutCalc } from './globals/ibllutCalc';
 import { mixerTarget } from './globals/mixerTarget';
+import { moonTexGen } from './globals/moonTexGen';
 import { music } from './globals/music';
 import { postTarget } from './globals/postTarget';
 import { promiseGui } from './globals/gui';
@@ -110,8 +111,6 @@ if ( import.meta.env.DEV ) {
 // const plane = new Plane();
 // dog.root.children.push( plane );
 
-const iblLutCalc = new IBLLUTCalc();
-
 // const plane = new Plane();
 // plane.transform.position = [ 0.0, 3.0, 5.0 ];
 // plane.transform.scale = [ 1.0, 1.0, 1.0 ];
@@ -145,7 +144,8 @@ const scenesB = [
 ];
 
 dog.root.children.push(
-  iblLutCalc,
+  ibllutCalc,
+  moonTexGen,
   ...scenesA,
   ...scenesB,
   // plane,

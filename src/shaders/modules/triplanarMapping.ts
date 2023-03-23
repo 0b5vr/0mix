@@ -11,6 +11,6 @@ export function triplanarMapping<T extends GLSLExpression<'float'> | GLSLExpress
   return div( add(
     mul( fn( sw( p, 'zy' ) ) as any, sw( nPowered, 'x' ) ),
     mul( fn( sw( p, 'xz' ) ) as any, sw( nPowered, 'y' ) ),
-    mul( fn( sw( p, 'xy' ) ) as any, sw( nPowered, 'z' ) ),
+    mul( fn( sw( p, 'yx' ) ) as any, sw( nPowered, 'z' ) ),
   ), dot( nPowered, vec3( 1.0 ) ) ) as any;
 }

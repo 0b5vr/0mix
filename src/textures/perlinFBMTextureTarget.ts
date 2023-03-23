@@ -3,7 +3,7 @@ import { perlinFBMFrag } from './shaders/perlinFBMFrag';
 import { quadVert } from '../shaders/common/quadVert';
 
 /**
- * Intended to be used in music
+ * the classic fbm
  */
 export const perlinFBMTextureTarget = new ShaderRenderTarget(
   2048,

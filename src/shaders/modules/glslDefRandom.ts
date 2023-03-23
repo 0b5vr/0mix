@@ -1,4 +1,4 @@
-import { GLSLExpression, GLSLToken, assign, cache, defFn, defGlobal, div, float, floatBitsToUint, insert, retFn, sw, unrollLoop, vec4 } from '../shaderBuilder';
+import { GLSLExpression, GLSLToken, assign, cache, defFn, defGlobal, div, float, floatBitsToUint, retFn, sw, vec4 } from '../shaderBuilder';
 import { pcg4d } from './pcg4d';
 
 const symbolSeed = Symbol();
@@ -28,7 +28,6 @@ export function glslDefRandom(): {
     symbolInitRandom,
     () => ( _seed: GLSLExpression<'vec4'> ) => {
       assign( seed, floatBitsToUint( _seed ) );
-      unrollLoop( 3, () => insert( `${ random() };` ) );
     }
   );
 
