@@ -1447,12 +1447,12 @@ vec2 mainaudio(vec4 time){
 //   conspiracy, ctrl+alt+test, doxas, epoch, fairlight,
 //   farbrausch, limp ninja, lj & virgill, logicoma, loonies,
 //   luchak, mercury, mfx, mrdoob, ninjadev,
-//   orange, prismbeings, rgba, satori, slay bells,
-//   srtuss, still, yx
+//   orange, prismbeings, rebels, rgba, satori,
+//   slay bells, srtuss, still, yx
 
 // oh, we will also do our demoparty three weeks later!
 //   sessions in c4 lan 2023 spring
-//   fri, 28 april - sun, 30 april
+//   28 april, fri - 30 april, sun
 //   twin messe shizuoka, japan + online streaming
 //
 //   https://sessions.frontl1ne.net
