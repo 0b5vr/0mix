@@ -8,7 +8,7 @@ import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { forwardPBRColorFrag } from '../../shaders/common/forwardPBRColorFrag';
 import { genCube } from '../../geometries/genCube';
-import { ibllutObservers } from '../../globals/globalObservers';
+import { ibllutTexture } from '../IBLLUTCalc/IBLLUTCalc';
 import { objectVert } from '../../shaders/common/objectVert';
 import { zeroTexture } from '../../globals/zeroTexture';
 
@@ -64,6 +64,11 @@ export class TransparentShell extends SceneNode {
       GL_TEXTURE_2D,
       cubemapNode?.targetWet?.texture ?? zeroTexture,
     );
+    forwardShell.addUniformTextures(
+      'samplerIBLLUT',
+      GL_TEXTURE_2D,
+      ibllutTexture,
+    );
 
     const meshShellFront = new Mesh( {
       geometry: geometryShellFront,
@@ -79,15 +84,6 @@ export class TransparentShell extends SceneNode {
 
     // -- receive stuff ----------------------------------------------------------------------------
     const lightUniformsLambda = createLightUniformsLambda( [ forwardShell ] );
-
-    // -- event listeners --------------------------------------------------------------------------
-    ibllutObservers.push( ( ibllutTexture ) => {
-      forwardShell.addUniformTextures(
-        'samplerIBLLUT',
-        GL_TEXTURE_2D,
-        ibllutTexture,
-      );
-    } );
 
     // -- components -------------------------------------------------------------------------------
     this.children = [
