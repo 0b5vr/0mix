@@ -58,6 +58,7 @@ export const cubemapSampleFrag = build( () => {
       addAssign( accum, mul(
         dotNL,
         texture( samplerCubemap, cubemapUV( L, num( 255.0 / 256.0 ) ) ),
+        1.0 / SAMPLES,
       ) );
     } );
 
