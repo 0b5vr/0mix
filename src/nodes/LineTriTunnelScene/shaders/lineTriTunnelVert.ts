@@ -16,7 +16,7 @@ export const lineTriTunnelVert = build( () => {
 
   main( () => {
     // -- create local position --------------------------------------------------------------------
-    const t = add( mul( -0.1, y ), mul( TAU / 3.0, x ), mul( 0.1, time ) );
+    const t = add( mul( -TAU / 50.0, y ), mul( TAU / 3.0, x ), mul( 0.1, time ) );
     const position = def( 'vec4', vec4(
       vec2( cos( t ), sin( t ) ),
       neg( mod( add( mul( -0.3, y ), mul( -0.6, time ) ), 15.0 ) ),
