@@ -1,10 +1,16 @@
 import { CameraStack } from '../CameraStack/CameraStack';
+import { GL_TEXTURE_2D } from '../../gl/constants';
+import { HALF_SQRT_TWO } from '../../utils/constants';
 import { Lambda } from '../../heck/components/Lambda';
+import { Material } from '../../heck/Material';
+import { Mesh } from '../../heck/components/Mesh';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { RaymarcherNode } from '../utils/RaymarcherNode';
 import { SceneNode } from '../../heck/components/SceneNode';
-import { arraySerial, quatRotationY } from '@0b5vr/experimental';
+import { arraySerial, quatRotationY, vec3ApplyQuaternion } from '@0b5vr/experimental';
 import { cameraStackATarget } from '../../globals/cameraStackTargets';
+import { deskFrag } from './shaders/deskFrag';
+import { dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { genCube } from '../../geometries/genCube';
 import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
@@ -12,7 +18,10 @@ import { keyboardBaseFrag } from './shaders/keyboardBaseFrag';
 import { keycapFrag } from './shaders/keycapFrag';
 import { keycapVert } from './shaders/keycapVert';
 import { mainCameraStackResources } from '../CameraStack/mainCameraStackResources';
-import { swapShadowMap1 } from '../../globals/swapShadowMap';
+import { moonTexture } from '../../globals/moonTexGen';
+import { objectVert } from '../../shaders/common/objectVert';
+import { quad3DGeometry } from '../../globals/quad3DGeometry';
+import { swapShadowMap1, swapShadowMap2 } from '../../globals/swapShadowMap';
 
 export class KeyboardScene extends SceneNode {
   public constructor() {
@@ -26,8 +35,16 @@ export class KeyboardScene extends SceneNode {
       swapShadowMap: swapShadowMap1,
       shadowMapFov: 30.0,
     } );
-    light1.transform.lookAt( [ 1.0, 2.0, 2.0 ] );
-    light1.color = [ 100.0, 100.0, 100.0 ];
+    light1.transform.lookAt( [ 4.0, 8.0, 8.0 ] );
+    light1.color = [ 1000.0, 1000.0, 1000.0 ];
+
+    const light2 = new PointLightNode( {
+      scene,
+      swapShadowMap: swapShadowMap2,
+      shadowMapFov: 30.0,
+    } );
+    light2.transform.lookAt( [ 0.0, 8.0, -4.0 ] );
+    light2.color = [ 100.0, 100.0, 100.0 ];
 
     // -- keycaps ----------------------------------------------------------------------------------
     const geometryKeycaps = genCube();
@@ -113,16 +130,41 @@ export class KeyboardScene extends SceneNode {
         keyboardBase,
       ],
     } );
-    keyboard.transform.scale = [ 0.01, 0.01, 0.01 ];
+    keyboard.transform.scale = [ 0.1, 0.1, 0.1 ];
 
-    const lambdaSpeen = new Lambda( {
-      onUpdate: ( { time } ) => {
-        keyboard.transform.rotation = quatRotationY( time );
+    // -- desk -------------------------------------------------------------------------------------
+    const deskDeferred = new Material(
+      objectVert,
+      deskFrag,
+      {
+        initOptions: { geometry: quad3DGeometry, target: dummyRenderTarget4 },
       },
+    );
+
+    deskDeferred.addUniformTextures( 'sampler0', GL_TEXTURE_2D, moonTexture );
+
+    if ( import.meta.hot ) {
+      import.meta.hot.accept(
+        './shaders/deskFrag',
+        ( { deskFrag } ) => {
+          deskDeferred.replaceShader( undefined, deskFrag );
+        },
+      );
+    }
+
+    const deskNode = new SceneNode();
+    deskNode.transform.rotation = [ -HALF_SQRT_TWO, 0.0, 0.0, HALF_SQRT_TWO ];
+    deskNode.transform.position = [ 0.0, -0.2, 0.0 ];
+    deskNode.transform.scale = [ 10.0, 10.0, 10.0 ];
+
+    const desk = new Mesh( {
+      geometry: quad3DGeometry,
+      materials: { deferred: deskDeferred },
     } );
+    deskNode.children.push( desk );
 
     if ( import.meta.env.DEV ) {
-      lambdaSpeen.name = 'speen';
+      desk.name = 'desk';
     }
 
     // -- camera -----------------------------------------------------------------------------------
@@ -132,19 +174,30 @@ export class KeyboardScene extends SceneNode {
       target: cameraStackATarget,
       useAO: true,
       near: 0.01,
-      dofParams: [ 0.3, 16.0 ],
+      dofParams: [ 3.2, 16.0 ],
     } );
-    camera.transform.lookAt(
-      [ 0.0, 0.1, 0.3 ],
-      undefined,
-      -0.2,
-    ); // = 5.0;
+
+    const lambdaSpeen = new Lambda( {
+      onUpdate: ( { time } ) => {
+        camera.transform.lookAt(
+          vec3ApplyQuaternion( [ 0.0, 1.5, 3.0 ], quatRotationY( time ) ),
+          [ 0.0, 0.0, 0.0 ],
+          -0.2,
+        );
+      },
+    } );
+
+    if ( import.meta.env.DEV ) {
+      lambdaSpeen.name = 'speen';
+    }
 
     // -- children ---------------------------------------------------------------------------------
     this.children = [
       light1,
+      light2,
       lambdaSpeen,
       keyboard,
+      deskNode,
       camera,
     ];
   }

@@ -1,4 +1,4 @@
-import { addAssign, build, def, defInNamed, defOut, defUniformNamed, insert, main, mul, pow, sin, subAssign, sw, texture } from '../../../shaders/shaderBuilder';
+import { addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, insert, main, mul, pow, sin, subAssign, sw, texture } from '../../../shaders/shaderBuilder';
 
 export const moonTexModFrag = build( () => {
   insert( 'precision highp float;' );
@@ -17,5 +17,7 @@ export const moonTexModFrag = build( () => {
     addAssign( height, mul( 0.6, pow( sin( mul( 3.0, sw( tex, 'x' ) ) ), 20.0 ) ) );
     addAssign( height, mul( 0.3, pow( sin( mul( 2.4, sw( tex, 'y' ) ) ), 10.0 ) ) );
     subAssign( height, mul( 0.1, sw( tex, 'z' ) ) );
+
+    assign( sw( fragColor, 'z' ), sw( tex, 'z' ) );
   } );
 } );

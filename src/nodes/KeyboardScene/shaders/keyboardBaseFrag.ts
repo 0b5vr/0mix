@@ -87,10 +87,10 @@ export const keyboardBaseFrag = ( tag: 'deferred' | 'depth' ): string => build( 
 
     const N = def( 'vec3', calcNormal( { rp, map: mapForN, delta: 1E-5 } ) );
 
-    assign( fragColor, vec4( vec3( 0.5 ), 1.0 ) );
+    assign( fragColor, vec4( 0.04, 0.04, 0.04, 1.0 ) );
     assign( fragPosition, vec4( sw( modelPos, 'xyz' ), depth ) );
     assign( fragNormal, vec4( normalize( mul( normalMatrix, N ) ), MTL_PBR_ROUGHNESS_METALLIC ) );
-    assign( fragMisc, vec4( 0.1, 1.0, 0.0, 0.0 ) );
+    assign( fragMisc, vec4( 0.1, 0.0, 0.0, 0.0 ) );
 
   } );
 } );
