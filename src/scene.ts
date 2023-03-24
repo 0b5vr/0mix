@@ -7,6 +7,7 @@ import { InkScene } from './nodes/InkScene/InkScene';
 import { KansokushaScene } from './nodes/KansokushaScene/KansokushaScene';
 import { KeyboardScene } from './nodes/KeyboardScene/KeyboardScene';
 import { Lambda } from './heck/components/Lambda';
+import { LineRings3DScene } from './nodes/LineRings3DScene/LineRings3DScene';
 import { LineRingsScene } from './nodes/LineRingsScene/LineRingsScene';
 import { LineTriTunnelScene } from './nodes/LineTriTunnelScene/LineTriTunnelScene';
 import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
@@ -141,6 +142,7 @@ const scenesB = [
   new PlexusScene(),
   new NoisePlaneScene(),
   new KansokushaScene(),
+  new LineRings3DScene(),
 ];
 
 dog.root.children.push(

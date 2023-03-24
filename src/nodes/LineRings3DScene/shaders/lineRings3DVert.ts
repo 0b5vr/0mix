@@ -1,7 +1,7 @@
 import { TAU } from '../../../utils/constants';
-import { add, assign, build, cos, def, defIn, defOutNamed, defUniformNamed, divAssign, glPosition, main, mod, mul, neg, sin, sw, vec2, vec4 } from '../../../shaders/shaderBuilder';
+import { assign, build, cos, def, defIn, defOutNamed, defUniformNamed, divAssign, glPosition, mad, main, mul, sin, sw, vec2, vec4 } from '../../../shaders/shaderBuilder';
 
-export const lineTriTunnelVert = build( () => {
+export const lineRings3DVert = build( () => {
   const x = defIn( 'float', 0 );
   const y = defIn( 'float', 1 );
 
@@ -16,10 +16,11 @@ export const lineTriTunnelVert = build( () => {
 
   main( () => {
     // -- create local position --------------------------------------------------------------------
-    const t = add( mul( -0.1, y ), mul( TAU / 3.0, x ), mul( 0.1, time ) );
+    const t = mul( x, TAU / 255.0 );
+    const r = mad( 0.1, sin( mad( 1.0, y, time ) ), 0.5 );
     const position = def( 'vec4', vec4(
-      vec2( cos( t ), sin( t ) ),
-      neg( mod( add( mul( -0.3, y ), mul( -0.6, time ) ), 15.0 ) ),
+      mul( r, vec2( cos( t ), sin( t ) ) ),
+      mul( -0.1, y ),
       1.0,
     ) );
 
