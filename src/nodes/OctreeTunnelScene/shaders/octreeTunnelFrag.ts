@@ -49,6 +49,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
       2.0,
       smoothstep( -0.5, 0.5, sin( add( mul( 0.5, time ), mul( TAU, haha ) ) ) ),
     ) );
+    addAssign( haha, mul( -0.3, time ) );
 
     const rot = def( 'vec3', ro );
     addAssign( sw( rot, 'z' ), haha );

@@ -48,7 +48,6 @@ export class OctreeTunnelScene extends SceneNode {
 
     const lambdaUpdateCamera = new Lambda( {
       onUpdate( { time } ) {
-        camera.transform.position = [ 0.0, 0.0, -0.3 * time ];
         camera.transform.rotation = quatRotationZ( 0.1 * time );
       },
     } );
