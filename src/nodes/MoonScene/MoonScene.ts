@@ -1,5 +1,6 @@
 import { CameraStack } from '../CameraStack/CameraStack';
 import { GL_TEXTURE_2D } from '../../gl/constants';
+import { InstancedLines } from '../utils/InstancedLines';
 import { Lambda } from '../../heck/components/Lambda';
 import { LightShaft } from '../Lights/LightShaft';
 import { PointLightNode } from '../Lights/PointLightNode';
@@ -8,6 +9,7 @@ import { SceneNode } from '../../heck/components/SceneNode';
 import { cameraStackATarget } from '../../globals/cameraStackTargets';
 import { genOctahedron } from '../../geometries/genOctahedron';
 import { mainCameraStackResources } from '../CameraStack/mainCameraStackResources';
+import { mebiusVert } from './shaders/mebiusVert';
 import { moonFrag } from './shaders/moonFrag';
 import { moonTexture } from '../../globals/moonTexGen';
 import { objectVert } from '../../shaders/common/objectVert';
@@ -68,13 +70,26 @@ export class MoonScene extends SceneNode {
       );
     }
 
+    // -- mebius -----------------------------------------------------------------------------------
+    const mebius = new InstancedLines( mebiusVert, 257, 9 );
+    mebius.deferred.addUniform( 'strength', '1f', 1.0 );
+
+    if ( import.meta.hot ) {
+      import.meta.hot.accept(
+        './shaders/mebiusVert',
+        ( { mebiusVert } ) => {
+          mebius.materials.deferred!.replaceShader( mebiusVert );
+        }
+      );
+    }
+
     // -- camera -----------------------------------------------------------------------------------
     const camera = new CameraStack( {
       scene,
       resources: mainCameraStackResources,
       target: cameraStackATarget,
       useAO: true,
-      dofParams: [ 3.0, 16.0 ],
+      dofParams: [ 3.0, 8.0 ],
     } );
     camera.transform.lookAt(
       [ 0.0, 0.0, 3.5 ],
@@ -97,6 +112,7 @@ export class MoonScene extends SceneNode {
       light1,
       light2,
       lambdaSpeen,
+      mebius,
       raymarcher,
       camera,
     ];

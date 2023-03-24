@@ -8,6 +8,8 @@ import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
 
 export class InstancedLines extends Mesh {
+  public deferred: Material;
+
   public constructor(
     vert: string,
     lineLength: number,
@@ -40,5 +42,7 @@ export class InstancedLines extends Mesh {
       geometry,
       materials: { deferred },
     } );
+
+    this.deferred = deferred;
   }
 }
