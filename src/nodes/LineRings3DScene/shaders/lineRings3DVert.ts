@@ -1,5 +1,7 @@
 import { TAU } from '../../../utils/constants';
-import { assign, build, cos, def, defIn, defOutNamed, defUniformNamed, divAssign, glPosition, mad, main, mul, sin, sw, vec2, vec4 } from '../../../shaders/shaderBuilder';
+import { addAssign, assign, build, cos, def, defIn, defOutNamed, defUniformNamed, div, divAssign, floor, glPosition, mad, main, mod, mul, mulAssign, sin, subAssign, sw, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { cyclicNoise } from '../../../shaders/modules/cyclicNoise';
+import { rotate2D } from '../../../shaders/modules/rotate2D';
 
 export const lineRings3DVert = build( () => {
   const x = defIn( 'float', 0 );
@@ -16,11 +18,25 @@ export const lineRings3DVert = build( () => {
 
   main( () => {
     // -- create local position --------------------------------------------------------------------
+    const p = def( 'vec2', vec2(
+      mod( y, 30.0 ),
+      floor( div( y, 30.0 ) ),
+    ) );
+    subAssign( p, vec2( 14.5, 4.5 ) );
+    mulAssign( p, 0.3 );
+
+    const n = def( 'vec3', cyclicNoise( vec3( p, mul( 0.5, time ) ), { freq: 1.2 } ) );
+
     const t = mul( x, TAU / 255.0 );
-    const r = mad( 0.1, sin( mad( 1.0, y, time ) ), 0.5 );
+    const r = mad( 0.05, sw( n, 'z' ), 0.1 );
+    const ring = def( 'vec3', vec3( mul( r, vec2( cos( t ), sin( t ) ) ), 0.0 ) );
+    mulAssign( sw( ring, 'zx' ), rotate2D( mul( TAU, sw( n, 'y' ) ) ) );
+    mulAssign( sw( ring, 'yz' ), rotate2D( mul( TAU, sw( n, 'x' ) ) ) );
+
+    addAssign( ring, vec3( p, -5.0 ) );
+
     const position = def( 'vec4', vec4(
-      mul( r, vec2( cos( t ), sin( t ) ) ),
-      mul( -0.1, y ),
+      ring,
       1.0,
     ) );
 

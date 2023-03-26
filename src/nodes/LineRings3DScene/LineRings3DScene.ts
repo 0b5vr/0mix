@@ -10,7 +10,7 @@ export class LineRings3DScene extends SceneNode {
     super();
 
     // -- lines ------------------------------------------------------------------------------------
-    const lines = new InstancedLines( lineRings3DVert, 256, 100 );
+    const lines = new InstancedLines( lineRings3DVert, 256, 300 );
 
     if ( import.meta.hot ) {
       import.meta.hot.accept(
