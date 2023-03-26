@@ -49,6 +49,7 @@ export class Post extends SceneNode {
     this.children = [ quad ];
 
     // -- auto -------------------------------------------------------------------------------------
+    auto( 'Post/barrelAmp', ( { value } ) => material.addUniform( 'barrelAmp', '1f', value ) );
     auto( 'Post/cos', ( { value } ) => material.addUniform( 'cosAmp', '1f', value ) );
     auto( 'Post/colorGrade', ( { value } ) => material.addUniform( 'colorGrade', '1f', value ) );
   }

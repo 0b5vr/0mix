@@ -7,9 +7,7 @@ import { liftGammaGain } from '../../../../shaders/modules/liftGammaGain';
 import { sRGBOETF } from '../../../../shaders/modules/sRGBOETF';
 import { tonemapACESHill } from '../../../../shaders/modules/tonemapACESHill';
 
-const BARREL_ITER = 10;
-const BARREL_OFFSET = 0.0;
-const BARREL_AMP = 0.05;
+const BARREL_ITER = 40;
 
 export const postFrag = build( () => {
   insert( 'precision highp float;' );
@@ -19,6 +17,7 @@ export const postFrag = build( () => {
   const vUv = defInNamed( 'vec2', 'vUv' );
 
   const time = defUniformNamed( 'float', 'time' );
+  const barrelAmp = defUniformNamed( 'float', 'barrelAmp' );
   const colorGrade = defUniformNamed( 'float', 'colorGrade' );
   const cosAmp = defUniformNamed( 'float', 'cosAmp' );
   const aspect = defUniformNamed( 'float', 'aspect' );
@@ -63,8 +62,7 @@ export const postFrag = build( () => {
         glslSaturate( sub( 1.0, mul( 3.0, abs( sub( div( vec3( 1.0, 3.0, 5.0 ), 6.0 ), phase ) ) ) ) ) as GLSLExpression<'vec3'>,
         4.0 / BARREL_ITER
       );
-      const barrelAmp = add( BARREL_OFFSET, mul( BARREL_AMP, phase ) );
-      addAssign( tex, mul( a, barrel( barrelAmp, uv ) ) );
+      addAssign( tex, mul( a, barrel( mul( barrelAmp, phase ), uv ) ) );
     } );
 
     const col = def( 'vec3', tex );
