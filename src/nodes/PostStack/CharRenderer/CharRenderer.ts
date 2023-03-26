@@ -77,7 +77,7 @@ export class CharRenderer extends SceneNode {
     geometry.mode = GL_TRIANGLE_STRIP;
 
     // -- material render --------------------------------------------------------------------------
-    const forward = new Material(
+    const material = new Material(
       charRendererVert( anchor, offset ),
       charRendererFrag,
       {
@@ -86,7 +86,7 @@ export class CharRenderer extends SceneNode {
       },
     );
 
-    forward.addUniformTextures( 'samplerChar', GL_TEXTURE_2D, codeCharTexture );
+    material.addUniformTextures( 'samplerChar', GL_TEXTURE_2D, codeCharTexture );
 
     if ( import.meta.hot ) {
       import.meta.hot.accept(
@@ -95,7 +95,7 @@ export class CharRenderer extends SceneNode {
           './shaders/charRendererFrag',
         ],
         ( [ v, f ] ) => {
-          forward.replaceShader(
+          material.replaceShader(
             v?.charRendererVert( anchor, offset ),
             f?.charRendererFrag,
           );
@@ -106,12 +106,11 @@ export class CharRenderer extends SceneNode {
     // -- quad -------------------------------------------------------------------------------------
     const quad = new Quad( {
       geometry,
-      material: forward,
+      material,
       target,
+      depthTest: false,
+      depthWrite: false,
     } ); // TODO: Quad???
-
-    quad.depthTest = false;
-    quad.depthWrite = false;
 
     if ( import.meta.env.DEV ) {
       quad.name = 'quad';
@@ -131,7 +130,7 @@ export class CharRenderer extends SceneNode {
       onUpdate: ( { deltaTime } ) => {
         cdsScroll.target = this.scrollTarget;
         cdsScroll.update( deltaTime );
-        forward.addUniform( 'scroll', '1f', cdsScroll.value );
+        material.addUniform( 'scroll', '1f', cdsScroll.value );
       }
     } );
 

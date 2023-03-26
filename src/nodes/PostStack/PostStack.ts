@@ -12,6 +12,7 @@ import { RenderTarget } from '../../heck/RenderTarget';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { StatsText } from './StatsText';
 import { Swap } from '@0b5vr/experimental';
+import { Vectorscope } from './Vectorscope/Vectorscope';
 import { resizeObservers } from '../../globals/globalObservers';
 
 export interface PostStackOptions extends ComponentOptions {
@@ -86,6 +87,7 @@ export class PostStack extends SceneNode {
     } );
 
     const code = new Code( target );
+    const vectorscope = new Vectorscope( target );
     const statsText = new StatsText( target );
 
     // -- components -------------------------------------------------------------------------------
@@ -98,6 +100,7 @@ export class PostStack extends SceneNode {
       dct,
       pixelSorter,
       code,
+      vectorscope,
       statsText,
     ];
   }

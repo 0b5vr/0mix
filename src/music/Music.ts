@@ -3,6 +3,7 @@ import { GL_ARRAY_BUFFER, GL_FLOAT, GL_POINTS, GL_RASTERIZER_DISCARD, GL_STATIC_
 import { MUSIC_BPM } from '../config';
 import { Pool, arraySerial } from '@0b5vr/experimental';
 import { audio, sampleRate } from '../globals/audio';
+import { audioAnalyzerSplitter } from '../globals/audioAnalyzer';
 import { createDebounce } from '../utils/createDebounce';
 import { gl } from '../globals/canvas';
 import { glLazyProgram } from '../gl/glLazyProgram';
@@ -149,6 +150,7 @@ export class Music {
     // -- reader -----------------------------------------------------------------------------------
     BufferReaderNode.addModule( audio ).then( () => {
       this.__bufferReaderNode = new BufferReaderNode( audio );
+      this.__bufferReaderNode.connect( audioAnalyzerSplitter );
       this.__bufferReaderNode.connect( gainNode );
     } );
 

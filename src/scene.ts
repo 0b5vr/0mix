@@ -44,6 +44,7 @@ import { postTarget } from './globals/postTarget';
 import { promiseGui } from './globals/gui';
 import { randomTexture } from './globals/randomTexture';
 import { resizeObservers } from './globals/globalObservers';
+import { updateAudioAnalyzer } from './globals/audioAnalyzer';
 
 // == dog ==========================================================================================
 export const dog = new Dog();
@@ -69,6 +70,13 @@ if ( import.meta.env.DEV ) {
 
   dog.root.children.push( new Lambda( {
     onUpdate: () => {
+      updateAudioAnalyzer();
+    },
+    name: 'audioAnalyzer',
+  } ) );
+
+  dog.root.children.push( new Lambda( {
+    onUpdate: () => {
       automaton.update( MUSIC_BPM / 60.0 * music.time );
     },
     name: 'automaton',
@@ -80,6 +88,7 @@ if ( import.meta.env.DEV ) {
     onUpdate: () => {
       randomTexture.update();
       music.update();
+      updateAudioAnalyzer();
       automaton.update( MUSIC_BPM / 60.0 * music.time );
     },
   } ) );

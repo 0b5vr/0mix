@@ -2,6 +2,7 @@ import { GL_LINE_STRIP } from '../../gl/constants';
 import { Geometry } from '../../heck/Geometry';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
+import { arraySerial } from '@0b5vr/experimental';
 import { deferredWhiteUnlitFrag } from '../../shaders/common/deferredWhiteUnlitFrag';
 import { dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
@@ -21,8 +22,7 @@ export class InstancedLines extends Mesh {
     geometry.count = lineLength;
     geometry.mode = GL_LINE_STRIP;
 
-    const bufferInstanceArray = new Float32Array( Math.max( lineLength, lines ) )
-      .map( ( _, i ) => i );
+    const bufferInstanceArray = new Float32Array( arraySerial( Math.max( lineLength, lines ) ) );
     const bufferInstance = glCreateVertexbuffer( bufferInstanceArray );
 
     glVertexArrayBindVertexbuffer( geometry.vao, bufferInstance, 0, 1 );

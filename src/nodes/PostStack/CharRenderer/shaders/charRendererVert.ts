@@ -21,6 +21,7 @@ export const charRendererVert = (
     ), 5.0 ) );
     assign( vMeta, meta );
 
+    const scale = floor( div( sw( resolution, 'y' ), 360.0 ) );
     const pos = add(
       div(
         floor( add(
@@ -32,7 +33,7 @@ export const charRendererVert = (
               mul( -1.0, vec2( 0.0, scroll ) ),
               offset,
             ),
-            floor( div( sw( resolution, 'y' ), 360.0 ) ),
+            scale,
           ),
         ) ),
         resolution,
