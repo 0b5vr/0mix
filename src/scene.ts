@@ -17,6 +17,7 @@ import { MetaballScene } from './nodes/MetaballScene/MetaballScene';
 import { Mixer } from './nodes/Mixer/Mixer';
 import { MoonScene } from './nodes/MoonScene/MoonScene';
 import { NoisePlaneScene } from './nodes/NoisePlaneScene/NoisePlaneScene';
+import { OBSVRLogoBScene } from './nodes/OBSVRLogoBScene/OBSVRLogoBScene';
 import { OBSVRLogoScene } from './nodes/OBSVRLogoScene/OBSVRLogoScene';
 import { OctreeTunnelScene } from './nodes/OctreeTunnelScene/OctreeTunnelScene';
 import { ParticlesRingScene } from './nodes/ParticlesRingScene/ParticlesRingScene';
@@ -144,6 +145,7 @@ const scenesB = [
   new NoisePlaneScene(),
   new KansokushaScene(),
   new LineRings3DScene(),
+  new OBSVRLogoBScene(),
 ];
 
 dog.root.children.push(
