@@ -51,16 +51,18 @@ export class Accumulator extends SceneNode {
     // -- swapper ----------------------------------------------------------------------------------
     const swapper = new Lambda( {
       onUpdate: () => {
-        this.samples ++;
-        swap.swap();
+        if ( material.program ) {
+          this.samples ++;
+          swap.swap();
 
-        if ( this.samples > this.iter ) {
-          this.active = false; // THE LAMBDA ITSELF WILL ALSO BE DEACTIVATED
-        } else {
-          material.addUniform( 'samples', '1f', this.samples );
-          material.addUniformTextures( 'sampler0', GL_TEXTURE_2D, swap.i.texture );
+          if ( this.samples > this.iter ) {
+            this.active = false; // THE LAMBDA ITSELF WILL ALSO BE DEACTIVATED
+          } else {
+            material.addUniform( 'samples', '1f', this.samples );
+            material.addUniformTextures( 'sampler0', GL_TEXTURE_2D, swap.i.texture );
 
-          quad.target = swap.o;
+            quad.target = swap.o;
+          }
         }
       },
     } );
