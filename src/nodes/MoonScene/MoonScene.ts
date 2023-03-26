@@ -71,7 +71,7 @@ export class MoonScene extends SceneNode {
     }
 
     // -- mebius -----------------------------------------------------------------------------------
-    const mebius = new InstancedLines( mebiusVert, 257, 9 );
+    const mebius = new InstancedLines( mebiusVert, 257, 13 );
     mebius.deferred.addUniform( 'strength', '1f', 1.0 );
 
     if ( import.meta.hot ) {

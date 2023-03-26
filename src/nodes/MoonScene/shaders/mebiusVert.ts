@@ -18,7 +18,7 @@ export const mebiusVert = build( () => {
 
   main( () => {
     // -- create local position --------------------------------------------------------------------
-    const yt = mul( 0.04, mad( 1.0, y, -4.0 ) );
+    const yt = mul( 0.02, mad( 1.0, y, -6.0 ) );
     const phase = mul( TAU / 256.0, x );
 
     const r = mad( yt, cos( phase ), 1.4 );
