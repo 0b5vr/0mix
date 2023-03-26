@@ -17,7 +17,7 @@ const BAR = 240.0 / MUSIC_BPM;
 const SIXTEEN_BAR = 3840.0 / MUSIC_BPM;
 
 export const BLOCK_SIZE = 128;
-export const BLOCKS_PER_RENDER = 16;
+export const BLOCKS_PER_RENDER = 32;
 export const FRAMES_PER_RENDER = BLOCK_SIZE * BLOCKS_PER_RENDER;
 export const LATENCY_BLOCKS = 64;
 
