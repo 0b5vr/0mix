@@ -73,7 +73,7 @@ if ( !import.meta.env.DEV ) {
     notifyObservers( resizeObservers, reso );
 
     // -- prepare canvas ---------------------------------------------------------------------------
-    document.body.innerHTML = '<style>body{margin:0;display:flex;background:#000}canvas{max-width:100%;max-height:100%;margin:auto;cursor:none}</style>';
+    document.body.innerHTML = '<style>body{margin:0;background:#000}canvas{width:100%;height:100%;object-fit:contain;cursor:none}</style>';
     document.body.appendChild( canvas );
 
     // -- prepare stuff ----------------------------------------------------------------------------
