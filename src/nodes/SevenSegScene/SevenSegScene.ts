@@ -44,7 +44,8 @@ export class SevenSegScene extends SceneNode {
       scene,
       resources: mainCameraStackResources,
       target: cameraStackATarget,
-      dofParams: [ 5.0, 8.0 ],
+      dofParams: [ 3.0, 16.0 ],
+      fog: [ 0.0, 3.0, 10.0 ],
     } );
     camera.transform.lookAt(
       [ 0.0, 0.0, 5.0 ],

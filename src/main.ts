@@ -33,7 +33,10 @@ if ( import.meta.env.DEV ) {
 
     notifyObservers( resizeObservers, [ 1920, 1080 ] );
     dog.active = true;
-    ( automaton as AutomatonWithGUI ).play();
+
+    if ( ( automaton as AutomatonWithGUI ).isPlaying ) {
+      ( automaton as AutomatonWithGUI ).play();
+    }
   };
 
   promiseGui.then( ( gui ) => {
