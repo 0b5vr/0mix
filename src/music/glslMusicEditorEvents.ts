@@ -1438,7 +1438,7 @@ vec2 mainaudio(vec4 time){
   [ 0.0, GLSLMusicEditorEventType.MoveEnd, [ 1000, 0 ] ],
   [ 0.0, GLSLMusicEditorEventType.MoveEnd, [ 0, 1000 ] ], // pretend to be select all
   [ 1.0, GLSLMusicEditorEventType.Insert, '' ],
-  [ 8.0, GLSLMusicEditorEventType.Insert, `// 0b5vr glsl techno live set
+  [ 8.0, GLSLMusicEditorEventType.Insert, `// 0b5vr glsl techno live set - "0mix"
 // a 64kb webgl intro by 0b5vr
 // appeared in the revision 2023 pc 64k intro compo
 
