@@ -7,6 +7,7 @@ import { InkScene } from './nodes/InkScene/InkScene';
 import { KansokushaScene } from './nodes/KansokushaScene/KansokushaScene';
 import { KeyboardScene } from './nodes/KeyboardScene/KeyboardScene';
 import { Lambda } from './heck/components/Lambda';
+import { LineRhombusesScene } from './nodes/LineRhombusesScene/LineRhombusesScene';
 import { LineRings3DScene } from './nodes/LineRings3DScene/LineRings3DScene';
 import { LineRingsScene } from './nodes/LineRingsScene/LineRingsScene';
 import { LineTriTunnelScene } from './nodes/LineTriTunnelScene/LineTriTunnelScene';
@@ -155,6 +156,7 @@ const scenesB = [
   new KansokushaScene(),
   new LineRings3DScene(),
   new OBSVRLogoBScene(),
+  new LineRhombusesScene(),
 ];
 
 dog.root.children.push(
