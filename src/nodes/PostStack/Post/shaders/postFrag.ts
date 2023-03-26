@@ -59,7 +59,7 @@ export const postFrag = build( () => {
     unrollLoop( BARREL_ITER, ( i ) => {
       const phase = div( add( float( i ), 0.5 ), BARREL_ITER );
       const a = mul(
-        glslSaturate( sub( 1.0, mul( 3.0, abs( sub( div( vec3( 1.0, 3.0, 5.0 ), 6.0 ), phase ) ) ) ) ) as GLSLExpression<'vec3'>,
+        glslSaturate( sub( 1.0, mul( 3.0, abs( sub( div( vec3( 1.0, 2.0, 3.0 ), 4.0 ), phase ) ) ) ) ) as GLSLExpression<'vec3'>,
         4.0 / BARREL_ITER
       );
       addAssign( tex, mul( a, barrel( mul( barrelAmp, phase ), uv ) ) );
