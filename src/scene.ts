@@ -12,6 +12,7 @@ import { LineRingsScene } from './nodes/LineRingsScene/LineRingsScene';
 import { LineTriTunnelScene } from './nodes/LineTriTunnelScene/LineTriTunnelScene';
 import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
 import { LoadingScreen } from './nodes/LoadingScreen/LoadingScreen';
+import { MUSIC_BPM } from './config';
 import { MetaballScene } from './nodes/MetaballScene/MetaballScene';
 import { Mixer } from './nodes/Mixer/Mixer';
 import { MoonScene } from './nodes/MoonScene/MoonScene';
@@ -67,7 +68,7 @@ if ( import.meta.env.DEV ) {
 
   dog.root.children.push( new Lambda( {
     onUpdate: () => {
-      automaton.update( music.time );
+      automaton.update( MUSIC_BPM / 60.0 * music.time );
     },
     name: 'automaton',
   } ) );
@@ -78,7 +79,7 @@ if ( import.meta.env.DEV ) {
     onUpdate: () => {
       randomTexture.update();
       music.update();
-      automaton.update( music.time );
+      automaton.update( MUSIC_BPM / 60.0 * music.time );
     },
   } ) );
 }

@@ -46,7 +46,7 @@ export function automatonSetupMusic( music: Music ): void {
     automatonWithGUI.on( 'play', () => { music.isPlaying = true; } );
     automatonWithGUI.on( 'pause', () => { music.isPlaying = false; } );
     automatonWithGUI.on( 'seek', ( { time } ) => {
-      music.time = Math.max( 0.0, time );
+      music.time = Math.max( 0.0, time / MUSIC_BPM * 60.0 );
       resetGLSLMusicEditor();
       automatonWithGUI.reset();
     } );
@@ -57,9 +57,9 @@ export function automatonSetupMusic( music: Music ): void {
       if ( event.key === ' ' ) {
         automatonWithGUI.togglePlay();
       } else if ( event.key === 'ArrowLeft' ) {
-        automatonWithGUI.seek( automaton.time - 240.0 / MUSIC_BPM );
+        automatonWithGUI.seek( automaton.time - 4.0 );
       } else if ( event.key === 'ArrowRight' ) {
-        automatonWithGUI.seek( automaton.time + 240.0 / MUSIC_BPM );
+        automatonWithGUI.seek( automaton.time + 4.0 );
       }
     } );
   }
