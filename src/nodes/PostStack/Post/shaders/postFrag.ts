@@ -8,8 +8,8 @@ import { sRGBOETF } from '../../../../shaders/modules/sRGBOETF';
 import { tonemapACESHill } from '../../../../shaders/modules/tonemapACESHill';
 
 const BARREL_ITER = 10;
-const BARREL_OFFSET = 0.03;
-const BARREL_AMP = 0.03;
+const BARREL_OFFSET = 0.0;
+const BARREL_AMP = 0.05;
 
 export const postFrag = build( () => {
   insert( 'precision highp float;' );
@@ -82,7 +82,7 @@ export const postFrag = build( () => {
       ),
       mix(
         vec4( 0.01, -0.03, 0.05, -0.02 ),
-        vec4( -0.02, -0.01, 0.05, 0.01 ),
+        vec4( -0.03, 0.01, 0.05, 0.0 ),
         glslLinearstep( 2.0, 3.0, colorGrade ),
       ),
       glslLinearstep( 1.0, 2.0, colorGrade ),
@@ -95,7 +95,7 @@ export const postFrag = build( () => {
       ),
       mix(
         vec4( 0.0, 0.0, -0.02, 0.0 ),
-        vec4( 0.0, 0.02, 0.02, 0.02 ),
+        vec4( -0.02, 0.02, -0.01, 0.0 ),
         glslLinearstep( 2.0, 3.0, colorGrade ),
       ),
       glslLinearstep( 1.0, 2.0, colorGrade ),
@@ -108,7 +108,7 @@ export const postFrag = build( () => {
       ),
       mix(
         vec4( 0.86, 1.14, 0.87, 1.06 ),
-        vec4( 1.08, 1.01, 0.8, 1.01 ),
+        vec4( 1.04, 0.98, 1.02, 1.0 ),
         glslLinearstep( 2.0, 3.0, colorGrade ),
       ),
       glslLinearstep( 1.0, 2.0, colorGrade ),
