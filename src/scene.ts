@@ -1,5 +1,6 @@
 import { Blit } from './heck/components/Blit';
 import { BufferTextureRenderTarget } from './heck/BufferTextureRenderTarget';
+import { CapsuleScene } from './nodes/CapsuleScene/CapsuleScene';
 import { Capture } from './nodes/Capture/Capture';
 import { Dog } from './heck/Dog';
 import { FluidScene } from './nodes/FluidScene/FluidScene';
@@ -145,6 +146,7 @@ const scenesA = [
   new KeyboardScene(),
   new RieScene(),
   new InkScene(),
+  new CapsuleScene(),
 ];
 
 const scenesB = [

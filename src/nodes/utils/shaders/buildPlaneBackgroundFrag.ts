@@ -2,13 +2,13 @@ import { GLSLExpression, assign, build, def, defOut, defUniformNamed, div, glFra
 import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
 import { setupRoRd } from '../../../shaders/modules/setupRoRd';
 
-export type FluidBackgroundDefDrawType = () => (
+export type BackgroundDefDrawType = () => (
   ro: GLSLExpression<'vec3'>,
   rd: GLSLExpression<'vec3'>,
 ) => GLSLExpression<'vec4'>;
 
 export const buildPlaneBackgroundFrag = (
-  defDraw: FluidBackgroundDefDrawType,
+  defDraw: BackgroundDefDrawType,
 ): string => build( () => {
   insert( 'precision highp float;' );
 

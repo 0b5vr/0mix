@@ -1,4 +1,4 @@
-import { FluidBackgroundDefDrawType, buildPlaneBackgroundFrag } from './shaders/buildPlaneBackgroundFrag';
+import { BackgroundDefDrawType, buildPlaneBackgroundFrag } from './shaders/buildPlaneBackgroundFrag';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
 import { SceneNode } from '../../heck/components/SceneNode';
@@ -11,7 +11,7 @@ export class PlaneBackground extends SceneNode {
   public deferred: Material;
   public mesh: Mesh;
 
-  public constructor( draw: FluidBackgroundDefDrawType ) {
+  public constructor( draw: BackgroundDefDrawType ) {
     super();
 
     // -- render -----------------------------------------------------------------------------------

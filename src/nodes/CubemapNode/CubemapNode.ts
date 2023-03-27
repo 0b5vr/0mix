@@ -9,7 +9,6 @@ import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
 import { RawQuaternion, Swap, arraySerial } from '@0b5vr/experimental';
 import { SceneNode } from '../../heck/components/SceneNode';
-import { auto } from '../../globals/automaton';
 import { createCameraStackResources, resizeCameraStackResources } from '../CameraStack/CameraStackResources';
 import { cubemapBlurFrag } from './shaders/cubemapBlurFrag';
 import { cubemapMergeFrag } from './shaders/cubemapMergeFrag';
@@ -31,6 +30,7 @@ const CUBEMAP_ROTATIONS: RawQuaternion[] = [ // 🔥
 
 export interface CubemapNodeOptions extends ComponentOptions {
   scene: SceneNode;
+  accumMix?: number;
   near?: number;
   exclusionTags?: symbol[];
 }
@@ -58,7 +58,7 @@ export class CubemapNode extends SceneNode {
 
     this.visible = false;
 
-    const { scene } = options;
+    const { scene, accumMix } = options;
 
     // -- cameras ----------------------------------------------------------------------------------
     const cameras = targets.map( ( target, i ) => {
@@ -111,9 +111,7 @@ export class CubemapNode extends SceneNode {
       targetCompiled.texture,
     );
 
-    auto( 'cubemap/accumMix', ( { value } ) => {
-      materialSample.addUniform( 'accumMix', '1f', value );
-    } );
+    materialSample.addUniform( 'accumMix', '1f', accumMix ?? 0.1 );
 
     if ( import.meta.hot ) {
       import.meta.hot.accept( './shaders/cubemapSampleFrag', ( { cubemapSampleFrag } ) => {
