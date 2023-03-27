@@ -22,11 +22,11 @@ export const lineRhombusesVert = build( () => {
 
     const rhombus = def( 'vec3', mixStepChain(
       x,
-      vec3( 0.7, 0.0, 0.0 ),
-      [ 1.0, vec3( 0.0, 1.0, 0.0 ) ],
-      [ 2.0, vec3( -0.7, 0.0, 0.0 ) ],
-      [ 3.0, vec3( 0.0, -1.0, 0.0 ) ],
-      [ 4.0, vec3( 0.7, 0.0, 0.0 ) ],
+      vec3( 0.0, 1.0, 2.0 ),
+      [ 1.0, vec3( 0.0, 1.0, -2.0 ) ],
+      [ 2.0, vec3( 0.0, -1.0, -2.0 ) ],
+      [ 3.0, vec3( 0.0, -1.0, 2.0 ) ],
+      [ 4.0, vec3( 0.0, 1.0, 2.0 ) ],
     ) );
     mulAssign( rhombus, mul( 1.0, sw( dice, 'w' ) ) );
     addAssign( rhombus, vec3(
