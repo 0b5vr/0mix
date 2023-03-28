@@ -2,8 +2,8 @@ import { GLSLExpression, add, assign, build, def, defFn, defInNamed, defOut, def
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
 import { calcNormal } from '../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
-import { cyclicNoise } from '../../../shaders/modules/cyclicNoise';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
+import { perlin3d } from '../../../shaders/modules/perlin3d';
 import { raymarch } from '../../../shaders/modules/raymarch';
 import { sdbox } from '../../../shaders/modules/sdbox';
 import { setupRoRd } from '../../../shaders/modules/setupRoRd';
@@ -55,7 +55,7 @@ export const keyboardBaseFrag = ( tag: 'deferred' | 'depth' ): string => build( 
   const mapForN = defFn( 'vec4', [ 'vec3' ], ( p ) => {
     retFn( add(
       map( p ),
-      vec4( sw( mul( 0.001, cyclicNoise( mul( 20.0, p ), { warp: 0.4 } ) ), 'x' ) ),
+      vec4( mul( 0.001, perlin3d( mul( 8.0, p ) ) ) ),
     ) );
   } );
 
@@ -90,7 +90,7 @@ export const keyboardBaseFrag = ( tag: 'deferred' | 'depth' ): string => build( 
     assign( fragColor, vec4( 0.04, 0.04, 0.04, 1.0 ) );
     assign( fragPosition, vec4( sw( modelPos, 'xyz' ), depth ) );
     assign( fragNormal, vec4( normalize( mul( normalMatrix, N ) ), MTL_PBR_ROUGHNESS_METALLIC ) );
-    assign( fragMisc, vec4( 0.1, 0.0, 0.0, 0.0 ) );
+    assign( fragMisc, vec4( 0.15, 0.0, 0.0, 1.0 ) );
 
   } );
 } );

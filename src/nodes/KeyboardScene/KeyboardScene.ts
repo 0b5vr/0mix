@@ -1,12 +1,16 @@
 import { CameraStack } from '../CameraStack/CameraStack';
+import { CubemapNode } from '../CubemapNode/CubemapNode';
+import { FAR } from '../../config';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 import { HALF_SQRT_TWO } from '../../utils/constants';
 import { Lambda } from '../../heck/components/Lambda';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
+import { PlaneBackground } from '../utils/PlaneBackground';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { RaymarcherNode } from '../utils/RaymarcherNode';
 import { SceneNode } from '../../heck/components/SceneNode';
+import { abs, fract, length, mad, mul, smoothstep, step, sub, sw, vec3, vec4 } from '../../shaders/shaderBuilder';
 import { arraySerial, quatRotationY, vec3ApplyQuaternion } from '@0b5vr/experimental';
 import { cameraStackATarget } from '../../globals/cameraStackTargets';
 import { deskFrag } from './shaders/deskFrag';
@@ -14,6 +18,7 @@ import { dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { genCube } from '../../geometries/genCube';
 import { glCreateVertexbuffer } from '../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../gl/glVertexArrayBindVertexbuffer';
+import { isectPlane } from '../../shaders/modules/isectPlane';
 import { keyboardBaseFrag } from './shaders/keyboardBaseFrag';
 import { keycapFrag } from './shaders/keycapFrag';
 import { keycapVert } from './shaders/keycapVert';
@@ -21,13 +26,14 @@ import { mainCameraStackResources } from '../CameraStack/mainCameraStackResource
 import { moonTexture } from '../../globals/moonTexGen';
 import { objectVert } from '../../shaders/common/objectVert';
 import { quad3DGeometry } from '../../globals/quad3DGeometry';
-import { swapShadowMap1, swapShadowMap2 } from '../../globals/swapShadowMap';
+import { swapShadowMap1 } from '../../globals/swapShadowMap';
 
 export class KeyboardScene extends SceneNode {
   public constructor() {
     super();
 
     const scene = this;
+    const cubemapExclusionTag = Symbol();
 
     // -- lights -----------------------------------------------------------------------------------
     const light1 = new PointLightNode( {
@@ -37,14 +43,6 @@ export class KeyboardScene extends SceneNode {
     } );
     light1.transform.lookAt( [ 4.0, 8.0, 8.0 ] );
     light1.color = [ 1000.0, 1000.0, 1000.0 ];
-
-    const light2 = new PointLightNode( {
-      scene,
-      swapShadowMap: swapShadowMap2,
-      shadowMapFov: 30.0,
-    } );
-    light2.transform.lookAt( [ 0.0, 8.0, -4.0 ] );
-    light2.color = [ 100.0, 100.0, 100.0 ];
 
     // -- keycaps ----------------------------------------------------------------------------------
     const geometryKeycaps = genCube();
@@ -129,6 +127,7 @@ export class KeyboardScene extends SceneNode {
         keycap,
         keyboardBase,
       ],
+      tags: [ cubemapExclusionTag ],
     } );
     keyboard.transform.scale = [ 0.1, 0.1, 0.1 ];
 
@@ -155,11 +154,12 @@ export class KeyboardScene extends SceneNode {
     const deskNode = new SceneNode();
     deskNode.transform.rotation = [ -HALF_SQRT_TWO, 0.0, 0.0, HALF_SQRT_TWO ];
     deskNode.transform.position = [ 0.0, -0.2, 0.0 ];
-    deskNode.transform.scale = [ 10.0, 10.0, 10.0 ];
+    deskNode.transform.scale = [ 40.0, 40.0, 40.0 ];
 
     const desk = new Mesh( {
       geometry: quad3DGeometry,
       materials: { deferred: deskDeferred },
+      tags: [ cubemapExclusionTag ],
     } );
     deskNode.children.push( desk );
 
@@ -167,21 +167,52 @@ export class KeyboardScene extends SceneNode {
       desk.name = 'desk';
     }
 
+    // -- background -------------------------------------------------------------------------------
+    const background = new PlaneBackground( () => {
+      return ( ro, rd ) => {
+        const isect = isectPlane(
+          sub( ro, vec3( 0.0, 10.0, 0.0 ) ),
+          rd,
+          vec3( 0.0, -1.0, 0.0 ),
+        );
+        const rp = mad( isect, rd, ro );
+        const shape = mul(
+          smoothstep( 0.2, 0.1, length( sub( fract( mul( 0.1, sw( rp, 'xz' ) ) ), 0.5 ) ) ),
+          step( abs( sw( rp, 'x' ) ), 40.0 ),
+          step( abs( sw( rp, 'z' ) ), 40.0 ),
+          step( isect, FAR - 1E-3 ),
+        );
+
+        return vec4(
+          vec3( shape ),
+          1.0,
+        );
+      };
+    } );
+
+    // -- cubemap ----------------------------------------------------------------------------------
+    const cubemapNode = new CubemapNode( {
+      scene,
+      accumMix: 0.3,
+      exclusionTags: [ cubemapExclusionTag ],
+    } );
+
     // -- camera -----------------------------------------------------------------------------------
     const camera = new CameraStack( {
       scene,
+      cubemapNode,
       resources: mainCameraStackResources,
       target: cameraStackATarget,
       useAO: true,
-      near: 0.01,
       dofParams: [ 3.2, 16.0 ],
+      fog: [ 0.0, 10.0, 20.0 ],
     } );
 
     const lambdaSpeen = new Lambda( {
       onUpdate: ( { time } ) => {
         camera.transform.lookAt(
           vec3ApplyQuaternion( [ 0.0, 1.5, 3.0 ], quatRotationY( time ) ),
-          [ 0.0, 0.0, 0.0 ],
+          [ 0.0, -0.2, 0.0 ],
           -0.2,
         );
       },
@@ -194,10 +225,11 @@ export class KeyboardScene extends SceneNode {
     // -- children ---------------------------------------------------------------------------------
     this.children = [
       light1,
-      light2,
       lambdaSpeen,
       keyboard,
       deskNode,
+      background,
+      cubemapNode,
       camera,
     ];
   }

@@ -19,7 +19,7 @@ export const deskFrag = build( () => {
     const depth = div( sw( vProjPosition, 'z' ), sw( vProjPosition, 'w' ) );
 
     const tap = ( uv: GLSLExpression<'vec2'> ): GLSLExpression<'float'> => (
-      sw( texture( sampler0, mul( 20.0, uv ) ), 'z' )
+      sw( texture( sampler0, mul( 70.0, uv ) ), 'z' )
     );
 
     const n = normalize( vec3(
@@ -32,7 +32,7 @@ export const deskFrag = build( () => {
 
     assign( fragPosition, vec4( sw( vPosition, 'xyz' ), depth ) );
     assign( fragNormal, vec4( n, MTL_PBR_ROUGHNESS_METALLIC ) );
-    assign( fragMisc, vec4( 0.2, 0.0, 0.0, 0.0 ) );
+    assign( fragMisc, vec4( 0.2, 0.0, 0.0, 1.0 ) );
     return;
   } );
 } );
