@@ -30,12 +30,12 @@ export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
     const pt = def( 'vec3', p );
 
     const scale = def( 'float', 1.0 );
-    forLoop( tag === 'depth' ? 1 : 4, () => {
+    forLoop( tag === 'depth' ? 1 : 3, () => {
       addAssign( pt, div(
         perlin3d( mul( add( p, mul( vec3( 0.0, 0.5, 0.5 ), time ) ), 0.3, scale ) ),
         scale,
       ) );
-      mulAssign( scale, 2.0 );
+      mulAssign( scale, 2.7 );
     } );
 
     const d = def( 'float', sub( 1.1, length( sw( pt, 'xy' ) ) ) );
