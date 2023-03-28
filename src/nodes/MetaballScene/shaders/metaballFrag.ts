@@ -1,16 +1,16 @@
-import { INV_PI } from '../../../../utils/constants';
-import { MTL_PBR_EMISSIVE3_ROUGHNESS } from '../../../CameraStack/deferredConstants';
-import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, glFragDepth, insert, mad, main, mul, normalize, retFn, sq, sw, vec3, vec4 } from '../../../../shaders/shaderBuilder';
-import { calcL } from '../../../../shaders/modules/calcL';
-import { calcNormal } from '../../../../shaders/modules/calcNormal';
-import { calcSS } from '../../../../shaders/modules/calcSS';
-import { calcShadowDepth } from '../../../../shaders/modules/calcShadowDepth';
-import { defMetaballMap } from '../../defMetaballMap';
-import { forEachLights } from '../../../../shaders/modules/forEachLights';
-import { glslDefRandom } from '../../../../shaders/modules/glslDefRandom';
-import { perlin3d } from '../../../../shaders/modules/perlin3d';
-import { raymarch } from '../../../../shaders/modules/raymarch';
-import { setupRoRd } from '../../../../shaders/modules/setupRoRd';
+import { INV_PI } from '../../../utils/constants';
+import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
+import { add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, glFragDepth, insert, mad, main, mul, normalize, retFn, sq, sw, vec4 } from '../../../shaders/shaderBuilder';
+import { calcL } from '../../../shaders/modules/calcL';
+import { calcNormal } from '../../../shaders/modules/calcNormal';
+import { calcSS } from '../../../shaders/modules/calcSS';
+import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
+import { defMetaballMap } from '../defMetaballMap';
+import { forEachLights } from '../../../shaders/modules/forEachLights';
+import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
+import { perlin3d } from '../../../shaders/modules/perlin3d';
+import { raymarch } from '../../../shaders/modules/raymarch';
+import { setupRoRd } from '../../../shaders/modules/setupRoRd';
 
 export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
@@ -64,7 +64,7 @@ export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () =
 
     const N = def( 'vec3', calcNormal( { rp, map: mapForN } ) );
 
-    const ssAccum = def( 'vec3', vec3( 0.0 ) );
+    const ssAccum = def( 'float', 0.0 );
 
     forEachLights( ( { lightPos, lightColor } ) => {
       const [ L ] = calcL(
@@ -78,9 +78,9 @@ export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () =
       );
 
       addAssign( ssAccum, mul(
-        lightColor,
+        sw( lightColor, 'x' ),
+        0.01,
         div( 1.0, sq( lenL ) ), // falloff
-        vec3( 0.01 ), // subsurfaceColor
         calcSS( {
           rp,
           rd,
@@ -94,10 +94,10 @@ export const metaballFrag = ( tag: 'deferred' | 'depth' ): string => build( () =
       ) );
     } );
 
-    assign( fragColor, vec4( vec3( 1.0 ), 1.0 ) );
+    assign( fragColor, vec4( 1.0, 1.0, 1.0, 1.0 ) );
     assign( fragPosition, vec4( sw( modelPos, 'xyz' ), depth ) );
-    assign( fragNormal, vec4( normalize( mul( normalMatrix, N ) ), MTL_PBR_EMISSIVE3_ROUGHNESS ) );
-    assign( fragMisc, vec4( ssAccum, 0.1 ) );
+    assign( fragNormal, vec4( normalize( mul( normalMatrix, N ) ), MTL_PBR_ROUGHNESS_METALLIC ) );
+    assign( fragMisc, vec4( 0.1, 0.0, ssAccum, 1.0 ) );
 
   } );
 } );

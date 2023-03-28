@@ -1,5 +1,5 @@
 import { GL_TEXTURE_2D } from '../../../gl/constants';
-import { GPUParticles } from '../../utils/GPUParticles';
+import { GPUParticles, GPUParticlesOptions } from '../../utils/GPUParticles';
 import { METABALL_PARTICLES_COUNT, METABALL_PARTICLES_COUNT_SQRT } from './constants';
 import { Material } from '../../../heck/Material';
 import { auto } from '../../../globals/automaton';
@@ -17,7 +17,7 @@ import { quadVert } from '../../../shaders/common/quadVert';
 import { randomTexture, randomTextureStatic } from '../../../globals/randomTexture';
 
 export class MetaballParticles extends GPUParticles {
-  public constructor() {
+  public constructor( options: Partial<GPUParticlesOptions> ) {
     // -- material compute -------------------------------------------------------------------------
     const materialCompute = new Material(
       quadVert,
@@ -101,6 +101,7 @@ export class MetaballParticles extends GPUParticles {
 
     // -- gpu particles ----------------------------------------------------------------------------
     super( {
+      ...options,
       materialCompute,
       geometryRender: geometry,
       materialsRender: {

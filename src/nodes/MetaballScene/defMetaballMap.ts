@@ -8,7 +8,7 @@ export const defMetaballMap: {
 } = ( time ) => {
   return defFn( 'vec4', [ 'vec3' ], ( p ) => {
     const pt = def( 'vec3', p );
-    const d = def( 'float', sub( length( pt ), 0.1 ) );
+    const d = def( 'float', sub( length( pt ), 0.15 ) );
 
     const off = def( 'vec3' );
     const radius = def( 'vec3' );
@@ -20,7 +20,7 @@ export const defMetaballMap: {
         mul( TAU, pcg3df( vec3( i ) ) ),
       ) ) ) );
 
-      assign( radius, mad( 0.1, pcg3df( vec3( i + 40 ) ), 0.05 ) );
+      assign( radius, mad( 0.07, pcg3df( vec3( i + 40 ) ), 0.05 ) );
 
       assign( pt, mad( 0.2, off, p ) );
       assign( d, smin( d, sub( length( pt ), sw( radius, 'x' ) ), 0.15 ) );
