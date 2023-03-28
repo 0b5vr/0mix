@@ -145,7 +145,7 @@ export class DCT extends SceneNode {
 
     // -- event listener ---------------------------------------------------------------------------
     auto( 'DCT/amp', ( { value } ) => {
-      const enable = value > 0.0;
+      const enable = value > 1E-3;
 
       blitDry.active = !enable;
       quadEncodeH.active = enable;

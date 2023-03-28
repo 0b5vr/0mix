@@ -182,7 +182,7 @@ export class PixelSorter extends SceneNode {
     auto( 'PixelSorter/amp', ( { value } ) => {
       indexMaterials.map( ( material ) => material.addUniform( 'threshold', '1f', value ) );
 
-      nodeMain.active = 0.0 < value;
+      nodeMain.active = value > 1E-3;
       nodeBypass.active = !nodeMain.active;
     } );
   }
