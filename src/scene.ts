@@ -4,6 +4,7 @@ import { CapsuleScene } from './nodes/CapsuleScene/CapsuleScene';
 import { Capture } from './nodes/Capture/Capture';
 import { Dog } from './heck/Dog';
 import { FluidScene } from './nodes/FluidScene/FluidScene';
+import { IcosahedronScene } from './nodes/IcosahedronScene/IcosahedronScene';
 import { InkScene } from './nodes/InkScene/InkScene';
 import { KansokushaScene } from './nodes/KansokushaScene/KansokushaScene';
 import { KeyboardScene } from './nodes/KeyboardScene/KeyboardScene';
@@ -28,7 +29,6 @@ import { PlexusScene } from './nodes/PlexusScene/PlexusScene';
 import { PostStack } from './nodes/PostStack/PostStack';
 import { RieScene } from './nodes/RieScene/RieScene';
 import { SevenSegScene } from './nodes/SevenSegScene/SevenSegScene';
-import { SphereArrayScene } from './nodes/SphereArrayScene/SphereArrayScene';
 import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
 import { TrailsScene } from './nodes/TrailsScene/TrailsScene';
 import { TruchetScene } from './nodes/TruchetScene/TruchetScene';
@@ -137,7 +137,7 @@ const scenesA = [
   new TrailsScene(),
   new OctreeTunnelScene(),
   new ParticlesRingScene(),
-  new SphereArrayScene(),
+  new IcosahedronScene(),
   new FluidScene(),
   new OBSVRLogoScene(),
   new TruchetScene(),

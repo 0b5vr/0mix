@@ -37,13 +37,6 @@ export const moonFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
     retFn( vec4( d, 0, 0, 0 ) );
   } );
 
-  const mapForN = defFn( 'vec4', [ 'vec3' ], ( p ) => {
-    retFn( sub(
-      map( p ),
-      // mul( 0.03, sw( fnTriplanar( p ), 'x' ) ),
-    ) );
-  } );
-
   main( () => {
     const p = def( 'vec2', div( sw( vProjPosition, 'xy' ), sw( vProjPosition, 'w' ) ) );
     init( vec4( p, time, 1.0 ) );
@@ -71,7 +64,7 @@ export const moonFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
 
     }
 
-    const N = def( 'vec3', calcNormal( { rp, map: mapForN, delta: 1E-4 } ) );
+    const N = def( 'vec3', calcNormal( { rp, map, delta: 1E-4 } ) );
 
     const col = mix( 0.3, 0.6, sw( fnTriplanar( rp ), 'x' ) );
 

@@ -1,10 +1,10 @@
-import { GLSLExpression, assign, build, def, defOut, defUniformNamed, div, glFragCoord, glFragDepth, insert, mad, main, mul, mulAssign, neg, sw, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, GLSLToken, assign, build, def, defOut, defUniformNamed, div, glFragCoord, glFragDepth, insert, mad, main, mul, mulAssign, neg, sw, vec4 } from '../../../shaders/shaderBuilder';
 import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
 import { setupRoRd } from '../../../shaders/modules/setupRoRd';
 
 export type BackgroundDefDrawType = () => (
-  ro: GLSLExpression<'vec3'>,
-  rd: GLSLExpression<'vec3'>,
+  ro: GLSLToken<'vec3'>,
+  rd: GLSLToken<'vec3'>,
 ) => GLSLExpression<'vec4'>;
 
 export const buildPlaneBackgroundFrag = (

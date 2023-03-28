@@ -168,7 +168,7 @@ export class CharRenderer extends SceneNode {
           ( [
             [ CharRendererToken.Statement, /^(\+|-|=|\*|\/|return|const|if|else|for)/ ],
             [ CharRendererToken.Number, /^(0x[0-9a-f]+(u)?|\d*\.\d+(e\d+)?|\d+\.\d*|\d+(e\d+)?(u)?)/ ],
-            [ CharRendererToken.Type, /^(floatBitsToUint|float|(u|i)?vec(2|3|4)|int|mat(2|3|4)|exp2?|sqrt|pow|max|a?sin|a?cos|a?tanh?|mod|floor|cross|dot|normalize|smoothstep)/ ],
+            [ CharRendererToken.Type, /^(floatBitsToUint|float|(u|i)?vec(2|3|4)|int|uint|mat(2|3|4)|exp2?|sqrt|pow|max|a?sin|a?cos|a?tanh?|mod|floor|cross|dot|normalize|smoothstep)(?=[ (])/ ],
             [ CharRendererToken.Name, /^[a-zA-Z_][a-zA-Z0-9_]*/ ],
           ] as [ CharRendererToken, RegExp ][] ).map( ( [ t, re ] ) => {
             if ( token === CharRendererToken.Text ) {
