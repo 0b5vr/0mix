@@ -757,10 +757,10 @@ vec2 mainaudio(vec4 time){
   [ 1.8, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 2.2, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 1.0, GLSLMusicEditorEventType.Comment ],
-  [ 8.0, GLSLMusicEditorEventType.Apply ],
+  [ 6.0, GLSLMusicEditorEventType.Apply ],
 
   // insert kick + bass 3rd
-  [ 16.0, GLSLMusicEditorEventType.JumpPart, -1 ],
+  [ 18.0, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 0.5, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 6.0, GLSLMusicEditorEventType.Insert, `{ // kick
     float tp=mod(time.y,2.*b2t);
