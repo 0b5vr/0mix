@@ -177,6 +177,7 @@ export class KeyboardScene extends SceneNode {
         );
         const rp = mad( isect, rd, ro );
         const shape = mul(
+          2.0,
           smoothstep( 0.2, 0.1, length( sub( fract( mul( 0.1, sw( rp, 'xz' ) ) ), 0.5 ) ) ),
           step( abs( sw( rp, 'x' ) ), 40.0 ),
           step( abs( sw( rp, 'z' ) ), 40.0 ),
