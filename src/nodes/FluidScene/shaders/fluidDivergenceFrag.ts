@@ -11,7 +11,7 @@ export const fluidDivergenceFrag: string = build( () => {
 
   const fragColor = defOut( 'vec4' );
 
-  const samplerVelocity = defUniformNamed( 'sampler2D', 'samplerVelocity' );
+  const samplerDensity = defUniformNamed( 'sampler2D', 'samplerDensity' );
 
   const sampleNearest3D = defFluidSampleNearest3D();
 
@@ -20,13 +20,13 @@ export const fluidDivergenceFrag: string = build( () => {
   main( () => {
     const pos = def( 'vec3', fluidUvToPos( vUv ) );
 
-    const v = def( 'vec3', sw( sampleNearest3D( samplerVelocity, pos ), 'xyz' ) );
-    const nx = def( 'float', sw( sampleNearest3D( samplerVelocity, fluidClampToGrid( sub( pos, sw( d, 'yxx' ) ) ) ), 'x' ) );
-    const px = def( 'float', sw( sampleNearest3D( samplerVelocity, fluidClampToGrid( add( pos, sw( d, 'yxx' ) ) ) ), 'x' ) );
-    const ny = def( 'float', sw( sampleNearest3D( samplerVelocity, fluidClampToGrid( sub( pos, sw( d, 'xyx' ) ) ) ), 'y' ) );
-    const py = def( 'float', sw( sampleNearest3D( samplerVelocity, fluidClampToGrid( add( pos, sw( d, 'xyx' ) ) ) ), 'y' ) );
-    const nz = def( 'float', sw( sampleNearest3D( samplerVelocity, fluidClampToGrid( sub( pos, sw( d, 'xxy' ) ) ) ), 'z' ) );
-    const pz = def( 'float', sw( sampleNearest3D( samplerVelocity, fluidClampToGrid( add( pos, sw( d, 'xxy' ) ) ) ), 'z' ) );
+    const v = def( 'vec3', sw( sampleNearest3D( samplerDensity, pos ), 'xyz' ) );
+    const nx = def( 'float', sw( sampleNearest3D( samplerDensity, fluidClampToGrid( sub( pos, sw( d, 'yxx' ) ) ) ), 'x' ) );
+    const px = def( 'float', sw( sampleNearest3D( samplerDensity, fluidClampToGrid( add( pos, sw( d, 'yxx' ) ) ) ), 'x' ) );
+    const ny = def( 'float', sw( sampleNearest3D( samplerDensity, fluidClampToGrid( sub( pos, sw( d, 'xyx' ) ) ) ), 'y' ) );
+    const py = def( 'float', sw( sampleNearest3D( samplerDensity, fluidClampToGrid( add( pos, sw( d, 'xyx' ) ) ) ), 'y' ) );
+    const nz = def( 'float', sw( sampleNearest3D( samplerDensity, fluidClampToGrid( sub( pos, sw( d, 'xxy' ) ) ) ), 'z' ) );
+    const pz = def( 'float', sw( sampleNearest3D( samplerDensity, fluidClampToGrid( add( pos, sw( d, 'xxy' ) ) ) ), 'z' ) );
 
     const maxBound = sub( 0.5, div( 1.0, GRID_RESO ) );
     const minBound = neg( maxBound );

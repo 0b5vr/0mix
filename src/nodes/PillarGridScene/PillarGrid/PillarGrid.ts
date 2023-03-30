@@ -1,5 +1,3 @@
-import { GL_LINES } from '../../../gl/constants';
-import { Geometry } from '../../../heck/Geometry';
 import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
 import { Material } from '../../../heck/Material';
 import { Mesh } from '../../../heck/components/Mesh';
@@ -7,6 +5,7 @@ import { SceneNode } from '../../../heck/components/SceneNode';
 import { depthFrag } from '../../../shaders/common/depthFrag';
 import { dummyRenderTarget1, dummyRenderTarget4 } from '../../../globals/dummyRenderTarget';
 import { genCube } from '../../../geometries/genCube';
+import { genWireCube } from '../../../geometries/genWireCube';
 import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
 import { pillarGridBodyFrag } from './shaders/pillarGridBodyFrag';
@@ -35,33 +34,9 @@ export class PillarGrid extends SceneNode {
     glVertexArrayBindVertexbuffer( geometry.vao, bufferInstance, 3, 2, 1 );
 
     // -- geometry frame ---------------------------------------------------------------------------
-    const geometryFrame = new Geometry();
-    geometryFrame.count = 16;
+    const geometryFrame = genWireCube( [ 0.1, 0.1, 1.0 ] );
     geometryFrame.primcount = 1024;
-    geometryFrame.mode = GL_LINES;
 
-    const arrayFramePosition = new Float32Array( [
-      -0.1, -0.1, 1.0,
-      0.1, -0.1, 1.0,
-      0.1, -0.1, 1.0,
-      0.1, 0.1, 1.0,
-      0.1, 0.1, 1.0,
-      -0.1, 0.1, 1.0,
-      -0.1, 0.1, 1.0,
-      -0.1, -0.1, 1.0,
-
-      -0.1, -0.1, 1.0,
-      -0.1, -0.1, 0.0,
-      0.1, -0.1, 1.0,
-      0.1, -0.1, 0.0,
-      0.1, 0.1, 1.0,
-      0.1, 0.1, 0.0,
-      -0.1, 0.1, 1.0,
-      -0.1, 0.1, 0.0,
-    ] );
-    const bufferFramePosition = glCreateVertexbuffer( arrayFramePosition );
-
-    glVertexArrayBindVertexbuffer( geometryFrame.vao, bufferFramePosition, 0, 3 );
     glVertexArrayBindVertexbuffer( geometryFrame.vao, bufferInstance, 1, 2, 1 );
 
     // -- material body ----------------------------------------------------------------------------

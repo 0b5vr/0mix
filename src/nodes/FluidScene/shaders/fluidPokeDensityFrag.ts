@@ -1,8 +1,8 @@
-import { add, addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, insert, main, mul, step, sub, subAssign, sw, vec3 } from '../../../shaders/shaderBuilder';
+import { abs, addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, insert, length, mad, main, mul, mulAssign, sub, subAssign, sw, vec4 } from '../../../shaders/shaderBuilder';
 import { defFluidSampleNearest3D } from './defFluidSampleNearest3D';
 import { fluidUvToPos } from './fluidUvToPos';
-import { glslLofir } from '../../../shaders/modules/glslLofir';
-import { sdcapsule } from '../../../shaders/modules/sdcapsule';
+import { glslSaturate } from '../../../shaders/modules/glslSaturate';
+import { rotate2D } from '../../../shaders/modules/rotate2D';
 
 export const fluidPokeDensityFrag: string = build( () => {
   insert( 'precision highp float;' );
@@ -11,6 +11,7 @@ export const fluidPokeDensityFrag: string = build( () => {
 
   const fragColor = defOut( 'vec4' );
 
+  const time = defUniformNamed( 'float', 'time' );
   const deltaTime = defUniformNamed( 'float', 'deltaTime' );
   const samplerDensity = defUniformNamed( 'sampler2D', 'samplerDensity' );
 
@@ -21,13 +22,15 @@ export const fluidPokeDensityFrag: string = build( () => {
 
     const density = def( 'vec4', sampleNearest3D( samplerDensity, pos ) );
 
-    subAssign( sw( pos, 'y' ), glslLofir( sw( pos, 'y' ), 0.08 ) );
+    // 冷気
+    subAssign( sw( density, 'y' ), mul( 20.0, deltaTime, sw( density, 'w' ) ) );
 
-    const d = def( 'float', sdcapsule( add( pos, vec3( 0.4, 0.0, 0.0 ) ), vec3( 0.8, 0.0, 0.0 ) ) );
+    mulAssign( sw( pos, 'xy' ), rotate2D( mul( 0.2, time ) ) );
+    mulAssign( sw( pos, 'zx' ), rotate2D( mul( 1.7, time ) ) );
+    assign( sw( pos, 'x' ), sub( abs( sw( pos, 'x' ) ), 0.3 ) );
 
-    const l = def( 'float', sub( d, 0.005 ) );
-    const poke = def( 'float', step( l, 0.0 ) );
-    addAssign( sw( density, 'x' ), mul( 1.0, deltaTime, poke ) );
+    const poke = def( 'float', glslSaturate( mad( -7.0, length( pos ), 1.0 ) ) );
+    addAssign( density, mul( deltaTime, poke, vec4( 0.0, 4.0, 0.0, 1.0 ) ) );
 
     assign( fragColor, density );
   } );

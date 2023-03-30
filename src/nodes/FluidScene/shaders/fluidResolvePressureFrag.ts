@@ -1,5 +1,5 @@
-import { GLSLExpression, add, addAssign, assign, build, def, defConst, defFn, defInNamed, defOut, defUniformNamed, div, insert, length, main, mul, mulAssign, neg, retFn, sub, sw, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
-import { GRID_RESO } from '../constants';
+import { CURL, GRID_RESO } from '../constants';
+import { GLSLExpression, add, addAssign, assign, build, def, defConst, defFn, defInNamed, defOut, defUniformNamed, div, insert, length, main, mul, mulAssign, neg, retFn, sub, sw, vec2, vec3 } from '../../../shaders/shaderBuilder';
 import { defFluidSampleNearest3D } from './defFluidSampleNearest3D';
 import { fluidClampToGrid } from './fluidClampToGrid';
 import { fluidUvToPos } from './fluidUvToPos';
@@ -12,9 +12,8 @@ export const fluidResolvePressureFrag: string = build( () => {
   const fragColor = defOut( 'vec4' );
 
   const deltaTime = defUniformNamed( 'float', 'deltaTime' );
-  const curl = defUniformNamed( 'float', 'curl' );
   const samplerCurl = defUniformNamed( 'sampler2D', 'samplerCurl' );
-  const samplerVelocity = defUniformNamed( 'sampler2D', 'samplerVelocity' );
+  const samplerDensity = defUniformNamed( 'sampler2D', 'samplerDensity' );
   const samplerPressure = defUniformNamed( 'sampler2D', 'samplerPressure' );
 
   const sampleNearest3D = defFluidSampleNearest3D();
@@ -47,7 +46,7 @@ export const fluidResolvePressureFrag: string = build( () => {
     addAssign( sw( force, 'zx' ), safeNormalize(
       mul( 0.25, vec2( sw( dx, 'y' ), neg( sw( dz, 'y' ) ) ) )
     ) );
-    mulAssign( force, mul( curl, sw( v, 'xyz' ) ) );
+    mulAssign( force, mul( CURL, sw( v, 'xyz' ) ) );
 
     return mul( deltaTime, force );
   };
@@ -70,11 +69,11 @@ export const fluidResolvePressureFrag: string = build( () => {
   main( () => {
     const pos = def( 'vec3', fluidUvToPos( vUv ) );
 
-    const v = def( 'vec3', sw( sampleNearest3D( samplerVelocity, pos ), 'xyz' ) );
+    const v = def( 'vec4', sampleNearest3D( samplerDensity, pos ) );
 
-    addAssign( v, resolveVorticity( pos ) );
-    addAssign( v, resolvePressure( pos ) );
+    addAssign( sw( v, 'xyz' ), resolveVorticity( pos ) );
+    addAssign( sw( v, 'xyz' ), resolvePressure( pos ) );
 
-    assign( fragColor, vec4( v, 1.0 ) );
+    assign( fragColor, v );
   } );
 } );

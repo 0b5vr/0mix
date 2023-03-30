@@ -11,7 +11,7 @@ export const fluidCurlFrag: string = build( () => {
 
   const fragColor = defOut( 'vec4' );
 
-  const samplerVelocity = defUniformNamed( 'sampler2D', 'samplerVelocity' );
+  const samplerDensity = defUniformNamed( 'sampler2D', 'samplerDensity' );
 
   const sampleNearest3D = defFluidSampleNearest3D();
 
@@ -20,12 +20,12 @@ export const fluidCurlFrag: string = build( () => {
   main( () => {
     const pos = def( 'vec3', fluidUvToPos( vUv ) );
 
-    const nx = def( 'vec4', sampleNearest3D( samplerVelocity, fluidClampToGrid( sub( pos, sw( d, 'yxx' ) ) ) ) );
-    const px = def( 'vec4', sampleNearest3D( samplerVelocity, fluidClampToGrid( add( pos, sw( d, 'yxx' ) ) ) ) );
-    const ny = def( 'vec4', sampleNearest3D( samplerVelocity, fluidClampToGrid( sub( pos, sw( d, 'xyx' ) ) ) ) );
-    const py = def( 'vec4', sampleNearest3D( samplerVelocity, fluidClampToGrid( add( pos, sw( d, 'xyx' ) ) ) ) );
-    const nz = def( 'vec4', sampleNearest3D( samplerVelocity, fluidClampToGrid( sub( pos, sw( d, 'xxy' ) ) ) ) );
-    const pz = def( 'vec4', sampleNearest3D( samplerVelocity, fluidClampToGrid( add( pos, sw( d, 'xxy' ) ) ) ) );
+    const nx = def( 'vec4', sampleNearest3D( samplerDensity, fluidClampToGrid( sub( pos, sw( d, 'yxx' ) ) ) ) );
+    const px = def( 'vec4', sampleNearest3D( samplerDensity, fluidClampToGrid( add( pos, sw( d, 'yxx' ) ) ) ) );
+    const ny = def( 'vec4', sampleNearest3D( samplerDensity, fluidClampToGrid( sub( pos, sw( d, 'xyx' ) ) ) ) );
+    const py = def( 'vec4', sampleNearest3D( samplerDensity, fluidClampToGrid( add( pos, sw( d, 'xyx' ) ) ) ) );
+    const nz = def( 'vec4', sampleNearest3D( samplerDensity, fluidClampToGrid( sub( pos, sw( d, 'xxy' ) ) ) ) );
+    const pz = def( 'vec4', sampleNearest3D( samplerDensity, fluidClampToGrid( add( pos, sw( d, 'xxy' ) ) ) ) );
 
     assign( fragColor, vec4(
       mul( 0.5, vec3(

@@ -42,7 +42,7 @@ export class Blit extends Component {
     this.filter = options?.filter ?? GL_NEAREST;
   }
 
-  protected __updateImpl(): void {
+  public blitImmediate(): void {
     if ( this.src && this.dst ) {
       gl.bindFramebuffer( GL_READ_FRAMEBUFFER, this.src.framebuffer );
       if ( this.dst instanceof RawBufferRenderTarget ) {
@@ -59,5 +59,9 @@ export class Blit extends Component {
         this.filter,
       );
     }
+  }
+
+  protected __updateImpl(): void {
+    this.blitImmediate();
   }
 }

@@ -1,4 +1,5 @@
 import { BUFFER_RESO } from './constants';
+import { Blit } from '../../heck/components/Blit';
 import { BufferTextureRenderTarget } from '../../heck/BufferTextureRenderTarget';
 import { GLTextureFormatStuffR16F, GLTextureFormatStuffRGBA16F } from '../../gl/glSetTexture';
 import { GL_NEAREST, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
@@ -49,13 +50,9 @@ export class Fluid extends SceneNode {
       new BufferTextureRenderTarget( BUFFER_RESO, BUFFER_RESO, 1, GLTextureFormatStuffR16F ),
       new BufferTextureRenderTarget( BUFFER_RESO, BUFFER_RESO, 1, GLTextureFormatStuffR16F ),
     );
-    const swapVelocity = new Swap(
-      new BufferTextureRenderTarget( BUFFER_RESO, BUFFER_RESO, 1, GLTextureFormatStuffRGBA16F ),
-      new BufferTextureRenderTarget( BUFFER_RESO, BUFFER_RESO, 1, GLTextureFormatStuffRGBA16F ),
-    );
     const swapDensity = new Swap(
-      new BufferTextureRenderTarget( BUFFER_RESO, BUFFER_RESO, 1, GLTextureFormatStuffR16F ),
-      new BufferTextureRenderTarget( BUFFER_RESO, BUFFER_RESO, 1, GLTextureFormatStuffR16F ),
+      new BufferTextureRenderTarget( BUFFER_RESO, BUFFER_RESO, 1, GLTextureFormatStuffRGBA16F ),
+      new BufferTextureRenderTarget( BUFFER_RESO, BUFFER_RESO, 1, GLTextureFormatStuffRGBA16F ),
     );
 
     glTextureFilter( bufferCurl.texture, GL_NEAREST );
@@ -66,13 +63,11 @@ export class Fluid extends SceneNode {
       bufferDivergence.name = 'Fluid/bufferDivergence';
       swapPressure.i.name = 'Fluid/swapPressure/0';
       swapPressure.o.name = 'Fluid/swapPressure/1';
-      swapVelocity.i.name = 'Fluid/swapVelocity/0';
-      swapVelocity.o.name = 'Fluid/swapVelocity/1';
       swapDensity.i.name = 'Fluid/swapDensity/0';
       swapDensity.o.name = 'Fluid/swapDensity/1';
     }
 
-    // -- density ----------------------------------------------------------------------------------
+    // -- poke density -----------------------------------------------------------------------------
     const materialPokeDensity = new Material(
       quadVert,
       fluidPokeDensityFrag,
@@ -108,9 +103,9 @@ export class Fluid extends SceneNode {
       },
     );
     materialCurl.addUniformTextures(
-      'samplerVelocity',
+      'samplerDensity',
       GL_TEXTURE_2D,
-      swapVelocity.o.texture,
+      swapDensity.o.texture,
     );
 
     const quadCurl = new Quad( {
@@ -127,9 +122,9 @@ export class Fluid extends SceneNode {
       },
     );
     materialDivergence.addUniformTextures(
-      'samplerVelocity',
+      'samplerDensity',
       GL_TEXTURE_2D,
-      swapVelocity.o.texture,
+      swapDensity.o.texture,
     );
 
     const quadDivergence = new Quad( {
@@ -154,10 +149,10 @@ export class Fluid extends SceneNode {
 
     swapPressure.swap();
 
-    const quadPressures = arraySerial( 24 ).map( ( i ) => {
+    const quadPressures = arraySerial( 20 ).map( () => {
       const material = new Material(
         quadVert,
-        fluidPressureFrag( i === 0 ),
+        fluidPressureFrag,
         {
           initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 },
         },
@@ -191,7 +186,6 @@ export class Fluid extends SceneNode {
         initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 },
       },
     );
-    materialResolvePressure.addUniform( 'curl', '1f', 5.0 );
     materialResolvePressure.addUniformTextures(
       'samplerCurl',
       GL_TEXTURE_2D,
@@ -203,17 +197,17 @@ export class Fluid extends SceneNode {
       swapPressure.o.texture,
     );
     materialResolvePressure.addUniformTextures(
-      'samplerVelocity',
+      'samplerDensity',
       GL_TEXTURE_2D,
-      swapVelocity.o.texture,
+      swapDensity.o.texture,
     );
 
     const quadResolvePressure = new Quad( {
-      target: swapVelocity.i,
+      target: swapDensity.i,
       material: materialResolvePressure,
     } );
 
-    swapVelocity.swap();
+    swapDensity.swap();
 
     // -- advection --------------------------------------------------------------------------------
     const materialAdvectionVelocity = new Material(
@@ -223,47 +217,23 @@ export class Fluid extends SceneNode {
         initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 },
       },
     );
-    materialAdvectionVelocity.addUniform( 'dissipation', '1f', 0.1 );
     materialAdvectionVelocity.addUniformTextures(
-      'samplerVelocity',
-      GL_TEXTURE_2D,
-      swapVelocity.o.texture,
-    );
-    materialAdvectionVelocity.addUniformTextures(
-      'samplerSource',
-      GL_TEXTURE_2D,
-      swapVelocity.o.texture,
-    );
-
-    const quadAdvectionVelocity = new Quad( {
-      target: swapVelocity.i,
-      material: materialAdvectionVelocity,
-    } );
-
-    swapVelocity.swap();
-
-    const materialAdvectionDensity = new Material(
-      quadVert,
-      fluidAdvectionFrag,
-      {
-        initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 },
-      },
-    );
-    materialAdvectionDensity.addUniform( 'dissipation', '1f', 1.0 );
-    materialAdvectionDensity.addUniformTextures(
-      'samplerVelocity',
-      GL_TEXTURE_2D,
-      swapVelocity.o.texture,
-    );
-    materialAdvectionDensity.addUniformTextures(
-      'samplerSource',
+      'samplerDensity',
       GL_TEXTURE_2D,
       swapDensity.o.texture,
     );
 
-    const quadAdvectionDensity = new Quad( {
+    const quadAdvectionVelocity = new Quad( {
       target: swapDensity.i,
-      material: materialAdvectionDensity,
+      material: materialAdvectionVelocity,
+    } );
+
+    swapDensity.swap();
+
+    // -- blit back --------------------------------------------------------------------------------
+    const blitDensity = new Blit( {
+      src: swapDensity.o,
+      dst: swapDensity.i,
     } );
 
     swapDensity.swap();
@@ -283,11 +253,6 @@ export class Fluid extends SceneNode {
       'samplerDensity',
       GL_TEXTURE_2D,
       swapDensity.o.texture,
-    );
-    forward.addUniformTextures(
-      'samplerVelocity',
-      GL_TEXTURE_2D,
-      swapVelocity.o.texture,
     );
 
     const lambdaLightUniforms = createLightUniformsLambda( [ forward ] );
@@ -318,7 +283,7 @@ export class Fluid extends SceneNode {
       quadPressures.map( ( quad ) => quad.drawImmediate( { time, deltaTime } ) );
       quadResolvePressure.drawImmediate( { time, deltaTime } );
       quadAdvectionVelocity.drawImmediate( { time, deltaTime } );
-      quadAdvectionDensity.drawImmediate( { time, deltaTime } );
+      blitDensity.blitImmediate();
     } );
 
     // -- names ------------------------------------------------------------------------------------
@@ -330,7 +295,6 @@ export class Fluid extends SceneNode {
       quadPressures.map( ( quad, i ) => quad.name = `quadPressures${ i }` );
       quadResolvePressure.name = 'quadResolvePressure';
       quadAdvectionVelocity.name = 'quadAdvectionVelocity';
-      quadAdvectionDensity.name = 'quadAdvectionDensity';
       lambdaLightUniforms.name = 'lambdaLightUniforms';
       lambdaRaymarchCameraUniforms.name = 'lambdaRaymarchCameraUniforms';
       mesh.name = 'mesh';

@@ -1,4 +1,4 @@
-import { add, assign, build, def, defInNamed, defOut, defUniformNamed, div, insert, main, mul, sub, sw } from '../../../shaders/shaderBuilder';
+import { assign, build, def, defInNamed, defOut, defUniformNamed, exp, insert, main, mul, sub, sw, vec4 } from '../../../shaders/shaderBuilder';
 import { defFluidSampleLinear3D } from './defFluidSampleLinear3D';
 import { defFluidSampleNearest3D } from './defFluidSampleNearest3D';
 import { fluidClampToGrid } from './fluidClampToGrid';
@@ -12,9 +12,7 @@ export const fluidAdvectionFrag: string = build( () => {
   const fragColor = defOut( 'vec4' );
 
   const deltaTime = defUniformNamed( 'float', 'deltaTime' );
-  const dissipation = defUniformNamed( 'float', 'dissipation' );
-  const samplerVelocity = defUniformNamed( 'sampler2D', 'samplerVelocity' );
-  const samplerSource = defUniformNamed( 'sampler2D', 'samplerSource' );
+  const samplerDensity = defUniformNamed( 'sampler2D', 'samplerDensity' );
 
   const sampleNearest3D = defFluidSampleNearest3D();
   const sampleLinear3D = defFluidSampleLinear3D();
@@ -22,12 +20,12 @@ export const fluidAdvectionFrag: string = build( () => {
   main( () => {
     const pos = def( 'vec3', fluidUvToPos( vUv ) );
 
-    const vel = sw( sampleNearest3D( samplerVelocity, pos ), 'xyz' );
+    const vel = sw( sampleNearest3D( samplerDensity, pos ), 'xyz' );
     const samplePos = fluidClampToGrid( sub( pos, mul( deltaTime, vel ) ) );
-    const result = sampleLinear3D( samplerSource, samplePos );
+    const result = sampleLinear3D( samplerDensity, samplePos );
 
-    const decay = add( 1.0, mul( deltaTime, dissipation ) );
+    const decay = exp( mul( deltaTime, vec4( 0.0, 0.0, 0.0, -2.0 ) ) );
 
-    assign( fragColor, div( result, decay ) );
+    assign( fragColor, mul( result, decay ) );
   } );
 } );
