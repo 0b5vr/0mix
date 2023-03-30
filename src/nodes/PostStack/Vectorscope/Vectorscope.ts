@@ -7,7 +7,7 @@ import { Quad } from '../../../heck/components/Quad';
 import { RenderTarget } from '../../../heck/RenderTarget';
 import { SceneNode } from '../../../heck/components/SceneNode';
 import { arraySerial } from '@0b5vr/experimental';
-import { audioAnalyzerObservers } from '../../../globals/globalObservers';
+import { audioAnalyzerObservers, editorVisibleObservers } from '../../../globals/globalObservers';
 import { audioAnalyzerTimeDomainL, audioAnalyzerTimeDomainR } from '../../../globals/audioAnalyzer';
 import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
 import { glCreateTexture } from '../../../gl/glCreateTexture';
@@ -93,6 +93,8 @@ export class Vectorscope extends SceneNode {
       depthTest: false,
       depthWrite: false,
     } ); // TODO: Quad???
+
+    editorVisibleObservers.push( ( active ) => quad.active = active );
 
     if ( import.meta.env.DEV ) {
       quad.name = 'quad';

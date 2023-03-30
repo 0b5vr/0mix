@@ -1,5 +1,7 @@
 import { GPUTimer } from './gui/GPUTimer';
 import { NullMeasureHandler } from './gui/NullMeasureHandler';
+import { editorVisibleObservers } from './globalObservers';
+import { notifyObservers } from '@0b5vr/experimental';
 import type { ImPane } from '@0b5vr/imtweakpane';
 
 export let gui: ImPane | undefined;
@@ -22,6 +24,10 @@ export const promiseGui = new Promise<ImPane>( ( resolve ) => {
       const createGPUMeasureHandler = (): any => (
         gpuTimer ?? new NullMeasureHandler()
       );
+
+      gui_.input( 'Code/active', true )?.on( 'change', ( { value } ) => {
+        notifyObservers( editorVisibleObservers, value );
+      } );
 
       import( '@0b5vr/tweakpane-plugin-profiler' ).then( ( plugin ) => {
         gui_.pane.registerPlugin( plugin as any );

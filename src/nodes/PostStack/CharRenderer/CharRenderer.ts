@@ -12,10 +12,10 @@ import { charRendererFrag } from './shaders/charRendererFrag';
 import { charRendererVert } from './shaders/charRendererVert';
 import { codeCharTexture } from './codeCharTexture';
 import { dummyRenderTarget1 } from '../../../globals/dummyRenderTarget';
+import { editorVisibleObservers } from '../../../globals/globalObservers';
 import { gl } from '../../../globals/canvas';
 import { glCreateVertexbuffer } from '../../../gl/glCreateVertexbuffer';
 import { glVertexArrayBindVertexbuffer } from '../../../gl/glVertexArrayBindVertexbuffer';
-import { promiseGui } from '../../../globals/gui';
 import { quadBuffer } from '../../../globals/quadGeometry';
 import { withinGLSLMusicEditorRange } from '../../../music/withinGLSLMusicEditorRange';
 
@@ -112,14 +112,10 @@ export class CharRenderer extends SceneNode {
       depthWrite: false,
     } ); // TODO: Quad???
 
+    editorVisibleObservers.push( ( active ) => quad.active = active );
+
     if ( import.meta.env.DEV ) {
       quad.name = 'quad';
-
-      promiseGui.then( ( gui ) => {
-        gui.input( 'Code/active', true )?.on( 'change', ( { value } ) => {
-          quad.active = value;
-        } );
-      } );
     }
 
     // -- lambda -----------------------------------------------------------------------------------
