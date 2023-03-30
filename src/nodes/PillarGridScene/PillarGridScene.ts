@@ -1,10 +1,16 @@
 import { CameraStack } from '../CameraStack/CameraStack';
+import { CubemapNode } from '../CubemapNode/CubemapNode';
+import { FAR } from '../../config';
 import { Lambda } from '../../heck/components/Lambda';
 import { PillarGrid } from './PillarGrid/PillarGrid';
+import { PlaneBackground } from '../utils/PlaneBackground';
 import { PointLightNode } from '../Lights/PointLightNode';
 import { SceneNode } from '../../heck/components/SceneNode';
+import { abs, add, def, defUniformNamed, floor, mad, mul, mulAssign, step, sub, subAssign, sw, vec3, vec4 } from '../../shaders/shaderBuilder';
 import { cameraStackATarget } from '../../globals/cameraStackTargets';
+import { isectPlane } from '../../shaders/modules/isectPlane';
 import { mainCameraStackResources } from '../CameraStack/mainCameraStackResources';
+import { pcg3df } from '../../shaders/modules/pcg3df';
 import { quatRotationZ } from '@0b5vr/experimental';
 import { swapShadowMap1, swapShadowMap2 } from '../../globals/swapShadowMap';
 
@@ -13,7 +19,9 @@ export class PillarGridScene extends SceneNode {
     super();
 
     const scene = this;
+    const cubemapExclusionTag = Symbol();
 
+    // -- light ------------------------------------------------------------------------------------
     const lightT = new PointLightNode( {
       scene,
       swapShadowMap: swapShadowMap1,
@@ -35,7 +43,9 @@ export class PillarGridScene extends SceneNode {
       lightB.name = 'lightB';
     }
 
+    // -- pillar grid ------------------------------------------------------------------------------
     const pillarGrid = new PillarGrid();
+    pillarGrid.tags = [ cubemapExclusionTag ];
 
     const lambdaSpeen = new Lambda( {
       onUpdate( { time } ) {
@@ -47,8 +57,52 @@ export class PillarGridScene extends SceneNode {
       lambdaSpeen.name = 'lambdaSpeen';
     }
 
+    // -- background -------------------------------------------------------------------------------
+    const background = new PlaneBackground( () => {
+      const time = defUniformNamed( 'float', 'time' );
+
+      return ( ro, rd ) => {
+        const isect = isectPlane(
+          sub( ro, vec3( 0.0, 0.0, 10.0 ) ),
+          rd,
+          vec3( 0.0, 0.0, -1.0 ),
+        );
+        const rp = mad( isect, rd, ro );
+
+        const coord = def( 'vec2', mul( 0.1, sw( rp, 'xy' ) ) );
+        mulAssign( sw( coord, 'y' ), 4.0 );
+        const row = floor( add( sw( coord, 'y' ), 0.5 ) );
+        const dicerow = def( 'float', sw( pcg3df( vec3( row ) ), 'x' ) );
+        subAssign( sw( coord, 'y' ), row );
+        subAssign( sw( coord, 'x' ), mul( 10.0, sub( dicerow, 0.5 ), time ) );
+
+        const shape = mul(
+          4.0, // strength
+          step( 0.5, sw( pcg3df( vec3( row, floor( sw( coord, 'x' ) ), 0.0 ) ), 'x' ) ), // dice
+          step( abs( sw( coord, 'y' ) ), 0.1 ), // stripe
+          step( abs( sw( rp, 'x' ) ), 40.0 ), // far fog
+          step( abs( sw( rp, 'y' ) ), 40.0 ), // far fog
+          step( isect, FAR - 1E-3 ), // plane hit
+        );
+
+        return vec4(
+          vec3( shape ),
+          1.0,
+        );
+      };
+    } );
+
+    // -- cubemap ----------------------------------------------------------------------------------
+    const cubemapNode = new CubemapNode( {
+      scene,
+      accumMix: 0.3,
+      exclusionTags: [ cubemapExclusionTag ],
+    } );
+
+    // -- camera -----------------------------------------------------------------------------------
     const camera = new CameraStack( {
       scene,
+      cubemapNode,
       resources: mainCameraStackResources,
       target: cameraStackATarget,
       fog: [ 0.0, 3.0, 5.0 ],
@@ -61,11 +115,14 @@ export class PillarGridScene extends SceneNode {
       -0.2,
     );
 
+    // -- children ---------------------------------------------------------------------------------
     this.children = [
       lightT,
       lightB,
       lambdaSpeen,
       pillarGrid,
+      background,
+      cubemapNode,
       camera,
     ];
   }

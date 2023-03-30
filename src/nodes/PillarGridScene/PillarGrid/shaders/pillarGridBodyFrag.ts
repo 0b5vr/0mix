@@ -36,7 +36,7 @@ export const pillarGridBodyFrag = build( () => {
     assign( fragColor, vec4( 0.02, 0.02, 0.02, 1.0 ) );
     assign( fragPosition, vec4( sw( vPosition, 'xyz' ), depth ) );
     assign( fragNormal, vec4( normalize( vNormal ), MTL_PBR_ROUGHNESS_METALLIC ) );
-    assign( fragMisc, vec4( roughness, 0.0, 0.0, 0.0 ) );
+    assign( fragMisc, vec4( roughness, 0.0, 0.0, 1.0 ) );
     return;
   } );
 } );
