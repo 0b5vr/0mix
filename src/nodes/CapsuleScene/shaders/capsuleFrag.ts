@@ -122,7 +122,7 @@ export const capsuleFrag = ( tag: 'deferred' | 'depth' ): string => build( () =>
     assign( mtl, step( d2, d ) );
     assign( d, min( d, d2 ) );
 
-    retFn( vec4( d, 0, 0, 0 ) );
+    retFn( vec4( d, mtl, 0, 0 ) );
   } );
 
   main( () => {
@@ -156,7 +156,7 @@ export const capsuleFrag = ( tag: 'deferred' | 'depth' ): string => build( () =>
 
     const color = def( 'vec4', mix(
       vec4( vec3( mix( 0.04, 0.8, label ) ), 1.0 ),
-      vec4( 0.1, 0.1, 0.1, 0.0 ),
+      vec4( 0.2, 0.2, 0.2, 0.0 ),
       mtl,
     ) );
 
@@ -166,7 +166,7 @@ export const capsuleFrag = ( tag: 'deferred' | 'depth' ): string => build( () =>
       mtl,
     ) );
 
-    const N = def( 'vec3', calcNormal( { rp, map, delta: 1E-3 } ) );
+    const N = def( 'vec3', calcNormal( { rp, map, delta: mix( 1E-3, 1E-2, mtl ) } ) );
 
     assign( fragColor, color );
     assign( fragPosition, vec4( sw( modelPos, 'xyz' ), depth ) );
