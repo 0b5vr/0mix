@@ -18,7 +18,7 @@ export const nhelvGlyphFrag = build( () => {
 
     const ani = def( 'float', exp( mul( -2.0, fract( seed ) ) ) );
 
-    divAssign( p, mix( 0.3, 0.28, ani ) );
+    divAssign( p, mix( 0.3, 0.29, ani ) );
     subAssign( p, 0.1 );
 
     const pt = def( 'vec2', abs( sub( fract( mul( 20.0, p ) ), 0.5 ) ) );
