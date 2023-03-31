@@ -8,7 +8,7 @@ for ( let iCh = 0; iCh < 2; iCh ++ ) {
 
   for ( let i = 0; i < samples; i ++ ) {
     const t = i / sampleRate;
-    ch[ i ] = i === 0 ? 1.0 : 0.003 * ( Math.random() - 0.5 ) * Math.exp( -5.0 * t );
+    ch[ i ] = i === 0 ? 1.0 : 0.001 * ( Math.random() - 0.5 ) * Math.exp( -5.0 * t );
   }
 }
 
