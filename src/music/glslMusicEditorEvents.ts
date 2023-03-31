@@ -1448,8 +1448,8 @@ vec2 mainaudio(vec4 time){
 //   conspiracy, ctrl+alt+test, doxas, epoch, fairlight,
 //   farbrausch, limp ninja, lj & virgill, logicoma, loonies,
 //   luchak, mercury, mfx, mrdoob, ninjadev,
-//   orange, prismbeings, rebels, rgba, satori,
-//   slay bells, srtuss, still, yx
+//   nuance, orange, prismbeings, rebels, rgba,
+//   satori, slay bells, srtuss, still, yx
 
 // oh, we will also do our demoparty three weeks later!
 //   sessions in c4 lan 2023 spring
