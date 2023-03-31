@@ -257,7 +257,7 @@ vec2 mainaudio(vec4 time){
   { // dual vco
     vec2 sum=vec2(0);
 
-    repeat(i,4){
+    repeat(i,7){
       float fi=float(i);
 
       const float freqs[3]=float[](560.,1200.,240.);
@@ -267,7 +267,7 @@ vec2 mainaudio(vec4 time){
         float t=mod(time.z-times[j]*b2t-.5*b2t*fi,2.*b2t);
         vec2 wave=vec2(0);
         wave+=sin(tau*freqs[j]*t);
-        wave+=sin(1.0*tau*freqs[j]*t+.0*wave); // osc 2
+        wave+=0.*sin(2.0*tau*freqs[j]*t+wave); // osc 2
         sum+=exp(-30.*max(t-.05,0.))*exp(-2.*fi)*wave*r2d(fi+10.*time.w);
       }
     }
@@ -311,7 +311,7 @@ vec2 mainaudio(vec4 time){
   [ 1.0, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 1.5, GLSLMusicEditorEventType.Uncomment ],
 
-  // dual vco detune
+  // osc2
   [ 1.5, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 0.5, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 1.0, GLSLMusicEditorEventType.JumpPart, 1 ],
@@ -325,37 +325,10 @@ vec2 mainaudio(vec4 time){
   [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
-  [ 0.5, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 1.0, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 0.5, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 2.0, GLSLMusicEditorEventType.Insert, '1' ],
   [ 7.5, GLSLMusicEditorEventType.Apply ],
-  [ 3.0, GLSLMusicEditorEventType.Delete ],
-  [ 0.5, GLSLMusicEditorEventType.Insert, '2' ],
-  [ 0.5, GLSLMusicEditorEventType.Apply ],
-  [ 3.0, GLSLMusicEditorEventType.Delete ],
-  [ 0.5, GLSLMusicEditorEventType.Insert, '3' ],
-  [ 0.5, GLSLMusicEditorEventType.Apply ],
-  [ 3.0, GLSLMusicEditorEventType.Delete ],
-  [ 0.5, GLSLMusicEditorEventType.Insert, '4' ],
-  [ 0.5, GLSLMusicEditorEventType.Apply ],
-  [ 3.0, GLSLMusicEditorEventType.Delete ],
-  [ 0.5, GLSLMusicEditorEventType.Insert, '5' ],
-  [ 0.5, GLSLMusicEditorEventType.Apply ],
-  [ 3.0, GLSLMusicEditorEventType.Delete ],
-  [ 0.5, GLSLMusicEditorEventType.Insert, '6' ],
-  [ 0.5, GLSLMusicEditorEventType.Apply ],
-  [ 3.0, GLSLMusicEditorEventType.Delete ],
-  [ 0.5, GLSLMusicEditorEventType.Insert, '8' ],
-  [ 0.5, GLSLMusicEditorEventType.Apply ],
-  [ 3.0, GLSLMusicEditorEventType.Delete ],
-  [ 0.2, GLSLMusicEditorEventType.Delete ],
-  [ 0.5, GLSLMusicEditorEventType.Insert, '1' ],
-  [ 0.2, GLSLMusicEditorEventType.Apply ],
   [ 3.0, GLSLMusicEditorEventType.Delete ],
   [ 0.5, GLSLMusicEditorEventType.Insert, '2' ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
@@ -380,33 +353,13 @@ vec2 mainaudio(vec4 time){
   [ 3.0, GLSLMusicEditorEventType.Delete ],
   [ 0.5, GLSLMusicEditorEventType.Insert, '9' ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
-  [ 2.0, GLSLMusicEditorEventType.Delete ],
-  [ 0.25, GLSLMusicEditorEventType.Delete ],
-  [ 0.25, GLSLMusicEditorEventType.Delete ],
-  [ 0.25, GLSLMusicEditorEventType.Insert, '2' ],
-  [ 0.25, GLSLMusicEditorEventType.Insert, '.' ],
-  [ 0.5, GLSLMusicEditorEventType.Apply ],
-
-  // dual vco fm
-  [ 2.0, GLSLMusicEditorEventType.Move, [ 0, 100 ] ],
-  [ 1.0, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 1.0, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 0.7, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
-  [ 3.0, GLSLMusicEditorEventType.Delete ],
+  [ 2.5, GLSLMusicEditorEventType.Delete ],
+  [ 0.3, GLSLMusicEditorEventType.Delete ],
+  [ 0.2, GLSLMusicEditorEventType.Delete ],
   [ 0.5, GLSLMusicEditorEventType.Insert, '1' ],
+  [ 0.2, GLSLMusicEditorEventType.Insert, '.' ],
+  [ 0.2, GLSLMusicEditorEventType.Apply ],
+  [ 3.5, GLSLMusicEditorEventType.Insert, '1' ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
   [ 3.0, GLSLMusicEditorEventType.Delete ],
   [ 0.5, GLSLMusicEditorEventType.Insert, '2' ],
@@ -418,19 +371,67 @@ vec2 mainaudio(vec4 time){
   [ 0.5, GLSLMusicEditorEventType.Insert, '4' ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
   [ 3.0, GLSLMusicEditorEventType.Delete ],
-  [ 0.5, GLSLMusicEditorEventType.Insert, '6' ],
+  [ 0.5, GLSLMusicEditorEventType.Insert, '5' ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
-  [ 3.0, GLSLMusicEditorEventType.Delete ],
+
+  // dual vco fm
+  [ 2.5, GLSLMusicEditorEventType.Move, [ 1, 0 ] ],
+  [ 1.0, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 1.3, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.3, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.7, GLSLMusicEditorEventType.Delete ],
+  [ 1.0, GLSLMusicEditorEventType.Insert, '1' ],
+  [ 0.5, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
+  [ 0.5, GLSLMusicEditorEventType.Insert, '9' ],
+  [ 0.5, GLSLMusicEditorEventType.Apply ],
+  [ 1.5, GLSLMusicEditorEventType.Delete ],
   [ 0.5, GLSLMusicEditorEventType.Insert, '8' ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
   [ 3.0, GLSLMusicEditorEventType.Delete ],
-  [ 0.2, GLSLMusicEditorEventType.Delete ],
-  [ 0.2, GLSLMusicEditorEventType.Insert, '1' ],
-  [ 0.2, GLSLMusicEditorEventType.Insert, '.' ],
-  [ 0.2, GLSLMusicEditorEventType.Apply ],
+  [ 0.5, GLSLMusicEditorEventType.Insert, '7' ],
+  [ 0.5, GLSLMusicEditorEventType.Apply ],
+  [ 3.0, GLSLMusicEditorEventType.Delete ],
+  [ 0.5, GLSLMusicEditorEventType.Insert, '6' ],
+  [ 0.5, GLSLMusicEditorEventType.Apply ],
+  [ 3.0, GLSLMusicEditorEventType.Delete ],
+  [ 0.5, GLSLMusicEditorEventType.Insert, '5' ],
+  [ 0.5, GLSLMusicEditorEventType.Apply ],
+  [ 3.0, GLSLMusicEditorEventType.Delete ],
+  [ 0.5, GLSLMusicEditorEventType.Insert, '4' ],
+  [ 0.5, GLSLMusicEditorEventType.Apply ],
+  [ 3.0, GLSLMusicEditorEventType.Delete ],
+  [ 0.5, GLSLMusicEditorEventType.Insert, '3' ],
+  [ 0.5, GLSLMusicEditorEventType.Apply ],
+  [ 3.0, GLSLMusicEditorEventType.Delete ],
+  [ 0.5, GLSLMusicEditorEventType.Insert, '2' ],
+  [ 0.5, GLSLMusicEditorEventType.Apply ],
 
   // dual vco polyrhythm
-  [ 3.0, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
+  [ 6.6, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
+  [ 0.6, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
   [ 0.5, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
   [ 0.5, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
   [ 1.0, GLSLMusicEditorEventType.Move, [ 0, 1000 ] ],
@@ -615,8 +616,8 @@ vec2 mainaudio(vec4 time){
   [ 4.0, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
   [ 0.8, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
   [ 0.8, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
-  [ 1.5, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
-  [ 2.0, GLSLMusicEditorEventType.Move, [ 0, 1000 ] ],
+  [ 1.0, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
+  [ 1.0, GLSLMusicEditorEventType.Move, [ 0, 1000 ] ],
   [ 1.0, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
   [ 0.2, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
   [ 0.2, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
@@ -645,7 +646,7 @@ vec2 mainaudio(vec4 time){
   [ 3.0, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 2.0, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 1.5, GLSLMusicEditorEventType.JumpPart, -1 ],
-  [ 5.0, GLSLMusicEditorEventType.Insert, `{ // chord
+  [ 6.5, GLSLMusicEditorEventType.Insert, `{ // chord
     float chord[8]=float[](
       0.,5.,7.,12.,14.,19.,22.,29.
     );
@@ -673,14 +674,14 @@ vec2 mainaudio(vec4 time){
   [ 0.8, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 2.0, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 2.0, GLSLMusicEditorEventType.Uncomment ],
-  [ 2.5, GLSLMusicEditorEventType.Apply ],
+  [ 1.5, GLSLMusicEditorEventType.Apply ],
 
   // unmute ride
-  [ 1.0, GLSLMusicEditorEventType.JumpPart, 1 ],
+  [ 2.0, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 2.0, GLSLMusicEditorEventType.Uncomment ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
 
-  // unmute clap
+  // unmute psysaw
   [ 4.0, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 2.0, GLSLMusicEditorEventType.Uncomment ],
   [ 25.5, GLSLMusicEditorEventType.Apply ],
