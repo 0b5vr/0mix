@@ -88,7 +88,7 @@ export const postFrag = build( () => {
     const gamma = mix(
       mix(
         vec4( 0.0, 0.0, 0.0, -0.1 ),
-        vec4( 0.0, 0.0, 0.0, -0.2 ),
+        vec4( 0.0, 0.0, 0.0, -0.1 ),
         glslLinearstep( 0.0, 1.0, colorGrade ),
       ),
       mix(
