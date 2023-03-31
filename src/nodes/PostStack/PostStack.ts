@@ -6,6 +6,7 @@ import { DCT } from './DCT/DCT';
 import { FUIShit } from './FUIShit/FUIShit';
 import { FXAA } from './FXAA/FXAA';
 import { Kaleidoscope } from './Kaleidoscope/Kaleidoscope';
+import { NhelvGlyph } from './NhelvGlyph/NhelvGlyph';
 import { PixelSorter } from './PixelSorter/PixelSorter';
 import { Post } from './Post/Post';
 import { RenderTarget } from '../../heck/RenderTarget';
@@ -61,6 +62,10 @@ export class PostStack extends SceneNode {
       target: swap.i,
     } );
 
+    const nhelvGlyph = new NhelvGlyph( {
+      target: swap.i,
+    } );
+
     swap.swap();
     const kaleidoscope = new Kaleidoscope( {
       input: swap.o,
@@ -95,6 +100,7 @@ export class PostStack extends SceneNode {
       bloom,
       fxaa,
       fuiShit,
+      nhelvGlyph,
       kaleidoscope,
       post,
       dct,
