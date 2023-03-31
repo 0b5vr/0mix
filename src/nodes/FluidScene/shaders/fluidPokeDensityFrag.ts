@@ -30,7 +30,7 @@ export const fluidPokeDensityFrag: string = build( () => {
     assign( sw( pos, 'x' ), sub( abs( sw( pos, 'x' ) ), 0.3 ) );
 
     const poke = def( 'float', glslSaturate( mad( -7.0, length( pos ), 1.0 ) ) );
-    addAssign( density, mul( deltaTime, poke, vec4( 0.0, 4.0, 0.0, 1.0 ) ) );
+    addAssign( density, mul( deltaTime, poke, vec4( 0.0, 5.0, 0.0, 1.0 ) ) );
 
     assign( fragColor, density );
   } );

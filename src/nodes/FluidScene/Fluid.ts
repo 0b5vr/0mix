@@ -10,7 +10,6 @@ import { SceneNode } from '../../heck/components/SceneNode';
 import { Swap, arraySerial } from '@0b5vr/experimental';
 import { auto } from '../../globals/automaton';
 import { colorFrag } from '../../shaders/common/colorFrag';
-import { createLightUniformsLambda } from '../utils/createLightUniformsLambda';
 import { createRaymarchCameraUniformsLambda } from '../utils/createRaymarchCameraUniformsLambda';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { fluidAdvectionFrag } from './shaders/fluidAdvectionFrag';
@@ -255,8 +254,6 @@ export class Fluid extends SceneNode {
       swapDensity.o.texture,
     );
 
-    const lambdaLightUniforms = createLightUniformsLambda( [ forward ] );
-
     const lambdaRaymarchCameraUniforms = createRaymarchCameraUniformsLambda( [ forward ] );
 
     const mesh = new Mesh( {
@@ -295,14 +292,12 @@ export class Fluid extends SceneNode {
       quadPressures.map( ( quad, i ) => quad.name = `quadPressures${ i }` );
       quadResolvePressure.name = 'quadResolvePressure';
       quadAdvectionVelocity.name = 'quadAdvectionVelocity';
-      lambdaLightUniforms.name = 'lambdaLightUniforms';
       lambdaRaymarchCameraUniforms.name = 'lambdaRaymarchCameraUniforms';
       mesh.name = 'mesh';
     }
 
     // -- components -------------------------------------------------------------------------------
     this.children = [
-      lambdaLightUniforms,
       lambdaRaymarchCameraUniforms,
       mesh,
     ];

@@ -77,8 +77,6 @@ export class FluidScene extends SceneNode {
       onUpdate: ( { time } ) => {
         camera.transform.lookAt(
           vec3ApplyQuaternion( [ 0.0, 0.1, 1.5 ], quatRotationY( 0.2 * time ) ),
-          [ 0.0, 0.0, 0.0 ],
-          0.0,
         );
       },
     } );
