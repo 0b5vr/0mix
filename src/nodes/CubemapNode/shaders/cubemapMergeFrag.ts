@@ -1,4 +1,4 @@
-import { add, addAssign, assign, build, def, defInNamed, defOutNamed, defUniformNamed, discard, div, floor, forBreak, forLoop, gt, ifThen, insert, log2, main, min, mul, neg, pow, step, sub, sw, texture } from '../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defInNamed, defOutNamed, defUniformNamed, discard, div, floor, forBreak, forLoop, gt, ifThen, insert, log2, main, min, mul, neg, pow, sub, sw, tern, texture, vec4 } from '../../../shaders/shaderBuilder';
 
 export const cubemapMergeFrag = build( () => {
   insert( 'precision highp float;' );
@@ -29,7 +29,11 @@ export const cubemapMergeFrag = build( () => {
     } );
 
     const accumw = sw( accum, 'w' );
-    assign( accum, mul( step( 0.001, accumw ), div( accum, accumw ) ) );
+    assign( accum, tern(
+      gt( accumw, 0.001 ),
+      div( accum, accumw ),
+      vec4( 0.0, 0.0, 0.0, 1.0 ),
+    ) );
 
     assign( fragColor, accum );
   } );
