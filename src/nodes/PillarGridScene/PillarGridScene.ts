@@ -77,9 +77,8 @@ export class PillarGridScene extends SceneNode {
         subAssign( sw( coord, 'x' ), mul( 10.0, sub( dicerow, 0.5 ), time ) );
 
         const shape = mul(
-          4.0, // strength
           step( 0.5, sw( pcg3df( vec3( row, floor( sw( coord, 'x' ) ), 0.0 ) ), 'x' ) ), // dice
-          step( abs( sw( coord, 'y' ) ), 0.1 ), // stripe
+          step( abs( sw( coord, 'y' ) ), 0.3 ), // stripe
           step( abs( sw( rp, 'x' ) ), 40.0 ), // far fog
           step( abs( sw( rp, 'y' ) ), 40.0 ), // far fog
           step( isect, FAR - 1E-3 ), // plane hit
