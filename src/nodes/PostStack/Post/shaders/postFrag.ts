@@ -38,7 +38,7 @@ export const postFrag = build( () => {
     const col = def( 'vec3', sw( texture( sampler0, p ), 'xyz' ) );
     assign( col, mix(
       col,
-      mad( -0.5, cos( mul( PI, cosAmp, sw( col, 'xxx' ) ) ), 0.5 ),
+      mad( -0.5, cos( mul( PI, cosAmp, glslSaturate( sw( col, 'xxx' ) ) ) ), 0.5 ),
       glslSaturate( cosAmp ),
     ) );
     retFn( col );
