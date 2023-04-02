@@ -374,8 +374,8 @@ vec2 mainaudio(vec4 time){
   [ 0.5, GLSLMusicEditorEventType.Insert, '5' ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
 
-  // dual vco fm
-  [ 2.5, GLSLMusicEditorEventType.Move, [ 1, 0 ] ],
+  // delay
+  [ 5.0, GLSLMusicEditorEventType.Move, [ 1, 0 ] ],
   [ 1.0, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 0.1, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
@@ -407,7 +407,7 @@ vec2 mainaudio(vec4 time){
   [ 0.5, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 0.5, GLSLMusicEditorEventType.Insert, '9' ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
-  [ 1.5, GLSLMusicEditorEventType.Delete ],
+  [ 3.0, GLSLMusicEditorEventType.Delete ],
   [ 0.5, GLSLMusicEditorEventType.Insert, '8' ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
   [ 3.0, GLSLMusicEditorEventType.Delete ],
@@ -421,9 +421,6 @@ vec2 mainaudio(vec4 time){
   [ 0.5, GLSLMusicEditorEventType.Apply ],
   [ 3.0, GLSLMusicEditorEventType.Delete ],
   [ 0.5, GLSLMusicEditorEventType.Insert, '4' ],
-  [ 0.5, GLSLMusicEditorEventType.Apply ],
-  [ 3.0, GLSLMusicEditorEventType.Delete ],
-  [ 0.5, GLSLMusicEditorEventType.Insert, '3' ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
   [ 3.0, GLSLMusicEditorEventType.Delete ],
   [ 0.5, GLSLMusicEditorEventType.Insert, '2' ],
