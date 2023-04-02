@@ -12,7 +12,7 @@ import { pcg3df } from '../../../shaders/modules/pcg3df';
 import { sampleGGX } from '../../../shaders/modules/sampleGGX';
 import { setupRoRd } from '../../../shaders/modules/setupRoRd';
 
-const IOR = 1.6;
+const IOR = 1.4;
 
 export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( () => {
   insert( 'precision highp float;' );
@@ -119,7 +119,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
       const h = def( 'vec3', sampleGGX(
         vec2( random(), random() ),
         N,
-        sq( mix( 0.0, 0.2, rough ) ),
+        sq( mix( 0.0, 0.3, rough ) ),
       ) );
       const dotVH = def( 'float', max( 0.001, dot( neg( rd ), h ) ) );
 
@@ -139,7 +139,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
 
       ifThen( not( result.hole ), () => {
         ifThen( inMedium, () => {
-          const size = sub( result.size, 0.04 );
+          const size = mul( result.size, 0.5 );
           assign( isect, mix(
             isect,
             isectBox( sub( ro, result.cell ), rd, vec3( size ) ),
@@ -169,7 +169,7 @@ export const octreeTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( 
 
         ifThen( inMedium, () => {
           // emissive
-          addAssign( col, mul( rough, colRem ) );
+          addAssign( col, colRem );
           mulAssign( colRem, 0.0 );
 
           ifThen( isFirstRay, () => forBreak() );

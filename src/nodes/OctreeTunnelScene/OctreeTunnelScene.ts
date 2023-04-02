@@ -40,7 +40,7 @@ export class OctreeTunnelScene extends SceneNode {
       scene,
       resources: mainCameraStackResources,
       target: cameraStackATarget,
-      fog: [ 0.0, 5.0, 20.0 ],
+      fog: [ 0.0, 5.0, 10.0 ],
       dofParams: [ 4.0, 4.0 ],
       useAO: false,
       useDenoiser: true,
