@@ -37,7 +37,7 @@ export const particlesRenderVert = build( () => {
     const size = mul(
       smoothstep( 1.0, 0.9, vLife ),
       smoothstep( 0.0, 1.0, vLife ),
-      pow( sw( vDice, 'x' ), 4.0 ),
+      add( 0.2, pow( sw( vDice, 'x' ), 4.0 ) ),
       0.1,
     );
 

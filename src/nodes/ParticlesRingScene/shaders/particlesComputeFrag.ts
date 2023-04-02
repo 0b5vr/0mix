@@ -1,10 +1,11 @@
 import { PARTICLES_COUNT, PARTICLES_COUNT_SQRT, PARTICLES_SPAWN_LENGTH } from '../constants';
 import { TAU } from '../../../utils/constants';
-import { add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, div, dot, exp, floor, ifThen, insert, length, lt, lte, main, max, mix, mul, mulAssign, normalize, sub, subAssign, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { add, addAssign, and, assign, build, def, defInNamed, defOut, defUniformNamed, div, dot, exp, floor, ifThen, insert, length, lt, lte, main, max, mix, mul, mulAssign, normalize, pow, sub, subAssign, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { cis } from '../../../shaders/modules/cis';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslLofi } from '../../../shaders/modules/glslLofi';
 import { perlin3d } from '../../../shaders/modules/perlin3d';
+import { uniformSphere } from '../../../shaders/modules/uniformSphere';
 
 export const particlesComputeFrag: string = build( () => {
   insert( 'precision highp float;' );
@@ -19,7 +20,7 @@ export const particlesComputeFrag: string = build( () => {
   const samplerCompute0 = defUniformNamed( 'sampler2D', 'samplerCompute0' );
   const samplerCompute1 = defUniformNamed( 'sampler2D', 'samplerCompute1' );
 
-  const { init, random } = glslDefRandom();
+  const { init, random4 } = glslDefRandom();
 
   main( () => {
     const dt = def( 'float', deltaTime );
@@ -53,11 +54,11 @@ export const particlesComputeFrag: string = build( () => {
     ifThen( and( lt( sub( time, deltaTime ), spawnTime ), lte( spawnTime, time ) ), () => {
       assign( dt, sub( time, spawnTime ) );
 
-      const x = def( 'float', mul( TAU, random() ) );
-      assign( pos, vec3(
-        mul( 1.5, cis( x ) ),
-        0.0,
-      ) );
+      const xi = def( 'vec4', mul( TAU, random4() ) );
+      assign( pos, vec3( add(
+        vec3( mul( 1.5, cis( sw( xi, 'x' ) ) ), 0.0 ),
+        mul( 0.1, mul( uniformSphere( sw( xi, 'yz' ) ), pow( sw( xi, 'w' ), 0.333 ) ) ),
+      ) ) );
       assign( vel, vec3( 0.0 ) );
       assign( life, 1.0 );
     } );
