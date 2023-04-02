@@ -1,5 +1,6 @@
 import { HALF_PI, TAU } from '../../../../utils/constants';
 import { abs, add, assign, atan, build, def, defInNamed, defOutNamed, defUniformNamed, div, dot, glFragCoord, insert, length, main, max, mix, mixStepChain, mod, mul, sin, step, sub, sw, vec2, vec3, vec4 } from '../../../../shaders/shaderBuilder';
+import { glslLinearstep } from '../../../../shaders/modules/glslLinearstep';
 import { glslLofi } from '../../../../shaders/modules/glslLofi';
 import { pcg3df } from '../../../../shaders/modules/pcg3df';
 
@@ -66,7 +67,11 @@ export const fuiShitFrag = build( () => {
 
       // a spinner
       [ 5.0, mul(
-        step( abs( sub( length( vCoord ), 0.8 ) ), 0.2 ),
+        glslLinearstep(
+          div( deltaPixel, 0.03, 2.0 ),
+          div( deltaPixel, -0.03, 2.0 ),
+          sub( abs( sub( length( vCoord ), 0.75 ) ), 0.2 ),
+        ),
         step( HALF_PI, mod( add(
           atan( sw( vCoord, 'y' ), sw( vCoord, 'x' ) ),
           glslLofi( mul( 16.0, t ), HALF_PI ),
@@ -74,9 +79,10 @@ export const fuiShitFrag = build( () => {
       ) ],
 
       // a huge circle
-      [ 6.0, step(
-        abs( sub( length( vCoord ), 0.9 ) ),
-        div( deltaPixel, 2.0, mul( 0.5, diceZ, diceZ ) ),
+      [ 6.0, glslLinearstep(
+        div( deltaPixel, mul( 0.5, diceZ, diceZ ) ),
+        0.0,
+        abs( sub( length( vCoord ), 0.95 ) ),
       ) ],
 
       // a crosshair
