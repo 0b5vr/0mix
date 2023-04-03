@@ -4,7 +4,7 @@ import { MUSIC_BPM } from '../config';
 import { Pool, arraySerial } from '@0b5vr/experimental';
 import { audio, sampleRate } from '../globals/audio';
 import { audioAnalyzerSplitter } from '../globals/audioAnalyzer';
-import { audioConvolver } from '../globals/audioConvolver';
+import { audioReverb } from '../globals/audioReverb';
 import { createDebounce } from '../utils/createDebounce';
 import { gl } from '../globals/canvas';
 import { glLazyProgram } from '../gl/glLazyProgram';
@@ -130,7 +130,8 @@ export class Music {
 
     // -- audio ------------------------------------------------------------------------------------
     const gainNode = audio.createGain();
-    gainNode.connect( audioConvolver );
+    gainNode.connect( audioReverb );
+    gainNode.connect( audio.destination );
 
     if ( import.meta.env.DEV ) {
       gainNode.gain.value = 0.0;

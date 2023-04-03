@@ -8,11 +8,15 @@ for ( let iCh = 0; iCh < 2; iCh ++ ) {
 
   for ( let i = 0; i < samples; i ++ ) {
     const t = i / sampleRate;
-    ch[ i ] = i === 0 ? 1.0 : 0.001 * ( Math.random() - 0.5 ) * Math.exp( -5.0 * t );
+    ch[ i ] = ( Math.random() - 0.5 ) * Math.exp( -5.0 * t );
   }
 }
 
-export const audioConvolver = audio.createConvolver();
-audioConvolver.buffer = buffer;
+const convolver = audio.createConvolver();
+convolver.buffer = buffer;
 
-audioConvolver.connect( audio.destination );
+convolver.connect( audio.destination );
+
+export const audioReverb = audio.createGain();
+audioReverb.gain.value = 0.04;
+audioReverb.connect( convolver );
