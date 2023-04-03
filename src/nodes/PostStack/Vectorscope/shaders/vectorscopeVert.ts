@@ -26,7 +26,7 @@ export const vectorscopeVert = build( () => {
 
     const scale = floor( div( sw( resolution, 'y' ), 360.0 ) );
 
-    mulAssign( position, mul( 50.0, scale ) );
+    mulAssign( position, mul( 40.0, scale ) );
     addAssign( position, resolution );
     subAssign( position, mul( vec2( 14.0 * 6.0, 13.0 * 7.0 ), scale ) );
     divAssign( position, resolution );

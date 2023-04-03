@@ -275,7 +275,7 @@ vec2 mainaudio(vec4 time){
     dest+=.1*sum;
   }
 
-  return tanh(dest);
+  return clip(1.3*tanh(dest));
 }` ],
   [ 0.0, GLSLMusicEditorEventType.Move, [ -1000, 0 ] ],
   [ 0.0, GLSLMusicEditorEventType.Move, [ 0, -1000 ] ],
@@ -1291,7 +1291,7 @@ vec2 mainaudio(vec4 time){
     }
 
     float zc=linearstep(0.,1E-3,t)*linearstep(0.,1E-2,.25*b2t-t);
-    dest+=.4*zc*sidechain*tanh(1.5*sum);
+    dest+=.5*zc*sidechain*tanh(1.5*sum);
   }
 
   // { // hihat
