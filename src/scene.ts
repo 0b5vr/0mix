@@ -17,6 +17,7 @@ import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
 import { LoadingScreen } from './nodes/LoadingScreen/LoadingScreen';
 import { MUSIC_BPM } from './config';
 import { MetaballScene } from './nodes/MetaballScene/MetaballScene';
+import { MetalCubeScene } from './nodes/MetalCubeScene/MetalCubeScene';
 import { Mixer } from './nodes/Mixer/Mixer';
 import { MoonScene } from './nodes/MoonScene/MoonScene';
 import { NoisePlaneScene } from './nodes/NoisePlaneScene/NoisePlaneScene';
@@ -147,6 +148,7 @@ const scenesA = [
   new RieScene(),
   new InkScene(),
   new CapsuleScene(),
+  new MetalCubeScene(),
 ];
 
 const scenesB = [

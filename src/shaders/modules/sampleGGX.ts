@@ -1,4 +1,4 @@
-import { GLSLExpression, add, cache, cos, def, defFn, div, mul, retFn, sin, sqrt, sub, sw, vec3 } from '../shaderBuilder';
+import { GLSLExpression, GLSLFloatExpression, add, cache, cos, def, defFn, div, mul, num, retFn, sin, sqrt, sub, sw, vec3 } from '../shaderBuilder';
 import { PI } from '../../utils/constants';
 import { orthBas } from './orthBas';
 
@@ -7,7 +7,7 @@ const symbol = Symbol();
 export function sampleGGX(
   Xi: GLSLExpression<'vec2'>,
   N: GLSLExpression<'vec3'>,
-  roughnessSq: GLSLExpression<'float'>,
+  roughnessSq: GLSLFloatExpression,
 ): GLSLExpression<'vec3'> {
   const f = cache(
     symbol,
@@ -25,5 +25,5 @@ export function sampleGGX(
     } )
   );
 
-  return f( Xi, N, roughnessSq );
+  return f( Xi, N, num( roughnessSq ) );
 }
