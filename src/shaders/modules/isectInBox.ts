@@ -1,5 +1,5 @@
 import { FAR } from '../../config';
-import { GLSLExpression, abs, add, cache, def, defFn, div, ifThen, lt, min, mul, neg, retFn, sign, step, sw, vec4 } from '../shaderBuilder';
+import { GLSLExpression, abs, add, cache, def, defFn, div, ifThen, lt, min, mul, neg, retFn, sign, step, sw, vec3, vec4 } from '../shaderBuilder';
 
 const symbol = Symbol();
 
@@ -13,12 +13,11 @@ export function isectInBox(
     const dst = abs( div( s, rd ) );
     const b = def( 'vec3', add( src, dst ) );
     const bl = min( sw( b, 'x' ), min( sw( b, 'y' ), sw( b, 'z' ) ) );
-    ifThen( lt( bl, 1E-3 ), () => retFn( vec4( FAR ) ) );
+    ifThen( lt( bl, 0.0 ), () => retFn( vec4( FAR ) ) );
     const n = mul(
       -1.0,
       sign( rd ),
-      step( b, sw( b, 'yzx' ) ),
-      step( b, sw( b, 'zxy' ) ),
+      step( b, vec3( bl ) ),
     );
     retFn( vec4( n, bl ) );
   } ) );

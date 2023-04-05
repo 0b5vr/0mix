@@ -1,5 +1,5 @@
 import { FAR } from '../../config';
-import { GLSLExpression, abs, add, cache, def, defFn, div, ifThen, lt, max, min, mul, neg, or, retFn, sign, step, sub, sw, vec4 } from '../shaderBuilder';
+import { GLSLExpression, abs, add, cache, def, defFn, div, ifThen, lt, max, min, mul, neg, or, retFn, sign, step, sub, sw, vec3, vec4 } from '../shaderBuilder';
 
 const symbol = Symbol();
 
@@ -15,12 +15,11 @@ export function isectBox(
     const b = def( 'vec3', add( src, dst ) );
     const fl = def( 'float', max( sw( f, 'x' ), max( sw( f, 'y' ), sw( f, 'z' ) ) ) );
     const bl = min( sw( b, 'x' ), min( sw( b, 'y' ), sw( b, 'z' ) ) );
-    ifThen( or( lt( bl, fl ), lt( fl, 1E-3 ) ), () => retFn( vec4( FAR ) ) );
+    ifThen( or( lt( bl, fl ), lt( fl, 0.0 ) ), () => retFn( vec4( FAR ) ) );
     const n = mul(
       -1.0,
       sign( rd ),
-      step( sw( f, 'yzx' ), f ),
-      step( sw( f, 'zxy' ), f ),
+      step( vec3( fl ), f ),
     );
     retFn( vec4( n, fl ) );
   } ) );
