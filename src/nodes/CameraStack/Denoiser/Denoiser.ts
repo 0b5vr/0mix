@@ -14,6 +14,11 @@ export interface DenoiserOptions {
   deferredTarget: BufferTextureRenderTarget;
   swap: Swap<BufferTextureRenderTarget>;
   iter: number;
+  params: [
+    rt: number,
+    p: number,
+    n: number,
+  ];
 }
 
 export class Denoiser extends SceneNode {
@@ -25,6 +30,7 @@ export class Denoiser extends SceneNode {
       deferredTarget,
       swap,
       iter,
+      params,
     } = options;
 
     // -- quads ------------------------------------------------------------------------------------
@@ -36,6 +42,11 @@ export class Denoiser extends SceneNode {
         {
           initOptions: { target: dummyRenderTarget1, geometry: quadGeometry },
         },
+      );
+      material.addUniform(
+        'sigma',
+        '3f',
+        ...params,
       );
       material.addUniformTextures(
         'sampler0',

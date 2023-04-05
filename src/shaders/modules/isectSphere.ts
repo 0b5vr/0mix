@@ -17,6 +17,8 @@ export function isectSphere(
 
     assign( h, sqrt( h ) );
     const d = def( 'float', neg( add( b, h ) ) );
+    ifThen( lt( d, 0.0 ), () => retFn( vec4( FAR ) ) );
+
     const N = normalize( mad( d, rd, ro ) );
     retFn( vec4( N, d ) );
   } ) );

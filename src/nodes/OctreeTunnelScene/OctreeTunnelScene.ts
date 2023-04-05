@@ -43,7 +43,7 @@ export class OctreeTunnelScene extends SceneNode {
       fog: [ 0.0, 5.0, 10.0 ],
       dofParams: [ 4.0, 4.0 ],
       useAO: false,
-      useDenoiser: true,
+      denoiserParams: [ 0.4, 0.1, 0.5 ],
     } );
 
     const lambdaUpdateCamera = new Lambda( {

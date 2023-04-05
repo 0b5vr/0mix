@@ -26,6 +26,7 @@ import { OBSVRLogoScene } from './nodes/OBSVRLogoScene/OBSVRLogoScene';
 import { OctreeTunnelScene } from './nodes/OctreeTunnelScene/OctreeTunnelScene';
 import { ParticlesRingScene } from './nodes/ParticlesRingScene/ParticlesRingScene';
 import { PillarGridScene } from './nodes/PillarGridScene/PillarGridScene';
+import { PinArrayScene } from './nodes/PinArrayScene/PinArrayScene';
 import { PlexusScene } from './nodes/PlexusScene/PlexusScene';
 import { PostStack } from './nodes/PostStack/PostStack';
 import { RieScene } from './nodes/RieScene/RieScene';
@@ -149,6 +150,7 @@ const scenesA = [
   new InkScene(),
   new CapsuleScene(),
   new MetalCubeScene(),
+  new PinArrayScene(),
 ];
 
 const scenesB = [

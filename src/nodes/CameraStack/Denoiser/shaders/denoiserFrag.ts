@@ -1,10 +1,6 @@
 import { abs, add, addAssign, arrayIndex, assign, build, def, defInNamed, defOut, defUniformArrayNamed, defUniformNamed, discard, div, dot, eq, exp, forLoop, ifThen, insert, int, length, mad, main, max, mul, neg, pow, sqrt, step, sub, sw, tern, texture, vec2, vec4 } from '../../../../shaders/shaderBuilder';
 import { glslGaussian } from '../../../../shaders/modules/glslGaussian';
 
-const SIGMA_RT = 0.4;
-const SIGMA_P = 0.1;
-const SIGMA_N = 0.5;
-
 export const denoiserFrag = ( iter: number ): string => build( () => {
   insert( 'precision highp float;' );
 
@@ -12,6 +8,10 @@ export const denoiserFrag = ( iter: number ): string => build( () => {
   const fragColor = defOut( 'vec4' );
 
   const resolution = defUniformNamed( 'vec2', 'resolution' );
+
+  /** vec3( rt, p, n ) */
+  const sigma = defUniformNamed( 'vec3', 'sigma' );
+
   const sampler0 = defUniformArrayNamed( 'sampler2D', 'sampler0', 4 );
   const sampler1 = defUniformNamed( 'sampler2D', 'sampler1' );
 
@@ -39,11 +39,11 @@ export const denoiserFrag = ( iter: number ): string => build( () => {
       const weight = mul(
         exp( neg( div(
           abs( sub( rtp, rtq ) ),
-          mul( SIGMA_RT, sqrt( add( rtp, rtq, 0.001 ) ) ),
+          mul( sw( sigma, 'x' ), sqrt( add( rtp, rtq, 0.001 ) ) ),
         ) ) ),
         step( sw( pqTex, 'w' ), 1.0 ),
-        glslGaussian( length( sub( pp, pq ) ), SIGMA_P ),
-        pow( max( 0.0, dot( np, nq ) ), SIGMA_N ),
+        glslGaussian( length( sub( pp, pq ) ), sw( sigma, 'y' ) ),
+        pow( max( 0.0, dot( np, nq ) ), sw( sigma, 'z' ) ),
       );
 
       addAssign( ci1, mul( weight, vec4( ciq, 1.0 ) ) );

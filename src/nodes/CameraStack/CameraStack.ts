@@ -38,7 +38,11 @@ export interface CameraStackOptions extends ComponentOptions {
   ];
   clear?: number[] | false;
   useAO?: boolean;
-  useDenoiser?: boolean;
+  denoiserParams?: [
+    rt: number,
+    p: number,
+    n: number,
+  ];
   cubemapNode?: CubemapNode;
   resources?: CameraStackResources;
 }
@@ -67,7 +71,7 @@ export class CameraStack extends SceneNode {
       dofParams,
       clear,
       useAO,
-      useDenoiser,
+      denoiserParams,
       cubemapNode,
     } = options;
 
@@ -151,6 +155,7 @@ export class CameraStack extends SceneNode {
         shadeTarget: aoTarget,
         swap: aoDenoiserSwap!,
         iter: 3,
+        params: [ 0.4, 0.1, 0.1 ],
       } );
 
       if ( import.meta.env.DEV ) {
@@ -269,11 +274,12 @@ export class CameraStack extends SceneNode {
     }
 
     // -- denoiser ---------------------------------------------------------------------------------
-    if ( useDenoiser && denoiserSwap ) {
+    if ( denoiserParams && denoiserSwap ) {
       this.children.push( new Denoiser( {
         swap: denoiserSwap!,
         deferredTarget,
         shadeTarget: shadeTarget!,
+        params: denoiserParams,
         iter: 5,
       } ) );
     }
