@@ -2,7 +2,7 @@ import { CameraStack } from '../CameraStack/CameraStack';
 import { CubemapNode } from '../CubemapNode/CubemapNode';
 import { GL_TEXTURE_2D } from '../../gl/constants';
 import { GPUParticles } from '../utils/GPUParticles';
-import { MTL_PBR_EMISSIVE3_ROUGHNESS, MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/deferredConstants';
+import { MTL_PBR_ROUGHNESS_METALLIC } from '../CameraStack/deferredConstants';
 import { Material } from '../../heck/Material';
 import { Mesh } from '../../heck/components/Mesh';
 import { PARTICLES_COUNT, PARTICLES_COUNT_SQRT } from './constants';
@@ -90,9 +90,9 @@ export class ParticlesRingScene extends SceneNode {
         { initOptions: { geometry, target: dummyRenderTarget4 } },
       );
 
-      deferred.addUniform( 'color', '4f', 0.0, 0.0, 0.0, 1.0 );
-      deferred.addUniform( 'mtlKind', '1f', MTL_PBR_EMISSIVE3_ROUGHNESS );
-      deferred.addUniform( 'mtlParams', '4f', 1.0, 1.0, 1.0, 0.0 );
+      deferred.addUniform( 'color', '4f', 0.1, 0.1, 0.1, 1.0 );
+      deferred.addUniform( 'mtlKind', '1f', MTL_PBR_ROUGHNESS_METALLIC );
+      deferred.addUniform( 'mtlParams', '4f', 1.0, 0.0, 10.0, 0.0 );
 
       meshTorus = new Mesh( {
         geometry,

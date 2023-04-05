@@ -1,7 +1,6 @@
-import { DIELECTRIC_SPECULAR, ONE_SUB_DIELECTRIC_SPECULAR, TAU } from '../../../utils/constants';
-import { GLSLExpression, GLSLFloatExpression, abs, add, addAssign, assign, build, clamp, cos, def, defFn, defInNamed, defOut, defUniformArrayNamed, defUniformNamed, discard, div, dot, eq, glFragDepth, gt, ifChain, ifThen, insert, main, max, mix, mul, mulAssign, neg, normalize, num, pow, retFn, smoothstep, sq, step, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
-import { MTL_IRIDESCENT, MTL_NONE, MTL_PBR_EMISSIVE3_ROUGHNESS, MTL_PBR_ROUGHNESS_METALLIC, MTL_PBR_SHEEN, MTL_UNLIT } from '../deferredConstants';
-import { brdfSheen } from '../../../shaders/modules/brdfSheen';
+import { DIELECTRIC_SPECULAR, ONE_SUB_DIELECTRIC_SPECULAR } from '../../../utils/constants';
+import { GLSLExpression, GLSLFloatExpression, add, addAssign, assign, build, clamp, def, defFn, defInNamed, defOut, defUniformArrayNamed, defUniformNamed, discard, div, dot, eq, glFragDepth, gt, ifChain, ifThen, insert, main, max, mix, mul, mulAssign, neg, normalize, num, retFn, smoothstep, sq, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { MTL_NONE, MTL_PBR_ROUGHNESS_METALLIC, MTL_UNLIT } from '../deferredConstants';
 import { calcAlbedoF0 } from '../../../shaders/modules/calcAlbedoF0';
 import { calcL } from '../../../shaders/modules/calcL';
 import { defDoSomethingUsingSamplerArray } from '../../../shaders/modules/defDoSomethingUsingSamplerArray';
@@ -9,10 +8,7 @@ import { defIBL } from '../../../shaders/modules/defIBL';
 import { doAnalyticLighting } from '../../../shaders/modules/doAnalyticLighting';
 import { doShadowMapping } from '../../../shaders/modules/doShadowMapping';
 import { forEachLights } from '../../../shaders/modules/forEachLights';
-import { glslSaturate } from '../../../shaders/modules/glslSaturate';
 import { invCalcDepth } from '../../../shaders/modules/invCalcDepth';
-
-const EPSILON = 1E-3;
 
 export const deferredShadeFrag = ( { withAO }: {
   withAO: boolean;
@@ -60,8 +56,6 @@ export const deferredShadeFrag = ( { withAO }: {
 
     const V = def( 'vec3', normalize( sub( cameraPos, position ) ) );
 
-    const dotNV = clamp( dot( normal, V ), EPSILON, 1.0 );
-
     const outColor = def( 'vec3', vec3( 0.0 ) );
 
     const ao = withAO ? def( 'float', sw( texture( samplerAo, vUv ), 'x' ) ) : 1.0;
@@ -81,20 +75,6 @@ export const deferredShadeFrag = ( { withAO }: {
 
         const { albedo, f0 } = calcAlbedoF0( color, metallic );
 
-        ifThen( eq( mtlId, MTL_IRIDESCENT ), () => {
-          const iri = def( 'vec3', add( // cringe
-            vec3( 0.5, 0.6, 1.0 ),
-            mul( vec3( 0.4, 0.4, 0.6 ), cos( mul(
-              TAU,
-              add(
-                vec3( 0.0, 0.0, 0.25 ),
-                mul( vec3( 0.43, 0.73, 0.25 ), pow( dotNV, 0.7 ) ),
-              ),
-            ) ) ),
-          ) );
-          assign( f0, mix( f0, sq( glslSaturate( iri ) ), sw( tex3, 'z' ) ) );
-        } );
-
         const irradiance = mul(
           lightColor,
           div( 1.0, sq( lenL ) ),
@@ -107,18 +87,6 @@ export const deferredShadeFrag = ( { withAO }: {
           doAnalyticLighting( V, L, normal, roughness, albedo, f0 ),
           ao, // cringe
         ) );
-
-        // sheen
-        ifThen( eq( mtlId, MTL_PBR_SHEEN ), () => {
-          const sheenTint = sw( tex3, 'xyz' );
-          const sheenRoughness = sw( tex3, 'w' );
-
-          addAssign( lightShaded, mul(
-            irradiance,
-            brdfSheen( L, V, normal, sheenRoughness, sheenTint ),
-            ao, // cringe
-          ) );
-        } );
 
         // fetch shadowmap + spot lighting
         const lightProj = def( 'vec4', mul( lightPV, vec4( position, 1.0 ) ) );
@@ -166,16 +134,6 @@ export const deferredShadeFrag = ( { withAO }: {
       [ eq( mtlId, MTL_PBR_ROUGHNESS_METALLIC ), () => {
         assign( outColor, shadePBR( sw( tex3, 'x' ), sw( tex3, 'y' ), sw( tex3, 'w' ) ) );
         addAssign( outColor, mul( sw( tex3, 'z' ), color ) );
-      } ],
-      [ eq( mtlId, MTL_PBR_EMISSIVE3_ROUGHNESS ), () => {
-        assign( outColor, shadePBR( abs( sw( tex3, 'w' ) ), step( sw( tex3, 'w' ), 0.0 ), 0.0 ) );
-        addAssign( outColor, sw( tex3, 'xyz' ) );
-      } ],
-      [ eq( mtlId, MTL_PBR_SHEEN ), () => {
-        assign( outColor, shadePBR( 1.0, 0.0, 0.0 ) );
-      } ],
-      [ eq( mtlId, MTL_IRIDESCENT ), () => {
-        assign( outColor, shadePBR( sw( tex3, 'x' ), sw( tex3, 'y' ), 0.0 ) );
       } ],
     );
 
