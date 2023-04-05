@@ -829,6 +829,16 @@ export const transpose: {
   ( a: Ex<'mat4'> ): Ex<'mat4'>;
 } = __callFn( 'transpose' ) as any;
 
+export const dFdx: {
+  ( x: Exf ): Ex<'float'>;
+  <T extends GLSLGenType>( x: Ex<T> ): Ex<T>;
+} = __callFn( 'dFdx' ) as any;
+
+export const dFdy: {
+  ( x: Exf ): Ex<'float'>;
+  <T extends GLSLGenType>( x: Ex<T> ): Ex<T>;
+} = __callFn( 'dFdy' ) as any;
+
 export const texture: {
   ( sampler: Ex<'sampler2D'>, x: Ex<'vec2'> ): Ex<'vec4'>;
 } = __callFn( 'texture' ) as any;
