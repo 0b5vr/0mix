@@ -30,6 +30,7 @@ import { PinArrayScene } from './nodes/PinArrayScene/PinArrayScene';
 import { PlexusScene } from './nodes/PlexusScene/PlexusScene';
 import { PostStack } from './nodes/PostStack/PostStack';
 import { RieScene } from './nodes/RieScene/RieScene';
+import { Section2Scene } from './nodes/Section2Scene/Section2Scene';
 import { SevenSegScene } from './nodes/SevenSegScene/SevenSegScene';
 import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
 import { TrailsScene } from './nodes/TrailsScene/TrailsScene';
@@ -151,6 +152,7 @@ const scenesA = [
   new CapsuleScene(),
   new MetalCubeScene(),
   new PinArrayScene(),
+  new Section2Scene(),
 ];
 
 const scenesB = [
