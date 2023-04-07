@@ -494,7 +494,7 @@ vec2 mainaudio(vec4 time){
     float zc=linearstep(0.,1E-3,t)*linearstep(0.,1E-3,.25*b2t-t);
     dest+=.0*sidechain*zc*sum;
   }` ],
-  [ 2.5, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
+  [ 1.5, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
   [ 0.2, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 0.2, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 0.2, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
@@ -523,7 +523,7 @@ vec2 mainaudio(vec4 time){
   [ 0.25, GLSLMusicEditorEventType.Apply ],
 
   // insert 2nd stuff
-  [ 4.0, GLSLMusicEditorEventType.JumpPart, 1 ],
+  [ 5.0, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 2.0, GLSLMusicEditorEventType.ExpandSelectForward ],
   [ 0.4, GLSLMusicEditorEventType.ExpandSelectForward ],
   [ 0.4, GLSLMusicEditorEventType.ExpandSelectForward ],
@@ -675,11 +675,11 @@ vec2 mainaudio(vec4 time){
 
   // unmute ride
   [ 2.0, GLSLMusicEditorEventType.JumpPart, 1 ],
-  [ 2.0, GLSLMusicEditorEventType.Uncomment ],
+  [ 1.0, GLSLMusicEditorEventType.Uncomment ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
 
   // unmute psysaw
-  [ 4.0, GLSLMusicEditorEventType.JumpPart, 1 ],
+  [ 5.0, GLSLMusicEditorEventType.JumpPart, 1 ],
   [ 2.0, GLSLMusicEditorEventType.Uncomment ],
   [ 25.5, GLSLMusicEditorEventType.Apply ],
 
@@ -873,7 +873,7 @@ vec2 mainaudio(vec4 time){
   [ 3.5, GLSLMusicEditorEventType.Apply ],
 
   // fadeout 2nd bass
-  [ 4.0, GLSLMusicEditorEventType.JumpPart, -1 ],
+  [ 3.0, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 0.8, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 0.8, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 0.8, GLSLMusicEditorEventType.JumpPart, -1 ],
@@ -911,7 +911,7 @@ vec2 mainaudio(vec4 time){
   [ 0.5, GLSLMusicEditorEventType.Apply ],
 
   // insert hihat
-  [ 2.0, GLSLMusicEditorEventType.Move, [ 1, 0 ] ],
+  [ 3.0, GLSLMusicEditorEventType.Move, [ 1, 0 ] ],
   [ 1.0, GLSLMusicEditorEventType.Insert, '\n  ' ],
   [ 1.0, GLSLMusicEditorEventType.Insert, '\n  ' ],
   [ 4.0, GLSLMusicEditorEventType.Insert, `{ // hihat
@@ -949,7 +949,7 @@ vec2 mainaudio(vec4 time){
 
     dest+=.0*mix(.2,1.,sidechain)*sum;
   }` ],
-  [ 3.0, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
+  [ 2.0, GLSLMusicEditorEventType.Move, [ -1, 0 ] ],
   [ 1.2, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 0.2, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 0.2, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
@@ -1005,7 +1005,7 @@ vec2 mainaudio(vec4 time){
   [ 0.5, GLSLMusicEditorEventType.Apply ],
 
   // insert hihat 2 + clap
-  [ 4.0, GLSLMusicEditorEventType.JumpPart, -1 ],
+  [ 5.0, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 1.0, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 0.7, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 0.7, GLSLMusicEditorEventType.JumpPart, -1 ],
@@ -1349,7 +1349,7 @@ vec2 mainaudio(vec4 time){
   [ 0.4, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 1.0, GLSLMusicEditorEventType.Delete ],
   [ 0.5, GLSLMusicEditorEventType.Insert, '2' ],
-  [ 6.5, GLSLMusicEditorEventType.Apply ],
+  [ 5.5, GLSLMusicEditorEventType.Apply ],
   [ 3.0, GLSLMusicEditorEventType.Delete ],
   [ 0.5, GLSLMusicEditorEventType.Insert, '4' ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
@@ -1369,7 +1369,7 @@ vec2 mainaudio(vec4 time){
   [ 0.5, GLSLMusicEditorEventType.Apply ],
 
   // unmute snare
-  [ 3.0, GLSLMusicEditorEventType.JumpPart, -1.0 ],
+  [ 4.0, GLSLMusicEditorEventType.JumpPart, -1.0 ],
   [ 0.4, GLSLMusicEditorEventType.JumpPart, -1.0 ],
   [ 0.4, GLSLMusicEditorEventType.JumpPart, -1.0 ],
   [ 0.4, GLSLMusicEditorEventType.JumpPart, -1.0 ],

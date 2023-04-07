@@ -108,6 +108,12 @@ export function updateGLSLMusicEditor( time: number ): void {
 
     notifyObservers( shaderEventAlterObservers );
   } else if ( event[ 1 ] === GLSLMusicEditorEventType.Apply ) {
+    if ( import.meta.env.DEV ) {
+      if ( eventBeat % 4.0 > 2.4 ) {
+        console.warn( `Scary shader application at ${ ( eventBeat - 4.0 ).toFixed( 3 ) } (${ ( eventBeat % 4.0 ).toFixed( 3 ) } within the beat)` );
+      }
+    }
+
     notifyObservers( shaderEventApplyObservers );
   } else if ( event[ 1 ] === GLSLMusicEditorEventType.Move ) {
     const [ deltaRow, deltaCol ] = event[ 2 ];
