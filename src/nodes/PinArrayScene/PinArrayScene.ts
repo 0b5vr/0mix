@@ -14,12 +14,10 @@ export class PinArrayScene extends SceneNode {
     super();
 
     const scene = this;
-    const cubemapExclusionTag = Symbol();
 
     // -- metalCube ---------------------------------------------------------------------------------
     const pinArray = new RaymarcherNode( pinArrayFrag, {
       geometry: quad3DGeometry,
-      tags: [ cubemapExclusionTag ],
     } );
 
     if ( import.meta.hot ) {

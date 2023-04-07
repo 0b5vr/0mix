@@ -16,7 +16,6 @@ export class Section2Scene extends SceneNode {
     super();
 
     const scene = this;
-    const cubemapExclusionTag = Symbol();
 
     // -- svg --------------------------------------------------------------------------------------
     const image = new Image();
@@ -35,7 +34,6 @@ export class Section2Scene extends SceneNode {
     // -- metalCube ---------------------------------------------------------------------------------
     const section2 = new RaymarcherNode( section2Frag, {
       geometry: quad3DGeometry,
-      tags: [ cubemapExclusionTag ],
     } );
 
     section2.materials.deferred.addUniformTextures( 'sampler0', GL_TEXTURE_2D, texture.texture );
@@ -51,6 +49,7 @@ export class Section2Scene extends SceneNode {
         },
       );
     }
+
     // -- camera -----------------------------------------------------------------------------------
     const camera = new CameraStack( {
       scene,

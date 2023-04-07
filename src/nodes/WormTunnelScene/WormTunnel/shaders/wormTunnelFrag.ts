@@ -58,7 +58,7 @@ export const wormTunnelFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
     const [ ro, rd ] = setupRoRd( p );
 
     const { rp } = raymarch( {
-      iter: tag === 'depth' ? 60 : 80,
+      iter: tag === 'depth' ? 20 : 40,
       ro,
       rd,
       map,

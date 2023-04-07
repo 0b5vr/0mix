@@ -52,7 +52,7 @@ export const icosahedronFrag = ( tag: 'deferred' | 'depth' ): string => build( (
   const map = defFn( 'vec4', [ 'vec3' ], ( p ) => {
     const shift = def( 'vec3', mul( 0.4, foldsurf ) );
 
-    forLoop( 9, () => {
+    forLoop( 5, () => {
       mulAssign( sw( p, 'zx' ), rotate2D( 0.6 ) );
       mulAssign( sw( p, 'yz' ), rotate2D( mul( 0.04, time ) ) );
       mulAssign( sw( p, 'xy' ), rotate2D( mul( -0.03, time ) ) );
