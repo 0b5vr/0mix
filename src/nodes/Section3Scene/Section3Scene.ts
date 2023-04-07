@@ -176,7 +176,7 @@ export class Section3Scene extends SceneNode {
             -2.0,
             2.4 + 0.03 * Math.cos( 1.7 * time ),
           ],
-          [ -0.4, 0.0, 0.0 ],
+          [ -0.4, -0.2, 0.0 ],
           0.1 + 0.01 * Math.sin( 1.4 * time ),
         );
       },
