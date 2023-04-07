@@ -1,7 +1,8 @@
 import { BackgroundDefDrawType } from '../../utils/shaders/buildPlaneBackgroundFrag';
 import { FAR } from '../../../config';
-import { abs, defUniformNamed, mad, mul, sin, smoothstep, step, sub, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { abs, add, defUniformNamed, mad, mul, sin, smoothstep, step, sub, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { isectPlane } from '../../../shaders/modules/isectPlane';
+import { phongSpecular } from '../../../shaders/modules/phongSpecular';
 
 export const section3Background: BackgroundDefDrawType = () => {
   const time = defUniformNamed( 'float', 'time' );
@@ -22,7 +23,10 @@ export const section3Background: BackgroundDefDrawType = () => {
     );
 
     return vec4(
-      vec3( shape ),
+      vec3( add(
+        shape,
+        mul( 0.1, phongSpecular( rd, vec3( -1.0, 1.0, -1.0 ), 5.0 ) ),
+      ) ),
       1.0,
     );
   };
