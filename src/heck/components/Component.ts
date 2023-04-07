@@ -97,7 +97,8 @@ export class Component {
       const ha = gui;
       const breakpoint = ha?.value( 'breakpoint/update', '' ) ?? '';
       if ( breakpoint !== '' ) {
-        const path = ancestorsToPath( event.ancestors );
+        const path = ancestorsToPath( [ ...event.ancestors, this ] );
+
         if ( new RegExp( breakpoint ).test( path ) ) {
           Component.updateHaveReachedBreakpoint = true;
         }
