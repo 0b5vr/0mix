@@ -7,6 +7,10 @@ import { arraySerial } from '@0b5vr/experimental';
 import { music } from '../../globals/music';
 import { vec2 } from '../../shaders/shaderBuilder';
 
+function zp( num: number, f = 0.0 ): string {
+  return num.toFixed( f ).padStart( f === 0 ? 2 : ( f + 3 ), '0' );
+}
+
 export class StatsText extends CharRenderer {
   public constructor( target: RenderTarget ) {
     super( {
@@ -29,7 +33,7 @@ export class StatsText extends CharRenderer {
         const content = [
           'status: ' + music.cueStatus,
           'beat: ' + beatIndicator,
-          'time: ' + time.toFixed( 3 ),
+          'time: ' + zp( time / 60.0 ) + ':' + zp( time % 60.0, 2 ),
           '0b5vr glsl techno live set',
         ];
         const select: GLSLMusicEditorRange = [ 0, 0, music.cueStatus === 'none' ? 0 : 1, 0 ];
