@@ -16,16 +16,16 @@ export const section3Background: BackgroundDefDrawType = () => {
     const rp = mad( isect, rd, ro );
 
     const shape = mul(
-      2.0,
-      step( 0.9, sin( mad( 0.2, sw( rp, 'z' ), mul( 4.0, time ) ) ) ),
-      smoothstep( 2.0, 1.0, abs( sw( rp, 'x' ) ) ),
+      10.0,
+      smoothstep( 0.98, 1.0, sin( mad( 0.2, sw( rp, 'z' ), mul( 4.0, time ) ) ) ),
+      smoothstep( 0.5, 0.0, abs( sub( abs( sw( rp, 'x' ) ), 1.0 ) ) ),
       step( isect, FAR - 1E-3 ), // plane hit
     );
 
     return vec4(
       vec3( add(
         shape,
-        mul( 0.1, phongSpecular( rd, vec3( -1.0, 1.0, -1.0 ), 5.0 ) ),
+        mul( 0.04, phongSpecular( rd, vec3( 1.0, 1.0, -1.0 ), 5.0 ) ),
       ) ),
       1.0,
     );

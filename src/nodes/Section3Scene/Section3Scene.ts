@@ -50,7 +50,7 @@ export class Section3Scene extends SceneNode {
       swapShadowMap: swapShadowMap1,
       shadowMapFov: 40.0,
     } );
-    lightL.transform.lookAt( [ -4.0, 1.0, 2.0 ], [ 0.0, 0.0, 0.0 ] );
+    lightL.transform.lookAt( [ 4.0, 1.0, 2.0 ], [ 0.0, 0.0, 0.0 ] );
     lightL.color = [ 100.0, 100.0, 100.0 ];
 
     if ( import.meta.env.DEV ) {
@@ -62,7 +62,7 @@ export class Section3Scene extends SceneNode {
       swapShadowMap: swapShadowMap2,
       shadowMapFov: 40.0,
     } );
-    lightR.transform.lookAt( [ 2.0, 1.0, -1.0 ], [ 0.0, 0.0, 0.0 ] );
+    lightR.transform.lookAt( [ -2.0, 1.0, -1.0 ], [ 0.0, 0.0, 0.0 ] );
     lightR.color = [ 40.0, 40.0, 40.0 ];
 
     if ( import.meta.env.DEV ) {
@@ -165,19 +165,19 @@ export class Section3Scene extends SceneNode {
       resources: mainCameraStackResources,
       target: cameraStackATarget,
       useAO: true,
-      dofParams: [ 2.8, 24.0 ],
+      dofParams: [ 3.4, 24.0 ],
     } );
 
     const lambdaShake = new Lambda( {
       onUpdate( { time } ) {
         camera.transform.lookAt(
           [
-            1.0 + 0.04 * Math.sin( 2.0 * time ),
-            -1.0 + 0.02 * Math.cos( 3.7 * time ),
-            2.4,
+            -1.0 - 0.03 * Math.sin( 1.2 * time ),
+            -2.0,
+            2.4 + 0.03 * Math.cos( 1.7 * time ),
           ],
-          [ 0.0, 0.0, 0.0 ],
-          -0.1 + 0.01 * Math.sin( 1.4 * time ),
+          [ -0.4, 0.0, 0.0 ],
+          0.1 + 0.01 * Math.sin( 1.4 * time ),
         );
       },
     } );

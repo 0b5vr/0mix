@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
-import { abs, add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, eq, exp, glFragDepth, ifThen, insert, length, main, max, min, mix, mul, mulAssign, neg, normalize, retFn, step, sub, subAssign, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { abs, add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, eq, glFragDepth, ifThen, insert, length, main, max, min, mix, mul, normalize, retFn, smoothstep, step, sub, subAssign, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
@@ -41,10 +41,10 @@ export const footbridgeFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
 
     // base 2
     assign( d, min( d, (
-      sdbox( sub( p, vec3( 0.0, -0.5, 0.0 ) ), vec3( 5.0, 0.15, 0.8 ) )
+      sdbox( sub( p, vec3( 0.0, -0.5, 0.0 ) ), vec3( 5.0, 0.1, 0.8 ) )
     ) ) );
 
-    // base 3
+    // base x
     assign( d, min( d, (
       sdbox( sub( p, vec3( 0.0, -0.5, 0.8 ) ), vec3( 5.0, 0.25, 0.1 ) )
     ) ) );
@@ -56,10 +56,10 @@ export const footbridgeFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
 
     const pt = def( 'vec3', p );
 
-    // base 3
+    // base z
     subAssign( sw( pt, 'x' ), glslLofir( sw( pt, 'x' ), 1.6 ) );
     assign( d, min( d, (
-      sdbox( sub( pt, vec3( 0.0, -0.5, 0.0 ) ), vec3( 0.1, 0.2, 0.8 ) )
+      sdbox( sub( pt, vec3( 0.0, -0.5, 0.0 ) ), vec3( 0.05, 0.2, 0.8 ) )
     ) ) );
 
     // tube v
@@ -77,7 +77,7 @@ export const footbridgeFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
     ) ) );
 
     ifThen( eq( isAfterMarch, 1.0 ), () => {
-      addAssign( d, mul( 0.001, perlin3d( mul( 70.0, p ) ) ) );
+      addAssign( d, mul( 0.0002, perlin3d( mul( 70.0, p ) ) ) );
     } );
 
     retFn( vec4( d, 0, 0, 0 ) );
@@ -113,26 +113,34 @@ export const footbridgeFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
     assign( isAfterMarch, 1.0 );
 
     const N = def( 'vec3', calcNormal( { rp, map, delta: 1E-2 } ) );
+    const edge = def( 'float', length( sub(
+      N,
+      calcNormal( { rp, map, delta: 1E-1 } )
+    ) ) );
 
     const dirt = def( 'float', 0.0 );
+
+    const uv = mul( vec2( 0.25, 0.0625 ), sw( rp, 'xy' ) );
     addAssign( dirt, mul(
       step( sw( rp, 'y' ), -0.15 ),
-      exp( mul( 2.0, add( sw( rp, 'y' ), 0.15 ) ) ),
+      smoothstep( -0.7, -0.15, sw( rp, 'y' ) ),
+      smoothstep( 0.4, 0.8, sw( texture( sampler0, uv ), 'z' ) ),
     ) );
 
-    // normal y
-    addAssign( dirt, max( 0.0, neg( sw( N, 'y' ) ) ) );
+    const uv2 = mul( vec2( 0.25, 0.25 ), sw( rp, 'xz' ) );
+    addAssign( dirt, mul(
+      0.5,
+      edge,
+      smoothstep( 0.4, 0.9, sw( texture( sampler0, uv2 ), 'z' ) ),
+    ) );
 
     assign( dirt, glslSaturate( dirt ) );
 
-    const uv = def( 'vec2', mul( vec2( 0.5, 0.125 ), sw( rp, 'xy' ) ) );
-    addAssign( sw( uv, 'y' ), mul( 0.1, sw( rp, 'z' ) ) );
-    mulAssign( dirt, sw( texture( sampler0, uv ), 'z' ) );
 
-    assign( fragColor, vec4( mix( vec3( 0.2 ), vec3( 0.1 ), dirt ), 1.0 ) );
+    assign( fragColor, vec4( mix( vec3( 0.2 ), vec3( 0.0 ), dirt ), 1.0 ) );
     assign( fragPosition, vec4( sw( modelPos, 'xyz' ), depth ) );
     assign( fragNormal, vec4( normalize( mul( normalMatrix, N ) ), MTL_PBR_ROUGHNESS_METALLIC ) );
-    assign( fragMisc, vec4( mix( 0.2, 0.7, dirt ), 0.0, 0.0, 1.0 ) );
+    assign( fragMisc, vec4( mix( 0.1, 0.5, dirt ), 0.0, 0.0, 1.0 ) );
 
   } );
 } );
