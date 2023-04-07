@@ -1,8 +1,7 @@
-import { TAU } from '../../../utils/constants';
-import { add, addAssign, assign, build, cos, def, defIn, defOutNamed, defUniformNamed, divAssign, glPosition, mad, main, mul, mulAssign, sin, sw, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
-import { perlin3d } from '../../../shaders/modules/perlin3d';
+import { assign, build, def, defIn, defOutNamed, defUniformNamed, div, divAssign, floor, glPosition, mad, main, mixStepChain, mod, mul, mulAssign, subAssign, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { rotate2D } from '../../../shaders/modules/rotate2D';
 
-export const lineRings3DVert = build( () => {
+export const wireCubeVert = build( () => {
   const x = defIn( 'float', 0 );
   const y = defIn( 'float', 1 );
 
@@ -17,25 +16,28 @@ export const lineRings3DVert = build( () => {
 
   main( () => {
     // -- create local position --------------------------------------------------------------------
-    const t = mul( x, TAU / 255.0 );
-    const r = mad( -0.005, y, 1.0 );
+    const a = mod( y, 2.0 );
+    const b = mod( floor( div( y, 2.0 ) ), 2.0 );
+    const c = mod( x, 2.0 );
 
-    const ring = def( 'vec3', vec3(
-      mul( r, vec2( cos( t ), sin( t ) ) ),
-      mad( -0.1, y, 0.0 ),
-    ) );
+    const i = floor( div( y, 12.0 ) );
+    const phase = mod( mad( 1.0, time, i ), 20.0 );
 
-    const noiseUv = def( 'vec3', ring );
-    mulAssign( noiseUv, vec3( 2.0, 2.0, 0.1 ) );
-    addAssign( sw( noiseUv, 'z' ), mul( 0.4, time ) );
-
-    addAssign( sw( ring, 'x' ), mul( 0.03, r, y, perlin3d( noiseUv ) ) );
-    addAssign( sw( ring, 'y' ), mul( 0.03, r, y, perlin3d( add( 4.0, noiseUv ) ) ) );
+    const basis = mixStepChain(
+      mod( y, 12.0 ),
+      vec3( a, b, c ),
+      [ 4.0, vec3( b, c, a ) ],
+      [ 8.0, vec3( c, a, b ) ],
+    );
 
     const position = def( 'vec4', vec4(
-      ring,
+      mad( 2.0, basis, -1.0 ),
       1.0,
     ) );
+    mulAssign( sw( position, 'xyz' ), mul( 0.1, phase ) );
+    mulAssign( sw( position, 'zx' ), rotate2D( mad( -0.05, phase, mul( 0.5, time ) ) ) );
+    mulAssign( sw( position, 'yz' ), rotate2D( mad( -0.02, phase, mul( 0.2, time ) ) ) );
+    subAssign( sw( position, 'z' ), 5.0 );
 
     // -- send the vertex position -----------------------------------------------------------------
     assign( vPosition, mul( modelMatrix, position ) );

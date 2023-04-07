@@ -10,7 +10,7 @@ export class LineRhombusesScene extends SceneNode {
     super();
 
     // -- lines ------------------------------------------------------------------------------------
-    const lines = new InstancedLines( lineRhombusesVert, 5, 400 );
+    const lines = new InstancedLines( lineRhombusesVert, 5, 800 );
 
     if ( import.meta.hot ) {
       import.meta.hot.accept(

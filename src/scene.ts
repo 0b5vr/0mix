@@ -37,6 +37,7 @@ import { SpongeScene } from './nodes/SpongeScene/SpongeScene';
 import { TrailsScene } from './nodes/TrailsScene/TrailsScene';
 import { TruchetScene } from './nodes/TruchetScene/TruchetScene';
 import { WebGLMemory } from './nodes/WebGLMemory/WebGLMemory';
+import { WireCubeScene } from './nodes/WireCubeScene/WireCubeScene';
 import { WormTunnelScene } from './nodes/WormTunnelScene/WormTunnelScene';
 import { auto, automaton } from './globals/automaton';
 import { cameraStackATarget, cameraStackBTarget } from './globals/cameraStackTargets';
@@ -167,6 +168,7 @@ const scenesB = [
   new LineRings3DScene(),
   new OBSVRLogoBScene(),
   new LineRhombusesScene(),
+  new WireCubeScene(),
 ];
 
 dog.root.children.push(

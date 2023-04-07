@@ -17,7 +17,7 @@ export const lineRingsVert = build( () => {
   main( () => {
     // -- create local position --------------------------------------------------------------------
     const t = mul( x, TAU / 511.0 );
-    const r = mul( mod( mad( 2.0, time, floor( mul( 0.5, y ) ) ), 128.0 ), 0.09 );
+    const r = mul( mod( mad( 2.0, time, floor( mul( 0.5, y ) ) ), 128.0 ), 0.15 );
     const position = def( 'vec4', vec4(
       mul( r, vec2( cos( t ), sin( t ) ) ),
       0.0,
