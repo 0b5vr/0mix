@@ -9,13 +9,21 @@ export const perlinFBMFrag = build( () => {
   const fragColor = defOut( 'vec4' );
 
   main( () => {
-    const sum = def( 'float', 0.5 );
+    const sum = def( 'vec4', vec4( 0.5 ) );
 
     unrollLoop( 4, ( i ) => {
       const h = Math.pow( 2.0, i );
-      addAssign( sum, mul( perlin2d( mul( 8.0 * h, vUv ), vec2( 8.0 * h ) ), 0.5 / h ) );
+      addAssign( sum, mul(
+        vec4(
+          perlin2d( mul( 1.0 * h, vUv ), vec2( 1.0 * h ) ),
+          perlin2d( mul( 4.0 * h, vUv ), vec2( 4.0 * h ) ),
+          perlin2d( mul( 16.0 * h, vUv ), vec2( 16.0 * h ) ),
+          perlin2d( mul( 64.0 * h, vUv ), vec2( 64.0 * h ) ),
+        ),
+        0.5 / h,
+      ) );
     } );
 
-    assign( fragColor, vec4( sum, 0.0, 0.0, 1.0 ) );
+    assign( fragColor, sum );
   } );
 } );
