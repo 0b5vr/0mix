@@ -1,59 +1,68 @@
-import { add, assign, build, def, defInNamed, defOut, defUniformNamed, div, dot, floor, glFragCoord, ifThen, insert, lt, mad, main, mix, mod, mul, neg, retFn, step, sub, subAssign, sw, texture, vec2, vec4 } from '../../../../shaders/shaderBuilder';
+import { add, addAssign, assign, build, def, defOut, defUniformNamed, div, dot, eq, floor, glFragCoord, ifThen, insert, int, ivec2, lt, main, mix, mod, mul, neg, retFn, step, sub, subAssign, sw, texelFetch, vec2, vec4 } from '../../../../shaders/shaderBuilder';
 
 const LUMA = vec4( 0.2126, 0.7152, 0.0722, 0.0 );
-export const ALIGN_SIZE = 64.0;
+
+export const ALIGN_SIZE = 256;
 
 export const pixelSorterFrag = build( () => {
   insert( 'precision highp float;' );
 
-  const vUv = defInNamed( 'vec2', 'vUv' );
   const fragColor = defOut( 'vec4' );
 
   const comp = defUniformNamed( 'float', 'comp' );
   const dir = defUniformNamed( 'float', 'dir' );
-  const resolution = defUniformNamed( 'vec2', 'resolution' );
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
   const sampler1 = defUniformNamed( 'sampler2D', 'sampler1' );
 
   main( () => {
-    const texIndex = def( 'vec4', texture( sampler1, vUv ) );
+    const coord = ivec2( sw( glFragCoord, 'xy' ) );
+    const texIndex = def( 'vec4', texelFetch( sampler1, coord, int( 0 ) ) );
+    const tex = texelFetch( sampler0, coord, int( 0 ) );
 
-    ifThen( lt( sw( texIndex, 'x' ), 0.5 ), () => {
-      assign( fragColor, texture( sampler0, vUv ) );
-      retFn();
-    } );
+    assign( fragColor, tex );
+
+    ifThen( eq( sw( texIndex, 'x' ), 0.0 ), () => retFn() );
 
     const index = sw( texIndex, 'x' );
     const width = add( index, sw( texIndex, 'y' ), -1.0 );
 
-    const coordOrigin = def( 'vec2', sw( glFragCoord, 'xy' ) );
-    subAssign( sw( coordOrigin, 'x' ), sub( index, 1.0 ) );
+    ifThen( lt( width, div( ALIGN_SIZE, comp ) ), () => retFn() );
+
+    const segOrigin = def( 'vec2', vec2( coord ) );
+    subAssign( sw( segOrigin, 'x' ), sub( index, 1.0 ) );
 
     const alignedIndex = def( 'float', floor( div( index, add( 1.0, width ), 1.0 / ALIGN_SIZE ) ) );
-    const alignDelta = def( 'vec2', vec2( div( width, ALIGN_SIZE ), 0.0 ) );
+    const alignDelta = def( 'float', div( width, ALIGN_SIZE ) );
 
-    const isCompHigher = def( 'float', step(
-      mod( alignedIndex, mul( 2.0, comp ) ),
-      sub( comp, 1.0 ),
+    const isRight = def( 'float', step(
+      1.0,
+      mod( div( alignedIndex, comp ), 2.0 ),
     ) );
 
-    const compOffset = mix( neg( comp ), comp, isCompHigher );
+    const compDelta = mul( comp, alignDelta );
+    const coordA = def( 'vec2', segOrigin );
+    addAssign( sw( coordA, 'x' ), mul( alignDelta, add( alignedIndex, 0.5 ) ) );
+    const coordB = def( 'vec2', coordA );
+    addAssign( sw( coordB, 'x' ), mix( compDelta, neg( compDelta ), isRight ) );
 
-    const coordA = mad( alignDelta, alignedIndex, coordOrigin );
-    const coordB = mad( alignDelta, compOffset, coordA );
-
-    const texA = texture( sampler0, div( coordA, resolution ) );
-    const texB = texture( sampler0, div( coordB, resolution ) );
+    const texA = texelFetch( sampler0, ivec2( coordA ), int( 0 ) );
+    const texB = texelFetch( sampler0, ivec2( coordB ), int( 0 ) );
 
     const valueA = dot( texA, LUMA );
     const valueB = dot( texB, LUMA );
 
-    const shouldSwap = def( 'float', step(
-      mod( div( alignedIndex, mul( 2.0, dir ) ), 2.0 ),
-      0.999,
-    ) );
-    const shouldSwap2 = mod( add( shouldSwap, isCompHigher, step( valueB, valueA ) ), 2.0 ); // TODO
+    const shouldRightBeSmaller = step(
+      1.0,
+      mod( div( alignedIndex, dir ), 2.0 ),
+    );
 
-    assign( fragColor, mix( texA, texB, shouldSwap2 ) );
+    // should we swap the pixel?
+    const shouldSwap = mod( add(
+      shouldRightBeSmaller,
+      isRight,
+      step( valueB, valueA ),
+    ), 2.0 );
+
+    assign( fragColor, mix( tex, texB, shouldSwap ) );
   } );
 } );

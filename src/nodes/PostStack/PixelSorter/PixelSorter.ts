@@ -1,6 +1,7 @@
 import { ALIGN_SIZE, pixelSorterFrag } from './shaders/pixelSorterFrag';
 import { Blit } from '../../../heck/components/Blit';
 import { BufferTextureRenderTarget } from '../../../heck/BufferTextureRenderTarget';
+import { GLTextureFormatStuffRG16F, GLTextureFormatStuffRGBA8 } from '../../../gl/glSetTexture';
 import { GL_NEAREST, GL_TEXTURE_2D } from '../../../gl/constants';
 import { Material } from '../../../heck/Material';
 import { Quad } from '../../../heck/components/Quad';
@@ -14,8 +15,6 @@ import { pixelSorterIndexFrag } from './shaders/pixelSorterIndexFrag';
 import { quadGeometry } from '../../../globals/quadGeometry';
 import { quadVert } from '../../../shaders/common/quadVert';
 import { resizeObservers } from '../../../globals/globalObservers';
-
-const TARGET_WIDTH = 2048;
 
 export interface PixelSorterOptions {
   input: BufferTextureRenderTarget;
@@ -49,26 +48,32 @@ export class PixelSorter extends SceneNode {
 
     // -- buffers ----------------------------------------------------------------------------------
     const swap = new Swap(
-      new BufferTextureRenderTarget( width, height ),
-      new BufferTextureRenderTarget( width, height ),
+      new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffRGBA8 ),
+      new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffRGBA8 ),
     );
 
-    const bufferIndex = new BufferTextureRenderTarget( width, height );
+    const indexSwap = new Swap(
+      new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffRG16F ),
+      new BufferTextureRenderTarget( width, height, 1, GLTextureFormatStuffRG16F ),
+    );
 
     resizeObservers.push( ( [ width, height ] ) => {
       swap.i.resize( width, height );
       swap.o.resize( width, height );
-      bufferIndex.resize( width, height );
+      indexSwap.i.resize( width, height );
+      indexSwap.o.resize( width, height );
     } );
 
     glTextureFilter( swap.i.texture, GL_NEAREST );
     glTextureFilter( swap.o.texture, GL_NEAREST );
-    glTextureFilter( bufferIndex.texture, GL_NEAREST );
+    glTextureFilter( indexSwap.i.texture, GL_NEAREST );
+    glTextureFilter( indexSwap.o.texture, GL_NEAREST );
 
     if ( import.meta.env.DEV ) {
       swap.i.name = 'PixelSorter/swap0';
       swap.o.name = 'PixelSorter/swap1';
-      bufferIndex.name = 'PixelSorter/index';
+      indexSwap.i.name = 'PixelSorter/indexSwap0';
+      indexSwap.o.name = 'PixelSorter/indexSwap1';
     }
 
     // -- bypass -----------------------------------------------------------------------------------
@@ -84,32 +89,24 @@ export class PixelSorter extends SceneNode {
     nodeBypass.children.push( blitBypass );
 
     // -- calc index -------------------------------------------------------------------------------
-    let indexWidth = 1;
-    const indexMaterials: Material[] = [];
-
-    while ( indexWidth < TARGET_WIDTH ) {
-      const isLast = ( indexWidth * 8 >= TARGET_WIDTH );
-
+    const indexMaterials: Material[] = [ 1, 16, 256 ].map( ( indexWidth ) => {
       const material = new Material(
         quadVert,
-        pixelSorterIndexFrag,
+        pixelSorterIndexFrag( indexWidth ),
         { initOptions: { geometry: quadGeometry, target: dummyRenderTarget1 } },
       );
 
-      material.addUniform( 'indexWidth', '1f', indexWidth );
       material.addUniformTextures( 'sampler0', GL_TEXTURE_2D, input.texture );
-      material.addUniformTextures( 'sampler1', GL_TEXTURE_2D, swap.o.texture );
+      material.addUniformTextures( 'sampler1', GL_TEXTURE_2D, indexSwap.o.texture );
 
       if ( import.meta.hot ) {
         import.meta.hot.accept( './shaders/pixelSorterIndexFrag', ( { pixelSorterIndexFrag } ) => {
-          material.replaceShader( quadVert, pixelSorterIndexFrag );
+          material.replaceShader( quadVert, pixelSorterIndexFrag( indexWidth ) );
         } );
       }
 
-      indexMaterials.push( material );
-
       const quad = new Quad( {
-        target: isLast ? bufferIndex : swap.i,
+        target: indexSwap.i,
         material,
       } );
 
@@ -119,18 +116,18 @@ export class PixelSorter extends SceneNode {
 
       nodeMain.children.push( quad );
 
-      swap.swap();
+      indexSwap.swap();
 
-      indexWidth *= 8;
-    }
+      return material;
+    } );
 
     // -- sort -------------------------------------------------------------------------------------
-    let dir = 1.0;
+    let dir = 2.0;
     let comp = 1.0;
+    let isFirst = true;
 
-    while ( dir < ALIGN_SIZE ) {
-      const isFirst = dir === 1.0;
-      const isLast = ( dir === ALIGN_SIZE / 2.0 ) && ( comp === 1.0 );
+    while ( dir <= ALIGN_SIZE ) {
+      const isLast = ( dir === ALIGN_SIZE ) && ( comp === 1.0 );
 
       const material = new Material(
         quadVert,
@@ -148,7 +145,7 @@ export class PixelSorter extends SceneNode {
       material.addUniformTextures(
         'sampler1',
         GL_TEXTURE_2D,
-        bufferIndex.texture,
+        indexSwap.o.texture,
       );
 
       if ( import.meta.hot ) {
@@ -171,11 +168,12 @@ export class PixelSorter extends SceneNode {
       swap.swap();
 
       if ( comp === 1.0 ) {
-        dir *= 2.0;
         comp = dir;
+        dir *= 2.0;
       } else {
         comp /= 2.0;
       }
+      isFirst = false;
     }
 
     // -- update uniform ---------------------------------------------------------------------------

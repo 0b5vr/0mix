@@ -415,6 +415,7 @@ export const rshift: {
 
 export const neg: {
   ( x: Exf ): Ex<'float'>;
+  ( x: Ex<'int'> ): Ex<'int'>;
   <T extends GLSLGenType>( x: Ex<T> ): Ex<T>;
 } = ( x: string | number ) => (
   `(-${ x })`
