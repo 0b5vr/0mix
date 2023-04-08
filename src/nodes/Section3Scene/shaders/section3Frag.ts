@@ -1,4 +1,4 @@
-import { GLSLExpression, abs, add, addAssign, assign, build, def, defInNamed, defOut, defUniformNamed, discard, div, gt, ifThen, insert, main, mix, mul, normalize, retFn, step, sub, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { GLSLExpression, abs, add, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, discard, div, gt, ifThen, insert, main, mix, mul, normalize, retFn, step, sub, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 import { sdbox2 } from '../../../shaders/modules/sdbox2';
@@ -18,6 +18,17 @@ export const section3Frag = ( tag: 'deferred' | 'depth' ): string => build( () =
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
   const sampler1 = defUniformNamed( 'sampler2D', 'sampler1' );
 
+  const pattern = defFn( 'float', [ 'vec2' ], ( p ) => {
+    const rrect = def( 'float', sub( sdbox2( sub( p, 0.5 ), vec2( 0.47, 0.3 ) ), 0.03 ) );
+
+    const uvTex = def( 'vec2', mix( vec2( 0.0, -0.5 ), vec2( 1.0, 1.5 ), p ) );
+
+    retFn( add(
+      step( abs( add( rrect, 0.01 ) ), 0.002 ),
+      sw( texture( sampler0, uvTex ), 'w' ),
+    ) );
+  } );
+
   main( () => {
     const depth = div( sw( vProjPosition, 'z' ), sw( vProjPosition, 'w' ) );
 
@@ -30,23 +41,20 @@ export const section3Frag = ( tag: 'deferred' | 'depth' ): string => build( () =
 
     }
 
-    const uv = def( 'vec2', mix( vec2( 0.0, -0.5 ), vec2( 1.0, 1.5 ), vUv ) );
-    const col = def( 'float', sw( texture( sampler0, uv ), 'w' ) );
+    const col = def( 'float', pattern( vUv ) );
 
-    const h = ( uv: GLSLExpression<'vec2'> ): GLSLExpression<'float'> => add(
-      mul( -0.2, sw( texture( sampler0, uv ), 'w' ) ),
-      mul( 0.02, sw( texture( sampler1, uv ), 'w' ) ),
+    const h = ( uv: GLSLExpression<'vec2'> ): GLSLExpression<'float'> => sub(
+      mul( 0.1, sw( texture( sampler1, uv ), 'w' ) ),
+      pattern( uv ),
     );
 
     const n = normalize( vec3(
-      sub( h( add( uv, vec2( 0.002, 0.0 ) ) ), h( add( uv, vec2( -0.002, 0.0 ) ) ) ),
-      sub( h( add( uv, vec2( 0.0, 0.004 ) ) ), h( add( uv, vec2( 0.0, -0.004 ) ) ) ),
-      1.0,
+      sub( h( add( vUv, vec2( 0.002, 0.0 ) ) ), h( add( vUv, vec2( -0.002, 0.0 ) ) ) ),
+      sub( h( add( vUv, vec2( 0.0, 0.002 ) ) ), h( add( vUv, vec2( 0.0, -0.002 ) ) ) ),
+      5.0,
     ) );
 
-    addAssign( col, step( abs( add( rrect, 0.01 ) ), 0.002 ) );
-
-    assign( fragColor, vec4( vec3( mix( 0.07, 0.8, col ) ), 1.0 ) );
+    assign( fragColor, vec4( vec3( mix( 0.07, 0.7, col ) ), 1.0 ) );
     assign( fragPosition, vec4( sw( vPosition, 'xyz' ), depth ) );
     assign( fragNormal, vec4( n, MTL_PBR_ROUGHNESS_METALLIC ) );
     assign( fragMisc, vec4( 0.1, 0.0, 0.0, 1.0 ) );

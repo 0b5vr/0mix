@@ -50,7 +50,7 @@ export class Section3Scene extends SceneNode {
       swapShadowMap: swapShadowMap1,
       shadowMapFov: 40.0,
     } );
-    lightL.transform.lookAt( [ 4.0, 1.0, 2.0 ], [ 0.0, 0.0, 0.0 ] );
+    lightL.transform.lookAt( [ 3.0, 1.0, 2.0 ], [ 0.0, 0.0, 0.0 ] );
     lightL.color = [ 100.0, 100.0, 100.0 ];
 
     if ( import.meta.env.DEV ) {
