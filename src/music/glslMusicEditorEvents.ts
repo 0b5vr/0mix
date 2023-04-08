@@ -1129,7 +1129,7 @@ vec2 mainaudio(vec4 time){
   [ 0.3, GLSLMusicEditorEventType.Move, [ 0, 1 ] ],
   [ 0.7, GLSLMusicEditorEventType.Move, [ 0, -1 ] ],
   [ 1.0, GLSLMusicEditorEventType.Insert, '1' ],
-  [ 10.5, GLSLMusicEditorEventType.Apply ],
+  [ 9.5, GLSLMusicEditorEventType.Apply ],
   [ 3.0, GLSLMusicEditorEventType.Delete ],
   [ 0.5, GLSLMusicEditorEventType.Insert, '2' ],
   [ 0.5, GLSLMusicEditorEventType.Apply ],
@@ -1166,7 +1166,7 @@ vec2 mainaudio(vec4 time){
   [ 0.8, GLSLMusicEditorEventType.Apply ],
 
   // remove fm perc and clap
-  [ 2.0, GLSLMusicEditorEventType.JumpPart, -1 ],
+  [ 3.0, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 0.7, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 0.7, GLSLMusicEditorEventType.JumpPart, -1 ],
   [ 0.7, GLSLMusicEditorEventType.JumpPart, -1 ],
