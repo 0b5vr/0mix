@@ -169,7 +169,7 @@ vec2 mainaudio(vec4 time){
     sidechain=smoothstep(0.,1E-3,b2t-t)*smoothstep(0.,.8*b2t,t);
 
     {
-      float env=linearstep(0.3,0.1,t);
+      float env=linearstep(0.4,0.15,t);
 
       // { // hi pass like
       //   env*=exp(-50.*t);
@@ -488,7 +488,7 @@ vec2 mainaudio(vec4 time){
       vec2 fm2=.2*exp(-10.*t)*vec2(sin(7.77*phase))*r2d(tau*dice.x);
       vec2 fm=8.*exp(-3.*t)*vec2(sin(.5*p5*phase+fm2))*r2d(tau*dice.y);
       vec2 car=exp(-8.*t)*vec2(sin(phase+fm))*r2d(tau*dice.z);
-      sum+=.13*car;
+      sum+=.1*car;
     }
 
     float zc=linearstep(0.,1E-3,t)*linearstep(0.,1E-3,.25*b2t-t);
@@ -565,7 +565,7 @@ vec2 mainaudio(vec4 time){
   //   float fm=fract(10.*exp(-freq*t));
   //   float wave=fract(20.*exp(-2.*fm))-.5;
   //   float zc=linearstep(0.,1E-3,t)*linearstep(0.,1E-3,l-t);
-  //   dest+=sidechain*.2*zc*wave;
+  //   dest+=.2*sidechain*zc*wave;
   // }
 
   { // crash
@@ -1260,7 +1260,7 @@ vec2 mainaudio(vec4 time){
     sidechain=smoothstep(0.,1E-3,b2t-t)*smoothstep(0.,.8*b2t,t);
 
     if(time.z<61.*b2t){
-      float env=linearstep(0.3,0.1,t);
+      float env=linearstep(0.3,0.15,t);
 
       float phase=50.*t-11.*(exp(-25.*t)+exp(-100.*t)+exp(-700.*t));
       phase+=.2*exp(-20.*t)*sin(tau*phase+1.); // fm attack mod
