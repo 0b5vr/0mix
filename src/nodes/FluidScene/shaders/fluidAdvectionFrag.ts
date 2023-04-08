@@ -24,7 +24,7 @@ export const fluidAdvectionFrag: string = build( () => {
     const samplePos = fluidClampToGrid( sub( pos, mul( deltaTime, vel ) ) );
     const result = sampleLinear3D( samplerDensity, samplePos );
 
-    const decay = exp( mul( deltaTime, vec4( 0.0, 0.0, 0.0, -2.0 ) ) );
+    const decay = exp( mul( deltaTime, vec4( 0.0, 0.0, 0.0, -1.0 ) ) );
 
     assign( fragColor, mul( result, decay ) );
   } );

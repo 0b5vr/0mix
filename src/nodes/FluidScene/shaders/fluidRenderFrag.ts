@@ -1,5 +1,6 @@
+import { GLSLExpression, abs, add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, eq, forBreak, forLoop, glFragCoord, gt, ifThen, insert, length, lt, mad, main, mix, mul, mulAssign, retFn, smoothstep, step, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { GRID_RESO } from '../constants';
-import { abs, add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, eq, forBreak, forLoop, glFragCoord, gt, ifThen, insert, length, lt, mad, main, mix, mul, mulAssign, retFn, smoothstep, step, sub, sw, texture, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { boxMuller } from '../../../shaders/modules/boxMuller';
 import { defFluidSampleLinear3D } from './defFluidSampleLinear3D';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { glslLinearstep } from '../../../shaders/modules/glslLinearstep';
@@ -21,8 +22,11 @@ export const fluidRenderFrag: string = build( () => {
   const samplerDensity = defUniformNamed( 'sampler2D', 'samplerDensity' );
   const samplerDeferredPos = defUniformNamed( 'sampler2D', 'samplerDeferredPos' );
 
-  const { init } = glslDefRandom();
+  const { init, random2 } = glslDefRandom();
 
+  const randomNormal = (): GLSLExpression<'float'> => (
+    sw( boxMuller( random2() ), 'x' )
+  );
   const sampleLinear3D = defFluidSampleLinear3D();
 
   const getDensity = defFn( 'float', [ 'vec3' ], ( p ) => {
@@ -43,7 +47,10 @@ export const fluidRenderFrag: string = build( () => {
 
     const [ ro, rd ] = setupRoRd( p );
 
-    const rl0 = def( 'float', length( sub( sw( vPositionWithoutModel, 'xyz' ), ro ) ) );
+    const rl0 = def( 'float', sub(
+      length( sub( sw( vPositionWithoutModel, 'xyz' ), ro ) ),
+      mul( 0.1, randomNormal() ),
+    ) );
     const rl = def( 'float', rl0 );
     const rp = def( 'vec3', add( ro, mul( rd, rl ) ) );
 

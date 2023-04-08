@@ -148,7 +148,7 @@ export class Fluid extends SceneNode {
 
     swapPressure.swap();
 
-    const quadPressures = arraySerial( 20 ).map( () => {
+    const quadPressures = arraySerial( 40 ).map( () => {
       const material = new Material(
         quadVert,
         fluidPressureFrag,
