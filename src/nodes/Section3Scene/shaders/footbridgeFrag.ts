@@ -1,5 +1,5 @@
 import { MTL_PBR_ROUGHNESS_METALLIC } from '../../CameraStack/deferredConstants';
-import { abs, add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, eq, glFragDepth, ifThen, insert, length, main, max, min, mix, mul, normalize, retFn, smoothstep, step, sub, subAssign, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { abs, add, addAssign, assign, build, def, defFn, defInNamed, defOut, defUniformNamed, div, glFragDepth, insert, length, main, max, min, mix, mul, normalize, retFn, smoothstep, step, sub, subAssign, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { calcNormal } from '../../../shaders/modules/calcNormal';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
@@ -26,8 +26,6 @@ export const footbridgeFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
 
   const time = defUniformNamed( 'float', 'time' );
   const sampler0 = defUniformNamed( 'sampler2D', 'sampler0' );
-
-  const isAfterMarch = def( 'float', 0.0 );
 
   const { init } = glslDefRandom();
 
@@ -76,11 +74,18 @@ export const footbridgeFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
       sub( abs( sub( sw( pt, 'y' ), 0.15 ) ), 0.35 ),
     ) ) );
 
-    ifThen( eq( isAfterMarch, 1.0 ), () => {
-      addAssign( d, mul( 0.0002, perlin3d( mul( 70.0, p ) ) ) );
-    } );
-
     retFn( vec4( d, 0, 0, 0 ) );
+  } );
+
+  const mapForN = defFn( 'vec4', [ 'vec3' ], ( p ) => {
+    retFn( add(
+      map( p ),
+      mul( 0.0002, perlin3d( mul( 70.0, p ) ) ),
+      mul( 0.0002, smoothstep( 0.1, 0.4, add(
+        perlin3d( mul( 7.0, p ) ),
+        perlin3d( mul( 20.0, p ) ),
+      ) ) ),
+    ) );
   } );
 
   main( () => {
@@ -110,9 +115,7 @@ export const footbridgeFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
 
     }
 
-    assign( isAfterMarch, 1.0 );
-
-    const N = def( 'vec3', calcNormal( { rp, map, delta: 1E-2 } ) );
+    const N = def( 'vec3', calcNormal( { rp, map: mapForN, delta: 1E-2 } ) );
     const edge = def( 'float', length( sub(
       N,
       calcNormal( { rp, map, delta: 1E-1 } )
@@ -135,7 +138,6 @@ export const footbridgeFrag = ( tag: 'deferred' | 'depth' ): string => build( ()
     ) );
 
     assign( dirt, glslSaturate( dirt ) );
-
 
     assign( fragColor, vec4( mix( vec3( 0.2 ), vec3( 0.0 ), dirt ), 1.0 ) );
     assign( fragPosition, vec4( sw( modelPos, 'xyz' ), depth ) );
