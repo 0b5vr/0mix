@@ -193,12 +193,8 @@ export class Music {
 
     this.__bufferReaderNode?.setActive( this.isPlaying );
 
-    updateGLSLMusicEditor( now - this.timeOffset );
-
-    if ( import.meta.env.DEV ) {
-      // process 15 more events if it's dev mode
-      arraySerial( 15 ).map( () => updateGLSLMusicEditor( now - this.timeOffset ) );
-    }
+    // process 15 events at max
+    arraySerial( 15 ).map( () => updateGLSLMusicEditor( now - this.timeOffset ) );
 
     if ( this.isPlaying ) {
       this.deltaTime = now - this.__prevTime;
