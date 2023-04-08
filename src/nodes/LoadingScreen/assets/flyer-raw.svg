@@ -54,10 +54,10 @@
 </g>
 <g transform="translate(80 664)" id="13">
   <rect width="240" height="40" fill="#000" stroke="#fff"/>
-  <g transform="translate(7 14.5) scale(.4 .36)">
+  <g transform="translate(7 14) scale(.4 .36)">
     <text id="14">0b5vr GLSL Techno Live Set</text>
-    <text id="15" y="24">A WebGL 64KB Intro - 7m20s - 140bpm</text>
-    <text id="16" y="48">Appeared in the Revision 2023 PC 64K Intro Compo</text>
+    <text id="15" y="25">A WebGL 64KB Intro - 7m20s - 140bpm</text>
+    <text id="16" y="50">Appeared in the Revision 2023 PC 64K Intro Compo</text>
   </g>
 </g>
 <g transform="translate(80 704)" id="17">
@@ -86,13 +86,13 @@
 <g transform="translate(380 723)" id="24">
   <g transform="scale(2 1)">
     <circle r="19"/>
-    <circle r="17" cx="3" fill="#000"/>
+    <circle r="16" cx="4" fill="#000"/>
   </g>
-  <text x="-22" y="8">Web</text>
-  <text x="28" y="8" font-weight="bold">GL</text>
+  <text x="-21" y="8">Web</text>
+  <text x="29" y="8" font-weight="bold">GL</text>
 </g>
 <g transform="translate(464 704)" id="25">
-  <rect width="40" height="40"/>
-  <text x="16" y="38" fill="#000" font-family="Verdana" font-weight="bold" transform="scale(.8 1)">TS</text>
+  <rect width="40" height="40" rx="4" ry="4"/>
+  <text x="11.5" y="37.5" fill="#000" font-family="Verdana" font-weight="bold" transform="scale(.85 1)">TS</text>
 </g>
 </svg>
