@@ -1,13 +1,15 @@
 import { FAR } from '../../../config';
 import { GLSLExpression, abs, add, addAssign, assign, build, cos, def, defInNamed, defOut, defUniformNamed, discard, div, dot, eq, forLoop, glFragDepth, ifThen, insert, length, lt, mad, main, max, mix, mul, mulAssign, neg, normalize, pow, reflect, retFn, sin, step, sub, sw, texture, vec2, vec3, vec4 } from '../../../shaders/shaderBuilder';
+import { HALF_PI, TAU } from '../../../utils/constants';
 import { MTL_UNLIT } from '../../CameraStack/deferredConstants';
-import { TAU } from '../../../utils/constants';
 import { calcShadowDepth } from '../../../shaders/modules/calcShadowDepth';
 import { fresnelSchlick } from '../../../shaders/modules/fresnelSchlick';
 import { glslDefRandom } from '../../../shaders/modules/glslDefRandom';
 import { isectBox } from '../../../shaders/modules/isectBox';
 import { isectMin } from '../../../shaders/modules/isectMin';
+import { isectPillar } from '../../../shaders/modules/isectPillar';
 import { isectPlane } from '../../../shaders/modules/isectPlane';
+import { rotate2D } from '../../../shaders/modules/rotate2D';
 import { sampleGGX } from '../../../shaders/modules/sampleGGX';
 import { sampleLambert } from '../../../shaders/modules/sampleLambert';
 import { setupRoRd } from '../../../shaders/modules/setupRoRd';
@@ -92,7 +94,7 @@ export const section2Frag = ( tag: 'deferred' | 'depth' ): string => build( () =
       mulAssign( colRem, step( 0.0, dot( rd, N ) ) );
     };
 
-    forLoop( 20, () => {
+    forLoop( 30, () => {
       const rot = def( 'vec3', ro );
       const isect = def( 'vec4', vec4( FAR ) );
       const isect2 = def( 'vec4', vec4( FAR ) );
@@ -193,6 +195,22 @@ export const section2Frag = ( tag: 'deferred' | 'depth' ): string => build( () =
         assign( baseColor, vec3( 0.4 ) );
         assign( emissive, vec3( m ) );
         assign( roughness, 0.1 );
+        assign( metallic, 0.0 );
+      } );
+
+      // pillar
+      assign( rot, sub( ro, vec3( 0.5, -0.0, -1.5 ) ) );
+      const rdt = def( 'vec3', rd );
+      mulAssign( sw( rot, 'yz' ), rotate2D( HALF_PI ) );
+      mulAssign( sw( rdt, 'yz' ), rotate2D( HALF_PI ) );
+      assign( isect2, isectPillar( rot, rdt, 0.2, 10.0 ) );
+
+      ifThen( lt( sw( isect2, 'w' ), isectlen ), () => {
+        assign( isect, isect2 );
+        mulAssign( sw( N, 'zy' ), rotate2D( HALF_PI ) );
+        assign( baseColor, vec3( 0.8 ) );
+        assign( emissive, vec3( 0.0 ) );
+        assign( roughness, 0.02 );
         assign( metallic, 0.0 );
       } );
 
