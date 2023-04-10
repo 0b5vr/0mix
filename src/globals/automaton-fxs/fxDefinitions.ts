@@ -1,3 +1,0 @@
-const fxDefinitions = {};
-
-export { fxDefinitions };
