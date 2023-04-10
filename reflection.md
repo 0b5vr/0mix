@@ -4,9 +4,9 @@
 
 ## Emix
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/SYG9zU_bd6U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![Emix by Epoch](http://img.youtube.com/vi/SYG9zU_bd6U/0.jpg)](https://www.youtube.com/watch?v=SYG9zU_bd6U)
 
-<p><small>▲ [Emix by Epoch](https://www.pouet.net/prod.php?which=66066)</small></p>
+<p><small>▲ Emix by Epoch</small></p>
 
 EmixというDemo。
 Assembly Summer 2015で公開された、7分弱のTechnoとVJビジュアルで構成されるDemo。
@@ -25,7 +25,7 @@ Assembly Summer 2015で公開された、7分弱のTechnoとVJビジュアルで
 64KB Introという戦場。
 Windows・Linux・Amiga・Browser等といったプラットフォームごとに、64KBの重みは変わってくる。
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/O3T1-nadehU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![Clean Slate by Conspiracy](http://img.youtube.com/vi/O3T1-nadehU/0.jpg)](https://www.youtube.com/watch?v=O3T1-nadehU)
 
 <p><small>▲ Clean Slate by Conspiracy。質感やディテールにこだわった多彩なオブジェクトを表示するWindows 64KB Intro</small></p>
 
@@ -52,7 +52,7 @@ Windows・Linux・Amiga・Browser等といったプラットフォームごと�
 今回の作品を作るにあたり、インターネットでTechnoを掘った。
 掘り方が決して適切ではないなとも思うし、これでもまだ不十分であるなという感覚はある。
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/HOzFF47uYEg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![Oscar Mulero at Reaktor 2019](http://img.youtube.com/vi/HOzFF47uYEg/0.jpg)](https://www.youtube.com/watch?v=HOzFF47uYEg)
 
 <p><small>▲ Oscar Muleroによる2時間弱のテクノセット</small></p>
 
@@ -63,7 +63,7 @@ Windows・Linux・Amiga・Browser等といったプラットフォームごと�
 音作りについて、Yan Cook氏がYouTubeにアップロードしている動画群が参考になった。
 極めて抽象的な音を、様々なシンセサイザー・エフェクターを用いて作り出す。
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/hGvDsPVuWPo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![Making Techno With Wavetable by Yan Cook](http://img.youtube.com/vi/hGvDsPVuWPo/0.jpg)](https://www.youtube.com/watch?v=hGvDsPVuWPo)
 
 <p><small>▲ Yan Cookによる、Wavetableシンセを用いてテクノのリフを生み出すチュートリアル</small></p>
 
@@ -73,7 +73,7 @@ Machine Live。
 全能のコンピュータを使うのではなく、あえて限られたハードウェアのセットで行われる音楽パフォーマンス。
 目の前で物理的感覚を持って操作されるボタンやノブ。ラップトップの上蓋で遮られることのない手札。
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/yMfbX6714j0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![STOOR live in Paradiso - ADE 2022](http://img.youtube.com/vi/yMfbX6714j0/0.jpg)](https://www.youtube.com/watch?v=yMfbX6714j0)
 
 <p><small>▲ STOORによる7時間弱のMachine Liveによるテクノのパフォーマンス</small></p>
 
@@ -84,7 +84,7 @@ Machine Live。
 Elektron製品は初めて触ったが、その操作性や哲学には驚かされた。
 限られたパラメータで音作りを楽しむ世界観・直感的な操作で複雑なシーケンスプログラムを組める感触。
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/XCpPdygkts4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![Syntakt - At A Glance](http://img.youtube.com/vi/XCpPdygkts4/0.jpg)](https://www.youtube.com/watch?v=XCpPdygkts4)
 
 <p><small>▲ Elektron Syntaktのデモ動画</small></p>
 
@@ -94,7 +94,7 @@ lsdjに影響された、ハンドヘルドの万能Tracker。
 
 TrackerのUI自体が初体験だったが、確かにこのインタフェースなら、方向キーとボタン4つだけで曲がしっかり作れるものだなと感心した。
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Q6C_eT9bxYE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![Dirtywave M8 : macrosynth jam by Freaky Tweaky](http://img.youtube.com/vi/Q6C_eT9bxYE/0.jpg)](https://www.youtube.com/watch?v=Q6C_eT9bxYE)
 
 <p><small>▲ Dirtywave M8を用いたハウスのパフォーマンス。Yebisu303による</small></p>
 
@@ -114,9 +114,9 @@ TrackerのUI自体が初体験だったが、確かにこのインタフェー�
 実際、2500回のforループで大量のサイン波によるAdditive Synthesisを行うコードが存在する。
 4KB Introで使われる[Oidos](https://github.com/askeksa/Oidos)というシンセサイザーから着想を得た。
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/vAh7RJxTavY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![Dirtywave M8 : macrosynth jam by Freaky Tweaky](http://img.youtube.com/vi/vAh7RJxTavY/0.jpg)](https://www.youtube.com/watch?v=vAh7RJxTavY)
 
-<p><small>▲ [Wackelkontakt by Alcatraz & Prismbeings](https://www.pouet.net/prod.php?which=85220)。Oidosによる美麗なサウンドはnobyによる</small></p>
+<p><small>▲ Wackelkontakt by Alcatraz & Prismbeings。Oidosによる美麗なサウンドはnobyによる</small></p>
 
 GLSLコーダーの頭で、Modular SynthやMachine Liveを再解釈した結果。
 
@@ -134,9 +134,9 @@ FM・Unison・Arpeggio…… GLSLという戦場でも使える道具は使う�
 リバーブの使えないチップチューンにおいて、音に広がりを持たせるには、複数トラックを活用したディレイを付与することが一例として挙げられる。
 また、メガドライブに代表されるFM音源を用いる際は、複数のパートが同じ周波数帯で干渉しないよう、オペレータのパラメータ調整を技巧に行う。
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/gnQXgr6_YR4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![Dirtywave M8 : macrosynth jam by Freaky Tweaky](http://img.youtube.com/vi/gnQXgr6_YR4/0.jpg)](https://www.youtube.com/watch?v=gnQXgr6_YR4)
 
-<p><small>▲ [Overdrive 2 by Titan](https://www.pouet.net/prod.php?which=69648)。メガドライブのFM音源を用いた強烈なドラムンベースはstrobeによる</small></p>
+<p><small>▲ Overdrive 2 by Titan。メガドライブのFM音源を用いた強烈なドラムンベースはstrobeによる</small></p>
 
 ## 8 Minutes
 
@@ -148,7 +148,7 @@ Revisionのレギュレーション上、ひとつのDemoが使える時間は�
 クラブにおける音楽体験を、ゲームセンターにおける1度のゲーム体験（100円・約10分）に詰め込む。
 そのためには、本来クラブではあり得ない楽曲展開やテンポが要求される。
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/UXqXnGW2VWE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![Dirtywave M8 : macrosynth jam by Freaky Tweaky](http://img.youtube.com/vi/UXqXnGW2VWE/0.jpg)](https://www.youtube.com/watch?v=UXqXnGW2VWE)
 
 <p><small>▲ DARK TRAIN - S-Bahn。beatmaniaIIDX 28 BISTROVERに収録された、2分間の本格的テクノトラック</small></p>
 
@@ -166,9 +166,9 @@ Live Coding。音楽や映像を生成する手段としてのコーディング
 コーディングを知らない視聴者にとっては、音を生成する黒魔術。
 言語や環境に精通した視聴者からは、次の展開を予想するための手がかり。
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/cB_tm-NAYRk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![Dirtywave M8 : macrosynth jam by Freaky Tweaky](http://img.youtube.com/vi/cB_tm-NAYRk/0.jpg)](https://www.youtube.com/watch?v=cB_tm-NAYRk)
 
-<p><small>▲ 田所淳の[TidalCycles](https://tidalcycles.org/)によるライブコーディングパフォーマンス。Tidalのシーケンスに呼応して変化する映像も田所先生が手掛けている</small></p>
+<p><small>▲ 田所淳のTidalCyclesによるライブコーディングパフォーマンス。Tidalのシーケンスに呼応して変化する映像も田所先生が手掛けている</small></p>
 
 コードを書くのは人間であるから、そこには人間的な不正確さ・限界が存在する。
 一度に編集できるコードには時間的な制約が存在し、音楽的に理想の展開を生み出すことは難しい。
