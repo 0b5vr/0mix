@@ -67,6 +67,12 @@ https://creativecommons.org/licenses/by-nc/4.0/
 ================================================================================
 ```
 
+- [reflection.md](./reflection.md)
+- [kpt.md](./kpt.md)
+- [YouTube](https://youtu.be/3lOptjAeA2w)
+- [pouet](https://www.pouet.net/prod.php?which=94135)
+- [Demozoo](https://demozoo.org/productions/322650/)
+
 ### How to build
 
 ```bat
