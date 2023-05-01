@@ -67,6 +67,7 @@ https://creativecommons.org/licenses/by-nc/4.0/
 ================================================================================
 ```
 
+- [Watch the demo](https://0b5vr.com/0mix/0mix.html)
 - [reflection.md](./reflection.md)
 - [kpt.md](./kpt.md)
 - [YouTube](https://youtu.be/3lOptjAeA2w)
