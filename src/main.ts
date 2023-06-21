@@ -3,12 +3,12 @@ import { audio } from './globals/audio';
 import { automaton } from './globals/automaton';
 import { canvas } from './globals/canvas';
 import { dog } from './scene';
+import { editorVisibleObservers, resizeObservers } from './globals/globalObservers';
 import { getDivCanvasContainer } from './globals/dom';
 import { music } from './globals/music';
 import { notifyObservers } from '@0b5vr/experimental';
 import { prepare } from './globals/preparationTasks';
 import { promiseGui } from './globals/gui';
-import { resizeObservers } from './globals/globalObservers';
 
 // == dom ==========================================================================================
 if ( import.meta.env.DEV ) {
@@ -57,9 +57,10 @@ if ( import.meta.env.DEV ) {
 
 // == prod kickstarter =============================================================================
 if ( !import.meta.env.DEV ) {
-  document.body.innerHTML = '<select><option>640x360</option><option>960x540</option><option>1280x720</option><option selected>1920x1080</option><option>2560x1440</option><option>3840x2160</option></select><br><button>fullscreen (click this first)</button><br><button>start</button><br>1920x1080 is intended';
+  document.body.innerHTML = '<select><option>640x360</option><option>960x540</option><option>1280x720</option><option selected>1920x1080</option><option>2560x1440</option><option>3840x2160</option></select><br><input type="checkbox" checked /> Show Code<br><button>fullscreen (click this first)</button><br><button>start</button><br>1920x1080 is intended';
 
-  const selects = document.querySelectorAll( 'select' );
+  const select = document.querySelector( 'select' )!;
+  const inputs = document.querySelectorAll( 'input' );
   const buttons = document.querySelectorAll( 'button' );
 
   buttons[ 0 ].addEventListener( 'click', () => {
@@ -70,10 +71,13 @@ if ( !import.meta.env.DEV ) {
     audio.resume();
 
     // -- set resolution ---------------------------------------------------------------------------
-    const reso = selects[ 0 ].value.split( 'x' )
+    const reso = select.value.split( 'x' )
       .map( ( v ) => parseInt( v ) ) as [ number, number ];
 
     notifyObservers( resizeObservers, reso );
+
+    // -- should we show the code? -----------------------------------------------------------------
+    notifyObservers( editorVisibleObservers, inputs[ 0 ].checked );
 
     // -- prepare canvas ---------------------------------------------------------------------------
     document.body.innerHTML = '<style>body{margin:0;background:#000}canvas{width:100%;height:100%;object-fit:contain;cursor:none}</style>';
