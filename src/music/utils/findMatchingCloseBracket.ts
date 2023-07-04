@@ -6,7 +6,7 @@ export function findMatchingCloseBracket(
   let nest = 1;
 
   lines.slice( row )
-    .find( ( line, deltaRow ) => {
+    .find( ( line, deltaRow ): boolean | void => {
       let colOffset = 0;
 
       if ( deltaRow === 0 ) {
