@@ -9,7 +9,7 @@ export function findNearestChar(
   if ( dir < 0 ) {
     lines.slice( 0, row + 1 )
       .reverse()
-      .find( ( line, deltaRow ) => {
+      .find( ( line, deltaRow ): boolean | void => {
         line = ( deltaRow === 0 ? line.substring( 0, col ) : line );
         const iCol = line.lastIndexOf( char );
 
@@ -21,7 +21,7 @@ export function findNearestChar(
 
   } else {
     lines.slice( row )
-      .find( ( line, deltaRow ) => {
+      .find( ( line, deltaRow ): boolean | void => {
         line = ( deltaRow === 0 ? line.substring( col + 1 ) : line );
         const colOffset = deltaRow === 0 ? col + 1 : 0;
         const deltaCol = line.indexOf( char );
