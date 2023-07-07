@@ -16,8 +16,6 @@
                                                    Live Coding: 0b5vr
                                                             VJ: 0b5vr
 
-           I checked this intro works in Windows 10 22H2, Chrome 112
-
 ================================================================================
 
 Intended to make crowds in E Werk do the hazy dancing
@@ -48,13 +46,32 @@ https://github.com/0b5vr/0mix/blob/release/reflection.md
 
 --------------------------------------------------------------------------------
 
+UPDATE 2023-07-08: FINAL VERSION
+
+I'm finally back from Hyrule!
+
+- Slightly revised the shape of the car headlight in the Section3Scene.
+  Shoutouts to LJ for Roadtrip.
+- Added an option to render music offline. No more audio stutter!
+- Added an option to hide codes.
+- Firefox support! Firefox finally supports DecompressionStream API in 113.
+
+--------------------------------------------------------------------------------
+
 I checked this intro works in:
 
-- Windows 10 22H2
-- Chrome 112
+- Windows 11 22H2
+- Chrome 114, Firefox 114
 - AMD Ryzen 9 5900X
 - NVIDIA GeForce RTX 3080
 - 1920 x 1080 @ 60Hz
+
+It doesn't work in the form of a mere html file!
+You need to do either of them:
+
+- Put `--allow-file-access-from-files` on the Chrome startup option,
+  as the Revision rule specifies.
+- Start a local server that serves the html file.
 
 --------------------------------------------------------------------------------
 
