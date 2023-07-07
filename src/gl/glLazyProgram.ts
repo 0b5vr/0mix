@@ -1,5 +1,5 @@
 import { GL_COMPILE_STATUS, GL_COMPLETION_STATUS_KHR, GL_FRAGMENT_SHADER, GL_LINK_STATUS, GL_SEPARATE_ATTRIBS, GL_VERTEX_SHADER } from './constants';
-import { gl } from '../globals/canvas';
+import { extParallel, gl } from '../globals/canvas';
 
 export interface LazyProgramOptions {
   tfVaryings?: string[],
@@ -63,6 +63,13 @@ export function glLazyProgram(
     gl.linkProgram( program );
 
     return new Promise( ( resolve, reject ) => {
+      // if the environment doesn't support parallel shader compilation,
+      // just return the program synchronously
+      if ( !extParallel ) {
+        resolve( program! );
+        return;
+      }
+
       const update = (): void => {
         if ( gl.getProgramParameter( program!, GL_COMPLETION_STATUS_KHR ) ) {
           if ( import.meta.env.DEV ) {
