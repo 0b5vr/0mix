@@ -2,16 +2,17 @@ import { AudioBufferPlayer } from './AudioBufferPlayer';
 import { BAR, BLOCKS_PER_RENDER, BLOCK_SIZE, FRAMES_PER_RENDER, MUSIC_LENGTH } from './constants';
 import { GLSLMusicEditor } from './GLSLMusicEditor';
 import { GL_ARRAY_BUFFER } from '../gl/constants';
-import { Music } from './Music';
+import { MusicEngine } from './MusicEngine';
 import { arraySerial } from '@0b5vr/experimental';
 import { audio, sampleRate } from '../globals/audio';
 import { gl } from '../globals/canvas';
 import { glslMusicEditor } from '../globals/glslMusicEditor';
 import { musicCompile, musicRender, tfPool } from './Renderer';
 import { musicRendererStatusObservers } from '../globals/globalObservers';
+import { preparationTasks } from '../globals/preparationTasks';
 import { sleep } from '../utils/sleep';
 
-export class MusicOffline extends AudioBufferPlayer implements Music {
+export class MusicEngineOffline extends AudioBufferPlayer implements MusicEngine {
   public deltaTime: number;
   public cueStatus: 'none' | 'compiling' | 'applying';
   public cueStatusRender: 'none' | 'compiling' | 'applying';
@@ -38,8 +39,10 @@ export class MusicOffline extends AudioBufferPlayer implements Music {
       this.cueStatus = 'applying';
     } );
 
-    // -- temp --
-    this.prepare();
+    // -- assign preparation task ------------------------------------------------------------------
+    preparationTasks.push( async () => {
+      await this.prepare();
+    } );
   }
 
   public async prepare(): Promise<void> {

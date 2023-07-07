@@ -1,6 +1,8 @@
 import { AutomatonWithGUI } from '@0b5vr/automaton-with-gui';
+import { MusicEngineOffline } from './music/MusicEngineOffline';
+import { MusicEngineRealtime } from './music/MusicEngineRealtime';
 import { audio } from './globals/audio';
-import { automaton } from './globals/automaton';
+import { automaton, automatonSetupMusic } from './globals/automaton';
 import { canvas } from './globals/canvas';
 import { dog } from './scene';
 import { editorVisibleObservers, resizeObservers } from './globals/globalObservers';
@@ -28,6 +30,9 @@ if ( import.meta.env.DEV ) {
 
 // == dev kickstarter ==============================================================================
 if ( import.meta.env.DEV ) {
+  music.setEngine( new MusicEngineRealtime() );
+  automatonSetupMusic( music );
+
   const kickstartDev = async (): Promise<void> => {
     console.info( dog );
 
@@ -57,9 +62,9 @@ if ( import.meta.env.DEV ) {
 
 // == prod kickstarter =============================================================================
 if ( !import.meta.env.DEV ) {
-  document.body.innerHTML = '<select><option>640x360</option><option>960x540</option><option>1280x720</option><option selected>1920x1080</option><option>2560x1440</option><option>3840x2160</option></select><br><input type="checkbox" checked /> Show Code<br><button>fullscreen (click this first)</button><br><button>start</button><br>1920x1080 is intended';
+  document.body.innerHTML = 'resolution: <select><option>640x360</option><option>960x540</option><option>1280x720</option><option selected>1920x1080</option><option>2560x1440</option><option>3840x2160</option></select><br>music: <select><option>realtime</option><option>offline</option></select><br><input type="checkbox" checked /> Show Code<br><button>fullscreen (click this first)</button><br><button>start</button><br>1920x1080 is intended';
 
-  const select = document.querySelector( 'select' )!;
+  const select = document.querySelectorAll( 'select' );
   const inputs = document.querySelectorAll( 'input' );
   const buttons = document.querySelectorAll( 'button' );
 
@@ -71,10 +76,17 @@ if ( !import.meta.env.DEV ) {
     audio.resume();
 
     // -- set resolution ---------------------------------------------------------------------------
-    const reso = select.value.split( 'x' )
+    const reso = select[ 0 ].value.split( 'x' )
       .map( ( v ) => parseInt( v ) ) as [ number, number ];
 
     notifyObservers( resizeObservers, reso );
+
+    // -- set music renderer -----------------------------------------------------------------------
+    const engine = select[ 1 ].value === 'realtime'
+      ? new MusicEngineRealtime()
+      : new MusicEngineOffline();
+
+    music.setEngine( engine );
 
     // -- should we show the code? -----------------------------------------------------------------
     notifyObservers( editorVisibleObservers, inputs[ 0 ].checked );

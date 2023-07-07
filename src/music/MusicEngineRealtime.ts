@@ -1,10 +1,9 @@
 import { BLOCKS_PER_RENDER, BLOCK_SIZE, FRAMES_PER_RENDER, LATENCY_BLOCKS } from './constants';
 import { BufferReaderNode } from './BufferReaderNode';
 import { GL_ARRAY_BUFFER } from '../gl/constants';
-import { Music } from './Music';
+import { MusicEngine } from './MusicEngine';
 import { arraySerial } from '@0b5vr/experimental';
 import { audio, sampleRate } from '../globals/audio';
-import { audioAnalyzerSplitter } from '../globals/audioAnalyzer';
 import { createDebounce } from '../utils/createDebounce';
 import { gl } from '../globals/canvas';
 import { glWaitGPUCommandsCompleteAsync } from '../gl/glWaitGPUCommandsCompleteAsync';
@@ -19,7 +18,7 @@ const dstArrayL = new Float32Array( FRAMES_PER_RENDER );
 const dstArrayR = new Float32Array( FRAMES_PER_RENDER );
 
 // == music realtime ===============================================================================
-export class MusicRealtime implements Music {
+export class MusicEngineRealtime implements MusicEngine {
   public isPlaying: boolean;
   public timeOffset: number;
   public deltaTime: number;
@@ -72,8 +71,8 @@ export class MusicRealtime implements Music {
     // -- reader -----------------------------------------------------------------------------------
     BufferReaderNode.addModule( audio ).then( () => {
       this.__bufferReaderNode = new BufferReaderNode( audio );
-      this.__bufferReaderNode.connect( audioAnalyzerSplitter );
       this.__bufferReaderNode.connect( this.gainNode );
+      this.__bufferReaderNode.setActive( this.isPlaying );
     } );
 
     this.__bufferWriteBlocks = 0;
