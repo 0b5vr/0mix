@@ -1,9 +1,8 @@
 import { CharRenderer } from './CharRenderer/CharRenderer';
 import { GLSLMusicEditorRange } from '../../music/GLSLMusicEditorRange';
 import { RenderTarget } from '../../heck/RenderTarget';
-import { glslMusicEditorFocusRow, glslMusicEditorLines, glslMusicEditorSelect } from '../../music/glslMusicEditor';
+import { glslMusicEditor } from '../../globals/glslMusicEditor';
 import { gui } from '../../globals/gui';
-import { shaderEventAlterObservers } from '../../globals/globalObservers';
 import { vec2 } from '../../shaders/shaderBuilder';
 
 export class Code extends CharRenderer {
@@ -17,9 +16,9 @@ export class Code extends CharRenderer {
     } );
 
     // -- set code ---------------------------------------------------------------------------------
-    shaderEventAlterObservers.push( () => {
-      let lines = glslMusicEditorLines.concat();
-      const select = glslMusicEditorSelect.concat() as GLSLMusicEditorRange;
+    glslMusicEditor.observersAlter.push( () => {
+      let lines = glslMusicEditor.lines.concat();
+      const select = glslMusicEditor.select.concat() as GLSLMusicEditorRange;
 
       if ( select[ 0 ] === select[ 2 ] && select[ 1 ] === select[ 3 ] ) {
         if ( lines[ select[ 0 ] ]?.length === select[ 1 ] ) {
@@ -41,7 +40,7 @@ export class Code extends CharRenderer {
       }
 
       this.setContent( lines, select );
-      this.scrollTarget = glslMusicEditorFocusRow[ 0 ];
+      this.scrollTarget = glslMusicEditor.focusRow[ 0 ];
     } );
   }
 }

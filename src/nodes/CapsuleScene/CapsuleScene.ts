@@ -2,7 +2,7 @@ import { CameraStack } from '../CameraStack/CameraStack';
 import { CanvasTexture } from '../utils/CanvasTexture';
 import { CubemapNode } from '../CubemapNode/CubemapNode';
 import { GL_ONE, GL_SRC_ALPHA, GL_TEXTURE_2D } from '../../gl/constants';
-import { MUSIC_BPM } from '../../config';
+import { MUSIC_BPM } from '../../music/constants';
 import { Material } from '../../heck/Material';
 import { PlaneBackground } from '../utils/PlaneBackground';
 import { RaymarcherNode } from '../utils/RaymarcherNode';

@@ -89,14 +89,12 @@ if ( !import.meta.env.DEV ) {
     // -- esc handler ------------------------------------------------------------------------------
     window.addEventListener( 'keydown', ( event ) => {
       if ( event.code === 'Escape' ) {
-        music.isPlaying = false;
-        music.update();
+        music.pause();
         dog.active = false;
       }
     } );
 
     // -- let's go ---------------------------------------------------------------------------------
-    music.time = 0.0;
-    music.isPlaying = true;
+    music.play();
   } );
 }

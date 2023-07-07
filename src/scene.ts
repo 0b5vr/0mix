@@ -15,7 +15,7 @@ import { LineRingsScene } from './nodes/LineRingsScene/LineRingsScene';
 import { LineTriTunnelScene } from './nodes/LineTriTunnelScene/LineTriTunnelScene';
 import { LineWaveScene } from './nodes/LineWaveScene/LineWaveScene';
 import { LoadingScreen } from './nodes/LoadingScreen/LoadingScreen';
-import { MUSIC_BPM } from './config';
+import { MUSIC_BPM } from './music/constants';
 import { MetaballScene } from './nodes/MetaballScene/MetaballScene';
 import { MetalCubeScene } from './nodes/MetalCubeScene/MetalCubeScene';
 import { Mixer } from './nodes/Mixer/Mixer';

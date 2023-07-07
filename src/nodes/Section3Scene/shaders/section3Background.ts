@@ -1,5 +1,6 @@
 import { BackgroundDefDrawType } from '../../utils/shaders/buildPlaneBackgroundFrag';
-import { FAR, MUSIC_BPM } from '../../../config';
+import { FAR } from '../../../config';
+import { MUSIC_BPM } from '../../../music/constants';
 import { add, addAssign, cos, def, defUniformNamed, div, fract, length, mad, mix, mul, normalize, smoothstep, step, sub, sw, vec3, vec4 } from '../../../shaders/shaderBuilder';
 import { isectPlane } from '../../../shaders/modules/isectPlane';
 import { phongSpecular } from '../../../shaders/modules/phongSpecular';

@@ -1,7 +1,7 @@
 import { CharRenderer } from './CharRenderer/CharRenderer';
 import { GLSLMusicEditorRange } from '../../music/GLSLMusicEditorRange';
 import { Lambda } from '../../heck/components/Lambda';
-import { MUSIC_BPM } from '../../config';
+import { MUSIC_BPM } from '../../music/constants';
 import { RenderTarget } from '../../heck/RenderTarget';
 import { arraySerial } from '@0b5vr/experimental';
 import { music } from '../../globals/music';
