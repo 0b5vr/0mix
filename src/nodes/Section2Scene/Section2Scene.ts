@@ -5,6 +5,7 @@ import { Lambda } from '../../heck/components/Lambda';
 import { RaymarcherNode } from '../utils/RaymarcherNode';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { cameraStackATarget } from '../../globals/cameraStackTargets';
+import { createPromiseSVGImage } from '../../utils/createPromiseSVGImage';
 import { mainCameraStackResources } from '../CameraStack/mainCameraStackResources';
 import { objectVert } from '../../shaders/common/objectVert';
 import { quad3DGeometry } from '../../globals/quad3DGeometry';
@@ -17,21 +18,16 @@ export class Section2Scene extends SceneNode {
 
     const scene = this;
 
-    // -- svg --------------------------------------------------------------------------------------
-    const image = new Image();
-
-    image.src = `data:image/svg+xml;charset=utf8,${ encodeURIComponent( section2Svg ) }`;
-
     // -- canvas -----------------------------------------------------------------------------------
-    const texture = new CanvasTexture( 2048, 1024 );
+    const texture = new CanvasTexture( 1024, 512 );
     const { context } = texture;
 
-    image.onload = () => {
+    createPromiseSVGImage( section2Svg ).then( ( image ) => {
       context.drawImage( image, 0, 0 );
       texture.updateTexture();
-    };
+    } );
 
-    // -- metalCube ---------------------------------------------------------------------------------
+    // -- metalCube --------------------------------------------------------------------------------
     const section2 = new RaymarcherNode( section2Frag, {
       geometry: quad3DGeometry,
     } );

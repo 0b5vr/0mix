@@ -4,6 +4,7 @@ import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { cameraStackBTarget } from '../../globals/cameraStackTargets';
+import { createPromiseSVGImage } from '../../utils/createPromiseSVGImage';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { kansokushaFrag } from './shaders/kansokushaFrag';
 import { quadGeometry } from '../../globals/quadGeometry';
@@ -15,11 +16,6 @@ export class KansokushaScene extends SceneNode {
   public constructor() {
     super();
 
-    // -- svg --------------------------------------------------------------------------------------
-    const image = new Image();
-
-    image.src = `data:image/svg+xml;charset=utf8,${ encodeURIComponent( kansokushaSvg ) }`;
-
     // -- canvas -----------------------------------------------------------------------------------
     const texture = new CanvasTexture( 4, 4 );
     const { context } = texture;
@@ -28,9 +24,10 @@ export class KansokushaScene extends SceneNode {
       texture.resize( h, h / 3 );
       texture.clear();
 
-      context.drawImage( image, 0, 0 );
-
-      texture.updateTexture();
+      createPromiseSVGImage( kansokushaSvg ).then( ( image ) => {
+        context.drawImage( image, 0, 0, h, h / 3 );
+        texture.updateTexture();
+      } );
     } );
 
     // -- material ---------------------------------------------------------------------------------

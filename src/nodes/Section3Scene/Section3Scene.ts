@@ -11,6 +11,7 @@ import { RaymarcherNode } from '../utils/RaymarcherNode';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { buildPlaneBackgroundFrag } from '../utils/shaders/buildPlaneBackgroundFrag';
 import { cameraStackATarget } from '../../globals/cameraStackTargets';
+import { createPromiseSVGImage } from '../../utils/createPromiseSVGImage';
 import { dummyRenderTarget1, dummyRenderTarget4 } from '../../globals/dummyRenderTarget';
 import { footbridgeFrag } from './shaders/footbridgeFrag';
 import { genCube } from '../../geometries/genCube';
@@ -30,19 +31,14 @@ export class Section3Scene extends SceneNode {
     const scene = this;
     const cubemapExclusionTag = Symbol();
 
-    // -- svg --------------------------------------------------------------------------------------
-    const image = new Image();
-
-    image.src = `data:image/svg+xml;charset=utf8,${ encodeURIComponent( section3Svg ) }`;
-
     // -- canvas -----------------------------------------------------------------------------------
-    const texture = new CanvasTexture( 2048, 1024 );
+    const texture = new CanvasTexture( 1024, 512 );
     const { context } = texture;
 
-    image.onload = () => {
+    createPromiseSVGImage( section3Svg ).then( ( image ) => {
       context.drawImage( image, 0, 0 );
       texture.updateTexture();
-    };
+    } );
 
     // -- light ------------------------------------------------------------------------------------
     const lightL = new PointLightNode( {

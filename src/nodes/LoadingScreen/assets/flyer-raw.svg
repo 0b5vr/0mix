@@ -1,4 +1,4 @@
-<svg viewBox="0 0 512 768" xmlns="http://www.w3.org/2000/svg" fill="#fff" font-size="24" font-family="Arial">
+<svg width="512" height="768" viewBox="0 0 512 768" xmlns="http://www.w3.org/2000/svg" fill="#fff" font-size="24" font-family="Arial">
 <filter id="f">
   <feGaussianBlur stdDeviation="4"/>
 </filter>

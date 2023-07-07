@@ -4,6 +4,7 @@ import { Material } from '../../heck/Material';
 import { Quad } from '../../heck/components/Quad';
 import { SceneNode } from '../../heck/components/SceneNode';
 import { arraySerial } from '@0b5vr/experimental';
+import { createPromiseSVGImage } from '../../utils/createPromiseSVGImage';
 import { ditherFrag } from './shaders/ditherFrag';
 import { dummyRenderTarget1 } from '../../globals/dummyRenderTarget';
 import { noiseFrag } from './shaders/noiseFrag';
@@ -27,9 +28,9 @@ export class LoadingScreen extends SceneNode {
     arraySerial( 27 ).map( ( i ) => {
       currentSvg = currentSvg.replace( `id="${ 26 - i }"`, 'display="none"' );
 
-      const image = new Image();
-      image.src = `data:image/svg+xml;charset=utf8,${ encodeURIComponent( currentSvg ) }`;
-      imageFlyers.unshift( image );
+      createPromiseSVGImage( currentSvg ).then( ( image ) => {
+        imageFlyers[ 26 - i ] = image;
+      } );
     } );
 
     // -- texture ----------------------------------------------------------------------------------
