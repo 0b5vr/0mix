@@ -62,7 +62,7 @@ if ( import.meta.env.DEV ) {
 
 // == prod kickstarter =============================================================================
 if ( !import.meta.env.DEV ) {
-  document.body.innerHTML = 'resolution: <select><option>640x360</option><option>960x540</option><option>1280x720</option><option selected>1920x1080</option><option>2560x1440</option><option>3840x2160</option></select><br>music: <select><option>realtime</option><option>offline</option></select><br><input type="checkbox" checked /> Show Code<br><button>fullscreen (click this first)</button><br><button>start</button><br>1920x1080 is intended';
+  document.body.innerHTML = 'resolution: <select><option>640x360</option><option>960x540</option><option>1280x720</option><option selected>1920x1080</option><option>2560x1440</option><option>3840x2160</option></select><br>music: <select><option>offline</option><option>realtime</option></select><br><input type="checkbox" checked /> Show Code<br><button>fullscreen (click this first)</button><br><button>start</button><br>1920x1080 is intended';
 
   const select = document.querySelectorAll( 'select' );
   const inputs = document.querySelectorAll( 'input' );
